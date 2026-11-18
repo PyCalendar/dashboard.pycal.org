@@ -5,16 +5,13 @@ import os
 import pytest
 from django.conf import settings as django_settings
 
-from pycal_dashboard.services.repository_sync import RepositorySync
-
 # Playwright's synchronous API runs an event loop; the database is used from this thread only.
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
 
 @pytest.fixture
-def site(live_server, transactional_db, organization):
-    """The address of a site that read the organization; nothing leaves the machine."""
-    RepositorySync(1).run()
+def site(live_server, transactional_db):
+    """The address of the site; nothing leaves the machine."""
     return live_server.url
 
 

@@ -1,9 +1,9 @@
-"""The models of the dashboard, one per module."""
+"""The models of the dashboard, one per module.
 
-from .installation import Installation
-from .item import Item
+The site keeps no data of GitHub for now: no repositories, issues or pull requests.
+"""
+
 from .profile import Profile
-from .repository import Repository
 from .webhook_delivery import WebhookDelivery
 
-__all__ = ["Installation", "Item", "Profile", "Repository", "WebhookDelivery"]
+__all__ = ["Profile", "WebhookDelivery"]

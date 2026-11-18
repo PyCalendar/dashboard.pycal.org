@@ -459,7 +459,6 @@ dependencies = [
     { name = "django-environ" },
     { name = "gunicorn" },
     { name = "httpx" },
-    { name = "pyjwt", extra = ["crypto"] },
     { name = "whitenoise" },
 ]
 
@@ -496,7 +495,6 @@ requires-dist = [
     { name = "gunicorn", specifier = ">=23" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydata-sphinx-theme", marker = "extra == 'docs'", specifier = "==0.23.0" },
-    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = "==9.1.0" },
     { name = "sphinx-autobuild", marker = "extra == 'docs'", specifier = "==2025.8.25" },
     { name = "sphinx-copybutton", marker = "extra == 'docs'", specifier = "==0.5.2" },

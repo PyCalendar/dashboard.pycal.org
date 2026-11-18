@@ -74,7 +74,7 @@ class ErrorPageMiddleware:
             The page of the error; None for other exceptions.
         """
         if isinstance(exception, SocialApp.DoesNotExist):
-            exception = SignInNotConfigured("GITHUB_CLIENT_ID, GITHUB_OAUTH_CLIENT_ID")
+            exception = SignInNotConfigured("GITHUB_OAUTH_CLIENT_ID")
         if not isinstance(exception, DashboardError):
             return None
         if isinstance(exception, UnexpectedError):

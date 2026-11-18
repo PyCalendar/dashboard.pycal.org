@@ -15,9 +15,10 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 
 ## Commits
 
-- The person has given standing authorization to commit and push finished
-  work, with the migrations it needs. Commit, push and check that the branch
-  matches the remote.
+- The person has given standing authorization, for this repository only, to
+  commit and push finished work, with the migrations it needs. Commit, push,
+  check that the branch matches the remote and that the CI run of the push
+  passes; fix it if not.
 - Ask before deleting or overwriting outside the files the agent made.
 - Commits written by an agent end with the attribution of the model.
 
@@ -37,6 +38,11 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - All pages are public, except those based on private information: the
   account, the preferences, the email addresses and the webhook deliveries.
   Private repositories are never shown.
+- Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
+  which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
+- The site keeps no data of GitHub for now (no models that track or query the
+  GitHub API) and writes nothing to GitHub; numbers and automation are separate
+  functionality, designed later.
 - New permissions or events of the GitHub App go into
   `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`.
 

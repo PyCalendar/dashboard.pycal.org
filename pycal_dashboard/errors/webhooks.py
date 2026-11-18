@@ -72,13 +72,3 @@ class WebhookEventMissing(WebhookError):
     """
 
     title = "The webhook names no event"
-
-
-class WebhookPayloadIncomplete(WebhookError):
-    """The webhook lacks a part that its event always has.
-
-    The detail names the missing part, such as ``pull_request``. A webhook of
-    GitHub always has it; check where the request came from.
-    """
-
-    title = "The webhook is incomplete"

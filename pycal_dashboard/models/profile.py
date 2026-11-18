@@ -10,12 +10,8 @@ class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="dashboard_profile"
     )
-    # a weekly email with what waits for the person: reviews, answers to their issues
-    email_digest = models.BooleanField(default=False)
-    # the start page shows these repositories first
-    watched = models.ManyToManyField("Repository", blank=True, related_name="watchers")
-    show_drafts = models.BooleanField(default=True)
-    days = models.PositiveIntegerField(default=90)  # the period of the statistics
+    # emails about the account and the site, to the verified primary address
+    email_notifications = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f"preferences of {self.user}"

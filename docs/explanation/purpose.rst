@@ -8,12 +8,20 @@ Why a dashboard
 PyCalendar has many repositories: icalendar, the calendar tools and their
 documentation. GitHub shows each repository alone. A newcomer does not know
 where to start, and maintainers do not see which pull request waited longest.
-The dashboard puts the organization on one page and guides the community:
+The dashboard will put the organization on one page and guide the community:
 
 - newcomers find issues that are meant for them,
 - reviewers find the pull requests that wait, small ones first,
 - first contributions are seen and welcomed,
 - everybody sees who contributes, which says thank you.
+
+Step by step
+============
+
+The numbers and the automation are separate functionality, designed later.
+For now the site is the frame: it signs people in, receives the webhooks of its
+GitHub App and logs them. It has no models that track or query the GitHub API
+and writes nothing to GitHub.
 
 `community-insights <https://community-insights.readthedocs.io/>`_ measures
 response times in depth; the dashboard is the daily start page. It looks like
@@ -30,14 +38,14 @@ Every page is public, except pages based on private information:
 - the webhook deliveries, only for the administrators, because they may name
   private repositories.
 
-Private repositories are stored when the app reads an installation, but never
-shown, not even their numbers. Contributor pages show what GitHub already shows
-publicly. The API returns the same public data.
+Private repositories are never shown. The site keeps no data of GitHub; the
+log of the webhooks keeps only the event, the action and the name of the
+repository, for the administrators.
 
 Signing in
 ==========
 
-People sign in with GitHub only; the dashboard has no passwords. GitHub tells
-it who they are and their email addresses. It stores no token of theirs and
-never writes to GitHub on their behalf. The GitHub App only reads, too: the
-dashboard adds no labels and writes no comments. Automation is designed later.
+People sign in with GitHub only, through an OAuth app; the dashboard has no
+passwords. GitHub tells it who they are and their email addresses. It stores no
+token of theirs and never writes to GitHub on their behalf. The GitHub App only
+reads, too: the dashboard adds no labels and writes no comments.

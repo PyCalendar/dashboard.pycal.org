@@ -60,23 +60,12 @@ class GitHubRateLimited(GitHubError):
     status = 503
 
 
-class GitHubAnswerNotJSON(GitHubError):
-    """GitHub answered with something that is not JSON.
-
-    This happens when GitHub has problems, or when ``GITHUB_API`` points to a
-    page that is not the API. Check ``GITHUB_API`` and try again.
-    """
-
-    title = "GitHub's answer was not JSON"
-
-
 class MissingPermissions(GitHubError):
     """The GitHub App may not do what the site needs.
 
-    An installation lacks a permission, such as writing the labels of pull
-    requests. An owner of the organization accepts the new permissions in the
-    settings of the installation on GitHub; :doc:`/reference/permissions` lists
-    them.
+    An installation lacks a permission that a request of the site needs. An
+    owner of the organization accepts the new permissions in the settings of the
+    installation on GitHub; :doc:`/reference/permissions` lists them.
     """
 
     title = "The GitHub App lacks a permission"
@@ -85,67 +74,16 @@ class MissingPermissions(GitHubError):
     guide_title = "Permissions of the GitHub App"
 
 
-class GitHubAppNotConfigured(GitHubError):
-    """The site has no GitHub App yet.
-
-    The site needs its GitHub App to read the repositories and to label pull
-    requests. Register it on the page *Register the GitHub App*
-    (``/setup/github-app/``) with the setup code from the log of the site, as
-    :doc:`/how-to/github-app` describes.
-    """
-
-    title = "The site has no GitHub App"
-    status = 503
-    guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
-
-
-class InvalidPrivateKey(GitHubError):
-    """The private key of the GitHub App cannot sign.
-
-    ``GITHUB_APP_PRIVATE_KEY`` or the file of ``GITHUB_APP_PRIVATE_KEY_FILE``
-    is not the PEM key that GitHub generated for the app. Generate a new key in
-    the settings of the app on GitHub and set it.
-    """
-
-    title = "The private key of the GitHub App is invalid"
-    status = 500
-    guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
-
-
-class InstallationNotFound(GitHubError):
-    """The GitHub App is not installed where the site expected it.
-
-    The installation was removed or suspended. Install the app again on the
-    organization.
-    """
-
-    title = "The GitHub App is not installed"
-    status = 404
-
-
-class InstallationNotAllowed(GitHubError):
-    """The GitHub App was installed on an account that this dashboard does not show.
-
-    The dashboard shows the organizations of ``GITHUB_ORGANIZATIONS`` only, such
-    as ``PyCalendar``. Install the app there, or add the account to the setting.
-    """
-
-    title = "This account is not part of the dashboard"
-    status = 403
-
-
 class SignInNotConfigured(GitHubError):
-    """Nobody can sign in: the site has no GitHub client for signing in.
+    """Nobody can sign in: the site has no OAuth app.
 
-    People sign in with the client of the GitHub App, which the registration
-    stores, or with an OAuth app of ``GITHUB_OAUTH_CLIENT_ID`` and
-    ``GITHUB_OAUTH_SECRET``. Register the GitHub App first, as
-    :doc:`/how-to/github-app` describes.
+    People sign in with a separate OAuth app of ``GITHUB_OAUTH_CLIENT_ID`` and
+    ``GITHUB_OAUTH_SECRET``. The people who run the site create it on GitHub
+    and enter it on ``/setup/oauth-app/`` with the setup code of the log, as
+    :ref:`oauth-app` describes.
     """
 
     title = "Signing in is not set up"
     status = 503
-    guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide = "how-to/github-app.html#oauth-app"
+    guide_title = "The OAuth app for signing in"

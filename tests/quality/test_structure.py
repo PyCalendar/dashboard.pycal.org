@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pycal_dashboard.github.permissions import EVENTS, REQUIRED, USER_PERMISSIONS
+from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 
 ROOT = Path(__file__).parents[2]
 PACKAGE = ROOT / "pycal_dashboard"
@@ -35,7 +35,7 @@ def test_the_license_is_agpl():
 
 def test_permissions_are_documented():
     documented = (ROOT / "docs/reference/permissions.rst").read_text()
-    for name, level in {**REQUIRED, **USER_PERMISSIONS}.items():
+    for name, level in REQUIRED.items():
         assert f"``{name}``" in documented and level in documented
     for event in EVENTS:
         assert f"``{event}``" in documented

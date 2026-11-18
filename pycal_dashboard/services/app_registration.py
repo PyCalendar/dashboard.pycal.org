@@ -35,7 +35,6 @@ from pycal_dashboard.errors import (
 )
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.permissions import manifest
-from pycal_dashboard.sign_in import SignIn
 
 LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 SESSION_KEY = "github_app_registration"
@@ -392,9 +391,6 @@ class AppRegistration:
         settings.GITHUB_APP_SLUG = os.environ["GITHUB_APP_SLUG"]
         settings.GITHUB_WEBHOOK_SECRET = os.environ["GITHUB_WEBHOOK_SECRET"]
         settings.GITHUB_APP_PRIVATE_KEY = key
-        # people sign in with the client of the app, unless an OAuth app is set
-        settings.SIGN_IN = SignIn.from_environment(os.environ)
-        settings.SOCIALACCOUNT_PROVIDERS = settings.SIGN_IN.providers()
 
     @staticmethod
     def reload_workers(request) -> bool:

@@ -37,11 +37,14 @@ def test_start_prints_the_setup_code(no_app, db, capsys):
     output = capsys.readouterr().out
     code = AppRegistration.setup_code()
     assert f"/setup/github-app/ with the setup code {code}" in output
+    assert f"/setup/oauth-app/ with the setup code {code}" in output
 
 
 def test_start_with_an_app(db, capsys):
     call_command("prepare")
-    assert "GitHub App dashboard-test" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "GitHub App dashboard-test" in output
+    assert "People sign in with the OAuth app." in output
 
 
 def test_every_page_asks_for_the_app(no_app, client, db):
@@ -102,8 +105,7 @@ def test_register(no_app, client, github, db, monkeypatch, private_key):
     assert saved["GITHUB_APP_ID"] == "77" and saved["GITHUB_CLIENT_ID"] == "Iv1.abc"
     from django.conf import settings
 
-    assert settings.SIGN_IN.source == "github-app"
-    assert settings.SOCIALACCOUNT_PROVIDERS["github"]["APP"]["client_id"] == "Iv1.abc"
+    assert settings.SIGN_IN == SignIn()  # people sign in with the OAuth app only
     assert client.get("/setup/github-app/").context["source"] == "volume"
 
 
@@ -126,7 +128,8 @@ def test_setup_code_command(no_app, db, capsys):
 
 def test_manifest_command(capsys):
     call_command("app_manifest")
-    assert '"email_addresses": "read"' in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert '"pull_requests": "read"' in output and "email_addresses" not in output
 
 
 def test_the_app_only_reads():

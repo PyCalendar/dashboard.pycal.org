@@ -16,10 +16,6 @@
     <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/favicon.png' %}" alt="" width="28" height="28"> {{ site_name }}</a>
     <nav aria-label="Menu">
       <ul class="menu">
-        <li><a href="{% url 'contribute' %}"{% if nav == 'contribute' %} aria-current="page"{% endif %}>Contribute</a></li>
-        <li><a href="{% url 'reviews' %}"{% if nav == 'reviews' %} aria-current="page"{% endif %}>Reviews</a></li>
-        <li><a href="{% url 'repositories' %}"{% if nav == 'repositories' or nav == 'repository' %} aria-current="page"{% endif %}>Repositories</a></li>
-        <li><a href="{% url 'contributors' %}"{% if nav == 'contributors' or nav == 'contributor' %} aria-current="page"{% endif %}>Contributors</a></li>
       {% if user.is_authenticated %}
         <li>{% include "pycal_dashboard/_account_menu.html" %}</li>
       {% else %}
@@ -34,7 +30,7 @@
   {% if messages %}<div class="messages">{% for message in messages %}
     <p class="message message-{{ message.level_tag }}" role="status">{{ message }}</p>
   {% endfor %}</div>{% endif %}
-  {% if not github_app_configured and nav != 'register_app' %}<div class="messages"><p class="message message-warning" data-no-app>This site has no GitHub App yet, so it shows no data. The people who run it <a href="{% url 'register_app' %}">register the GitHub App</a> with the setup code from the log.</p></div>{% endif %}
+  {% if not github_app_configured and nav != 'register_app' %}<div class="messages"><p class="message message-warning" data-no-app>This site has no GitHub App yet. The people who run it <a href="{% url 'register_app' %}">register the GitHub App</a> with the setup code from the log.</p></div>{% endif %}
   {% block main %}{% endblock %}
 </main>
 <footer class="footer">

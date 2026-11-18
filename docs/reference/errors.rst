@@ -16,10 +16,10 @@ link:
 .. code-block:: json
 
    {
-     "error": "RepositoryNotFound",
-     "title": "Repository not found",
-     "detail": "PyCalendar/nothing",
-     "documentation": "https://dashboard-pycal-org.readthedocs.io/en/latest/reference/errors.html#pycal_dashboard.errors.dashboard.RepositoryNotFound"
+     "error": "ApiEndpointNotFound",
+     "title": "No such address in the API",
+     "detail": "/api/v1/nothing/",
+     "documentation": "https://docs.dashboard.pycal.org/reference/errors.html#pycal_dashboard.errors.dashboard.ApiEndpointNotFound"
    }
 
 An error the site does not know is shown as

@@ -1,10 +1,12 @@
-"""Requests to the API of GitHub, with its errors translated."""
+"""Requests to the API of GitHub, with its errors translated.
+
+The site only sends one: the conversion of the manifest when the GitHub App is registered.
+"""
 
 import httpx
 from django.conf import settings
 
 from pycal_dashboard.errors import (
-    GitHubAnswerNotJSON,
     GitHubError,
     GitHubLoginExpired,
     GitHubNotFound,
@@ -97,59 +99,3 @@ class GitHubClient:
         except ValueError:
             return response.text[:200]
         return str(data.get("message", "")) if isinstance(data, dict) else ""
-
-    def json(self, method: str, path: str, **kwargs):
-        """Send a request and read the JSON of the answer.
-
-        Args:
-            method: GET, POST ...
-            path: The path of the API.
-            **kwargs: For httpx.
-
-        Returns:
-            The JSON; None for an empty answer.
-
-        Raises:
-            GitHubAnswerNotJSON: The answer is no JSON.
-        """
-        response = self.request(method, path, **kwargs)
-        if not response.content:
-            return None
-        try:
-            return response.json()
-        except ValueError as error:
-            raise GitHubAnswerNotJSON(f"{method} {path}") from error
-
-    def get(self, path: str, **params):
-        """GET with parameters.
-
-        Args:
-            path: The path of the API.
-            **params: The parameters of the query.
-
-        Returns:
-            The JSON of the answer.
-        """
-        return self.json("GET", path, params=params or None)
-
-    def pages(self, path: str, key: str | None = None, limit: int = 50, **params) -> list:
-        """GET every page of a list, 100 items per page.
-
-        Args:
-            path: The path of the API.
-            key: The key of the list in the answer, such as ``repositories``; None if the
-                answer is the list.
-            limit: The most pages to read.
-            **params: The parameters of the query.
-
-        Returns:
-            The items of all pages.
-        """
-        items: list = []
-        for page in range(1, limit + 1):
-            answer = self.get(path, per_page=100, page=page, **params)
-            found = (answer or {}).get(key, []) if key else (answer or [])
-            items.extend(found)
-            if len(found) < 100:
-                break
-        return items

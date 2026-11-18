@@ -6,11 +6,10 @@ The list is in docs/reference/permissions.rst (tests/test_permissions.py checks 
 # What the site needs from an installation.
 REQUIRED = {
     "metadata": "read",  # the repositories of the installation
-    "issues": "read",  # the issues: where to start, what waits for an answer
-    "pull_requests": "read",  # the pull requests: what waits for a review
+    "issues": "read",  # the webhooks of issues and their comments
+    "pull_requests": "read",  # the webhooks of pull requests and their reviews
 }
-# What the site may read of the people who sign in: their verified email addresses.
-USER_PERMISSIONS = {"email_addresses": "read"}
+# The app asks nothing of the people who use it: they sign in with the OAuth app.
 # The events the app receives. "installation" and "installation_repositories" come without
 # a subscription.
 EVENTS = ["issues", "issue_comment", "pull_request", "pull_request_review", "repository"]
@@ -62,11 +61,10 @@ def manifest(name: str, url: str, public: bool = False) -> dict:
         "url": url,
         "hook_attributes": {"url": f"{url}/github/webhook/", "active": True},
         "redirect_url": f"{url}/setup/github-app/registered/",
-        "callback_urls": [f"{url}/accounts/github/login/callback/"],
         "setup_url": f"{url}/setup/installed/",
         "setup_on_update": True,
         "request_oauth_on_install": False,
         "public": public,
-        "default_permissions": {**REQUIRED, **USER_PERMISSIONS},
+        "default_permissions": dict(REQUIRED),
         "default_events": list(EVENTS),
     }

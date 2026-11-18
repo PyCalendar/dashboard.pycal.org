@@ -26,7 +26,7 @@ extensions = [
     "sphinx_design",
 ]
 
-html_baseurl = "https://dashboard-pycal-org.readthedocs.io/en/latest/"
+html_baseurl = "https://docs.dashboard.pycal.org/"
 html_theme = "pydata_sphinx_theme"
 html_favicon = "../static/img/favicon.png"
 html_logo = "../static/img/favicon.png"

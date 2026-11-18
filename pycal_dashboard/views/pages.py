@@ -8,43 +8,20 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from pycal_dashboard import build_info
-from pycal_dashboard.github.permissions import EVENTS, REQUIRED, USER_PERMISSIONS
-from pycal_dashboard.models import Profile
-from pycal_dashboard.services.overview import Overview
-from pycal_dashboard.services.request_filters import RequestFilters
+from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.theme import COOKIE, Theme
 
 
 def home(request):
-    """The start page: where to help, what waits, who contributes.
+    """The start page: what the site is and where it stands.
 
     Args:
-        request: The request; ``days`` sets the period of the statistics.
+        request: The request.
 
     Returns:
         The page.
     """
-    days = RequestFilters(request.GET).days()
-    overview = Overview(days)
-    watched = []
-    if request.user.is_authenticated:
-        profile = Profile.objects.filter(user=request.user).first()
-        if profile:
-            watched = Overview(days, profile.watched.filter(private=False)).per_repository()
-    return render(
-        request,
-        "pycal_dashboard/home.html",
-        {
-            "counts": overview.counts(),
-            "starter": overview.starter_issues(limit=8),
-            "waiting": overview.waiting_for_review()[:8],
-            "unanswered": overview.unanswered()[:8],
-            "first": overview.first_contributions()[:5],
-            "contributors": overview.contributors(limit=10),
-            "watched": watched,
-            "days": days,
-        },
-    )
+    return render(request, "pycal_dashboard/home.html")
 
 
 def about(request):
@@ -61,7 +38,7 @@ def about(request):
         "pycal_dashboard/about.html",
         {
             "build": build_info.get(settings.SOURCE_URL),
-            "permissions": {**REQUIRED, **USER_PERMISSIONS},
+            "permissions": REQUIRED,
             "events": EVENTS,
             "organizations": settings.GITHUB_ORGANIZATIONS,
         },

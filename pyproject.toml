@@ -12,7 +12,6 @@ dependencies = [
     "django-environ>=0.14.0",
     "gunicorn>=23",
     "httpx>=0.28.1",
-    "PyJWT[crypto]>=2.10",
     "whitenoise>=6.9",
 ]
 
@@ -32,9 +31,9 @@ package = false  # uv sync installs the dependencies only; the code runs from th
 
 [project.urls]
 Homepage = "https://dashboard.pycal.org"
-Documentation = "https://dashboard-pycal-org.readthedocs.io/en/latest/"
+Documentation = "https://docs.dashboard.pycal.org/"
 Source = "https://github.com/PyCalendar/dashboard.pycal.org"
-Changelog = "https://dashboard-pycal-org.readthedocs.io/en/latest/changelog.html"
+Changelog = "https://docs.dashboard.pycal.org/changelog.html"
 
 [project.optional-dependencies]
 docs = [

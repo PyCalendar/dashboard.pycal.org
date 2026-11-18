@@ -132,8 +132,8 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = False  # a button with POST: no sign in by a link of another site
 SOCIALACCOUNT_STORE_TOKENS = False  # the site only reads who signed in
 SOCIALACCOUNT_QUERY_EMAIL = True  # the verified addresses of GitHub
-# The client that signs people in: an OAuth app (GITHUB_OAUTH_CLIENT_ID) if set, else the
-# client of the GitHub App, which the registration stores (pycal_dashboard/sign_in.py).
+# People sign in with a separate OAuth app (GITHUB_OAUTH_CLIENT_ID, pycal_dashboard/sign_in.py),
+# entered on /setup/oauth-app/ or set here; without it nobody can sign in.
 SIGN_IN = SignIn.from_environment(dict(os.environ))
 SOCIALACCOUNT_PROVIDERS = SIGN_IN.providers()
 # GitHub handles that administer this site: the Django admin and the webhook deliveries
@@ -149,15 +149,13 @@ _key_file = env("GITHUB_APP_PRIVATE_KEY_FILE", default="")
 if _key_file and not GITHUB_APP_PRIVATE_KEY and Path(_key_file).is_file():
     GITHUB_APP_PRIVATE_KEY = Path(_key_file).read_text()
 GITHUB_WEBHOOK_SECRET = env("GITHUB_WEBHOOK_SECRET", default="")
-# the organizations that the dashboard shows; installations elsewhere are ignored
+# the organizations of the GitHub App; webhooks of other accounts are ignored
 GITHUB_ORGANIZATIONS = parse_organizations(env("GITHUB_ORGANIZATIONS", default="PyCalendar"))
-# days after which an open pull request without activity counts as stale
-STALE_DAYS = env.int("STALE_DAYS", default=30)
 
 # Branding: the colors of sign.pycal.org, changed with COLOR_... (docs/reference/settings.rst)
 THEME = Theme.from_environment(dict(os.environ))
 SOURCE_URL = env("SOURCE_URL", default="https://github.com/PyCalendar/dashboard.pycal.org")
-DOCS_URL = env("DOCS_URL", default="https://dashboard-pycal-org.readthedocs.io/en/latest/")
+DOCS_URL = env("DOCS_URL", default="https://docs.dashboard.pycal.org/")
 
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_BACKEND = (

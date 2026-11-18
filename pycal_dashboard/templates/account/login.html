@@ -5,15 +5,16 @@
 <div class="card narrow">
   <h1>Sign in with GitHub</h1>
   {% if sign_in_configured %}
-  <p>GitHub tells this site who you are and your email addresses. There are no passwords on this site. Every page is public; signing in adds your account, your preferences and what waits for you.</p>
+  <p>GitHub tells this site who you are and your email addresses. There are no passwords on this site. Every page is public; signing in adds your account and your preferences.</p>
   <form method="post" action="{% provider_login_url 'github' %}">
     {% csrf_token %}
     {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}
     <button class="button" type="submit">Sign in with GitHub</button>
   </form>
   {% else %}
-  <p class="message message-warning" data-no-sign-in>Signing in is not set up yet: the site signs people in with its GitHub App, which is not registered yet.</p>
-  <p><a class="button" href="{% url 'register_app' %}">Register the GitHub App</a> <a href="{{ links.app_setup }}">How</a></p>
+  <p class="message message-warning" data-no-sign-in>Signing in is not set up yet: the site has no OAuth app.</p>
+  <p>The people who run the site create an OAuth app on GitHub and enter it here, with the setup code of the log. It only tells the site who people are and their email addresses.</p>
+  <p><a class="button" href="{% url 'oauth_app' %}">Set up signing in</a> <a href="{{ links.oauth_app }}">How</a></p>
   {% endif %}
 </div>
 {% endblock %}

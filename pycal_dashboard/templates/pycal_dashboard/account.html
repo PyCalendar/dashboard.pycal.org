@@ -2,7 +2,7 @@
 {% block title %}Account · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>Account · @{{ identity.login }}</h1>
-<p class="muted">Only you see this page. <a href="{% url 'contributor' identity.login %}">Your public activity</a> · <a href="{{ links.account }}">Help</a></p>
+<p class="muted">Only you see this page. <a href="https://github.com/{{ identity.login }}">Your profile on GitHub</a> · <a href="{{ links.account }}">Help</a></p>
 <div class="columns">
 <section class="card" id="emails"><h2>Email addresses</h2>
   {% if emails %}<ul class="list" data-emails>{% for address in emails %}<li>{{ address.email }} {% if address.verified %}<span class="badge badge-success">verified</span>{% else %}<span class="badge badge-warning">not verified</span>{% endif %}{% if address.primary %} <span class="badge">primary</span>{% endif %}</li>{% endfor %}</ul>
@@ -12,17 +12,13 @@
 </section>
 <section class="card" id="preferences"><h2>Preferences</h2>
 <form method="post" class="stacked">{% csrf_token %}
-  <p><label class="check"><input type="checkbox" name="email_digest" value="yes"{% if profile.email_digest %} checked{% endif %}> Email me a weekly summary of what waits for me</label></p>
-  <p><label class="check"><input type="checkbox" name="show_drafts" value="yes"{% if profile.show_drafts %} checked{% endif %}> Show draft pull requests</label></p>
-  <p><label for="days">Period of the statistics</label>
-    <select id="days" name="days">{% for value in day_choices %}<option value="{{ value }}"{% if profile.days == value %} selected{% endif %}>{{ value }} days</option>{% endfor %}</select></p>
-  <fieldset><legend>Repositories I watch</legend><small>The start page shows them first.</small>
-  {% for repository in repositories %}<label class="check"><input type="checkbox" name="watched" value="{{ repository.pk }}"{% if repository.pk in watched_ids %} checked{% endif %}> {{ repository.full_name }}</label>{% empty %}<p class="muted">No repository yet.</p>{% endfor %}</fieldset>
+  <p><label class="check"><input type="checkbox" name="email_notifications" value="yes"{% if profile.email_notifications %} checked{% endif %}> Email me about my account and news of the site</label></p>
   <p><button class="button">Save the preferences</button></p>
 </form></section>
-</div>
-<div class="columns">
-  <section class="card"><h2>My open pull requests</h2>{% include "pycal_dashboard/_items.html" with items=open_pulls empty="No open pull request." %}</section>
-  <section class="card"><h2>Asked to review</h2>{% include "pycal_dashboard/_items.html" with items=review_requests empty="No review is requested from you." %}</section>
+<section class="card" id="install" data-install><h2>The GitHub App</h2>
+  {% if install_url %}<p>Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub.</p>
+  <p><a class="button" href="{{ install_url }}">Install the GitHub App</a> <a class="button button-quiet" href="{{ links.install_help }}">Ways to install it</a></p>
+  {% else %}<p>The site has no GitHub App yet. The people who run the site <a href="{% url 'register_app' %}">register it</a> first.</p>{% endif %}
+</section>
 </div>
 {% endblock %}

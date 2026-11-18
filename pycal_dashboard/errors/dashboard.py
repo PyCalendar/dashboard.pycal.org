@@ -8,37 +8,15 @@ from .base import DashboardError
 
 
 class LookupFailed(DashboardError):
-    """The page shows something that the dashboard does not know.
+    """The page does not exist.
 
-    Check the address. The dashboard knows the public repositories of the
-    organizations where its GitHub App is installed.
+    Check the address, or start again from the start page.
     """
 
     title = "Not found"
     status = 404
     guide = "tutorial/use.html"
     guide_title = "Use the dashboard"
-
-
-class RepositoryNotFound(LookupFailed):
-    """The dashboard does not know this repository.
-
-    The repository does not exist, is private, or the GitHub App is not
-    installed on it. Private repositories are never shown. The list of
-    repositories is on the page *Repositories*.
-    """
-
-    title = "Repository not found"
-
-
-class ContributorNotFound(LookupFailed):
-    """The dashboard knows no issue or pull request of this person.
-
-    The handle is misspelled, or the person has not opened an issue or pull
-    request in the public repositories of the dashboard yet.
-    """
-
-    title = "Contributor not found"
 
 
 class ApiEndpointNotFound(LookupFailed):
@@ -53,29 +31,15 @@ class ApiEndpointNotFound(LookupFailed):
     guide_title = "API"
 
 
-class InvalidFilter(DashboardError):
-    """A filter of the address has a value that the page does not know.
+class InvalidInstallationId(DashboardError):
+    """GitHub returned to the site without the number of the installation.
 
-    The detail names the parameter and its allowed values, such as
-    ``state=open`` or ``state=closed``. Remove the parameter to see everything.
+    GitHub opens ``/setup/installed/?installation_id=...`` after the GitHub App
+    was installed. The address was changed or opened by hand. Install the app
+    again from its page on GitHub, see :doc:`/how-to/github-app`.
     """
 
-    title = "Invalid filter"
-
-
-class InvalidPageNumber(InvalidFilter):
-    """``page`` is not a positive whole number.
-
-    Pages are counted from 1, such as ``?page=2``.
-    """
-
-    title = "Invalid page number"
-
-
-class InvalidDays(InvalidFilter):
-    """``days`` is not a whole number between 1 and 3650.
-
-    ``days`` is the period of the statistics in days, such as ``?days=90``.
-    """
-
-    title = "Invalid number of days"
+    title = "Invalid installation"
+    status = 400
+    guide = "how-to/github-app.html"
+    guide_title = "Register the GitHub App"

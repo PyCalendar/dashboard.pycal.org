@@ -52,4 +52,5 @@ Every push runs these jobs in parallel: lint and the tests, the browser tests,
 the documentation and the build of the Docker image (with its health check).
 The image is pushed to ``ghcr.io`` only when all of them pass.
 
-The documentation is built on Read the Docs from ``.readthedocs.yml``.
+CI publishes the documentation of ``main`` on GitHub Pages, at
+https://docs.dashboard.pycal.org/.

@@ -12,7 +12,7 @@ body {
 a { color: var(--primary); }
 a:hover { color: var(--primary-hover); }
 code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
-h1, h2, h3 { line-height: 1.2; }
+h1, h2, h3 { line-height: 1.2; overflow-wrap: anywhere; }  /* long names such as dashboard.pycal.org wrap on phones */
 .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
 .muted { color: var(--text-muted); }
 

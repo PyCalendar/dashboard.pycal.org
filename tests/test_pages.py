@@ -2,63 +2,58 @@
 
 import pytest
 
-from tests.conftest import REPOSITORY
-
-PUBLIC = [
-    "/",
-    "/about/",
+PUBLIC = ["/", "/about/", "/accounts/login/", "/setup/github-app/", "/health/", "/api/v1/"]
+# the pages of GitHub data are gone: the site keeps no data of GitHub for now
+REMOVED = [
     "/contribute/",
     "/reviews/",
     "/repositories/",
+    "/repositories/PyCalendar/icalendar/",
     "/contributors/",
-    f"/repositories/{REPOSITORY}/",
     "/contributors/alice/",
-    "/accounts/login/",
-    "/setup/github-app/",
-    "/health/",
+    "/labels/",
 ]
 
 
 @pytest.mark.parametrize("path", PUBLIC)
-def test_public_pages(client, synced, path):
+def test_public_pages(client, db, path):
     assert client.get(path).status_code == 200
 
 
-def test_start_page(client, synced):
+@pytest.mark.parametrize("path", REMOVED)
+def test_no_pages_of_github_data(client, db, path):
+    assert client.get(path).status_code == 404
+
+
+def test_start_page(client, db):
     content = client.get("/").content.decode()
-    assert "Issue 1" in content  # good first issue
-    assert "Pull request 4" in content  # waiting for a review
-    assert "Pull request 3" in content  # a first contribution
-    assert "dependabot" not in content.split("Most active")[1]
-    assert "A private issue" not in content
+    assert "Welcome to the community of PyCalendar" in content
+    assert "registered" in content and "writes nothing to GitHub" in content
+    assert "/accounts/login/" in content
 
 
-def test_private_repositories_are_hidden(client, synced):
-    assert client.get("/repositories/PyCalendar/secret/").status_code == 404
-    assert b"secret" not in client.get("/repositories/").content
-    assert client.get("/contributors/mallory/").status_code == 404
+def test_start_page_without_sign_in(client, db, settings):
+    from pycal_dashboard.sign_in import SignIn
+
+    settings.SIGN_IN = SignIn()
+    assert "the site has no OAuth app" in client.get("/").content.decode()
 
 
-def test_repository_filters(client, synced):
-    closed = client.get(f"/repositories/{REPOSITORY}/?state=closed").content.decode()
-    assert "Pull request 5" in closed and "Issue 1" not in closed
-    issues = client.get(f"/repositories/{REPOSITORY}/?kind=issues").content.decode()
-    assert "Issue 1" in issues and "Pull request 4" not in issues
+def test_installed(client, db):
+    content = client.get("/setup/installed/?installation_id=5&setup_action=install").content
+    assert b"The GitHub App is installed" in content and b'data-installation="5"' in content
+    update = client.get("/setup/installed/?installation_id=5&setup_action=update").content
+    assert b"is updated" in update
 
 
 @pytest.mark.parametrize(
     ("path", "status", "error"),
     [
-        ("/repositories/PyCalendar/nothing/", 404, "RepositoryNotFound"),
-        ("/contributors/nobody/", 404, "ContributorNotFound"),
-        ("/?days=0", 400, "InvalidDays"),
-        ("/contributors/?days=abc", 400, "InvalidDays"),
-        (f"/repositories/{REPOSITORY}/?state=merged", 400, "InvalidFilter"),
-        (f"/repositories/{REPOSITORY}/?page=0", 400, "InvalidPageNumber"),
-        (f"/repositories/{REPOSITORY}/?page=9", 400, "InvalidPageNumber"),
+        ("/setup/installed/", 400, "InvalidInstallationId"),
+        ("/setup/installed/?installation_id=abc", 400, "InvalidInstallationId"),
     ],
 )
-def test_error_pages_link_their_documentation(client, synced, path, status, error):
+def test_error_pages_link_their_documentation(client, db, path, status, error):
     response = client.get(path)
     assert response.status_code == status
     content = response.content.decode()
@@ -113,6 +108,5 @@ def test_health(client, db):
     assert client.get("/health/").json() == {"status": "ok", "github_app": True}
 
 
-def test_no_labels_page(client, db):
-    assert client.get("/labels/").status_code == 404
-    assert "/labels/" not in client.get("/about/").content.decode()
+def test_about_says_the_app_only_reads(client, db):
+    assert "writes nothing to GitHub" in client.get("/about/").content.decode()

@@ -46,6 +46,8 @@ def site(request) -> dict:
             "use": f"{docs}tutorial/use.html",
             "account": f"{docs}tutorial/account.html",
             "app_setup": f"{docs}how-to/github-app.html",
+            "install_help": f"{docs}how-to/install-app.html",
+            "oauth_app": f"{docs}how-to/github-app.html#oauth-app",
             "api": f"{docs}reference/api.html",
             "changelog": f"{docs}changelog.html",
             "source": settings.SOURCE_URL,
@@ -56,6 +58,12 @@ def site(request) -> dict:
         },
         "version": version_text(),
         "github_app_configured": configured,
+        # where people install the app on repositories; empty without an app
+        "install_url": (
+            f"https://github.com/apps/{settings.GITHUB_APP_SLUG}/installations/new"
+            if configured and settings.GITHUB_APP_SLUG
+            else ""
+        ),
         "sign_in_configured": settings.SIGN_IN.configured,
         "app_registration_obstacle": None if configured else AppRegistration.obstacle(),
         "github": GitHubIdentity.of(getattr(request, "user", None)),

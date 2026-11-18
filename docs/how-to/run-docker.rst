@@ -23,25 +23,25 @@ pass.
       docker compose up -d
       docker compose logs dashboard
 
-4. The log says that the site has no GitHub App yet and shows the setup code:
+4. The log says that the site has no GitHub App and no OAuth app yet, and
+   shows the setup code:
 
    .. code-block:: text
 
       This site has no GitHub App yet. Register it on https://dashboard.pycal.org/setup/github-app/ with the setup code 3f9a-0c41-77d2
+      Nobody can sign in: this site has no OAuth app. Enter it on https://dashboard.pycal.org/setup/oauth-app/ with the setup code 3f9a-0c41-77d2
 
-   Register the app as :doc:`github-app` describes.
+   Set up both as :doc:`github-app` describes, then install the GitHub App,
+   see :doc:`install-app`.
 
 The volume ``./data`` holds the SQLite database, the generated secret key and
-the credentials of the GitHub App. Back it up.
+the credentials of the GitHub App and the OAuth app. Back it up.
 
 The container
 =============
 
-At every start, the container migrates the database (``manage.py prepare``),
-then reads all installations again in the background
-(``manage.py sync_repositories``), every ``SYNC_HOURS`` hours, so that nothing
-is missed while the site was down. Webhooks keep the dashboard up to date in
-between.
+At every start, the container migrates the database and says in the log what
+is missing (``manage.py prepare``).
 
 The health check of the container calls ``/health/`` with the first host of
 ``ALLOWED_HOSTS``. While the site starts, nginx answers with a page that says

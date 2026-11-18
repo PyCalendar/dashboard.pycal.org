@@ -1,11 +1,9 @@
 {% extends "pycal_dashboard/base.html" %}
 {% block title %}Installed · {{ site_name }}{% endblock %}
 {% block main %}
-<section class="hero" data-installation="{{ installation.github_id }}">
-  <h1>The GitHub App is installed on {{ installation.account_login }}</h1>
-  {% if summary %}<p class="lead" data-summary>The dashboard read {{ summary.repositories }} repositories and {{ summary.items }} issues and pull requests.</p>
-  {% if summary.errors %}<ul class="message message-warning">{% for problem in summary.errors %}<li>{{ problem }}</li>{% endfor %}</ul>{% endif %}
-  {% else %}<p class="lead">The webhooks of GitHub keep the dashboard up to date.</p>{% endif %}
-  <p><a class="button" href="{% url 'repositories' %}">See the repositories</a></p>
+<section class="hero" data-installation="{{ installation_id }}">
+  <h1>{% if action == "update" %}The installation of the GitHub App is updated{% else %}The GitHub App is installed{% endif %}</h1>
+  <p class="lead">The app receives the webhooks of the repositories you chose. The site logs them, but does nothing with them yet: it keeps no data of GitHub and writes nothing to GitHub.</p>
+  <p><a class="button" href="{% url 'home' %}">Back to the start</a></p>
 </section>
 {% endblock %}

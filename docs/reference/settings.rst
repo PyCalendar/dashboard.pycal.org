@@ -3,8 +3,8 @@ Settings
 ========
 
 The site is configured with environment variables, such as in ``.env`` next to
-``docker-compose.yml``. ``.env.example`` lists the important ones. A wrong
-setting stops the site with an error of :doc:`errors`.
+``docker-compose.yml``. ``.env.example`` lists every one of them with its
+default. A wrong setting stops the site with an error of :doc:`errors`.
 
 The address
 ===========
@@ -32,31 +32,31 @@ Leave these empty and register the app on the site, see
 ``GITHUB_APP_SLUG``
    The name of the app in ``https://github.com/apps/<slug>``.
 ``GITHUB_CLIENT_ID``, ``GITHUB_SECRET``
-   The client of the app, which signs people in.
+   The client of the app. The registration stores it; the site does not sign
+   people in with it.
 ``GITHUB_WEBHOOK_SECRET``
    The secret of the webhooks; without it all webhooks are refused.
 ``GITHUB_APP_PRIVATE_KEY_FILE``
    The file of the private key, such as ``/app/data/github-app.pem``.
 ``GITHUB_APP_PRIVATE_KEY``
    Or the key itself, with ``\n`` for the line breaks.
-``GITHUB_OAUTH_CLIENT_ID``, ``GITHUB_OAUTH_SECRET``
-   Optional: an OAuth app that signs people in instead of the client of the
-   GitHub App.
 ``GITHUB_API``
    Only for GitHub Enterprise Server. Default: ``https://api.github.com``.
+``GITHUB_ORGANIZATIONS``
+   The organizations of the app, comma separated; webhooks of other accounts
+   are ignored. Empty: every account. Default: ``PyCalendar``.
 
-The dashboard
+The OAuth app
 =============
 
-``GITHUB_ORGANIZATIONS``
-   The organizations that the dashboard shows, comma separated; installations
-   elsewhere are ignored. Empty: every account. Default: ``PyCalendar``.
-``STALE_DAYS``
-   Days without activity after which an open pull request is listed as
-   without activity. Default: ``30``.
-``SYNC_HOURS``
-   Hours between two reads of all installations in the container. Default:
-   ``6``.
+``GITHUB_OAUTH_CLIENT_ID``, ``GITHUB_OAUTH_SECRET``
+   The OAuth app that signs people in; without it nobody can sign in. Enter it
+   on ``/setup/oauth-app/``, which writes it into ``DATA_DIR/.env``, or set it
+   here, see :ref:`oauth-app`.
+
+People
+======
+
 ``SITE_ADMINS``
    GitHub handles, comma separated, that administer the site: the Django admin
    and the webhook deliveries.
@@ -78,6 +78,14 @@ Data and secrets
 ``LOG_LEVEL``
    ``INFO`` by default.
 
+The container
+=============
+
+``PORT``
+   The port of nginx in the container. Default: ``5000``.
+``WORKERS``, ``THREADS``
+   The processes and threads of gunicorn. Default: ``2`` and ``4``.
+
 Email
 =====
 
@@ -95,4 +103,5 @@ Look and links
 ``SOURCE_URL``
    The repository of the code.
 ``DOCS_URL``
-   This documentation; the error pages link to it.
+   This documentation; the error pages link to it. Default:
+   ``https://docs.dashboard.pycal.org/``.

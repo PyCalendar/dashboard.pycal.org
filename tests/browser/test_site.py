@@ -1,55 +1,17 @@
 """Visit the site in Chromium like a contributor."""
 
-import re
-
 from playwright.sync_api import expect
 
-from tests.conftest import REPOSITORY
 
-
-def test_find_something_to_work_on(page, site):
+def test_start_page(page, site):
     page.goto(site)
     expect(
         page.get_by_role("heading", name="Welcome to the community of PyCalendar")
     ).to_be_visible()
-    page.get_by_role("link", name="Find something to work on").click()
-    expect(page).to_have_url(f"{site}/contribute/")
-    expect(page.get_by_role("link", name="Issue 1").first).to_have_attribute(
-        "href", f"https://github.com/{REPOSITORY}/issues/1"
-    )
-
-
-def test_menu_leads_to_every_page(page, site):
-    page.goto(site)
-    for name, path in [
-        ("Reviews", "/reviews/"),
-        ("Repositories", "/repositories/"),
-        ("Contributors", "/contributors/"),
-        ("Contribute", "/contribute/"),
-    ]:
-        page.get_by_role("navigation", name="Menu").get_by_role("link", name=name).click()
-        expect(page).to_have_url(f"{site}{path}")
-        expect(page.get_by_role("link", name=name)).to_have_attribute("aria-current", "page")
-
-
-def test_repository_and_contributor(page, site):
-    page.goto(f"{site}/repositories/")
-    page.get_by_role("link", name=REPOSITORY).click()
-    expect(page.get_by_role("heading", level=1)).to_contain_text("icalendar")
-    page.get_by_label("Kind").select_option("issues")
-    page.get_by_role("button", name="Show").click()
-    expect(page).to_have_url(re.compile(r"kind=issues"))
-    expect(page.get_by_role("link", name="Pull request 4")).to_have_count(0)
-    page.get_by_role("link", name="@alice").first.click()
-    expect(page.get_by_role("heading", name="@alice")).to_be_visible()
-
-
-def test_period_of_the_contributors(page, site):
-    page.goto(f"{site}/contributors/")
-    page.get_by_label("Period").select_option("30")
-    page.get_by_role("button", name="Show").click()
-    expect(page).to_have_url(f"{site}/contributors/?days=30")
-    expect(page.get_by_text("in the last 30 days")).to_be_visible()
+    expect(page.locator("[data-github-app]")).to_contain_text("registered")
+    page.get_by_role("link", name="About the site").click()
+    expect(page).to_have_url(f"{site}/about/")
+    expect(page.get_by_text("writes nothing to GitHub")).to_be_visible()
 
 
 def test_switch_to_dark_colors(page, site):
@@ -62,16 +24,18 @@ def test_switch_to_dark_colors(page, site):
 
 
 def test_error_page_links_its_documentation(page, site):
-    response = page.goto(f"{site}/repositories/PyCalendar/nothing/")
-    assert response.status == 404
-    expect(page.get_by_role("heading", name="Repository not found")).to_be_visible()
+    response = page.goto(f"{site}/setup/installed/?installation_id=x")
+    assert response.status == 400
+    expect(page.get_by_role("heading", name="Invalid installation")).to_be_visible()
     expect(
         page.get_by_role("link", name="What this error means and how to solve it")
     ).to_have_attribute(
         "href",
-        "https://docs.example.org/reference/errors.html#pycal_dashboard.errors.dashboard.RepositoryNotFound",
+        "https://docs.example.org/reference/errors.html#pycal_dashboard.errors.dashboard.InvalidInstallationId",
     )
-    expect(page.locator("#error-details")).to_contain_text("Error: RepositoryNotFound (HTTP 404)")
+    expect(page.locator("#error-details")).to_contain_text(
+        "Error: InvalidInstallationId (HTTP 400)"
+    )
 
 
 def test_page_not_found(page, site):
@@ -90,14 +54,15 @@ def test_preferences(signed_in, site):
     page = signed_in
     page.goto(f"{site}/account/")
     expect(page.get_by_role("heading", name="Account · @bob")).to_be_visible()
-    expect(page.get_by_role("link", name="Pull request 4")).to_be_visible()  # asked to review
-    page.get_by_label("Email me a weekly summary").check()
-    page.get_by_label(REPOSITORY).check()
+    expect(page.get_by_role("link", name="Install the GitHub App").first).to_have_attribute(
+        "href", "https://github.com/apps/dashboard-test/installations/new"
+    )
+    box = page.get_by_label("Email me about my account and news of the site")
+    expect(box).to_be_checked()
+    box.uncheck()
     page.get_by_role("button", name="Save the preferences").click()
     expect(page.get_by_role("status")).to_have_text("Your preferences are saved.")
-    expect(page.get_by_label("Email me a weekly summary")).to_be_checked()
-    page.get_by_role("link", name=page.locator("a.brand").inner_text().strip()).click()
-    expect(page.get_by_role("heading", name="Repositories you watch")).to_be_visible()
+    expect(box).not_to_be_checked()
 
 
 def test_sign_out(signed_in, site):
@@ -110,7 +75,7 @@ def test_sign_out(signed_in, site):
 
 def test_phone_width_without_horizontal_scroll(page, site):
     page.set_viewport_size({"width": 360, "height": 740})
-    for path in ("/", "/repositories/", f"/repositories/{REPOSITORY}/", "/account/"):
+    for path in ("/", "/about/", "/account/", "/setup/github-app/"):
         page.goto(f"{site}{path}")
         width = page.evaluate("document.documentElement.scrollWidth")
         assert width <= 360, (path, width)

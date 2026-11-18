@@ -3,7 +3,7 @@
   <ul>
     <li><a href="{% url 'account' %}">Account and preferences</a></li>
     <li><a href="{% url 'account_email' %}">Email addresses</a></li>
-    {% if github %}<li><a href="{% url 'contributor' github.login %}">My public activity</a></li>{% endif %}
+    {% if install_url %}<li><a href="{{ install_url }}">Install the GitHub App</a></li>{% endif %}
     {% if site_admin %}<li class="separator" role="separator"></li>
     <li class="menu-heading">Administration</li>
     <li><a href="{% url 'deliveries' %}">Webhook deliveries</a></li>

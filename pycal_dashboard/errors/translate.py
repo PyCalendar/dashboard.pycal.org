@@ -13,7 +13,7 @@ def all_errors() -> dict[str, type[DashboardError]]:
         The classes by their names.
 
     Examples:
-        >>> "RepositoryNotFound" in all_errors()
+        >>> "InvalidInstallationId" in all_errors()
         True
     """
     found, todo = {}, [DashboardError]

@@ -35,11 +35,35 @@ def test_every_setting_is_documented():
 
 
 def test_every_setting_is_in_the_example():
+    """.env.example lists every variable of the documentation, and nothing else."""
     example = (ROOT / ".env.example").read_text()
-    for name in (
-        "SITE_URL",
-        "ALLOWED_HOSTS",
-        "GITHUB_ORGANIZATIONS",
-        "SITE_ADMINS",
-    ):
-        assert name in example
+    in_example = set(re.findall(r"^#? ?([A-Z][A-Z_]+)=", example, re.MULTILINE))
+    # the terms of the definition lists: the lines that start with a name
+    terms = re.findall(r"^``.*$", (ROOT / "docs/reference/settings.rst").read_text(), re.MULTILINE)
+    documented = {name for line in terms for name in re.findall(r"``([A-Z][A-Z_]+)``", line)}
+    colors = {name for name in in_example if name.startswith("COLOR_")}
+    assert sorted(documented - in_example) == []
+    assert sorted(in_example - documented - colors) == []
+
+
+def test_every_color_is_in_the_example():
+    from pycal_dashboard.theme import DARK, LIGHT
+
+    example = (ROOT / ".env.example").read_text()
+    for name, value in LIGHT.items():
+        assert f"# COLOR_{name.upper()}={value}\n" in example
+    for name, value in DARK.items():
+        assert f"# COLOR_DARK_{name.upper()}={value}\n" in example
+
+
+def test_every_variable_of_the_code_is_documented():
+    """Also those of the container and of the libraries, such as PORT."""
+    code = "\n".join(
+        path.read_text()
+        for pattern in ("pycal_dashboard/**/*.py", "docker/*.sh", "Dockerfile")
+        for path in ROOT.glob(pattern)
+    )
+    names = set(re.findall(r'env(?:\.\w+)?\(\s*"([A-Z_]+)"', code))
+    names |= set(re.findall(r"\$\{?(PORT|WORKERS|THREADS)\b", code))
+    documented = (ROOT / "docs/reference/settings.rst").read_text()
+    assert [name for name in sorted(names) if f"``{name}``" not in documented] == []

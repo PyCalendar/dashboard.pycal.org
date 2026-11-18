@@ -8,7 +8,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Look at sign.pycal.org and community-insights: same structure, conventions and tools
 - [x] Django, the same colors as sign.pycal.org (pycal blue #3b79aa, yellow #ffd43b), light/dark switch
 - [x] Documentation (Sphinx, pydata theme) that describes the usage and the purpose
-- [x] Documentation on Read the Docs (.readthedocs.yml)
+- [x] Documentation on Read the Docs (.readthedocs.yml); replaced by GitHub Pages, see below
 - [x] Makefile (dev, run, test, lint, docs, browser-test, docker-...)
 - [x] pre-commit (ruff, ai-prompt-auto-commit, the usual hooks)
 - [x] Slim README
@@ -40,20 +40,37 @@ community: where to start, what waits for a review, who contributes.
 
 ## 2026-11-18: a separate OAuth app; docs on GitHub Pages; no models of GitHub data
 
-- [ ] Sign in with a separate OAuth app (as sign.pycal.org), not with the client of the GitHub App
-- [ ] Documentation on GitHub Pages at docs.dashboard.pycal.org, like sign.pycal.org (no Read the Docs)
-- [ ] No models that track and query the GitHub API for now: the numbers are separate
+- [x] Sign in with a separate OAuth app (as sign.pycal.org), not with the client of the GitHub App
+- [x] Documentation on GitHub Pages at docs.dashboard.pycal.org, like sign.pycal.org (no Read the Docs)
+- [x] No models that track and query the GitHub API for now: the numbers are separate
       functionality, designed later. The pages and the API built on them are removed (new migration)
+
+## 2026-11-18: all variables in .env.example; what to take over from sign.pycal.org
+
+- [x] .env.example contains every variable (a test checks it against docs/reference/settings.rst)
+- [ ] Go through the commits and todos of sign.pycal.org; ask with check boxes which ones to apply
+      (only those that make sense for an application with separate functionality)
+
+## 2026-11-18: admins, the Django admin, installing the app, CI
+
+- [x] The administrators (SITE_ADMINS) reach the Django admin, like sign.pycal.org
+- [x] Every model shows up in the Django admin (a test checks it; rule in AGENTS.md)
+- [x] The app is installable on repositories: signed in, people find "Install the GitHub App"
+      in the menu, on the start page and on the page Account
+- [x] The documentation says the ways to install the app (docs/how-to/install-app.rst)
+- [x] For this repository only: commit, push and make sure CI passes (AGENTS.md, memory)
 
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
 - [ ] Who registers the GitHub App on PyCalendar and where the site runs (Sencho stack, like sign.pycal.org?)
+- [ ] DNS: docs.dashboard.pycal.org needs a CNAME to pycalendar.github.io
+- [ ] Should the GitHub App be public, so that accounts other than PyCalendar can install it?
+      (now private: only its owner installs it; docs/how-to/install-app.rst says how to change it)
 
 ## Open: work
 
 - [ ] Deploy job (Sencho) after the push of the image, like sign.pycal.org, once the stack exists
-- [ ] A queue for webhooks (now handled while GitHub waits, which is fast for one pull request)
 - [ ] Translations (German, Spanish) like sign.pycal.org
-- [ ] Email digest of the preferences: the preference is stored; the sending is not built yet
+- [ ] Emails of the preference "Email me about my account and news of the site": stored; nothing is sent yet
 - [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io

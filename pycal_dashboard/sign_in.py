@@ -1,8 +1,9 @@
-"""The GitHub client that signs people in.
+"""The OAuth app that signs people in: ``GITHUB_OAUTH_CLIENT_ID`` and ``GITHUB_OAUTH_SECRET``.
 
-An OAuth app of ``GITHUB_OAUTH_CLIENT_ID`` and ``GITHUB_OAUTH_SECRET`` if they are set;
-else the client of the GitHub App (``GITHUB_CLIENT_ID`` and ``GITHUB_SECRET``), which the
-registration of the app stores. So people can sign in as soon as the app is registered.
+People sign in with a separate OAuth app, as on sign.pycal.org, not with the GitHub App:
+GitHub then only tells the site who they are and their email addresses, read only, and never
+asks to let the site act on their behalf. The people who run the site enter it on
+``/setup/oauth-app/``, which keeps it in ``DATA_DIR/.env``, or set it in the environment.
 """
 
 from collections.abc import Mapping
@@ -11,39 +12,30 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class SignIn:
-    """The client id and secret for signing in, and where they come from."""
+    """The client id and secret of the OAuth app."""
 
     client_id: str = ""
     secret: str = ""
-    source: str = ""  # "oauth-app", "github-app" or "" without a client
 
     @classmethod
     def from_environment(cls, environ: Mapping[str, str]) -> "SignIn":
-        """The client of the environment.
+        """The OAuth app of the environment.
 
         Args:
             environ: The environment, such as ``os.environ``.
 
         Returns:
-            The client; empty without one.
+            The OAuth app; empty without one.
 
         Examples:
-            >>> SignIn.from_environment({"GITHUB_CLIENT_ID": "a", "GITHUB_SECRET": "b"}).source
-            'github-app'
-            >>> SignIn.from_environment({"GITHUB_OAUTH_CLIENT_ID": "o", "GITHUB_CLIENT_ID": "a"})
-            SignIn(client_id='o', secret='', source='oauth-app')
-            >>> SignIn.from_environment({}).configured
+            >>> SignIn.from_environment({"GITHUB_OAUTH_CLIENT_ID": "o", "GITHUB_OAUTH_SECRET": "s"})
+            SignIn(client_id='o', secret='s')
+            >>> SignIn.from_environment({"GITHUB_CLIENT_ID": "of the GitHub App"}).configured
             False
         """
-        if environ.get("GITHUB_OAUTH_CLIENT_ID"):
-            return cls(
-                environ["GITHUB_OAUTH_CLIENT_ID"],
-                environ.get("GITHUB_OAUTH_SECRET", ""),
-                "oauth-app",
-            )
-        if environ.get("GITHUB_CLIENT_ID"):
-            return cls(environ["GITHUB_CLIENT_ID"], environ.get("GITHUB_SECRET", ""), "github-app")
-        return cls()
+        return cls(
+            environ.get("GITHUB_OAUTH_CLIENT_ID", ""), environ.get("GITHUB_OAUTH_SECRET", "")
+        )
 
     @property
     def configured(self) -> bool:
@@ -51,12 +43,12 @@ class SignIn:
         return bool(self.client_id)
 
     def providers(self) -> dict:
-        """``SOCIALACCOUNT_PROVIDERS`` of allauth with this client.
+        """``SOCIALACCOUNT_PROVIDERS`` of allauth with this OAuth app.
 
         Returns:
             The settings of the provider ``github``: the identity and the email addresses.
         """
-        github: dict = {"SCOPE": ["user:email"]}
+        github: dict = {"SCOPE": ["user:email"]}  # the identity and the email addresses, read only
         if self.configured:
             github["APP"] = {"client_id": self.client_id, "secret": self.secret}
         return {"github": github}

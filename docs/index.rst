@@ -4,21 +4,19 @@ dashboard.pycal.org
 
 `dashboard.pycal.org <https://dashboard.pycal.org>`_ is the dashboard of the
 contributor community of `PyCalendar <https://github.com/PyCalendar>`_, the
-Python Calendaring Ecosystem. It answers three questions:
+Python Calendaring Ecosystem. It will answer three questions: where can I
+help, what waits for me, and who makes it happen.
 
-- **Where can I help?** Issues for newcomers and issues that nobody answered yet.
-- **What waits for me?** Pull requests that wait for a review, the longest
-  waiting first, and those without activity for a long time.
-- **Who makes it happen?** The people who contribute, and those who contribute
-  for the first time.
-
-Its GitHub App only reads the repositories: the dashboard writes nothing to
-GitHub, such as labels or comments.
+The numbers and the automation are designed next, as separate functionality.
+Until then the site signs people in with GitHub and receives the webhooks of
+its GitHub App, which people install on repositories. It keeps no data of
+GitHub and writes nothing to GitHub, such as labels or comments.
 
 - **Contributors** read :doc:`tutorial/use`, and :doc:`tutorial/account` to
   sign in.
-- **People who run the site** start the container and register the GitHub
-  App: :doc:`how-to/run-docker` and :doc:`how-to/github-app`.
+- **People who run the site** start the container, register the GitHub App
+  and the OAuth app, and install the app: :doc:`how-to/run-docker`,
+  :doc:`how-to/github-app` and :doc:`how-to/install-app`.
 - **Developers** read :doc:`how-to/develop` and :doc:`reference/api`.
 
 Why the dashboard exists and what it shows publicly is in

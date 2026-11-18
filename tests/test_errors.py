@@ -34,7 +34,8 @@ def test_error_is_exported_and_documented(cls):
 @pytest.mark.parametrize("cls", ERRORS, ids=lambda cls: cls.__name__)
 def test_guide_exists(cls):
     if cls.guide:
-        assert (DOCS / cls.guide.replace(".html", ".rst")).is_file(), cls.guide
+        page = cls.guide.split("#")[0].replace(".html", ".rst")
+        assert (DOCS / page).is_file(), cls.guide
 
 
 def test_translate():
@@ -42,9 +43,9 @@ def test_translate():
 
     assert translate(httpx.ConnectError("x")).code == "GitHubUnreachable"
     assert translate(httpx.HTTPError("x")).code == "GitHubError"
-    error = errors.RepositoryNotFound("a/b")
+    error = errors.InvalidInstallationId("installation_id='x'")
     assert translate(error) is error
-    assert error.as_json()["title"] == "Repository not found"
+    assert error.as_json()["title"] == "Invalid installation"
 
 
 def test_one_class_per_cause():

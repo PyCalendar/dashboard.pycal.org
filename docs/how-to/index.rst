@@ -7,5 +7,6 @@ How-to guides
 
    run-docker
    github-app
+   install-app
    develop
    report-bug

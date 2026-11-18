@@ -2,8 +2,8 @@
 
 import pytest
 
-from pycal_dashboard.models import Installation, Item, Repository, WebhookDelivery
-from tests.conftest import OTHER, REPOSITORY, pull_payload, send_webhook
+from pycal_dashboard.models import WebhookDelivery
+from tests.conftest import REPOSITORY, pull_payload, repository_payload, send_webhook
 
 
 @pytest.mark.parametrize(
@@ -48,106 +48,68 @@ def test_ping(client, db):
     assert send_webhook(client, "ping", {"zen": "Keep it simple."}).json() == {"done": "pong"}
 
 
-def test_unknown_event(client, db):
-    response = send_webhook(client, "star", {"action": "created"})
-    assert response.json()["done"] == "ignored: the event star"
-    assert WebhookDelivery.objects.get().outcome == "ignored"
+EVENTS = [
+    ("installation", {"action": "created"}),
+    ("installation_repositories", {"action": "added"}),
+    ("issues", {"action": "opened", "issue": {"number": 9}}),
+    ("issue_comment", {"action": "created", "issue": {"number": 9}}),
+    ("pull_request_review", {"action": "submitted", "pull_request": {"number": 6}}),
+    ("repository", {"action": "renamed"}),
+    ("star", {"action": "created"}),
+]
 
 
-def test_installation_reads_everything(client, organization):
-    payload = {"action": "created", "installation": {"id": 1, "account": {"login": "PyCalendar"}}}
-    response = send_webhook(client, "installation", payload)
-    assert "3 repositories" in response.json()["done"]
-    assert Item.objects.filter(repository__full_name=REPOSITORY).count() == 5
-    send_webhook(client, "installation", {**payload, "action": "deleted"})
-    assert not Installation.objects.exists()
-
-
-def test_other_organizations_are_ignored(client, organization):
-    payload = {"action": "created", "installation": {"id": 1, "account": {"login": "Elsewhere"}}}
-    assert send_webhook(client, "installation", payload).json()["done"].startswith("ignored")
-    assert not Installation.objects.exists()
+@pytest.mark.parametrize(("event", "payload"), EVENTS)
+def test_events_are_logged_only(client, github, db, event, payload):
+    """The site keeps no data of GitHub and asks GitHub nothing back."""
+    payload = {
+        **payload,
+        "repository": repository_payload(),
+        "installation": {"id": 1, "account": {"login": "PyCalendar"}},
+    }
+    response = send_webhook(client, event, payload)
+    assert response.json() == {"done": "received: no automation yet"}
+    assert github.requests == []
+    delivery = WebhookDelivery.objects.get()
+    assert (delivery.event, delivery.action, delivery.repository, delivery.outcome) == (
+        event,
+        payload["action"],
+        REPOSITORY,
+        "done",
+    )
 
 
 @pytest.mark.parametrize(
-    "action", ["opened", "reopened", "synchronize", "edited", "ready_for_review"]
+    "action", ["opened", "reopened", "synchronize", "edited", "ready_for_review", "closed"]
 )
-def test_pull_request_is_stored_but_not_labeled(client, synced, action):
-    synced.pull(REPOSITORY, 6, "dave", additions=30, author_association="FIRST_TIME_CONTRIBUTOR")
-    synced.requests.clear()
-    response = send_webhook(client, "pull_request", pull_payload(synced, 6, action=action))
-    assert response.json()["done"] == f"updated {REPOSITORY}#6"
-    assert synced.writes() == []
-    assert synced.find(REPOSITORY, 6)["labels"] == []
-    assert Item.objects.get(repository__full_name=REPOSITORY, number=6).labels == []
-    delivery = WebhookDelivery.objects.get()
-    assert (delivery.event, delivery.action, delivery.repository) == (
-        "pull_request",
-        action,
-        REPOSITORY,
-    )
+def test_pull_requests_are_not_labeled(client, github, db, action):
+    response = send_webhook(client, "pull_request", pull_payload(action=action))
+    assert response.json()["done"] == "received: no automation yet"
+    assert github.writes() == [] and github.requests == []
 
 
-def test_pull_request_closed_is_stored_only(client, synced):
-    pull = synced.find(REPOSITORY, 3)
-    pull.update(state="closed", merged=True, merged_at="2026-11-18T10:00:00Z")
-    response = send_webhook(client, "pull_request", pull_payload(synced, 3, action="closed"))
-    assert response.json()["done"] == f"updated {REPOSITORY}#3"
-    assert Item.objects.get(repository__full_name=REPOSITORY, number=3).status == "merged"
+def test_other_organizations_are_ignored(client, db):
+    payload = pull_payload(account="Elsewhere")
+    payload["repository"] = repository_payload("Elsewhere/x")
+    assert send_webhook(client, "pull_request", payload).json()["done"].startswith("ignored")
+    assert WebhookDelivery.objects.get().outcome == "ignored"
 
 
-def test_issue_events(client, synced):
-    repository = synced.repositories[REPOSITORY]
-    issue = synced.issue(REPOSITORY, 9, "erin", title="New idea")
-    payload = {
-        "action": "opened",
-        "issue": issue,
-        "repository": repository,
-        "installation": {"id": 1},
-    }
-    send_webhook(client, "issues", payload)
-    assert Item.objects.get(number=9, repository__full_name=REPOSITORY).title == "New idea"
-    issue["comments"] = 1
-    send_webhook(client, "issue_comment", {**payload, "action": "created"})
-    assert Item.objects.get(number=9, repository__full_name=REPOSITORY).comments == 1
-    send_webhook(client, "issues", {**payload, "action": "deleted"})
-    assert not Item.objects.filter(number=9, repository__full_name=REPOSITORY).exists()
-
-
-def test_review_updates_reviewers(client, synced):
-    pull = synced.find(REPOSITORY, 4)
-    pull["requested_reviewers"] = []
-    payload = pull_payload(synced, 4, action="submitted")
-    send_webhook(client, "pull_request_review", payload)
-    assert Item.objects.get(repository__full_name=REPOSITORY, number=4).requested_reviewers == []
-
-
-def test_repository_events(client, synced):
-    data = dict(synced.repositories[OTHER], full_name="PyCalendar/plann2", archived=True)
-    send_webhook(
-        client, "repository", {"action": "renamed", "repository": data, "installation": {"id": 1}}
-    )
-    assert Repository.objects.get(github_id=data["id"]).full_name == "PyCalendar/plann2"
-    send_webhook(
-        client, "repository", {"action": "deleted", "repository": data, "installation": {"id": 1}}
-    )
-    assert not Repository.objects.filter(github_id=data["id"]).exists()
-
-
-def test_incomplete_payload(client, synced):
-    response = send_webhook(
-        client, "issues", {"action": "opened", "repository": synced.repositories[REPOSITORY]}
-    )
-    assert response.status_code == 200
-    assert response.json()["error"] == "WebhookPayloadIncomplete"
-    assert WebhookDelivery.objects.get().outcome == "failed"
-
-
-def test_pull_request_while_github_is_down(client, synced):
+def test_webhooks_while_github_is_down(client, github, db):
     """The webhook brings everything: the site does not ask GitHub back."""
-    synced.pull(REPOSITORY, 6, "dave")
-    payload = pull_payload(synced, 6)
-    synced.unreachable = True
-    response = send_webhook(client, "pull_request", payload)
+    github.unreachable = True
+    response = send_webhook(client, "pull_request", pull_payload())
     assert response.status_code == 200
-    assert response.json()["done"] == f"updated {REPOSITORY}#6"
+
+
+def test_failure_is_logged(client, db, monkeypatch):
+    from pycal_dashboard.services.webhook_handler import WebhookHandler
+
+    def broken(self):
+        raise RuntimeError("broken")
+
+    monkeypatch.setattr(WebhookHandler, "handle", broken)
+    response = send_webhook(client, "pull_request", pull_payload())
+    assert response.status_code == 500
+    assert response.json()["error"] == "UnexpectedError"
+    assert WebhookDelivery.objects.get().outcome == "failed"

@@ -19,7 +19,7 @@ class Command(BaseCommand):
         """Prepare the site.
 
         Without a GitHub App, the log says where to register it and the setup code that
-        allows it: the site needs the app for its data, its webhooks and signing in.
+        allows it; the same for the OAuth app that signs people in.
 
         Args:
             *args: Not used.
@@ -31,6 +31,21 @@ class Command(BaseCommand):
             pk=settings.SITE_ID, defaults={"domain": domain, "name": settings.SITE_NAME}
         )
         self.stdout.write(f"prepared {domain}")
+        self.github_app()
+        self.oauth_app()
+
+    def code(self) -> str:
+        """The setup code that allows the setup, as the log shows it.
+
+        Returns:
+            The code, or a note that DEBUG needs none.
+        """
+        if AppRegistration.needs_setup_code():
+            return AppRegistration.setup_code()
+        return "(none needed with DEBUG)"
+
+    def github_app(self) -> None:
+        """Say which GitHub App the site has, or where to register it."""
         if AppRegistration.source():
             self.stdout.write(f"GitHub App {settings.GITHUB_APP_SLUG or settings.GITHUB_APP_ID}")
             return
@@ -41,12 +56,17 @@ class Command(BaseCommand):
                 f"{obstacle.detail} ({obstacle.docs_url()})"
             )
             return
-        code = (
-            AppRegistration.setup_code()
-            if AppRegistration.needs_setup_code()
-            else "(none needed with DEBUG)"
-        )
         self.stdout.write(
             "This site has no GitHub App yet. Register it on "
-            f"{settings.SITE_URL}/setup/github-app/ with the setup code {code}"
+            f"{settings.SITE_URL}/setup/github-app/ with the setup code {self.code()}"
+        )
+
+    def oauth_app(self) -> None:
+        """Say whether people can sign in, or where to enter the OAuth app."""
+        if settings.SIGN_IN.configured:
+            self.stdout.write("People sign in with the OAuth app.")
+            return
+        self.stdout.write(
+            "Nobody can sign in: this site has no OAuth app. Enter it on "
+            f"{settings.SITE_URL}/setup/oauth-app/ with the setup code {self.code()}"
         )
