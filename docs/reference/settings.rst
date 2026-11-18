@@ -18,7 +18,8 @@ The address
    The host names of the site, comma separated. The health check sends the
    first one.
 ``CSRF_TRUSTED_ORIGINS``
-   The address with ``https://``; forms of other origins are refused.
+   The addresses whose forms the site accepts, comma separated; forms of other
+   origins are refused. Default: ``SITE_URL``.
 
 The GitHub App
 ==============

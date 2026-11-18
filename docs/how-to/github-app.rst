@@ -69,11 +69,29 @@ The site never signs people in with the client of the GitHub App
 (``GITHUB_CLIENT_ID``): GitHub would ask them to let the site act on their
 behalf.
 
+Check the permissions and events
+================================
+
+A new version of the site may need more of the app. On *Register the GitHub
+App*, the administrators of the site see whether the app has every permission
+and event of :doc:`/reference/permissions`, with a link to change them on
+GitHub. On the command line:
+
+.. code-block:: shell
+
+   docker compose exec dashboard python manage.py check_app
+
+It fails and names what is missing, such as ``The GitHub App does not receive
+the events repository: change them on https://github.com/...``. After the owner
+of the app changed the permissions, the owners of the installations accept them
+in the settings of the installation.
+
 A site with a local address
 ===========================
 
 GitHub cannot deliver webhooks to ``http://localhost``. The registration then
 creates the app without a webhook; signing in works, but no webhook arrives.
+To test webhooks locally, see :doc:`github-app-tunnel`.
 
 Set the app yourself
 ====================

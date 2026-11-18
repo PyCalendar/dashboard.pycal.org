@@ -87,3 +87,32 @@ class SignInNotConfigured(GitHubError):
     status = 503
     guide = "how-to/github-app.html#oauth-app"
     guide_title = "The OAuth app for signing in"
+
+
+class GitHubAppNotConfigured(GitHubError):
+    """The site has no GitHub App yet.
+
+    The site needs its GitHub App to receive the webhooks and to read what GitHub
+    knows about the app. Register it on the page *Register the GitHub App*
+    (``/setup/github-app/``) with the setup code from the log of the site, as
+    :doc:`/how-to/github-app` describes.
+    """
+
+    title = "The site has no GitHub App"
+    status = 503
+    guide = "how-to/github-app.html"
+    guide_title = "Register the GitHub App"
+
+
+class InvalidPrivateKey(GitHubError):
+    """The private key of the GitHub App cannot sign.
+
+    ``GITHUB_APP_PRIVATE_KEY`` or the file of ``GITHUB_APP_PRIVATE_KEY_FILE``
+    is not the PEM key that GitHub generated for the app. Generate a new key in
+    the settings of the app on GitHub and set it.
+    """
+
+    title = "The private key of the GitHub App is invalid"
+    status = 500
+    guide = "how-to/github-app.html"
+    guide_title = "Register the GitHub App"

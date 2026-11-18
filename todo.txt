@@ -65,9 +65,9 @@ community: where to start, what waits for a review, who contributes.
 - [x] The page of the licenses: /licenses/
 - [x] Local times in the browser (a small static script; works without JavaScript)
 - [x] FOOTER_LINKS and FAVICON settings
-- [ ] Guide: test the GitHub App locally through a tunnel (Tailscale Funnel)
-- [ ] A development .env (.env.development.example) that make run reads
-- [ ] Show the permissions and events that the registered app misses (setup page, command)
+- [x] Guide: test the GitHub App locally through a tunnel (Tailscale Funnel)
+- [x] A development .env (.env.development.example) that make run reads
+- [x] Show the permissions and events that the registered app misses (setup page, command)
 - [x] Links to the documentation as a question mark that opens a new tab; the GitHub mark on links to GitHub
 
 ## 2026-11-18: admins, the Django admin, installing the app, CI

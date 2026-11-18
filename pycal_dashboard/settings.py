@@ -53,7 +53,8 @@ SITE_NAME = env("SITE_NAME", default="dashboard.pycal.org")
 # the address of the site: the GitHub App, its webhooks and the links of the labels use it
 SITE_URL = env("SITE_URL", default="https://dashboard.pycal.org").rstrip("/")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+# forms are accepted from the address of the site, also behind a tunnel without X-Forwarded-Proto
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[SITE_URL])
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_FAILURE_VIEW = "pycal_dashboard.views.errors.csrf_failure"
 X_FRAME_OPTIONS = "DENY"

@@ -14,6 +14,22 @@ You need `uv <https://docs.astral.sh/uv/>`_, ``make`` and ``git``.
 ``make help`` lists all targets. ``make run`` starts the site with
 ``DEBUG=true``, so that it registers its GitHub App without a setup code.
 
+Settings for development
+========================
+
+``make run`` reads ``.env``. Start from the example for development:
+
+.. code-block:: shell
+
+   cp .env.development.example .env
+
+It names the settings that matter locally: a unique ``SITE_NAME`` for your
+development app, the OAuth app for signing in and your handle in
+``SITE_ADMINS``. :file:`.env.example` lists every setting.
+
+GitHub cannot deliver webhooks to ``localhost``. To test them, make the site
+reachable through a tunnel, see :doc:`github-app-tunnel`.
+
 Tests
 =====
 

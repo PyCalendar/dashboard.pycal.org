@@ -26,11 +26,13 @@ from .dashboard import (
     LookupFailed,
 )
 from .github import (
+    GitHubAppNotConfigured,
     GitHubError,
     GitHubLoginExpired,
     GitHubNotFound,
     GitHubRateLimited,
     GitHubUnreachable,
+    InvalidPrivateKey,
     MissingPermissions,
     SignInNotConfigured,
 )
@@ -64,6 +66,7 @@ __all__ = [
     "ConfigurationError",
     "DashboardError",
     "FaviconNotFound",
+    "GitHubAppNotConfigured",
     "GitHubError",
     "GitHubLoginExpired",
     "GitHubNotFound",
@@ -75,6 +78,7 @@ __all__ = [
     "InvalidInstallationId",
     "InvalidOrganization",
     "InvalidOrganizationSetting",
+    "InvalidPrivateKey",
     "LookupFailed",
     "ManifestConversionFailed",
     "MissingPermissions",

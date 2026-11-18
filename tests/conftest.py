@@ -18,8 +18,16 @@ OTHER = "PyCalendar/plann"
 
 @pytest.fixture(scope="session")
 def private_key() -> str:
-    """A private key as GitHub sends it; the site only stores it."""
-    return "-----BEGIN RSA PRIVATE KEY-----\nZmFrZQ==\n-----END RSA PRIVATE KEY-----\n"
+    """A private key as GitHub sends it: the app signs its token with it."""
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    return key.private_bytes(
+        serialization.Encoding.PEM,
+        serialization.PrivateFormat.TraditionalOpenSSL,
+        serialization.NoEncryption(),
+    ).decode()
 
 
 @pytest.fixture(autouse=True)

@@ -1,0 +1,1 @@
+The page *Register the GitHub App* and ``manage.py check_app`` name the permissions and events that the app lacks; a guide tests the app locally through Tailscale Funnel; ``.env.development.example`` holds the settings for development.

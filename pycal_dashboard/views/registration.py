@@ -12,10 +12,31 @@ from django.conf import settings
 from django.shortcuts import render
 
 from pycal_dashboard.errors import DashboardError, RegistrationError
+from pycal_dashboard.github.app_check import AppCheck
 from pycal_dashboard.middleware import error_page
 from pycal_dashboard.services.app_registration import AppRegistration
+from pycal_dashboard.services.identity import GitHubIdentity
 
 log = logging.getLogger(__name__)
+
+
+def app_check(request) -> AppCheck | None:
+    """What the GitHub App lacks, for the administrators of the site.
+
+    Args:
+        request: The request.
+
+    Returns:
+        The check of the app; None for other people, without an app, or if GitHub could
+        not be asked.
+    """
+    if not AppRegistration.source() or not GitHubIdentity.is_site_admin(request.user):
+        return None
+    try:
+        return AppCheck.read()
+    except DashboardError as error:
+        log.warning("the GitHub App could not be read: %s %s", error.code, error)
+        return None
 
 
 def register_app(request):
@@ -30,6 +51,7 @@ def register_app(request):
     organizations = settings.GITHUB_ORGANIZATIONS
     context = {
         "source": AppRegistration.source(),
+        "app_check": app_check(request),
         "slug": settings.GITHUB_APP_SLUG,
         "site_url": settings.SITE_URL,
         "local": AppRegistration.is_local(settings.SITE_URL),

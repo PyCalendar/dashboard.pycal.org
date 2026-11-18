@@ -1,6 +1,7 @@
 """A fake GitHub: the tests never use the network.
 
-The site only talks to GitHub to register its GitHub App (the conversion of the manifest).
+The site only talks to GitHub to register its GitHub App (the conversion of the manifest)
+and to read the app itself (``GET /app``).
 The fake logs every request, so tests can check that the site writes nothing to GitHub.
 """
 
@@ -21,6 +22,15 @@ class FakeGitHub:
         self.fail_with: int | None = None
         self.fail_message = "failure of the fake"
         self.unreachable = False
+        # the app as GET /app describes it; the tests change its permissions and events
+        from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+
+        self.app = {
+            "slug": "dashboard-test",
+            "owner": {"login": "PyCalendar", "type": "Organization"},
+            "permissions": dict(REQUIRED),
+            "events": list(EVENTS),
+        }
 
     def transport(self) -> httpx.MockTransport:
         return httpx.MockTransport(self.handle)
@@ -40,6 +50,12 @@ class FakeGitHub:
             raise httpx.ConnectError("no network", request=request)
         if self.fail_with:
             return httpx.Response(self.fail_with, json={"message": self.fail_message})
+        if request.method == "GET" and request.url.path == "/app":
+            if not request.headers.get("Authorization", "").startswith("Bearer ey"):
+                return httpx.Response(
+                    401, json={"message": "A JSON web token could not be decoded"}
+                )
+            return httpx.Response(200, json=self.app)
         match = re.fullmatch(r"/app-manifests/(?P<code>[^/]+)/conversions", request.url.path)
         if request.method == "POST" and match and match["code"] in self.manifest_codes:
             return httpx.Response(201, json=self.manifest_codes.pop(match["code"]))
