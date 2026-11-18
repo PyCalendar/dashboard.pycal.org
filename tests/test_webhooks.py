@@ -88,11 +88,15 @@ def test_pull_requests_are_not_labeled(client, github, db, action):
     assert github.writes() == [] and github.requests == []
 
 
-def test_other_organizations_are_ignored(client, db):
+def test_other_accounts_may_install_the_app(client, db):
     payload = pull_payload(account="Elsewhere")
     payload["repository"] = repository_payload("Elsewhere/x")
-    assert send_webhook(client, "pull_request", payload).json()["done"].startswith("ignored")
-    assert WebhookDelivery.objects.get().outcome == "ignored"
+    assert (
+        send_webhook(client, "pull_request", payload).json()["done"]
+        == "received: no automation yet"
+    )
+    delivery = WebhookDelivery.objects.get()
+    assert (delivery.repository, delivery.outcome) == ("Elsewhere/x", "done")
 
 
 def test_webhooks_while_github_is_down(client, github, db):

@@ -11,7 +11,7 @@ class WebhookDelivery(models.Model):
     action = models.CharField(max_length=100, blank=True, default="")
     repository = models.CharField(max_length=200, blank=True, default="")
     received = models.DateTimeField(auto_now_add=True)
-    outcome = models.CharField(max_length=20)  # done, ignored, refused or failed
+    outcome = models.CharField(max_length=20)  # done, refused or failed
     error = models.CharField(max_length=100, blank=True, default="")
     detail = models.TextField(blank=True, default="")
 

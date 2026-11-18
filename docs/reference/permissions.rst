@@ -38,6 +38,5 @@ the app was installed or its repositories changed.
 
 The site logs every webhook and does nothing else with it yet.
 
-The app is not public: only its owner can install it, see
-:doc:`/how-to/install-app`. The site ignores the webhooks of accounts that are
-not in ``GITHUB_ORGANIZATIONS``.
+The app is public: every account can install it, see
+:doc:`/how-to/install-app`.

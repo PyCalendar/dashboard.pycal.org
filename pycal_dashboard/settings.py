@@ -160,7 +160,8 @@ _key_file = env("GITHUB_APP_PRIVATE_KEY_FILE", default="")
 if _key_file and not GITHUB_APP_PRIVATE_KEY and Path(_key_file).is_file():
     GITHUB_APP_PRIVATE_KEY = Path(_key_file).read_text()
 GITHUB_WEBHOOK_SECRET = env("GITHUB_WEBHOOK_SECRET", default="")
-# the organizations of the GitHub App; webhooks of other accounts are ignored
+# the organizations of the community of the site: the links of the start page, the account that
+# owns the GitHub App in the form of its registration; every account may install the app
 GITHUB_ORGANIZATIONS = parse_organizations(env("GITHUB_ORGANIZATIONS", default="PyCalendar"))
 
 # Branding: the colors of sign.pycal.org, changed with COLOR_... (docs/reference/settings.rst)

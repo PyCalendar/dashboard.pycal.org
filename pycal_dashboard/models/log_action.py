@@ -9,7 +9,7 @@ class LogAction(models.Model):
     """What the site did and why, recorded by an :class:`~pycal_dashboard.actions.Action`."""
 
     trigger = models.ForeignKey(LogTrigger, on_delete=models.CASCADE, related_name="actions")
-    kind = models.CharField(max_length=50)  # such as admin-rights, preferences, oauth-app
+    kind = models.CharField(max_length=50)  # such as admin-rights or settings
     text = models.CharField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
 

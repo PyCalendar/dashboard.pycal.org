@@ -5,7 +5,6 @@ The site keeps no data of GitHub for now: no repositories, issues or pull reques
 
 from .log_action import LogAction
 from .log_trigger import LogTrigger
-from .profile import Profile
 from .webhook_delivery import WebhookDelivery
 
-__all__ = ["LogAction", "LogTrigger", "Profile", "WebhookDelivery"]
+__all__ = ["LogAction", "LogTrigger", "WebhookDelivery"]

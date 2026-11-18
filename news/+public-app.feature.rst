@@ -1,0 +1,1 @@
+Every account can install the GitHub App, which is public now; the error pages of a missing GitHub App or OAuth app lead to its setup page. The preference of emails is removed until the site sends emails.

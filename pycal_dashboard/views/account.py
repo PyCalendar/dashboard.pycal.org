@@ -1,30 +1,30 @@
 """The private pages: the account, preferences and email addresses, the deliveries, the log."""
 
 from allauth.account.models import EmailAddress
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.shortcuts import redirect, render
-from django.utils.translation import gettext as _
-from django.views.decorators.http import require_http_methods
+from django.shortcuts import render
+from django.views.decorators.http import require_GET
 
-from pycal_dashboard.actions import PreferencesSaved, Trigger
 from pycal_dashboard.errors import NoGitHubAccount
-from pycal_dashboard.models import LogTrigger, Profile, WebhookDelivery
+from pycal_dashboard.models import LogTrigger, WebhookDelivery
 from pycal_dashboard.services.identity import GitHubIdentity
 
 
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_GET
 def account(request):
     """The account: who you are on GitHub, your email addresses and preferences.
 
+    The language and the colors are kept in cookies of the browser; the types of emails to
+    switch on and off come with the features that send them.
+
     Args:
-        request: The request of a person who signed in; POST saves the preferences.
+        request: The request of a person who signed in.
 
     Returns:
-        The page, or a redirect after saving.
+        The page.
 
     Raises:
         NoGitHubAccount: The account was not created with GitHub.
@@ -32,20 +32,11 @@ def account(request):
     identity = GitHubIdentity.of(request.user)
     if identity is None:
         raise NoGitHubAccount(request.user.username)
-    profile, _created = Profile.objects.get_or_create(user=request.user)
-    if request.method == "POST":
-        profile.email_notifications = request.POST.get("email_notifications") == "yes"
-        with Trigger.start("preferences", f"@{identity.login} saved the preferences"):
-            profile.save(update_fields=["email_notifications"])
-            PreferencesSaved(identity.login, profile.email_notifications).run()
-        messages.success(request, _("Your preferences are saved."))
-        return redirect("account")
     return render(
         request,
         "pycal_dashboard/account.html",
         {
             "identity": identity,
-            "profile": profile,
             "emails": EmailAddress.objects.filter(user=request.user).order_by("-primary", "email"),
         },
     )

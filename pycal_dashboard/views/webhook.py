@@ -83,7 +83,7 @@ def webhook(request):
             # 200: GitHub would not deliver it again anyway; the deliveries of GitHub show why
             return JsonResponse(error.as_json(), status=200 if error.status < 500 else error.status)
         WebhookTrigger.complete(trigger, event, payload, done)
-    delivery.outcome = "ignored" if done.startswith("ignored") else "done"
+    delivery.outcome = "done"
     delivery.detail = done
     delivery.save()
     return JsonResponse({"done": done})

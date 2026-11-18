@@ -81,7 +81,8 @@ class SignInNotConfigured(GitHubError):
 
     People sign in with a separate OAuth app of ``GITHUB_OAUTH_CLIENT_ID`` and
     ``GITHUB_OAUTH_SECRET``. The people who run the site create it on GitHub
-    and enter it on ``/setup/oauth-app/`` with the setup code of the log, as
+    and enter it on ``/setup/oauth-app/``, which the button *Set up signing in*
+    of the page of the error opens, with the setup code of the log, as
     :ref:`oauth-app` describes.
     """
 
@@ -89,6 +90,8 @@ class SignInNotConfigured(GitHubError):
     status = 503
     guide = "how-to/github-app.html#oauth-app"
     guide_title = _("The OAuth app for signing in")
+    setup = "oauth_app"
+    setup_title = _("Set up signing in")
 
 
 class GitHubAppNotConfigured(GitHubError):
@@ -96,14 +99,17 @@ class GitHubAppNotConfigured(GitHubError):
 
     The site needs its GitHub App to receive the webhooks and to read what GitHub
     knows about the app. Register it on the page *Register the GitHub App*
-    (``/setup/github-app/``) with the setup code from the log of the site, as
-    :doc:`/how-to/github-app` describes.
+    (``/setup/github-app/``), which the button of the page of the error opens,
+    with the setup code from the log of the site, as :doc:`/how-to/github-app`
+    describes.
     """
 
     title = _("The site has no GitHub App")
     status = 503
     guide = "how-to/github-app.html"
     guide_title = _("Register the GitHub App")
+    setup = "register_app"
+    setup_title = _("Register the GitHub App")
 
 
 class InvalidPrivateKey(GitHubError):

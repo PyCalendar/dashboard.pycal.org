@@ -84,17 +84,24 @@ community: where to start, what waits for a review, who contributes.
 - [x] The documentation says the ways to install the app (docs/how-to/install-app.rst)
 - [x] For this repository only: commit, push and make sure CI passes (AGENTS.md, memory)
 
+## 2026-11-18: public app; the person registers the apps; no email flag yet
+
+- [x] Other accounts can install the GitHub App: the manifest makes it public; webhooks of every
+      account are received (GITHUB_ORGANIZATIONS only names the community of the site)
+- [x] The person registers the GitHub App and the OAuth app through the UI: the error pages of a
+      missing app lead to its setup page
+- [x] The flag "Email me about my account and news of the site" is removed (migration); types of
+      emails to switch on and off come later
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
-- [ ] Who registers the GitHub App on PyCalendar and where the site runs (Sencho stack, like sign.pycal.org?)
 - [ ] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
       secret SENCHO_TOKEN; until then the jobs Deploy to Sencho and Check the live site fail
 - [ ] DNS: docs.dashboard.pycal.org needs a CNAME to pycalendar.github.io
-- [ ] Should the GitHub App be public, so that accounts other than PyCalendar can install it?
-      (now private: only its owner installs it; docs/how-to/install-app.rst says how to change it)
 
 ## Open: work
 
-- [ ] Emails of the preference "Email me about my account and news of the site": stored; nothing is sent yet
+- [ ] Types of emails that people switch on and off on the page Account, with the features that send them
+
 - [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io

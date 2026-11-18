@@ -11,7 +11,12 @@ The OAuth app
    Only signs people in. GitHub tells the site who they are and their email
    addresses, read only, and never asks to let the site act on their behalf.
 
-At every start, the log says what is missing, with the setup code:
+The people who run the site register both through the pages of the site. The
+banner *This site has no GitHub App yet* and the page of an error of a missing
+app, such as
+:class:`~pycal_dashboard.errors.github.SignInNotConfigured`, have a button to
+its setup page. At every start, the log says what is missing, with the setup
+code:
 
 .. code-block:: text
 

@@ -10,7 +10,7 @@ class LogTrigger(models.Model):
     is for the administrators of the site (``/logs/``).
     """
 
-    kind = models.CharField(max_length=50)  # such as webhook, sign-in, setup, preferences
+    kind = models.CharField(max_length=50)  # such as webhook, sign-in or setup
     summary = models.CharField(max_length=300)
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     actor_login = models.CharField(max_length=100, blank=True)

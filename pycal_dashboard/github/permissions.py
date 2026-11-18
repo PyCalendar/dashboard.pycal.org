@@ -40,14 +40,13 @@ def missing(granted: dict[str, str], required: dict[str, str] | None = None) -> 
     }
 
 
-def manifest(name: str, url: str, public: bool = False) -> dict:
+def manifest(name: str, url: str, public: bool = True) -> dict:
     """The manifest of the GitHub App, to create it with these permissions and events.
 
     Args:
         name: The name of the app on GitHub.
         url: The address of the site.
-        public: Whether other accounts may install the app; the dashboard shows the
-            organizations of ``GITHUB_ORGANIZATIONS`` only.
+        public: Whether other accounts may install the app; they may by default.
 
     Returns:
         The manifest, as GitHub reads it.
@@ -55,6 +54,8 @@ def manifest(name: str, url: str, public: bool = False) -> dict:
     Examples:
         >>> manifest("dashboard", "https://dashboard.pycal.org")["hook_attributes"]["url"]
         'https://dashboard.pycal.org/github/webhook/'
+        >>> manifest("dashboard", "https://dashboard.pycal.org")["public"]
+        True
     """
     return {
         "name": name,

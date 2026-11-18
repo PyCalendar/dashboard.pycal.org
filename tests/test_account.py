@@ -1,10 +1,9 @@
-"""The private pages: account, preferences, email addresses and the webhook deliveries."""
+"""The private pages: the account, its email addresses and the webhook deliveries."""
 
 import pytest
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 
-from pycal_dashboard.models import Profile
 from tests.conftest import person
 
 
@@ -18,16 +17,12 @@ def test_account_page(client, bob):
     client.force_login(bob)
     content = client.get("/account/").content.decode()
     assert "@bob" in content and "bob@example.org" in content
-    assert 'name="email_notifications" value="yes" checked' in content
+    assert "data-no-emails" in content and "email_notifications" not in content
 
 
-def test_save_preferences(client, alice):
+def test_the_account_saves_nothing(client, alice):
     client.force_login(alice)
-    response = client.post("/account/", {})
-    assert response.status_code == 302
-    assert not Profile.objects.get(user=alice).email_notifications
-    client.post("/account/", {"email_notifications": "yes"})
-    assert Profile.objects.get(user=alice).email_notifications
+    assert client.post("/account/", {"email_notifications": "yes"}).status_code == 405
 
 
 def test_account_without_github(client, db):
@@ -76,7 +71,7 @@ def test_every_model_is_in_the_django_admin():
     assert [m.__name__ for m in models if not admin.site.is_registered(m)] == []
 
 
-@pytest.mark.parametrize("model", ["profile", "webhookdelivery"])
+@pytest.mark.parametrize("model", ["logtrigger", "logaction", "webhookdelivery"])
 def test_site_admins_open_the_django_admin(client, db, model):
     from django.contrib.auth.signals import user_logged_in
 

@@ -7,7 +7,6 @@ the webhook or the person that caused it. The administrators read the log on ``/
 
 from .action import Action
 from .admin_rights_changed import AdminRightsChanged
-from .preferences_saved import PreferencesSaved
 from .settings_saved import SettingsSaved
 from .trigger import Trigger
 from .webhook_trigger import WebhookTrigger
@@ -15,7 +14,6 @@ from .webhook_trigger import WebhookTrigger
 __all__ = [
     "Action",
     "AdminRightsChanged",
-    "PreferencesSaved",
     "SettingsSaved",
     "Trigger",
     "WebhookTrigger",

@@ -1,4 +1,4 @@
-"""Errors of the account page and the preferences, met by people who signed in."""
+"""Errors of the account page, met by people who signed in."""
 
 from django.utils.translation import gettext_lazy as _
 

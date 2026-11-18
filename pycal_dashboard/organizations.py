@@ -1,4 +1,4 @@
-"""The organizations that the dashboard shows: ``GITHUB_ORGANIZATIONS``."""
+"""The organizations of the community of the site: ``GITHUB_ORGANIZATIONS``."""
 
 import re
 
@@ -30,20 +30,3 @@ def parse_organizations(value: str) -> list[str]:
         if not LOGIN.fullmatch(login):
             raise InvalidOrganizationSetting(f"GITHUB_ORGANIZATIONS: {login!r}")
     return [login.lower() for login in logins]
-
-
-def is_shown(login: str, organizations: list[str]) -> bool:
-    """Whether the dashboard shows an account.
-
-    Args:
-        login: The login of the account of an installation.
-        organizations: The setting ``GITHUB_ORGANIZATIONS``.
-
-    Returns:
-        True if it is one of them, or if the setting allows every account.
-
-    Examples:
-        >>> is_shown("PyCalendar", ["pycalendar"]), is_shown("other", ["pycalendar"])
-        (True, False)
-    """
-    return not organizations or login.lower() in organizations

@@ -25,10 +25,11 @@ Only you see it. It shows:
 - **Email addresses**: those GitHub shared, whether they are verified and which
   one is primary. *Add, verify or change email addresses* adds another one,
   which the dashboard verifies with a link.
-- **Preferences**: *Email me about my account and news of the site*, on by
-  default. The site only writes to verified addresses.
-- **The GitHub App**: *Install the GitHub App* on the repositories of an
-  organization, see :doc:`/how-to/install-app`.
+- **Preferences**: the language and the colors, which the menus at the top
+  keep in your browser. The site sends no emails yet; the types of emails to
+  switch on and off come with the features that send them.
+- **The GitHub App**: *Install the GitHub App* on the repositories of your
+  account or of an organization, see :doc:`/how-to/install-app`.
 
 .. _administrators:
 
@@ -40,8 +41,8 @@ follow the setting at every request. The menu of their account has:
 
 *Log*
    What happened to the site and what followed from it: each webhook, each
-   sign-in, a change of the rights of an administrator, the setup of the apps
-   and saved preferences. Secrets and email addresses are never logged.
+   sign-in, a change of the rights of an administrator and the setup of the
+   apps. Secrets and email addresses are never logged.
 *Webhook deliveries*
    The latest 100 webhooks with their outcome and errors.
 *Django admin*

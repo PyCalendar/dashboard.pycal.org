@@ -12,19 +12,21 @@ The app must be registered on the site first, see :doc:`github-app`.
 Who can install it
 ==================
 
-- **Owners of the organization** install the app and choose the repositories.
+The app is **public**: every account can install it, an organization or a
+person, not only the one that owns it, such as PyCalendar.
+
+- **Owners of an organization** install the app and choose the repositories.
 - **Other members** can ask for it: GitHub sends the request to the owners,
   who approve it in the settings of the organization.
-- The app is **private**: only the account that owns it, such as PyCalendar,
-  can install it. To install it on other accounts, an owner makes it public in
-  the settings of the app on GitHub (*Advanced → Make public*). The site still
-  ignores the webhooks of accounts that are not in ``GITHUB_ORGANIZATIONS``,
-  see :doc:`/reference/settings`.
+- **A person** installs it on the repositories of their own account.
+
+An app registered before it was public stays private: its owner makes it
+public in the settings of the app on GitHub (*Advanced → Make public*).
 
 All repositories or only some
 =============================
 
-GitHub asks where to install the app:
+GitHub asks for the account and where to install the app:
 
 **All repositories**
    Every repository of the organization, also the ones created later.

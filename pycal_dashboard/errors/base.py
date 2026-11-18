@@ -16,6 +16,10 @@ class DashboardError(Exception):
     # a page of the documentation that explains the topic of the error; "" for none
     guide = "how-to/report-bug.html"
     guide_title = _("How to report a bug")
+    # the page of the site that solves the error, such as the setup of an app: the name of its
+    # address and the text of its button; "" for none
+    setup = ""
+    setup_title = ""
 
     def __init__(self, detail: str = "", **context):
         """An error people can meet, with what happened.
@@ -50,6 +54,22 @@ class DashboardError(Exception):
         """
         docs = settings.DOCS_URL.rstrip("/") + "/"
         return f"{docs}reference/errors.html#{cls.__module__}.{cls.__name__}"
+
+    @classmethod
+    def setup_url(cls) -> str:
+        """The page of the site that solves the error, such as the setup of the GitHub App.
+
+        Returns:
+            Its address, "" for errors without one.
+
+        Examples:
+            >>> from pycal_dashboard.errors import SignInNotConfigured
+            >>> SignInNotConfigured.setup_url(), UnexpectedError.setup_url()
+            ('/setup/oauth-app/', '')
+        """
+        from django.urls import reverse
+
+        return reverse(cls.setup) if cls.setup else ""
 
     @classmethod
     def guide_url(cls) -> str:

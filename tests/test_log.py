@@ -48,13 +48,6 @@ def test_a_change_of_site_admins_is_logged(client, alice, settings):
     assert LogTrigger.objects.filter(kind="site-admins").count() == 1  # nothing changed
 
 
-def test_preferences_are_logged_without_the_address(client, alice):
-    client.force_login(alice)
-    client.post("/account/", {})
-    action = LogAction.objects.get(kind="preferences")
-    assert action.text == "@alice saved the preferences: no emails about the account and the site"
-
-
 def test_the_oauth_app_is_logged_without_its_secret(client, admin, settings):
     from pycal_dashboard.sign_in import SignIn
 

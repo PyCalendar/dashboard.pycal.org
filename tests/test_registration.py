@@ -132,6 +132,10 @@ def test_manifest_command(capsys):
     assert '"pull_requests": "read"' in output and "email_addresses" not in output
 
 
+def test_every_account_may_install_the_app():
+    assert manifest("dashboard", "https://dashboard.example.org")["public"] is True
+
+
 def test_the_app_only_reads():
     """The site writes nothing to GitHub for now: the app asks for no write permission."""
     permissions = manifest("dashboard", "https://dashboard.example.org")["default_permissions"]

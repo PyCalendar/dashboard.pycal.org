@@ -14,7 +14,7 @@
     {% else %}{% url 'register_app' as register_url %}<p><span class="badge badge-warning">{% translate "not registered" %}</span> {% blocktranslate %}The people who run the site <a href="{{ register_url }}">register it</a>.{% endblocktranslate %}</p>{% endif %}</section>
   <section class="card" data-sign-in><h2>{% translate "Your account" %}</h2>
     {% if user.is_authenticated %}<p>{% translate "You are signed in." %} <a href="{% url 'account' %}">{% translate "Your account and preferences" %}</a></p>{% if install_url %}<p><a class="button" href="{{ install_url }}">{% translate "Install the GitHub App" %}</a></p>{% endif %}
-    {% elif sign_in_configured %}<p>{% translate "Sign in with GitHub to choose your preferences and email addresses." %}</p><p><a class="button" href="{% url 'account_login' %}">{% translate "Sign in" %}</a></p>
+    {% elif sign_in_configured %}<p>{% translate "Sign in with GitHub to install the GitHub App and to see your email addresses." %}</p><p><a class="button" href="{% url 'account_login' %}">{% translate "Sign in" %}</a></p>
     {% else %}<p><span class="badge badge-warning">{% translate "not set up" %}</span> {% translate "Nobody can sign in yet: the site has no OAuth app." %}</p>{% endif %}</section>
 </div>
 {% endblock %}

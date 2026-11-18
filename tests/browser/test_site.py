@@ -50,19 +50,14 @@ def test_account_asks_to_sign_in(page, site):
     expect(page.get_by_role("button", name="Sign in with GitHub")).to_be_visible()
 
 
-def test_preferences(signed_in, site):
+def test_the_account(signed_in, site):
     page = signed_in
     page.goto(f"{site}/account/")
     expect(page.get_by_role("heading", name="Account · @bob")).to_be_visible()
     expect(page.get_by_role("link", name="Install the GitHub App").first).to_have_attribute(
         "href", "https://github.com/apps/dashboard-test/installations/new"
     )
-    box = page.get_by_label("Email me about my account and news of the site")
-    expect(box).to_be_checked()
-    box.uncheck()
-    page.get_by_role("button", name="Save the preferences").click()
-    expect(page.get_by_role("status")).to_have_text("Your preferences are saved.")
-    expect(box).not_to_be_checked()
+    expect(page.get_by_text("The site sends no emails yet.")).to_be_visible()
 
 
 def test_sign_out(signed_in, site):

@@ -44,8 +44,10 @@ Leave these empty and register the app on the site, see
 ``GITHUB_API``
    Only for GitHub Enterprise Server. Default: ``https://api.github.com``.
 ``GITHUB_ORGANIZATIONS``
-   The organizations of the app, comma separated; webhooks of other accounts
-   are ignored. Empty: every account. Default: ``PyCalendar``.
+   The organizations of the community of the site, comma separated: the start
+   page links them, and the form of the registration proposes the first one as
+   the owner of the GitHub App. Every account may install the app. Default:
+   ``PyCalendar``.
 
 The OAuth app
 =============
