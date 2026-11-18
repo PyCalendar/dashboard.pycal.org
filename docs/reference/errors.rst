@@ -65,13 +65,6 @@ GitHub
    :members:
    :show-inheritance:
 
-Labels
-======
-
-.. automodule:: pycal_dashboard.errors.labels
-   :members:
-   :show-inheritance:
-
 Webhooks
 ========
 

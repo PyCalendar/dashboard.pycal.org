@@ -12,8 +12,8 @@ Python Calendaring Ecosystem. It answers three questions:
 - **Who makes it happen?** The people who contribute, and those who contribute
   for the first time.
 
-Its GitHub App labels the pull requests, such as with their size, so that
-reviewers find small changes and welcome first contributions.
+Its GitHub App only reads the repositories: the dashboard writes nothing to
+GitHub, such as labels or comments.
 
 - **Contributors** read :doc:`tutorial/use`, and :doc:`tutorial/account` to
   sign in.

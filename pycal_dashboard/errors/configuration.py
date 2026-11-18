@@ -39,19 +39,6 @@ class InvalidColor(ConfigurationError):
     title = "Invalid color"
 
 
-class UnknownLabelRule(ConfigurationError):
-    """``PULL_REQUEST_LABELS`` names a rule that does not exist.
-
-    The detail lists the rules. Separate them with commas, such as
-    ``size,first-contribution``, or leave the setting empty to label nothing.
-    See :doc:`/reference/labels`.
-    """
-
-    title = "Unknown label rule"
-    guide = "reference/labels.html"
-    guide_title = "Labels of pull requests"
-
-
 class InvalidOrganizationSetting(ConfigurationError):
     """``GITHUB_ORGANIZATIONS`` contains something that is not a GitHub login.
 

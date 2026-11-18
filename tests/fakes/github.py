@@ -1,12 +1,11 @@
 """A fake GitHub: the tests never use the network.
 
-It knows installations, repositories, issues and pull requests with labels, and answers the
-requests that the site sends with httpx.
+It knows installations, repositories, issues and pull requests, and answers the requests
+that the site sends with httpx. It has no route that writes: the site only reads.
 """
 
-import json
 import re
-from urllib.parse import parse_qs, unquote
+from urllib.parse import parse_qs
 
 import httpx
 
@@ -21,7 +20,6 @@ class FakeGitHub:
         self.installation_repositories: dict[int, list[str]] = {}
         self.repositories: dict[str, dict] = {}
         self.items: dict[str, list[dict]] = {}  # issues and pull requests by repository
-        self.repo_labels: dict[str, dict[str, dict]] = {}
         self.requests: list[httpx.Request] = []
         self.manifest_codes: dict[str, dict] = {}
         self.fail_with: int | None = None
@@ -107,8 +105,17 @@ class FakeGitHub:
     def find(self, full_name: str, number: int) -> dict | None:
         return next((i for i in self.items.get(full_name, []) if i["number"] == number), None)
 
-    def labels_of(self, full_name: str, number: int) -> list[str]:
-        return sorted(label["name"] for label in self.find(full_name, number)["labels"])
+    # what the site may send without changing anything on GitHub
+    NOT_WRITING = (r"/app-manifests/[^/]+/conversions", r"/app/installations/\d+/access_tokens")
+
+    def writes(self) -> list[httpx.Request]:
+        """The requests that would change something on GitHub, such as labels or comments."""
+        return [
+            r
+            for r in self.requests
+            if r.method not in ("GET", "HEAD")
+            and not any(re.fullmatch(p, r.url.path) for p in self.NOT_WRITING)
+        ]
 
     # --- answering -------------------------------------------------------------
 
@@ -124,13 +131,6 @@ class FakeGitHub:
         ("GET", r"/repos/(?P<repo>[^/]+/[^/]+)/issues", "list_issues"),
         ("GET", r"/repos/(?P<repo>[^/]+/[^/]+)/pulls", "list_pulls"),
         ("GET", r"/repos/(?P<repo>[^/]+/[^/]+)/pulls/(?P<n>\d+)", "get_pull"),
-        ("POST", r"/repos/(?P<repo>[^/]+/[^/]+)/labels", "create_label"),
-        ("POST", r"/repos/(?P<repo>[^/]+/[^/]+)/issues/(?P<n>\d+)/labels", "add_labels"),
-        (
-            "DELETE",
-            r"/repos/(?P<repo>[^/]+/[^/]+)/issues/(?P<n>\d+)/labels/(?P<label>.+)",
-            "remove_label",
-        ),
     ]
 
     def handle(self, request: httpx.Request) -> httpx.Response:
@@ -209,28 +209,3 @@ class FakeGitHub:
         if not found or "pull_request" not in found:
             return self.not_found()
         return httpx.Response(200, json={k: v for k, v in found.items() if k != "pull_request"})
-
-    def create_label(self, request, repo):
-        data = json.loads(request.content)
-        labels = self.repo_labels.setdefault(repo, {})
-        if data["name"] in labels:
-            return httpx.Response(422, json={"message": "Validation Failed"})
-        labels[data["name"]] = data
-        return httpx.Response(201, json=data)
-
-    def add_labels(self, request, repo, n):
-        found = self.find(repo, int(n))
-        if not found:
-            return self.not_found()
-        for name in json.loads(request.content)["labels"]:
-            if name not in {label["name"] for label in found["labels"]}:
-                found["labels"].append({"name": name})
-        return httpx.Response(200, json=found["labels"])
-
-    def remove_label(self, request, repo, n, label):
-        found = self.find(repo, int(n))
-        name = unquote(label)
-        if not found or name not in {label["name"] for label in found["labels"]}:
-            return self.not_found()
-        found["labels"] = [label for label in found["labels"] if label["name"] != name]
-        return httpx.Response(200, json=found["labels"])

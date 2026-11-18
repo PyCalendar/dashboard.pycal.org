@@ -15,8 +15,8 @@ Find something to work on
 2. Choose **Contribute** in the menu. *Issues for newcomers* are open issues
    labeled ``good first issue``, ``help wanted`` or ``easy``.
 3. Open an issue on GitHub, say in a comment that you work on it, and open a
-   pull request when you are ready. The GitHub App labels it, see
-   :doc:`/reference/labels`.
+   pull request when you are ready. It appears on the dashboard, and reviewers
+   find it on the page *Reviews*.
 
 An issue without an answer is a good start, too: a question, a test or a
 confirmation of the bug helps the maintainers.
@@ -34,7 +34,7 @@ Look at a repository
 
 Choose **Repositories** and a repository. Its page shows its numbers and its
 issues and pull requests. Filter them by state (open, closed) and kind (pull
-requests, issues). The latest labels of the GitHub App are at the bottom.
+requests, issues).
 
 The period
 ==========

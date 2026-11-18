@@ -17,7 +17,6 @@ from pycal_dashboard.models import Installation, Repository
 from pycal_dashboard.organizations import is_shown
 
 from .item_store import ItemStore
-from .labeler import PullRequestLabeler
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ class RepositorySync:
             installation_id: The id of the installation on GitHub.
         """
         self.installation_id = installation_id
-        self.summary = {"repositories": 0, "items": 0, "labeled": 0, "errors": []}
+        self.summary = {"repositories": 0, "items": 0, "errors": []}
 
     @classmethod
     def everything(cls) -> list[dict]:
@@ -77,8 +76,8 @@ class RepositorySync:
         """Read the installation.
 
         Returns:
-            How many repositories and items were read and pull requests labeled, and the
-            errors of single repositories or pull requests.
+            How many repositories and items were read, and the errors of single
+            repositories.
         """
         installation = self.installation()
         client = GitHubApp.for_installation(self.installation_id)
@@ -100,7 +99,7 @@ class RepositorySync:
         return self.summary
 
     def items(self, client: GitHubClient, repository: Repository) -> None:
-        """Read the issues and pull requests changed since the last sync; label the open pulls.
+        """Read the issues and pull requests changed since the last sync.
 
         Args:
             client: A client of the installation.
@@ -113,16 +112,7 @@ class RepositorySync:
         for data in client.pages(f"/repos/{repository.full_name}/issues", **params):
             ItemStore.item(repository, data)
             self.summary["items"] += 1
-        labeler = PullRequestLabeler(client, repository)
         for pull in client.pages(f"/repos/{repository.full_name}/pulls", state="open"):
             ItemStore.item(repository, pull)
-            try:
-                added, removed = labeler.label(pull)
-            except DashboardError as error:
-                self.summary["errors"].append(
-                    f"{repository.full_name}#{pull['number']}: {error.code}: {error}"
-                )
-                continue
-            self.summary["labeled"] += bool(added or removed)
         repository.synced_at = started
         repository.save(update_fields=["synced_at"])

@@ -7,7 +7,7 @@ The list is in docs/reference/permissions.rst (tests/test_permissions.py checks 
 REQUIRED = {
     "metadata": "read",  # the repositories of the installation
     "issues": "read",  # the issues: where to start, what waits for an answer
-    "pull_requests": "write",  # the pull requests and their labels
+    "pull_requests": "read",  # the pull requests: what waits for a review
 }
 # What the site may read of the people who sign in: their verified email addresses.
 USER_PERMISSIONS = {"email_addresses": "read"}

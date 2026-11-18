@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from .models import Installation, Item, LabelChange, Profile, Repository, WebhookDelivery
+from .models import Installation, Item, Profile, Repository, WebhookDelivery
 
 admin.site.register(Installation, list_display=["account_login", "github_id", "suspended"])
 admin.site.register(
@@ -16,7 +16,6 @@ admin.site.register(
     list_filter=["is_pull", "state"],
     search_fields=["title", "author_login"],
 )
-admin.site.register(LabelChange, list_display=["__str__", "rule", "time"])
 admin.site.register(Profile, list_display=["user", "email_digest"])
 admin.site.register(
     WebhookDelivery, list_display=["event", "action", "repository", "outcome", "received"]

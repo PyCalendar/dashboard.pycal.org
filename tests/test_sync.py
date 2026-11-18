@@ -9,12 +9,13 @@ from pycal_dashboard.services.repository_sync import RepositorySync
 from tests.conftest import REPOSITORY
 
 
-def test_sync_reads_and_labels(synced):
+def test_sync_reads(synced):
     assert Repository.objects.count() == 3
     assert not Item.objects.filter(repository__private=True).exists()
     assert Item.objects.filter(repository__full_name=REPOSITORY).count() == 5
-    assert synced.labels_of(REPOSITORY, 3) == ["first contribution", "size: XS"]
-    assert synced.labels_of(REPOSITORY, 4) == ["size: L"]
+    assert Item.objects.get(repository__full_name=REPOSITORY, number=1).labels == [
+        "good first issue"
+    ]
     pull = Item.objects.get(repository__full_name=REPOSITORY, number=4)
     assert pull.is_pull and pull.requested_reviewers == ["bob"]
     assert Item.objects.get(repository__full_name=REPOSITORY, number=5).merged
@@ -23,7 +24,7 @@ def test_sync_reads_and_labels(synced):
 def test_sync_again_reads_what_changed(synced):
     synced.requests.clear()
     summary = RepositorySync(1).run()
-    assert summary["labeled"] == 0
+    assert "labeled" not in summary
     issue_requests = [r for r in synced.requests if r.url.path.endswith("/issues")]
     assert all("since=" in str(r.url) for r in issue_requests)
 
@@ -79,3 +80,9 @@ def test_command_without_app(settings, db, capsys):
     settings.GITHUB_APP_ID = ""
     call_command("sync_repositories")
     assert "No GitHub App" in capsys.readouterr().out
+
+
+def test_sync_writes_nothing_to_github(synced):
+    """No labels, no comments: the site only reads, also when it reads again."""
+    RepositorySync(1).run()
+    assert synced.writes() == []

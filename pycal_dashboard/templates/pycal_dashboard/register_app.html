@@ -3,7 +3,7 @@
 {% block main %}
 <section class="hero">
   <h1>Register the GitHub App</h1>
-  <p class="lead">The dashboard reads the repositories, receives webhooks, labels pull requests and signs people in with its own GitHub App. The site registers the app on GitHub itself and keeps the credentials in its volume.</p>
+  <p class="lead">The dashboard reads the repositories, receives webhooks and signs people in with its own GitHub App. The site registers the app on GitHub itself and keeps the credentials in its volume.</p>
 </section>
 
 {% if source %}
@@ -33,7 +33,7 @@
 </div>
 
 {% else %}
-{% if local %}<p class="message message-warning" data-local>This site runs at <code>{{ site_url }}</code>, which GitHub cannot reach. Signing in works, but webhooks cannot be delivered: the app is registered without a webhook, so pull requests are not labeled. Give the site a public address and set <code>SITE_URL</code> to it to test everything.</p>{% endif %}
+{% if local %}<p class="message message-warning" data-local>This site runs at <code>{{ site_url }}</code>, which GitHub cannot reach. Signing in works, but webhooks cannot be delivered: the app is registered without a webhook, so the dashboard is only up to date after <code>manage.py sync_repositories</code>. Give the site a public address and set <code>SITE_URL</code> to it to test everything.</p>{% endif %}
 {% if error %}<div class="message message-error" role="alert" data-error="{{ error.code }}"><strong>{{ error.title }}</strong>{% if error.detail %}: <code>{{ error.detail }}</code>{% endif %} <a href="{{ error.docs_url }}">What this means</a></div>{% endif %}
 <div class="card" data-step="details">
   <h2>1. Name the app</h2>

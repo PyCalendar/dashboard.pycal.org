@@ -32,7 +32,7 @@ class Command(BaseCommand):
         for summary in summaries:
             self.stdout.write(
                 f"{summary['repositories']} repositories, {summary['items']} issues and pull "
-                f"requests, {summary['labeled']} labeled"
+                "requests"
             )
             for problem in summary["errors"]:
                 self.stderr.write(problem)

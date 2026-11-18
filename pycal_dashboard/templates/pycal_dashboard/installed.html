@@ -3,7 +3,7 @@
 {% block main %}
 <section class="hero" data-installation="{{ installation.github_id }}">
   <h1>The GitHub App is installed on {{ installation.account_login }}</h1>
-  {% if summary %}<p class="lead" data-summary>The dashboard read {{ summary.repositories }} repositories and {{ summary.items }} issues and pull requests, and labeled {{ summary.labeled }} pull request{{ summary.labeled|pluralize }}.</p>
+  {% if summary %}<p class="lead" data-summary>The dashboard read {{ summary.repositories }} repositories and {{ summary.items }} issues and pull requests.</p>
   {% if summary.errors %}<ul class="message message-warning">{% for problem in summary.errors %}<li>{{ problem }}</li>{% endfor %}</ul>{% endif %}
   {% else %}<p class="lead">The webhooks of GitHub keep the dashboard up to date.</p>{% endif %}
   <p><a class="button" href="{% url 'repositories' %}">See the repositories</a></p>

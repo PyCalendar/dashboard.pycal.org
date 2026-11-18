@@ -30,16 +30,25 @@ community: where to start, what waits for a review, who contributes.
 - [x] The documentation of each error says why it appears and how to resolve it (checked by a test)
 - [x] Notify the person when the work is done; ask for clarification at the end
 
+## 2026-11-18: no labels for now; automation is designed later
+
+- [x] The platform adds no labels anywhere: the labeler, its rules (PULL_REQUEST_LABELS), the
+      page Labels and the log of label changes are removed (new migration)
+- [x] The GitHub App only reads: pull_requests: read instead of write
+- [x] Documentation, news fragment and tests updated; a test checks that no webhook and no sync
+      writes to GitHub
+
+## 2026-11-18: a separate OAuth app; docs on GitHub Pages; no models of GitHub data
+
+- [ ] Sign in with a separate OAuth app (as sign.pycal.org), not with the client of the GitHub App
+- [ ] Documentation on GitHub Pages at docs.dashboard.pycal.org, like sign.pycal.org (no Read the Docs)
+- [ ] No models that track and query the GitHub API for now: the numbers are separate
+      functionality, designed later. The pages and the API built on them are removed (new migration)
+
 ## Open: decisions of the person
 
-- [ ] Which labels should the app set? Now: size (size: XS ... XL) and "first contribution";
-      more rules are easy to add (pycal_dashboard/labels/)
-- [ ] Sign in: with the client of the GitHub App (default now, no extra setup) or a separate OAuth app
-      (GITHUB_OAUTH_CLIENT_ID, as sign.pycal.org, which never asks to act on your behalf)?
-- [ ] Address of the documentation on Read the Docs (now https://dashboard-pycal-org.readthedocs.io/en/latest/);
-      the project on Read the Docs has to be created by a person
+- [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
 - [ ] Who registers the GitHub App on PyCalendar and where the site runs (Sencho stack, like sign.pycal.org?)
-- [ ] Which numbers matter most for the community (response times as in community-insights?)
 
 ## Open: work
 

@@ -11,7 +11,6 @@ PUBLIC = [
     "/reviews/",
     "/repositories/",
     "/contributors/",
-    "/labels/",
     f"/repositories/{REPOSITORY}/",
     "/contributors/alice/",
     "/accounts/login/",
@@ -114,7 +113,6 @@ def test_health(client, db):
     assert client.get("/health/").json() == {"status": "ok", "github_app": True}
 
 
-def test_labels_page(client, synced):
-    content = client.get("/labels/").content.decode()
-    assert 'data-rule="size"' in content and "size: XS" in content
-    assert f"{REPOSITORY}#3" in content
+def test_no_labels_page(client, db):
+    assert client.get("/labels/").status_code == 404
+    assert "/labels/" not in client.get("/about/").content.decode()

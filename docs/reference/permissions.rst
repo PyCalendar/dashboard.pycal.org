@@ -3,7 +3,9 @@ Permissions of the GitHub App
 ==================================
 
 The GitHub App asks for as little as the dashboard needs
-(``pycal_dashboard/github/permissions.py``).
+(``pycal_dashboard/github/permissions.py``). It only reads: the dashboard
+writes nothing to GitHub, such as labels or comments. Automation that writes
+is designed later.
 
 Permissions of the repositories
 ===============================
@@ -12,8 +14,8 @@ Permissions of the repositories
    The repositories of the installation.
 ``issues``: read
    The issues: issues for newcomers and those without an answer.
-``pull_requests``: write
-   The pull requests, and writing their labels.
+``pull_requests``: read
+   The pull requests: what waits for a review.
 
 Permissions of the people who sign in
 =====================================
@@ -28,8 +30,7 @@ Events
 ``issues``, ``issue_comment``
    An issue was opened, changed or commented.
 ``pull_request``
-   A pull request was opened or changed: the dashboard stores it and sets its
-   labels.
+   A pull request was opened or changed: the dashboard stores it.
 ``pull_request_review``
    A pull request was reviewed: the requested reviewers changed.
 ``repository``

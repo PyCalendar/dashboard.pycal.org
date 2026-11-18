@@ -1,1 +1,1 @@
-The dashboard of the PyCalendar community, its GitHub App that labels pull requests, sign in with GitHub, the account page and the JSON API.
+The dashboard of the PyCalendar community, its GitHub App that only reads the repositories, sign in with GitHub, the account page and the JSON API.

@@ -51,9 +51,6 @@ The dashboard
 ``GITHUB_ORGANIZATIONS``
    The organizations that the dashboard shows, comma separated; installations
    elsewhere are ignored. Empty: every account. Default: ``PyCalendar``.
-``PULL_REQUEST_LABELS``
-   The rules that label pull requests, see :doc:`labels`. Empty: no labels.
-   Default: ``size,first-contribution``.
 ``STALE_DAYS``
    Days without activity after which an open pull request is listed as
    without activity. Default: ``30``.

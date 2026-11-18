@@ -9,7 +9,7 @@
 <section class="card"><h2>The GitHub App</h2>
 <dl class="facts-list">{% for name, level in permissions.items %}<dt>{{ name }}</dt><dd>{{ level }}</dd>{% endfor %}</dl>
 <p>Events: {{ events|join:", " }}</p>
-<p>Labels: {% for rule in rules %}<a href="{% url 'labels' %}">{{ rule.name }}</a>{% if not forloop.last %}, {% endif %}{% empty %}none{% endfor %}</p></section>
+<p>The app only reads: it writes nothing to GitHub, such as labels or comments.</p></section>
 <section class="card"><h2>Version</h2>
 <dl class="facts-list"><dt>Version</dt><dd>{{ build.version }}</dd>
 {% if build.commit %}<dt>Commit</dt><dd><a href="{{ build.commit_url }}">{{ build.commit }}</a> {{ build.message }}</dd>{% endif %}

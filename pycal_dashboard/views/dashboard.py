@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from pycal_dashboard.errors import InvalidPageNumber, RepositoryNotFound
-from pycal_dashboard.models import LabelChange, Profile
+from pycal_dashboard.models import Profile
 from pycal_dashboard.services.contributor_stats import ContributorStats
 from pycal_dashboard.services.overview import Overview
 from pycal_dashboard.services.request_filters import RequestFilters
@@ -116,7 +116,6 @@ def repository(request, owner: str, repo: str):
             "state": state,
             "kind": kind,
             "days": days,
-            "label_changes": LabelChange.objects.filter(repository=found)[:10],
         },
     )
 
@@ -197,23 +196,4 @@ def contributor(request, login: str):
             "review_requests": stats.review_requests(),
             "recent": stats.recent(),
         },
-    )
-
-
-def labels(request):
-    """The rules that label pull requests and the latest labels they set.
-
-    Args:
-        request: The request.
-
-    Returns:
-        The page.
-    """
-    changes = LabelChange.objects.filter(repository__in=Overview.public()).select_related(
-        "repository"
-    )
-    return render(
-        request,
-        "pycal_dashboard/labels.html",
-        {"rules": settings.PULL_REQUEST_LABELS.rules, "page": page_of(request, changes)},
     )

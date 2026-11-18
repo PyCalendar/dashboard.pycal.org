@@ -8,5 +8,4 @@ Reference
    errors
    settings
    permissions
-   labels
    api

@@ -63,7 +63,6 @@ def about(request):
             "build": build_info.get(settings.SOURCE_URL),
             "permissions": {**REQUIRED, **USER_PERMISSIONS},
             "events": EVENTS,
-            "rules": settings.PULL_REQUEST_LABELS.rules,
             "organizations": settings.GITHUB_ORGANIZATIONS,
         },
     )

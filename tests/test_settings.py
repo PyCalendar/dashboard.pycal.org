@@ -40,7 +40,6 @@ def test_every_setting_is_in_the_example():
         "SITE_URL",
         "ALLOWED_HOSTS",
         "GITHUB_ORGANIZATIONS",
-        "PULL_REQUEST_LABELS",
         "SITE_ADMINS",
     ):
         assert name in example

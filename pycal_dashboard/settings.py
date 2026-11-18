@@ -10,7 +10,6 @@ from pathlib import Path
 import environ
 
 from pycal_dashboard import registered_settings
-from pycal_dashboard.labels.rule_set import RuleSet
 from pycal_dashboard.organizations import parse_organizations
 from pycal_dashboard.sign_in import SignIn
 from pycal_dashboard.theme import Theme
@@ -152,8 +151,6 @@ if _key_file and not GITHUB_APP_PRIVATE_KEY and Path(_key_file).is_file():
 GITHUB_WEBHOOK_SECRET = env("GITHUB_WEBHOOK_SECRET", default="")
 # the organizations that the dashboard shows; installations elsewhere are ignored
 GITHUB_ORGANIZATIONS = parse_organizations(env("GITHUB_ORGANIZATIONS", default="PyCalendar"))
-# the rules that label pull requests, comma separated: docs/reference/labels.rst
-PULL_REQUEST_LABELS = RuleSet.parse(env("PULL_REQUEST_LABELS", default="size,first-contribution"))
 # days after which an open pull request without activity counts as stale
 STALE_DAYS = env.int("STALE_DAYS", default=30)
 

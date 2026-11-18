@@ -46,7 +46,6 @@ def site(request) -> dict:
             "use": f"{docs}tutorial/use.html",
             "account": f"{docs}tutorial/account.html",
             "app_setup": f"{docs}how-to/github-app.html",
-            "labels": f"{docs}reference/labels.html",
             "api": f"{docs}reference/api.html",
             "changelog": f"{docs}changelog.html",
             "source": settings.SOURCE_URL,

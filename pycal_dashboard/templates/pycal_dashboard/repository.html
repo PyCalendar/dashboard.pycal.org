@@ -18,5 +18,4 @@
 </form>
 {% include "pycal_dashboard/_items.html" with items=page.object_list empty="Nothing here." %}
 {% include "pycal_dashboard/_pages.html" %}
-{% if label_changes %}<section class="card"><h2>Latest labels of the GitHub App</h2><ul class="list">{% for change in label_changes %}<li>#{{ change.number }} {% if change.added %}+{% else %}−{% endif %} <span class="label">{{ change.label }}</span> <span class="muted">{{ change.time|timesince }} ago</span></li>{% endfor %}</ul><p><a href="{% url 'labels' %}">Why pull requests get labels</a></p></section>{% endif %}
 {% endblock %}

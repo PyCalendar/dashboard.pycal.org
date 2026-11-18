@@ -19,7 +19,6 @@ from .configuration import (
     InvalidColor,
     InvalidOrganizationSetting,
     UnknownColor,
-    UnknownLabelRule,
 )
 from .dashboard import (
     ApiEndpointNotFound,
@@ -43,11 +42,6 @@ from .github import (
     InvalidPrivateKey,
     MissingPermissions,
     SignInNotConfigured,
-)
-from .labels import (
-    CannotWriteLabels,
-    LabelError,
-    PullRequestSizeUnknown,
 )
 from .registration import (
     AppAlreadyRegistered,
@@ -78,7 +72,6 @@ __all__ = [
     "ApiEndpointNotFound",
     "AppAlreadyRegistered",
     "AppSettingsInEnvironment",
-    "CannotWriteLabels",
     "ConfigurationError",
     "ContributorNotFound",
     "DashboardError",
@@ -99,13 +92,11 @@ __all__ = [
     "InvalidOrganizationSetting",
     "InvalidPageNumber",
     "InvalidPrivateKey",
-    "LabelError",
     "LookupFailed",
     "ManifestConversionFailed",
     "MissingPermissions",
     "NoGitHubAccount",
     "PrivateKeyFileExists",
-    "PullRequestSizeUnknown",
     "RegistrationCodeMissing",
     "RegistrationError",
     "RegistrationExpired",
@@ -115,7 +106,6 @@ __all__ = [
     "SignInNotConfigured",
     "UnexpectedError",
     "UnknownColor",
-    "UnknownLabelRule",
     "UnknownPreference",
     "WatchedRepositoryUnknown",
     "WebhookError",

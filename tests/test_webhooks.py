@@ -1,4 +1,4 @@
-"""The webhook: signatures, events, labels and the log of the deliveries."""
+"""The webhook: signatures, events and the log of the deliveries."""
 
 import pytest
 
@@ -69,17 +69,21 @@ def test_other_organizations_are_ignored(client, organization):
     assert not Installation.objects.exists()
 
 
-def test_pull_request_opened_is_labeled(client, synced):
+@pytest.mark.parametrize(
+    "action", ["opened", "reopened", "synchronize", "edited", "ready_for_review"]
+)
+def test_pull_request_is_stored_but_not_labeled(client, synced, action):
     synced.pull(REPOSITORY, 6, "dave", additions=30, author_association="FIRST_TIME_CONTRIBUTOR")
-    response = send_webhook(client, "pull_request", pull_payload(synced, 6))
-    assert response.json()["done"] == (
-        f"updated {REPOSITORY}#6; labels: +first contribution +size: S"
-    )
-    assert synced.labels_of(REPOSITORY, 6) == ["first contribution", "size: S"]
+    synced.requests.clear()
+    response = send_webhook(client, "pull_request", pull_payload(synced, 6, action=action))
+    assert response.json()["done"] == f"updated {REPOSITORY}#6"
+    assert synced.writes() == []
+    assert synced.find(REPOSITORY, 6)["labels"] == []
+    assert Item.objects.get(repository__full_name=REPOSITORY, number=6).labels == []
     delivery = WebhookDelivery.objects.get()
     assert (delivery.event, delivery.action, delivery.repository) == (
         "pull_request",
-        "opened",
+        action,
         REPOSITORY,
     )
 
@@ -139,10 +143,11 @@ def test_incomplete_payload(client, synced):
     assert WebhookDelivery.objects.get().outcome == "failed"
 
 
-def test_github_down_while_labeling(client, synced):
+def test_pull_request_while_github_is_down(client, synced):
+    """The webhook brings everything: the site does not ask GitHub back."""
     synced.pull(REPOSITORY, 6, "dave")
     payload = pull_payload(synced, 6)
     synced.unreachable = True
     response = send_webhook(client, "pull_request", payload)
-    assert response.status_code == 503
-    assert response.json()["error"] == "GitHubUnreachable"
+    assert response.status_code == 200
+    assert response.json()["done"] == f"updated {REPOSITORY}#6"

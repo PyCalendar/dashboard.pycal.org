@@ -34,7 +34,7 @@ def test_repositories(client, synced):
 def test_repository(client, synced):
     data = client.get(f"/api/v1/repositories/{REPOSITORY}/?kind=pulls").json()
     assert [item["number"] for item in data["items"]] == [3, 4]
-    assert data["items"][0]["labels"] == ["first contribution", "size: XS"]
+    assert data["items"][0]["labels"] == []
     assert data["pages"] == 1
     closed = client.get(f"/api/v1/repositories/{REPOSITORY}/?state=closed").json()
     assert [(i["number"], i["status"]) for i in closed["items"]] == [(5, "merged")]

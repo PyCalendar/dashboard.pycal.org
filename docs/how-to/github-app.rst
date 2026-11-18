@@ -3,7 +3,7 @@ Register the GitHub App
 =======================
 
 The dashboard needs its GitHub App: the app reads the repositories, receives
-the webhooks, labels the pull requests and signs people in. Without it, every
+the webhooks and signs people in. Without it, every
 page says that the site has no GitHub App yet.
 
 Register it on the site
@@ -38,7 +38,8 @@ A site with a local address
 
 GitHub cannot deliver webhooks to ``http://localhost``. The registration then
 creates the app without a webhook; signing in and reading the repositories
-work, but pull requests are only labeled by ``manage.py sync_repositories``.
+work, but the dashboard is only up to date after ``manage.py sync_repositories``,
+which the container runs every ``SYNC_HOURS``.
 
 Set the app yourself
 ====================

@@ -11,7 +11,6 @@ from django.contrib.auth import get_user_model
 from pycal_dashboard.github import client as github_client
 from pycal_dashboard.github.app import GitHubApp
 from pycal_dashboard.github.webhook_signature import sign
-from pycal_dashboard.labels.rule_set import RuleSet
 from pycal_dashboard.services.repository_sync import RepositorySync
 from pycal_dashboard.sign_in import SignIn
 from tests.fakes.github import FakeGitHub
@@ -39,7 +38,6 @@ def app_settings(settings, private_key, tmp_path):
     settings.GITHUB_APP_PRIVATE_KEY = private_key
     settings.GITHUB_WEBHOOK_SECRET = WEBHOOK_SECRET
     settings.GITHUB_ORGANIZATIONS = ["pycalendar"]
-    settings.PULL_REQUEST_LABELS = RuleSet.parse("size,first-contribution")
     settings.SITE_URL = "https://dashboard.example.org"
     settings.SITE_ADMINS = ["admin"]
     settings.SIGN_IN = SignIn("client", "secret", "github-app")

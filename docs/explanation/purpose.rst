@@ -12,7 +12,7 @@ The dashboard puts the organization on one page and guides the community:
 
 - newcomers find issues that are meant for them,
 - reviewers find the pull requests that wait, small ones first,
-- first contributions are welcomed and labeled,
+- first contributions are seen and welcomed,
 - everybody sees who contributes, which says thank you.
 
 `community-insights <https://community-insights.readthedocs.io/>`_ measures
@@ -39,5 +39,5 @@ Signing in
 
 People sign in with GitHub only; the dashboard has no passwords. GitHub tells
 it who they are and their email addresses. It stores no token of theirs and
-never writes to GitHub on their behalf. Only the GitHub App writes: the labels
-of pull requests.
+never writes to GitHub on their behalf. The GitHub App only reads, too: the
+dashboard adds no labels and writes no comments. Automation is designed later.

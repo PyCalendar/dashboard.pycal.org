@@ -1,22 +1,20 @@
-"""Handle the webhooks of the GitHub App: keep the dashboard up to date, label pull requests."""
+"""Handle the webhooks of the GitHub App: keep the dashboard up to date.
+
+The site only reads: it writes nothing to GitHub.
+"""
 
 import logging
 
 from django.conf import settings
 
 from pycal_dashboard.errors import WebhookPayloadIncomplete
-from pycal_dashboard.github.app import GitHubApp
 from pycal_dashboard.models import Installation, Item, Repository
 from pycal_dashboard.organizations import is_shown
 
 from .item_store import ItemStore
-from .labeler import PullRequestLabeler
 from .repository_sync import RepositorySync
 
 log = logging.getLogger(__name__)
-
-# the actions of pull_request after which the labels are set again
-LABEL_ACTIONS = {"opened", "reopened", "synchronize", "edited", "ready_for_review"}
 
 
 class WebhookHandler:
@@ -158,21 +156,13 @@ class WebhookHandler:
         return f"updated {item}"
 
     def on_pull_request(self) -> str:
-        """A pull request was opened, pushed to, closed ...: store it and set its labels.
+        """A pull request was opened, pushed to, closed ...: store it.
 
         Returns:
             What was done.
         """
-        repository = self.repository()
-        pull = self.part("pull_request")
-        item = ItemStore.item(repository, pull)
-        if self.action not in LABEL_ACTIONS or repository.private:
-            return f"updated {item}"
-        installation_id = self.part("installation")["id"]
-        labeler = PullRequestLabeler(GitHubApp.for_installation(installation_id), repository)
-        added, removed = labeler.label(pull)
-        changes = [f"+{label}" for label in sorted(added)] + [f"-{label}" for label in removed]
-        return f"updated {item}; labels: {' '.join(changes) or 'unchanged'}"
+        item = ItemStore.item(self.repository(), self.part("pull_request"))
+        return f"updated {item}"
 
     def on_pull_request_review(self) -> str:
         """A pull request was reviewed: its requested reviewers changed.

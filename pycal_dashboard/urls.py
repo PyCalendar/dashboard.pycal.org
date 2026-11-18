@@ -17,7 +17,6 @@ urlpatterns = [
     path("reviews/", dashboard.reviews, name="reviews"),
     path("contributors/", dashboard.contributors, name="contributors"),
     path("contributors/<str:login>/", dashboard.contributor, name="contributor"),
-    path("labels/", dashboard.labels, name="labels"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
     path("setup/github-app/", registration.register_app, name="register_app"),
