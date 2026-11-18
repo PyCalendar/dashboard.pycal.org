@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="{{ color_scheme }}">
 <title>{% block title %}{{ site_name }}{% endblock %}</title>
-<link rel="icon" href="{% static 'img/favicon.png' %}">
+<link rel="icon" href="{{ favicon_url }}">
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <style>{{ theme_css }}</style>
 </head>
@@ -13,7 +13,7 @@
 <a class="skip" href="#main">Skip to the content</a>
 <header class="nav">
   <div class="wrap nav-row">
-    <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/favicon.png' %}" alt="" width="28" height="28"> {{ site_name }}</a>
+    <a class="brand" href="{% url 'home' %}"><img src="{{ favicon_url }}" alt="" width="28" height="28"> {{ site_name }}</a>
     <nav aria-label="Menu">
       <ul class="menu">
       {% if user.is_authenticated %}
@@ -40,6 +40,7 @@
       <li><a href="{% url 'api' %}">API</a></li>
       <li><a href="{{ links.documentation }}">Documentation</a></li>
       <li><a href="{{ links.source }}">Source code</a></li>
+      {% for title, url in footer_links %}<li><a href="{{ url }}">{{ title }}</a></li>{% endfor %}
     </ul>
     <small class="muted">{{ version }}</small>
   </div>

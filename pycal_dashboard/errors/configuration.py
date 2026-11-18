@@ -47,3 +47,38 @@ class InvalidOrganizationSetting(ConfigurationError):
     """
 
     title = "Invalid organization in the settings"
+
+
+class FaviconNotFound(ConfigurationError):
+    """The file of ``FAVICON`` does not exist.
+
+    ``FAVICON`` is an address such as ``https://pycal.org/favicon.png``, or the
+    path of a PNG, ICO or SVG file inside the container, such as
+    ``/app/data/favicon.png`` in the volume of the data. See
+    :doc:`/reference/settings`.
+    """
+
+    title = "The favicon was not found"
+
+
+class UnsupportedFavicon(ConfigurationError):
+    """The file of ``FAVICON`` is not a PNG, ICO or SVG file.
+
+    Browsers show these formats as icon of the page. Convert the icon and name
+    the file with its extension: ``.png``, ``.ico`` or ``.svg``.
+    """
+
+    title = "The favicon has an unsupported format"
+
+
+class InvalidFooterLink(ConfigurationError):
+    """An entry of ``FOOTER_LINKS`` is not ``Title=URL``.
+
+    ``FOOTER_LINKS`` lists the extra links of the footer, separated by commas,
+    each as a title, ``=`` and an address that starts with ``https://`` or
+    ``http://``, such as
+    ``FOOTER_LINKS=pycal.org=https://pycal.org,Blog=https://example.org/blog/``.
+    Leave it empty for no extra links. See :doc:`/reference/settings`.
+    """
+
+    title = "A link of the footer is invalid"

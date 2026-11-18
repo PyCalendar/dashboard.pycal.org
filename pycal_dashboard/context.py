@@ -1,8 +1,10 @@
 """What every page knows: the name of the site, its colors, its links and the visitor."""
 
 from django.conf import settings
+from django.urls import reverse
 
 from . import build_info
+from .checks import is_url
 from .services.app_registration import AppRegistration
 from .services.identity import GitHubIdentity
 from .theme import COOKIE, Theme
@@ -58,6 +60,8 @@ def site(request) -> dict:
         },
         "version": version_text(),
         "github_app_configured": configured,
+        "favicon_url": settings.FAVICON if is_url(settings.FAVICON) else reverse("favicon"),
+        "footer_links": settings.FOOTER_LINKS,
         # where people install the app on repositories; empty without an app
         "install_url": (
             f"https://github.com/apps/{settings.GITHUB_APP_SLUG}/installations/new"

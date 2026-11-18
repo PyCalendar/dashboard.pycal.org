@@ -14,9 +14,12 @@ from .base import (
 )
 from .configuration import (
     ConfigurationError,
+    FaviconNotFound,
     InvalidColor,
+    InvalidFooterLink,
     InvalidOrganizationSetting,
     UnknownColor,
+    UnsupportedFavicon,
 )
 from .dashboard import (
     ApiEndpointNotFound,
@@ -62,6 +65,7 @@ __all__ = [
     "AppSettingsInEnvironment",
     "ConfigurationError",
     "DashboardError",
+    "FaviconNotFound",
     "GitHubError",
     "GitHubLoginExpired",
     "GitHubNotFound",
@@ -69,6 +73,7 @@ __all__ = [
     "GitHubUnreachable",
     "InvalidAppName",
     "InvalidColor",
+    "InvalidFooterLink",
     "InvalidInstallationId",
     "InvalidOrganization",
     "InvalidOrganizationSetting",
@@ -85,6 +90,7 @@ __all__ = [
     "SignInNotConfigured",
     "UnexpectedError",
     "UnknownColor",
+    "UnsupportedFavicon",
     "WebhookError",
     "WebhookEventMissing",
     "WebhookPayloadInvalid",

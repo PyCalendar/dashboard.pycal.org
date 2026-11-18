@@ -11,5 +11,5 @@ class DashboardConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
 
     def ready(self):
-        """Connect the signals."""
-        from . import signals  # noqa: F401
+        """Connect the signals and register the checks of the settings."""
+        from . import checks, signals  # noqa: F401

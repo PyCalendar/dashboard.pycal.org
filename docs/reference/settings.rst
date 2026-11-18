@@ -61,8 +61,9 @@ People
    GitHub handles, comma separated, that administer the site: the Django admin
    and the webhook deliveries. The rights follow the setting at every request,
    also for people who signed in before it changed.
-``SESSION_HOURS``
-   Hours after which people are signed out. Default: two weeks.
+``SIGN_OUT_MINUTES``
+   Minutes after signing in when people are signed out again, also while they
+   use the site. Default: ``60``.
 
 Data and secrets
 ================
@@ -101,6 +102,16 @@ Look and links
    The defaults are the colors of sign.pycal.org: the blue ``#3b79aa`` and the
    yellow ``#ffd43b`` of the pycal logo. The names are those of
    ``pycal_dashboard/theme.py``, such as ``PRIMARY``, ``ACCENT`` or ``NAV``.
+``FAVICON``
+   The icon of the site: an address, such as ``https://pycal.org/favicon.png``,
+   or the path of a PNG, ICO or SVG file in the container, such as
+   ``/app/data/favicon.png``. Empty: the icon of pycal. A wrong file stops the
+   site with :class:`~pycal_dashboard.errors.configuration.FaviconNotFound` or
+   :class:`~pycal_dashboard.errors.configuration.UnsupportedFavicon`.
+``FOOTER_LINKS``
+   The extra links of the footer, comma separated, each ``Title=URL``, such as
+   ``pycal.org=https://pycal.org,Blog=https://example.org/blog/``. Empty: no
+   extra links. Default: ``pycal.org=https://pycal.org``.
 ``SOURCE_URL``
    The repository of the code.
 ``DOCS_URL``

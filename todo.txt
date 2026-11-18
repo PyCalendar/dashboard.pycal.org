@@ -48,8 +48,27 @@ community: where to start, what waits for a review, who contributes.
 ## 2026-11-18: all variables in .env.example; what to take over from sign.pycal.org
 
 - [x] .env.example contains every variable (a test checks it against docs/reference/settings.rst)
-- [ ] Go through the commits and todos of sign.pycal.org; ask with check boxes which ones to apply
+- [x] Go through the commits and todos of sign.pycal.org; ask with check boxes which ones to apply
       (only those that make sense for an application with separate functionality)
+
+## 2026-11-18: taken over from sign.pycal.org (chosen with check boxes)
+
+- [ ] Sencho deploy job after the push of the image (with retries; skipped without SENCHO_TOKEN)
+- [ ] Live check after each deployment: make check-live walks the public pages of the live site
+- [ ] Trivy scan of the image: make docker-scan in CI
+- [ ] Vale for the prose of the documentation: make prose in CI
+- [x] Sign out after a time: SIGN_OUT_MINUTES
+- [ ] German and Spanish, with a language menu next to the color menu
+- [ ] Action log: what triggered what, a global log for the administrators
+- [x] Warn at the start about SITE_ADMINS that never signed in
+- [ ] JSON of every public page with CORS
+- [ ] The page of the licenses: /licenses/
+- [ ] Local times in the browser (a small static script; works without JavaScript)
+- [x] FOOTER_LINKS and FAVICON settings
+- [ ] Guide: test the GitHub App locally through a tunnel (Tailscale Funnel)
+- [ ] A development .env (.env.development.example) that make run reads
+- [ ] Show the permissions and events that the registered app misses (setup page, command)
+- [ ] Links to the documentation as a question mark that opens a new tab; the GitHub mark on links to GitHub
 
 ## 2026-11-18: admins, the Django admin, installing the app, CI
 
@@ -72,7 +91,5 @@ community: where to start, what waits for a review, who contributes.
 
 ## Open: work
 
-- [ ] Deploy job (Sencho) after the push of the image, like sign.pycal.org, once the stack exists
-- [ ] Translations (German, Spanish) like sign.pycal.org
 - [ ] Emails of the preference "Email me about my account and news of the site": stored; nothing is sent yet
 - [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io

@@ -11,6 +11,7 @@ urlpatterns = [
     path("about/", pages.about, name="about"),
     path("health/", pages.health, name="health"),
     path("theme/", pages.theme, name="theme"),
+    path("favicon.ico", pages.favicon, name="favicon"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
     path("setup/github-app/", registration.register_app, name="register_app"),

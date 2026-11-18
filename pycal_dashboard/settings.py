@@ -10,6 +10,8 @@ from pathlib import Path
 import environ
 
 from pycal_dashboard import registered_settings
+from pycal_dashboard.footer_links import DEFAULT as DEFAULT_FOOTER_LINKS
+from pycal_dashboard.footer_links import parse_footer_links
 from pycal_dashboard.organizations import parse_organizations
 from pycal_dashboard.sign_in import SignIn
 from pycal_dashboard.theme import Theme
@@ -140,7 +142,9 @@ SIGN_IN = SignIn.from_environment(dict(os.environ))
 SOCIALACCOUNT_PROVIDERS = SIGN_IN.providers()
 # GitHub handles that administer this site: the Django admin and the webhook deliveries
 SITE_ADMINS = [login.lower() for login in env.list("SITE_ADMINS", default=[])]
-SESSION_COOKIE_AGE = env.int("SESSION_HOURS", default=24 * 14) * 3600
+# minutes after signing in when people are signed out again, also while they use the site
+SIGN_OUT_MINUTES = env.float("SIGN_OUT_MINUTES", default=60)
+SESSION_COOKIE_AGE = max(60, round(SIGN_OUT_MINUTES * 60))
 
 # The GitHub App: docs/how-to/github-app.rst
 GITHUB_API = env("GITHUB_API", default="https://api.github.com").rstrip("/")
@@ -158,6 +162,10 @@ GITHUB_ORGANIZATIONS = parse_organizations(env("GITHUB_ORGANIZATIONS", default="
 THEME = Theme.from_environment(dict(os.environ))
 SOURCE_URL = env("SOURCE_URL", default="https://github.com/PyCalendar/dashboard.pycal.org")
 DOCS_URL = env("DOCS_URL", default="https://docs.dashboard.pycal.org/")
+# the icon: an address (https://...) or the path of a PNG, ICO or SVG file; empty: pycal's
+FAVICON = env("FAVICON", default="")
+# the extra links of the footer: Title=URL, comma separated; empty: none
+FOOTER_LINKS = parse_footer_links(env("FOOTER_LINKS", default=DEFAULT_FOOTER_LINKS))
 
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_BACKEND = (
