@@ -100,6 +100,17 @@ community: where to start, what waits for a review, who contributes.
 - [x] Add another address and choose the primary one (only a verified address; the primary one
       cannot be removed)
 
+## 2026-11-18: every setting in the env file, described and structured (a rule)
+
+- [x] Every setting that can be set is in .env.example with a description directly above it and
+      its default, in sections; the same for .env.development.example (AGENTS.md, tests)
+
+## 2026-11-18: language and colors in the account
+
+- [ ] People choose their language in the account; without a choice the language of the browser
+      decides, and the language menu overrides it
+- [ ] People choose the colors (as the system, light, dark) in the account, like on sign.pycal.org
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now

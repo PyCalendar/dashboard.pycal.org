@@ -67,3 +67,12 @@ def test_every_variable_of_the_code_is_documented():
     names |= set(re.findall(r"\$\{?(PORT|WORKERS|THREADS)\b", code))
     documented = (ROOT / "docs/reference/settings.rst").read_text()
     assert [name for name in sorted(names) if f"``{name}``" not in documented] == []
+
+
+@pytest.mark.parametrize("name", [".env.example", ".env.development.example"])
+def test_every_setting_of_the_example_is_described(name):
+    """Each setting has its description: a line with ## directly above it."""
+    lines = (ROOT / name).read_text().splitlines()
+    for number, line in enumerate(lines):
+        if re.match(r"^#? ?[A-Z][A-Z_]+=", line):
+            assert lines[number - 1].startswith("## "), line

@@ -44,6 +44,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - The site keeps no data of GitHub for now (no models that track or query the
   GitHub API) and writes nothing to GitHub; numbers and automation are separate
   functionality, designed later.
+- Every setting that can be set is in `.env.example`, with its description (a `##` line
+  directly above it) and its default, in the sections of the file; and in
+  `docs/reference/settings.rst`. `tests/test_settings.py` checks both.
 - New permissions or events of the GitHub App go into
   `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`.
 
