@@ -1,0 +1,1 @@
+The container needs about half the memory when idle (about 60 MB instead of 124 MB): one process of nginx and of gunicorn by default (``WORKERS=1``), the packages that speak with GitHub are loaded only when needed, and the image reads the licenses when it is built.

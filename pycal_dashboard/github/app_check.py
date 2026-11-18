@@ -8,7 +8,6 @@ app lacks, on the page *Register the GitHub App* and with ``manage.py check_app`
 import time
 from dataclasses import dataclass
 
-import jwt
 from django.conf import settings
 
 from pycal_dashboard.errors import GitHubAppNotConfigured, InvalidPrivateKey
@@ -40,6 +39,8 @@ class AppCheck:
         """
         if not (settings.GITHUB_APP_ID and settings.GITHUB_APP_PRIVATE_KEY):
             raise GitHubAppNotConfigured("GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY")
+        import jwt  # with cryptography, only when the app speaks for itself
+
         now = int(time.time())
         payload = {"iat": now - 60, "exp": now + 540, "iss": str(settings.GITHUB_APP_ID)}
         try:

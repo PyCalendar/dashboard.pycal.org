@@ -9,4 +9,8 @@ python manage.py prepare
 # the installations of the GitHub App: a new version may need more permissions, which the
 # people of each installation are told by email
 (python manage.py check_installations || true) &
-exec gunicorn pycal_dashboard.wsgi -w "$WORKERS" --threads "$THREADS" -b "127.0.0.1:8000" --access-logfile -
+# a low footprint when idle: fewer arenas of malloc for the threads, and every worker is replaced
+# after about 1000 requests, which returns the memory that a busy time made it grow by
+export MALLOC_ARENA_MAX=2
+exec gunicorn pycal_dashboard.wsgi -w "$WORKERS" --threads "$THREADS" -b "127.0.0.1:8000" \
+    --max-requests 1000 --max-requests-jitter 100 --access-logfile -

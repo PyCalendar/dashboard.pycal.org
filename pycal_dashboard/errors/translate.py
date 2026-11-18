@@ -1,6 +1,6 @@
 """The translation table: any exception becomes an error people understand."""
 
-import httpx
+import sys
 
 from .base import DashboardError, UnexpectedError
 from .github import GitHubError, GitHubUnreachable
@@ -39,8 +39,11 @@ def translate(error: BaseException) -> DashboardError:
     """
     if isinstance(error, DashboardError):
         return error
-    if isinstance(error, httpx.TransportError):
+    # httpx is loaded only for the requests to GitHub: if it is not loaded, the error is not one
+    # of its errors, and the idle site does not keep it in memory
+    httpx = sys.modules.get("httpx")
+    if httpx and isinstance(error, httpx.TransportError):
         return GitHubUnreachable(str(error))
-    if isinstance(error, httpx.HTTPError):
+    if httpx and isinstance(error, httpx.HTTPError):
         return GitHubError(str(error))
     return UnexpectedError(f"{type(error).__name__}: {error}")

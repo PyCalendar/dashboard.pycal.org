@@ -89,7 +89,9 @@ The container
 ``PORT``
    The port of nginx in the container. Default: ``5000``.
 ``WORKERS``, ``THREADS``
-   The processes and threads of gunicorn. Default: ``2`` and ``4``.
+   The processes and threads of gunicorn. Default: ``1`` and ``4``. Each process
+   keeps the site in memory, threads share it: raise ``WORKERS`` only for many
+   visitors, see :ref:`memory`.
 
 Email
 =====

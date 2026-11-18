@@ -1,9 +1,12 @@
 """Requests to the API of GitHub, with its errors translated.
 
-The site only sends one: the conversion of the manifest when the GitHub App is registered.
+httpx is imported with the first request, so that the idle site does not keep it in memory.
 """
 
-import httpx
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 
 from pycal_dashboard.errors import (
@@ -14,6 +17,9 @@ from pycal_dashboard.errors import (
     GitHubUnreachable,
     MissingPermissions,
 )
+
+if TYPE_CHECKING:
+    import httpx
 
 # The tests replace it with a fake GitHub (tests/fakes/github.py); None: the network.
 TRANSPORT: httpx.BaseTransport | None = None
@@ -38,6 +44,8 @@ class GitHubClient:
         }
         if token:
             headers["Authorization"] = f"{scheme} {token}"
+        import httpx  # only when the site speaks with GitHub
+
         self.http = httpx.Client(
             base_url=settings.GITHUB_API,
             headers=headers,
@@ -64,6 +72,8 @@ class GitHubClient:
             MissingPermissions: The app may not do this.
             GitHubError: Another error.
         """
+        import httpx  # loaded by __init__ already
+
         try:
             response = self.http.request(method, path, **kwargs)
         except httpx.TransportError as error:

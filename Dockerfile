@@ -4,7 +4,7 @@ COPY LICENSE /LICENSE
 
 EXPOSE 5000
 ENV PORT=5000
-ENV WORKERS=2
+ENV WORKERS=1
 ENV THREADS=4
 ENV DATA_DIR=/app/data
 ENV PYTHONUNBUFFERED=true
@@ -32,8 +32,10 @@ COPY LICENSES LICENSES
 COPY REUSE.toml ./
 COPY docker/start-service.sh docker/healthcheck.py ./
 COPY docker/nginx.conf docker/starting.html docker/
-# throwaway key: nothing secret is written into the image
+# throwaway key: nothing secret is written into the image. The licenses are read once, here: the
+# site reads the file and keeps neither the REUSE tool nor pip-licenses in memory.
 RUN SECRET_KEY=build DATA_DIR=/tmp/build python manage.py collectstatic --noinput \
+ && python -m pycal_dashboard.licenses \
  && mkdir -p /app/data && chmod 777 /app/data
 
 VOLUME /app/data

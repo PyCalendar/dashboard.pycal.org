@@ -2,19 +2,31 @@
 
 The license of the project and the licenses of the code taken over from other projects are read
 from ``REUSE.toml`` and ``LICENSES/`` with the REUSE tool; the installed Python packages with
-pip-licenses.
+pip-licenses. The image reads them once when it is built, into ``licenses.json`` (``write()``):
+the site then reads that file and never loads the REUSE tool and pip-licenses, which keeps its
+memory low. Without the file, such as in development, it reads them itself.
 """
 
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
 from functools import cache
 from pathlib import Path
-
-import piplicenses
-from reuse.global_licensing import ReuseTOML
 
 ROOT = Path(__file__).resolve().parent.parent
 PROJECT_LICENSE = "AGPL-3.0-or-later"
 UNKNOWN = "UNKNOWN"  # what pip-licenses says for a field that is missing
+# the licenses, read when the image is built; not in git
+DATA = Path(__file__).resolve().parent / "licenses.json"
+# the fields of pip-licenses that the site shows
+FIELDS = (
+    "name",
+    "version",
+    "home-page",
+    "license_expression",
+    "license",
+    "license_classifier",
+    "licensetext",
+)
 
 
 @dataclass(frozen=True)
@@ -63,6 +75,20 @@ def license_file(name: str, root: Path = ROOT) -> Path | None:
 
 
 def reused(root: Path = ROOT) -> list[Package]:
+    """The code taken over from other projects, from ``licenses.json`` or ``REUSE.toml``.
+
+    Args:
+        root: The project.
+
+    Returns:
+        The files, their copyright and license.
+    """
+    if root == ROOT and DATA.is_file():
+        return [Package(**package) for package in json.loads(DATA.read_text())["reused"]]
+    return read_reused(root)
+
+
+def read_reused(root: Path = ROOT) -> list[Package]:
     """The code taken over from other projects, from the annotations of ``REUSE.toml``.
 
     Annotations under the license of the project are left out.
@@ -77,6 +103,8 @@ def reused(root: Path = ROOT) -> list[Package]:
     if not path.is_file():
         return []
     found = []
+    from reuse.global_licensing import ReuseTOML  # see the docstring
+
     for annotation in ReuseTOML.from_file(path, root).annotations:
         expressions = sorted(str(expression) for expression in annotation.spdx_expressions)
         if expressions == [PROJECT_LICENSE]:
@@ -115,20 +143,54 @@ def license_of(entry: dict) -> str:
     return ", ".join(entry.get("license_classifier", [])) or "see the package"
 
 
-@cache
 def installed() -> dict[str, dict]:
+    """The installed Python packages, from ``licenses.json`` or pip-licenses, by lower case name.
+
+    The file is read on each call, so that the texts of the licenses do not stay in memory.
+
+    Returns:
+        The entries of pip-licenses, with the texts of their license files.
+    """
+    if DATA.is_file():
+        return json.loads(DATA.read_text())["installed"]
+    return read_installed()
+
+
+@cache
+def read_installed() -> dict[str, dict]:
     """The installed Python packages as pip-licenses reads them, by lower case name.
 
     Returns:
         The entries of pip-licenses, with the texts of their license files.
     """
+    import piplicenses  # see the docstring of the module
+
     arguments = piplicenses.create_parser().parse_args(
         ["--from=mixed", "--with-system", "--with-urls", "--with-license-file", "--no-license-path"]
     )
     found: dict[str, dict] = {}
     for entry in piplicenses.get_packages(arguments):
-        found.setdefault(str(entry["name"]).lower(), entry)
+        found.setdefault(
+            str(entry["name"]).lower(), {key: entry[key] for key in FIELDS if key in entry}
+        )
     return found
+
+
+def write(path: Path = DATA) -> None:
+    """Read the licenses into a file, which the site reads instead; the image does it once.
+
+    Args:
+        path: The file.
+    """
+    data = {
+        "installed": read_installed(),
+        "reused": [asdict(package) for package in read_reused()],
+    }
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=0, sort_keys=True))
+
+
+if __name__ == "__main__":
+    write()
 
 
 def package_license_text(name: str) -> str | None:

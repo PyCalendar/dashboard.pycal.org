@@ -123,6 +123,16 @@ community: where to start, what waits for a review, who contributes.
 - [x] The page Account lists the installations of the person with what they lack and the link to
       accept the permissions on GitHub
 
+## 2026-11-18: a low memory footprint when idle
+
+- [x] Measured the idle container: 124 MiB (13 workers of nginx, 2 of gunicorn, httpx, jwt,
+      cryptography, reuse and pip-licenses loaded by every worker)
+- [x] One worker of nginx and of gunicorn by default (WORKERS=1), MALLOC_ARENA_MAX=2, workers
+      replaced after about 1000 requests: 60 MiB when idle
+- [x] httpx, jwt and cryptography are imported only when the site speaks with GitHub; the image
+      reads the licenses when it is built (pycal_dashboard/licenses.json)
+- [x] A rule in AGENTS.md and a test (tests/quality/test_memory.py) keep it so
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now

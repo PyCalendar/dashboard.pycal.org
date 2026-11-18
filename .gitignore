@@ -14,3 +14,4 @@ __pycache__/
 /.claude/settings.local.json
 /build/
 /pycal_dashboard/version.json
+/pycal_dashboard/licenses.json

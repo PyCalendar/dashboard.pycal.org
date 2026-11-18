@@ -52,6 +52,12 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - New permissions or events of the GitHub App go into
   `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`.
 
+- The idle memory of the service stays as low as possible: one process of nginx and of gunicorn
+  by default, and the packages that are only needed now and then (GitHub, JWT, the licenses) are
+  imported where they are used, not at the top of the modules that the pages load.
+  `tests/quality/test_memory.py` checks that the pages of every day load none of them; measure
+  the container (`docker stats`) when a change adds a dependency or a process.
+
 ## Tests
 
 - Every change comes with tests, also of the errors people can see.

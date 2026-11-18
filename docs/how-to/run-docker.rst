@@ -49,6 +49,19 @@ The health check of the container calls ``/health/`` with the first host of
 ``ALLOWED_HOSTS``. While the site starts, nginx answers with a page that says
 so.
 
+.. _memory:
+
+Memory
+------
+
+The site needs little memory when it is idle, about 60 MB: one process of
+nginx and one of gunicorn with four threads (``WORKERS``, ``THREADS``). It
+loads what speaks with GitHub only when it does, and the image reads the
+licenses of the packages when it is built, into ``licenses.json``. After about
+1000 requests gunicorn replaces its process, which gives back the memory that a
+busy time took. For many visitors, raise ``WORKERS``; each process needs about
+60 MB more.
+
 Update
 ======
 

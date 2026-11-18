@@ -1,8 +1,11 @@
 """The page of the licenses: the project, code from other projects, the Python packages."""
 
+import json
 from pathlib import Path
 
 import pytest
+
+from pycal_dashboard import licenses
 
 pytestmark = pytest.mark.django_db
 
@@ -41,3 +44,26 @@ def test_package_license_texts(client):
 def test_the_image_contains_the_license_texts():
     dockerfile = (Path(__file__).parents[1] / "Dockerfile").read_text()
     assert "COPY LICENSES LICENSES" in dockerfile and "COPY REUSE.toml" in dockerfile
+
+
+def test_the_image_reads_the_licenses_when_it_is_built():
+    dockerfile = (Path(__file__).parents[1] / "Dockerfile").read_text()
+    assert "python -m pycal_dashboard.licenses" in dockerfile
+
+
+def test_the_site_reads_the_licenses_from_the_file(tmp_path, monkeypatch, client):
+    """With licenses.json, as in the image, the page shows what the file says."""
+    path = tmp_path / "licenses.json"
+    licenses.write(path)
+    data = json.loads(path.read_text())
+    assert "django" in data["installed"] and "licensetext" in data["installed"]["django"]
+    data["installed"]["django"]["version"] = "9.9.9-from-the-file"
+    path.write_text(json.dumps(data))
+    monkeypatch.setattr(licenses, "DATA", path)
+    licenses.packages.cache_clear()
+    try:
+        assert b"9.9.9-from-the-file" in client.get("/licenses/").content
+        assert b"Django Software Foundation" in client.get("/licenses/packages/django/").content
+        assert licenses.reused() == licenses.read_reused()
+    finally:
+        licenses.packages.cache_clear()
