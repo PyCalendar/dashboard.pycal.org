@@ -13,7 +13,16 @@
   <p class="muted">{% translate "The site sends emails only to verified addresses and only what you choose below." %}</p>
 </section>
 <section class="card" id="preferences"><h2>{% translate "Preferences" %}</h2>
-  <p>{% translate "The language and the colors: the menus at the top keep them in this browser." %}</p>
+<form method="post" class="stacked" data-preferences>{% csrf_token %}
+  <p><label for="language">{% translate "Language" %}</label>
+    <select id="language" name="language"><option value="">{% translate "As the browser" %}</option>{% for code, name in language_choices %}<option value="{{ code }}" lang="{{ code }}"{% if preferences.language == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select>
+    <small>{% translate "Without a choice, the language of your browser decides, or the language menu at the top." %}</small></p>
+  <p><label for="theme">{% translate "Colors" %}</label>
+    <select id="theme" name="theme"><option value="">{% translate "As the menu" %}</option>{% for value, title in theme_choices %}<option value="{{ value }}"{% if preferences.theme == value %} selected{% endif %}>{{ title }}</option>{% endfor %}</select>
+    <small>{% translate "Light, dark, or as your system. Without a choice, the colors menu at the top decides." %}</small></p>
+  <p class="muted">{% translate "Your choice applies on every device where you sign in. The menus at the top change it, too." %}</p>
+  <p><button class="button">{% translate "Save the preferences" %}</button></p>
+</form>
   <p class="muted" data-no-emails>{% translate "The site sends no emails yet. When it does, you choose here which types of emails you get." %}</p>
 </section>
 <section class="card" id="install" data-install><h2>{% translate "The GitHub App" %}</h2>

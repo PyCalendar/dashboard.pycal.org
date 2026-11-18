@@ -11,10 +11,12 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
+from django.views.i18n import set_language
 
 from pycal_dashboard import build_info, licenses
 from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+from pycal_dashboard.models import Preferences
 from pycal_dashboard.public_json import json_address
 from pycal_dashboard.theme import COOKIE, Theme
 from pycal_dashboard.views.json_page import page
@@ -181,8 +183,24 @@ def favicon(request):
 
 
 @require_POST
+def language(request):
+    """Keep the choice of the language menu in a cookie, and in the account, and go back.
+
+    Args:
+        request: POST with ``language`` and ``next``, as Django's ``set_language`` reads them.
+
+    Returns:
+        A redirect to ``next`` on this site.
+    """
+    chosen = request.POST.get("language", "")
+    if request.user.is_authenticated and chosen in dict(settings.LANGUAGES):
+        Preferences.objects.update_or_create(user=request.user, defaults={"language": chosen})
+    return set_language(request)
+
+
+@require_POST
 def theme(request):
-    """Keep the choice of the colors in a cookie and return to the page.
+    """Keep the choice of the colors in a cookie, and in the account, and return to the page.
 
     Args:
         request: POST with ``theme`` (auto, light or dark) and ``next``.
@@ -194,9 +212,12 @@ def theme(request):
     if not url_has_allowed_host_and_scheme(target, {request.get_host()}, request.is_secure()):
         target = "/"
     response = HttpResponseRedirect(target)
+    choice = Theme.choice(request.POST.get("theme"))
+    if request.user.is_authenticated:
+        Preferences.objects.update_or_create(user=request.user, defaults={"theme": choice})
     response.set_cookie(
         COOKIE,
-        Theme.choice(request.POST.get("theme")),
+        choice,
         max_age=365 * 24 * 3600,
         samesite="Lax",
         secure=request.is_secure(),

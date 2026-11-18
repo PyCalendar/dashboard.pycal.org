@@ -26,3 +26,14 @@ class NoGitHubAccount(AccountError):
 
     title = _("The account has no GitHub identity")
     status = 403
+
+
+class UnknownPreference(AccountError):
+    """The form of the preferences sent a value that the site does not know.
+
+    The detail names the field and its value. Reload the page *Account*: the
+    form may be from an older version of the site, which knew other languages
+    or colors.
+    """
+
+    title = _("Unknown preference")

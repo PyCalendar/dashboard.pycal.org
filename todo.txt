@@ -107,9 +107,10 @@ community: where to start, what waits for a review, who contributes.
 
 ## 2026-11-18: language and colors in the account
 
-- [ ] People choose their language in the account; without a choice the language of the browser
-      decides, and the language menu overrides it
-- [ ] People choose the colors (as the system, light, dark) in the account, like on sign.pycal.org
+- [x] People choose their language in the account; without a choice the language of the browser
+      decides, and the language menu overrides it; signed in, the menus save their choice in the
+      account (migration 0006)
+- [x] People choose the colors (as the system, light, dark) in the account, like on sign.pycal.org
 
 ## Open: decisions of the person
 

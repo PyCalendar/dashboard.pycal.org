@@ -88,6 +88,8 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     # the rights of the Django admin follow SITE_ADMINS, also for sessions of before a change
     "pycal_dashboard.admin_rights.AdminRightsMiddleware",
+    # the language that a person chose in the account, on every device
+    "pycal_dashboard.preferences_middleware.PreferencesMiddleware",
     # <page>.json: the public information of a page, readable by other sites
     "pycal_dashboard.public_json.PublicJsonMiddleware",
     "pycal_dashboard.middleware.ErrorPageMiddleware",

@@ -96,3 +96,15 @@ def test_switch_the_language(page, site):
     page.get_by_label("Sprache").click()
     page.get_by_role("button", name="English").click()
     expect(page.locator("html")).to_have_attribute("lang", "en")
+
+
+def test_choose_the_language_and_the_colors_in_the_account(signed_in, site):
+    page = signed_in
+    page.goto(f"{site}/account/")
+    page.locator("select#language").select_option("de")
+    page.locator("select#theme").select_option("dark")
+    page.get_by_role("button", name="Save the preferences").click()
+    expect(page.get_by_role("status")).to_have_text("Deine Einstellungen sind gespeichert.")
+    expect(page.locator("html")).to_have_attribute("lang", "de")
+    expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+    expect(page.locator("body")).to_have_css("background-color", "rgb(17, 24, 32)")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 15:12+0000\n"
+"POT-Creation-Date: 2026-11-18 15:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,9 @@ msgstr "Tu cuenta"
 
 msgid "The account has no GitHub identity"
 msgstr "La cuenta no tiene identidad de GitHub"
+
+msgid "Unknown preference"
+msgstr "Preferencia desconocida"
 
 msgid "Something went wrong"
 msgstr "Algo salió mal"
@@ -439,10 +442,37 @@ msgstr ""
 msgid "Preferences"
 msgstr "Preferencias"
 
+msgid "As the browser"
+msgstr "Como el navegador"
+
 msgid ""
-"The language and the colors: the menus at the top keep them in this browser."
+"Without a choice, the language of your browser decides, or the language menu "
+"at the top."
 msgstr ""
-"El idioma y los colores: los menús de arriba los guardan en este navegador."
+"Sin elección, decide el idioma de tu navegador o el menú de idioma de arriba."
+
+msgid "Colors"
+msgstr "Colores"
+
+msgid "As the menu"
+msgstr "Como el menú"
+
+msgid ""
+"Light, dark, or as your system. Without a choice, the colors menu at the top "
+"decides."
+msgstr ""
+"Claro, oscuro o como tu sistema. Sin elección, decide el menú de colores de "
+"arriba."
+
+msgid ""
+"Your choice applies on every device where you sign in. The menus at the top "
+"change it, too."
+msgstr ""
+"Tu elección vale en cada dispositivo donde inicies sesión. Los menús de "
+"arriba también la cambian."
+
+msgid "Save the preferences"
+msgstr "Guardar las preferencias"
 
 msgid ""
 "The site sends no emails yet. When it does, you choose here which types of "
@@ -1000,6 +1030,9 @@ msgstr[1] "hace %(count)d días"
 #, python-format
 msgid "on %(date)s"
 msgstr "el %(date)s"
+
+msgid "Your preferences are saved."
+msgstr "Tus preferencias están guardadas."
 
 msgid "Bad request"
 msgstr "Solicitud incorrecta"

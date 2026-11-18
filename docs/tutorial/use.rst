@@ -29,14 +29,17 @@ The language
 
 The site speaks English, German and Spanish. It starts in the language of your
 browser; the menu with the globe at the top changes it and keeps the choice.
+Signed in, you choose it in your account for every device, see
+:ref:`preferences`.
 To help translate, see :ref:`translate`.
 
 The colors
 ==========
 
 The button with the sun and the moon switches between light, dark and the
-colors of your system. The site keeps the choice in a cookie; it works without
-JavaScript.
+colors of your system, like on sign.pycal.org. The site keeps the choice in a
+cookie; it works without JavaScript. Signed in, the choice is kept in your
+account for every device, see :ref:`preferences`.
 
 When something goes wrong
 =========================

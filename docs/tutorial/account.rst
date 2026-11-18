@@ -25,13 +25,31 @@ Only you see it. It shows:
 - **Email addresses**: those GitHub shared, whether they are verified and which
   one is primary, with *Send a link to verify it* for an address that is not
   verified, see below.
-- **Preferences**: the language and the colors, which the menus at the top
-  keep in your browser. The site sends no emails yet; the types of emails to
-  switch on and off come with the features that send them.
+- **Preferences**: the language and the colors, see below. The site sends
+  no emails yet; the types of emails to switch on and off come with the
+  features that send them.
 - **The GitHub App**: *Install the GitHub App* on the repositories of your
   account or of an organization, see :doc:`/how-to/install-app`.
 
 .. _administrators:
+
+.. _preferences:
+
+Language and colors
+===================
+
+*Language*
+   English, Deutsch or Español, or *As the browser*.
+*Colors*
+   *As the system*, *Light* or *Dark*, or *As the menu*.
+
+Press *Save the preferences*. Your choice applies on every device where you
+sign in. The language menu (the globe) and the colors menu (the sun and the
+moon) at the top change it, too.
+
+Without a choice, the language of your browser decides, and the colors follow
+your system; the menus override them in a cookie of the browser, also when you
+are not signed in.
 
 .. _email-addresses:
 

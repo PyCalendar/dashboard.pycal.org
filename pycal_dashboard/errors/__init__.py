@@ -7,6 +7,7 @@ documentation (``DashboardError.docs_url``).
 from .account import (
     AccountError,
     NoGitHubAccount,
+    UnknownPreference,
 )
 from .base import (
     DashboardError,
@@ -92,6 +93,7 @@ __all__ = [
     "SignInNotConfigured",
     "UnexpectedError",
     "UnknownColor",
+    "UnknownPreference",
     "UnsupportedFavicon",
     "WebhookError",
     "WebhookEventMissing",

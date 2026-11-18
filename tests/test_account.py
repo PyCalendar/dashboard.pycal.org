@@ -20,11 +20,6 @@ def test_account_page(client, bob):
     assert "data-no-emails" in content and "email_notifications" not in content
 
 
-def test_the_account_saves_nothing(client, alice):
-    client.force_login(alice)
-    assert client.post("/account/", {"email_notifications": "yes"}).status_code == 405
-
-
 def test_account_without_github(client, db):
     user = get_user_model().objects.create(username="local")
     client.force_login(user)

@@ -36,7 +36,8 @@ def site(request) -> dict:
         The name, the colors, the links of the site and the GitHub account of the visitor.
     """
     docs = settings.DOCS_URL.rstrip("/") + "/"
-    theme = Theme.choice(request.COOKIES.get(COOKIE))
+    chosen = getattr(getattr(request, "preferences", None), "theme", "")
+    theme = Theme.choice(chosen or request.COOKIES.get(COOKIE))
     configured = bool(settings.GITHUB_APP_ID)
     return {
         "site_name": settings.SITE_NAME,
