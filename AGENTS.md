@@ -57,6 +57,10 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   imported where they are used, not at the top of the modules that the pages load.
   `tests/quality/test_memory.py` checks that the pages of every day load none of them; measure
   the container (`docker stats`) when a change adds a dependency or a process.
+- Every lazy import (an import inside a function) goes through the import guard,
+  `with IMPORT_GUARD:` of `pycal_dashboard/import_guard.py`, as in community-insights: threads
+  that import at the same time could otherwise stop each other in a deadlock.
+  `tests/quality/test_lazy_imports.py` checks every import and imports in threads at once.
 
 ## Tests
 

@@ -3,6 +3,8 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
+
 
 class DashboardError(Exception):
     """Something went wrong.
@@ -67,7 +69,8 @@ class DashboardError(Exception):
             >>> SignInNotConfigured.setup_url(), UnexpectedError.setup_url()
             ('/setup/oauth-app/', '')
         """
-        from django.urls import reverse
+        with IMPORT_GUARD:  # see import_guard.py
+            from django.urls import reverse
 
         return reverse(cls.setup) if cls.setup else ""
 

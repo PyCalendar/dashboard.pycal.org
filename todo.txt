@@ -133,6 +133,17 @@ community: where to start, what waits for a review, who contributes.
       reads the licenses when it is built (pycal_dashboard/licenses.json)
 - [x] A rule in AGENTS.md and a test (tests/quality/test_memory.py) keep it so
 
+## 2026-11-18: every lazy import through an import guard
+
+- [x] As in community-insights (heavy.LOCK): every import inside a function goes through the
+      import guard, `with IMPORT_GUARD:` of pycal_dashboard/import_guard.py, so that threads cannot
+      stop each other in a deadlock while they import
+- [x] Tested: tests/quality/test_lazy_imports.py checks every import inside a function, and eight
+      threads of a fresh process import httpx, jwt, cryptography, reuse and pip-licenses at once,
+      each under the guard
+- [x] Seen in community-insights: some imports inside functions there (of its own modules, to
+      avoid cycles) are outside heavy.LOCK; not changed there
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now

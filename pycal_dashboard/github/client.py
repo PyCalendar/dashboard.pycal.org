@@ -17,6 +17,7 @@ from pycal_dashboard.errors import (
     GitHubUnreachable,
     MissingPermissions,
 )
+from pycal_dashboard.import_guard import IMPORT_GUARD
 
 if TYPE_CHECKING:
     import httpx
@@ -44,7 +45,8 @@ class GitHubClient:
         }
         if token:
             headers["Authorization"] = f"{scheme} {token}"
-        import httpx  # only when the site speaks with GitHub
+        with IMPORT_GUARD:  # see import_guard.py
+            import httpx  # only when the site speaks with GitHub
 
         self.http = httpx.Client(
             base_url=settings.GITHUB_API,
@@ -72,7 +74,8 @@ class GitHubClient:
             MissingPermissions: The app may not do this.
             GitHubError: Another error.
         """
-        import httpx  # loaded by __init__ already
+        with IMPORT_GUARD:  # see import_guard.py
+            import httpx  # loaded by __init__ already
 
         try:
             response = self.http.request(method, path, **kwargs)

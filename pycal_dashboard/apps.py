@@ -2,6 +2,8 @@
 
 from django.apps import AppConfig
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
+
 
 class DashboardConfig(AppConfig):
     """The app: models, templates and commands."""
@@ -12,4 +14,5 @@ class DashboardConfig(AppConfig):
 
     def ready(self):
         """Connect the signals and register the checks of the settings."""
-        from . import checks, signals  # noqa: F401
+        with IMPORT_GUARD:  # see import_guard.py
+            from . import checks, signals  # noqa: F401

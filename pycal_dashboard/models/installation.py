@@ -2,6 +2,8 @@
 
 from django.db import models
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
+
 
 class Installation(models.Model):
     """The GitHub App installed on an account or an organization of GitHub.
@@ -54,6 +56,7 @@ class Installation(models.Model):
     @property
     def missing_permissions(self) -> dict[str, str]:
         """The permissions that the site needs and the installation lacks."""
-        from pycal_dashboard.github.permissions import missing
+        with IMPORT_GUARD:  # see import_guard.py
+            from pycal_dashboard.github.permissions import missing
 
         return missing(self.permissions or {})

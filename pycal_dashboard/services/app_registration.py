@@ -35,6 +35,7 @@ from pycal_dashboard.errors import (
 )
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.permissions import manifest
+from pycal_dashboard.import_guard import IMPORT_GUARD
 
 LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 SESSION_KEY = "github_app_registration"
@@ -376,7 +377,8 @@ class AppRegistration:
             cls.code_file().unlink(missing_ok=True)
         except OSError as error:
             raise RegistrationNotSaved(f"{settings.DATA_DIR}: {error}") from error
-        from pycal_dashboard.actions import SettingsSaved, Trigger
+        with IMPORT_GUARD:  # see import_guard.py
+            from pycal_dashboard.actions import SettingsSaved, Trigger
 
         with Trigger.start("setup", f"GitHub App {answer['slug']} registered"):
             SettingsSaved([*values, "the private key"], "the GitHub App was registered").run()

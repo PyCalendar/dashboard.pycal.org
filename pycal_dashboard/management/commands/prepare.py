@@ -7,6 +7,7 @@ from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.services.app_registration import AppRegistration
 
 
@@ -47,7 +48,8 @@ class Command(BaseCommand):
         Returns:
             The handles, such as a misspelled one; they get admin rights when they sign in.
         """
-        from allauth.socialaccount.models import SocialAccount
+        with IMPORT_GUARD:  # see import_guard.py
+            from allauth.socialaccount.models import SocialAccount
 
         known = {
             str(account.extra_data.get("login", "")).lower()

@@ -12,6 +12,8 @@ from dataclasses import asdict, dataclass
 from functools import cache
 from pathlib import Path
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
+
 ROOT = Path(__file__).resolve().parent.parent
 PROJECT_LICENSE = "AGPL-3.0-or-later"
 UNKNOWN = "UNKNOWN"  # what pip-licenses says for a field that is missing
@@ -103,7 +105,8 @@ def read_reused(root: Path = ROOT) -> list[Package]:
     if not path.is_file():
         return []
     found = []
-    from reuse.global_licensing import ReuseTOML  # see the docstring
+    with IMPORT_GUARD:  # see import_guard.py
+        from reuse.global_licensing import ReuseTOML  # see the docstring
 
     for annotation in ReuseTOML.from_file(path, root).annotations:
         expressions = sorted(str(expression) for expression in annotation.spdx_expressions)
@@ -163,7 +166,8 @@ def read_installed() -> dict[str, dict]:
     Returns:
         The entries of pip-licenses, with the texts of their license files.
     """
-    import piplicenses  # see the docstring of the module
+    with IMPORT_GUARD:  # see import_guard.py
+        import piplicenses  # see the docstring of the module
 
     arguments = piplicenses.create_parser().parse_args(
         ["--from=mixed", "--with-system", "--with-urls", "--with-license-file", "--no-license-path"]

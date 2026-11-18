@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from django.conf import settings
 
 from pycal_dashboard.errors import GitHubAppNotConfigured, InvalidPrivateKey
+from pycal_dashboard.import_guard import IMPORT_GUARD
 
 from . import permissions
 from .client import GitHubClient
@@ -39,7 +40,8 @@ class AppCheck:
         """
         if not (settings.GITHUB_APP_ID and settings.GITHUB_APP_PRIVATE_KEY):
             raise GitHubAppNotConfigured("GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY")
-        import jwt  # with cryptography, only when the app speaks for itself
+        with IMPORT_GUARD:  # see import_guard.py
+            import jwt  # with cryptography, only when the app speaks for itself
 
         now = int(time.time())
         payload = {"iat": now - 60, "exp": now + 540, "iss": str(settings.GITHUB_APP_ID)}

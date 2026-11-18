@@ -60,7 +60,8 @@ loads what speaks with GitHub only when it does, and the image reads the
 licenses of the packages when it is built, into ``licenses.json``. After about
 1000 requests gunicorn replaces its process, which gives back the memory that a
 busy time took. For many visitors, raise ``WORKERS``; each process needs about
-60 MB more.
+60 MB more. The packages loaded when needed go through an import guard, so that
+the threads cannot stop each other while they import them.
 
 Update
 ======

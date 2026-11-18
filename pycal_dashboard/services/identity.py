@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 from django.conf import settings
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
+
 
 @dataclass(frozen=True)
 class GitHubIdentity:
@@ -84,7 +86,8 @@ class GitHubIdentity:
             return False
         user.is_staff = user.is_superuser = admin
         user.save(update_fields=["is_staff", "is_superuser"])
-        from pycal_dashboard.actions import AdminRightsChanged
+        with IMPORT_GUARD:  # see import_guard.py
+            from pycal_dashboard.actions import AdminRightsChanged
 
         AdminRightsChanged(identity.login, admin).run()
         return True

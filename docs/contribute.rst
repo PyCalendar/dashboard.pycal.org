@@ -53,6 +53,26 @@ English.
 
 .. _license:
 
+Lazy imports
+============
+
+The site imports the packages that it needs only now and then inside the
+functions that use them, which keeps its memory low, see :ref:`memory`. Each
+such import goes through the import guard, so that threads that serve pages at
+the same time cannot stop each other in a deadlock:
+
+.. code-block:: python
+
+   from pycal_dashboard.import_guard import IMPORT_GUARD
+
+   def token():
+       with IMPORT_GUARD:  # see import_guard.py
+           import jwt
+       ...
+
+``tests/quality/test_lazy_imports.py`` checks that every import inside a
+function is inside ``with IMPORT_GUARD:``.
+
 License
 =======
 

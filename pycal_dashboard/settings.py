@@ -12,6 +12,7 @@ import environ
 from pycal_dashboard import registered_settings
 from pycal_dashboard.footer_links import DEFAULT as DEFAULT_FOOTER_LINKS
 from pycal_dashboard.footer_links import parse_footer_links
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.organizations import parse_organizations
 from pycal_dashboard.sign_in import SignIn
 from pycal_dashboard.theme import Theme
@@ -40,7 +41,8 @@ def kept_secret(name: str) -> str:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     path = DATA_DIR / name.lower()
     if not path.exists():
-        from django.core.management.utils import get_random_secret_key
+        with IMPORT_GUARD:  # see import_guard.py
+            from django.core.management.utils import get_random_secret_key
 
         registered_settings.write_private(path, get_random_secret_key())
     return path.read_text().strip()
