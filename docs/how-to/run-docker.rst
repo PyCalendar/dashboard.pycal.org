@@ -53,3 +53,38 @@ Update
 .. code-block:: shell
 
    docker compose pull && docker compose up -d
+
+Deploy with Sencho
+==================
+
+CI deploys every push of ``main`` after the image was pushed: it asks
+`Sencho <https://sencho.pycal.org>`_ to update the stack, then checks the live
+site. The job *Deploy to Sencho* fails until the deployment exists:
+
+#. Create the stack in Sencho, named ``dashboard-pycal``, with
+   ``docker-compose.yml``, its ``.env`` and the volume ``./data``.
+#. In the repository on GitHub, create the environment ``dashboard.pycal.org``
+   (*Settings → Environments*) with the secret ``SENCHO_TOKEN``, a token of the
+   API of Sencho. A stack of another name is the repository variable
+   ``SENCHO_STACK``.
+#. Make the package ``ghcr.io/pycalendar/dashboard.pycal.org`` public, or give
+   Sencho access to it.
+
+Sencho answers ``409`` while the stack deploys already and ``5xx`` for passing
+errors: the job tries ten times, 30 seconds apart.
+
+Check the live site
+===================
+
+After each deployment, the job *Check the live site* runs:
+
+.. code-block:: shell
+
+   make check-live                                     # https://dashboard.pycal.org
+   LIVE_URL=https://dashboard.example.org make check-live
+
+It waits while the site starts (up to ``LIVE_WAIT`` seconds, 600 by default),
+follows the links of the public pages as a visitor, reads their JSON and checks
+that errors get their pages: a missing page is 404, not 500, the account asks to
+sign in and the webhook refuses unsigned deliveries. It sends nothing but one
+unsigned webhook, which the site refuses and logs.

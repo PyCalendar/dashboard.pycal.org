@@ -53,13 +53,15 @@ community: where to start, what waits for a review, who contributes.
 
 ## 2026-11-18: taken over from sign.pycal.org (chosen with check boxes)
 
-- [ ] Sencho deploy job after the push of the image (with retries; skipped without SENCHO_TOKEN)
-- [ ] Live check after each deployment: make check-live walks the public pages of the live site
-- [ ] Trivy scan of the image: make docker-scan in CI
-- [ ] Vale for the prose of the documentation: make prose in CI
+- [x] Sencho deploy job after the push of the image (with retries); it fails without SENCHO_TOKEN
+      while there is no deployment (decided by the person)
+- [x] Live check after each deployment: make check-live walks the public pages of the live site
+- [x] Trivy scan of the image: make docker-scan in CI
+- [x] Vale for the prose of the documentation: make prose in CI
 - [x] Sign out after a time: SIGN_OUT_MINUTES
 - [ ] German and Spanish, with a language menu next to the color menu
-- [ ] Action log: what triggered what, a global log for the administrators
+- [x] Action log: what triggered what (webhooks, sign-ins, admin rights, setup, preferences),
+      on /logs/ for the administrators (migration 0004)
 - [x] Warn at the start about SITE_ADMINS that never signed in
 - [x] JSON of every public page with CORS (replaces /api/v1/)
 - [x] The page of the licenses: /licenses/
@@ -85,6 +87,8 @@ community: where to start, what waits for a review, who contributes.
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
 - [ ] Who registers the GitHub App on PyCalendar and where the site runs (Sencho stack, like sign.pycal.org?)
+- [ ] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
+      secret SENCHO_TOKEN; until then the jobs Deploy to Sencho and Check the live site fail
 - [ ] DNS: docs.dashboard.pycal.org needs a CNAME to pycalendar.github.io
 - [ ] Should the GitHub App be public, so that accounts other than PyCalendar can install it?
       (now private: only its owner installs it; docs/how-to/install-app.rst says how to change it)

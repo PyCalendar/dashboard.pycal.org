@@ -1,0 +1,12 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load times help %}
+{% block title %}Log · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Log {% help_link links.log_help "The log" %}</h1>
+<p class="muted">What happened to the site and what followed from it: webhooks, sign-ins, the rights of the administrators, the setup and the preferences. Only the administrators of the site see it.</p>
+{% if page.object_list %}<ol class="log" data-log>{% for trigger in page.object_list %}
+<li class="card" data-trigger="{{ trigger.kind }}"><p><span class="badge">{{ trigger.kind }}</span> <strong>{{ trigger.summary }}</strong> <span class="muted">{% when trigger.created %}{% if trigger.actor_login %} · @{{ trigger.actor_login }}{% endif %}{% if trigger.repository %} · {{ trigger.repository }}{% endif %}{% if trigger.delivery %} · delivery <code>{{ trigger.delivery }}</code>{% endif %}</span></p>
+{% if trigger.actions.all %}<ul>{% for action in trigger.actions.all %}<li data-action="{{ action.kind }}">{{ action.text }}</li>{% endfor %}</ul>{% endif %}</li>{% endfor %}</ol>
+{% if page.has_other_pages %}<nav class="pages" aria-label="Pages">{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">Newer</a>{% endif %} Page {{ page.number }} of {{ page.paginator.num_pages }} {% if page.has_next %}<a href="?page={{ page.next_page_number }}">Older</a>{% endif %}</nav>{% endif %}
+{% else %}<p class="muted empty">Nothing yet.</p>{% endif %}
+{% endblock %}

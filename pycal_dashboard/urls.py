@@ -17,6 +17,7 @@ urlpatterns = [
     path("favicon.ico", pages.favicon, name="favicon"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
+    path("logs/", account.logs, name="logs"),
     path("setup/github-app/", registration.register_app, name="register_app"),
     path("setup/github-app/registered/", registration.app_registered, name="app_registered"),
     path("setup/installed/", setup.installed, name="installed"),

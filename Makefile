@@ -87,6 +87,14 @@ linkcheck:  ## Check the links of the documentation (needs the internet)
 changelog:  ## Check that there is a news fragment
 	@uv run --extra docs towncrier check --compare-with origin/main
 
+.PHONY: prose
+prose:  ## Check the prose of the documentation with Vale (.vale.ini)
+	@uv run --extra docs --with vale==3.26.0.1 vale docs/*.rst docs/*/*.rst README.md
+
+.PHONY: check-live
+check-live: .venv  ## Check a live site as a visitor: LIVE_URL (default https://dashboard.pycal.org), waits while it starts
+	@uv run python scripts/check_live.py
+
 .PHONY: workflows
 workflows:  ## Check the GitHub workflows for security problems with zizmor
 	@uvx zizmor==1.32.0 --offline .github/workflows
@@ -112,6 +120,15 @@ docker-test: docker-build  ## Run the container and check that Docker sees it he
 	[ "$$status" = healthy ] || docker logs $(IMAGE)-test; \
 	docker logs $(IMAGE)-test 2>&1 | grep -q "setup code" || { echo "no setup code in the log"; status=no-code; }; \
 	docker rm -f $(IMAGE)-test >/dev/null; [ "$$status" = healthy ]
+
+TRIVY = aquasec/trivy:0.58.1
+.PHONY: docker-scan
+docker-scan: docker-build  ## Scan the image with Trivy: fails on critical vulnerabilities that have a fix
+	@# the image is saved to a file, so Trivy needs no access to the socket of Docker
+	@mkdir -p build && docker save $(IMAGE) -o build/$(IMAGE)-image.tar
+	@docker run --rm -v "$(CURDIR)/build:/scan:ro" $(TRIVY) image --input /scan/$(IMAGE)-image.tar \
+		--exit-code 1 --severity CRITICAL --ignore-unfixed --no-progress; \
+		status=$$?; rm -f build/$(IMAGE)-image.tar; exit $$status
 
 .PHONY: docker-run
 docker-run: docker-build  ## Run the container on $(PORT) with ./data

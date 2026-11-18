@@ -6,6 +6,7 @@
     {% if install_url %}<li><a href="{{ install_url }}">Install the GitHub App</a></li>{% endif %}
     {% if site_admin %}<li class="separator" role="separator"></li>
     <li class="menu-heading">Administration</li>
+    <li><a href="{% url 'logs' %}">Log</a></li>
     <li><a href="{% url 'deliveries' %}">Webhook deliveries</a></li>
     {% if user.is_staff %}<li><a href="{% url 'admin:index' %}">Django admin</a></li>{% endif %}{% endif %}
     <li class="separator" role="separator"></li>

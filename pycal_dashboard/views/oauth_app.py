@@ -17,6 +17,7 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard import registered_settings
+from pycal_dashboard.actions import SettingsSaved, Trigger
 from pycal_dashboard.services.app_registration import AppRegistration
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.sign_in import SignIn
@@ -90,7 +91,13 @@ def oauth_app(request):
     if not CLIENT_ID.fullmatch(client_id) or not SECRET.fullmatch(secret):
         context["error"] = True
         return render(request, TEMPLATE, context, status=400)
-    apply(client_id, secret)
+    actor = request.user.username if request.user.is_authenticated else ""
+    with Trigger.start("setup", "OAuth app for signing in entered", actor_login=actor):
+        apply(client_id, secret)
+        SettingsSaved(
+            ["GITHUB_OAUTH_CLIENT_ID", "GITHUB_OAUTH_SECRET"],
+            "the OAuth app for signing in was entered",
+        ).run()
     AppRegistration.reload_workers(request)
     messages.success(request, "People now sign in with the OAuth app.")
     return redirect("account_login")

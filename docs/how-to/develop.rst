@@ -40,6 +40,9 @@ Tests
    make browser-test      # browser tests, on all processors
    make lint              # ruff
    make docs              # the documentation; warnings fail
+   make prose             # the prose of the documentation (Vale)
+   make docker-test       # the image: healthy, with the setup code in the log
+   make docker-scan       # the image: no critical vulnerabilities with a fix (Trivy)
 
 The tests run in parallel with `pytest-xdist
 <https://pytest-xdist.readthedocs.io/>`_; ``JOBS=0`` runs them in one process.
@@ -65,8 +68,13 @@ Continuous integration
 ======================
 
 Every push runs these jobs in parallel: lint and the tests, the browser tests,
-the documentation and the build of the Docker image (with its health check).
-The image is pushed to ``ghcr.io`` only when all of them pass.
+the documentation with its prose and the workflows, and the build of the Docker
+image with its health check and the scan of Trivy. The image is pushed to
+``ghcr.io`` only when all of them pass. For ``main``, Sencho then deploys it and
+``make check-live`` checks the live site, see :doc:`run-docker`.
+
+Words that Vale does not know, such as names, go into
+``.vale/styles/config/vocabularies/Dashboard/accept.txt``.
 
 CI publishes the documentation of ``main`` on GitHub Pages, at
 https://docs.dashboard.pycal.org/.

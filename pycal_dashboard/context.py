@@ -50,6 +50,7 @@ def site(request) -> dict:
             "app_setup": f"{docs}how-to/github-app.html",
             "install_help": f"{docs}how-to/install-app.html",
             "oauth_app": f"{docs}how-to/github-app.html#oauth-app",
+            "log_help": f"{docs}tutorial/account.html#administrators",
             "json": f"{docs}reference/json.html",
             "licenses_help": f"{docs}contribute.html#license",
             "changelog": f"{docs}changelog.html",

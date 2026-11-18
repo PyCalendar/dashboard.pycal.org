@@ -1,5 +1,6 @@
 """The rights of the Django admin follow ``SITE_ADMINS`` at every request."""
 
+from .actions import Trigger
 from .services.identity import GitHubIdentity
 
 
@@ -28,6 +29,7 @@ class AdminRightsMiddleware:
             The answer.
         """
         user = getattr(request, "user", None)
-        if user is not None and user.is_authenticated:
-            GitHubIdentity.keep_rights(user)
+        if user is not None and user.is_authenticated and GitHubIdentity.rights_differ(user):
+            with Trigger.start("site-admins", "SITE_ADMINS changed", actor_login=user.username):
+                GitHubIdentity.keep_rights(user)
         return self.get_response(request)

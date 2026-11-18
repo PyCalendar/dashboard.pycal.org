@@ -2,9 +2,11 @@
 
 from django.contrib import admin
 
-from .models import Profile, WebhookDelivery
+from .models import LogAction, LogTrigger, Profile, WebhookDelivery
 
 admin.site.register(Profile, list_display=["user", "email_notifications"])
 admin.site.register(
     WebhookDelivery, list_display=["event", "action", "repository", "outcome", "received"]
 )
+admin.site.register(LogTrigger, list_display=["summary", "kind", "actor_login", "created"])
+admin.site.register(LogAction, list_display=["text", "kind", "created"])

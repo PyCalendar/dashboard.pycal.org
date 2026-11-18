@@ -376,6 +376,10 @@ class AppRegistration:
             cls.code_file().unlink(missing_ok=True)
         except OSError as error:
             raise RegistrationNotSaved(f"{settings.DATA_DIR}: {error}") from error
+        from pycal_dashboard.actions import SettingsSaved, Trigger
+
+        with Trigger.start("setup", f"GitHub App {answer['slug']} registered"):
+            SettingsSaved([*values, "the private key"], "the GitHub App was registered").run()
         cls.apply(values, answer["pem"])
 
     @staticmethod

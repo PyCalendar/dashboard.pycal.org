@@ -1,0 +1,1 @@
+CI scans the image with Trivy, checks the prose of the documentation with Vale, deploys every push of ``main`` with Sencho and then checks the live site (``make check-live``); the administrators read the log of the site on ``/logs/``.

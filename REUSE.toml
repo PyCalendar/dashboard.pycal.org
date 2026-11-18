@@ -6,6 +6,8 @@ path = [
     ".claude/**",
     ".codex/**",
     ".github/**",
+    ".vale/**",
+    "scripts/**",
     "pycal_dashboard/**",
     "docker/**",
     "docs/**",

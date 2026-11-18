@@ -30,12 +30,22 @@ Only you see it. It shows:
 - **The GitHub App**: *Install the GitHub App* on the repositories of an
   organization, see :doc:`/how-to/install-app`.
 
+.. _administrators:
+
 Administrators
 ==============
 
-The people of ``SITE_ADMINS`` get the rights of the Django admin when they sign
-in. The menu of their account has *Webhook deliveries* and *Django admin*,
-which shows every table of the site.
+The people of ``SITE_ADMINS`` get the rights of the Django admin; the rights
+follow the setting at every request. The menu of their account has:
+
+*Log*
+   What happened to the site and what followed from it: each webhook, each
+   sign-in, a change of the rights of an administrator, the setup of the apps
+   and saved preferences. Secrets and email addresses are never logged.
+*Webhook deliveries*
+   The latest 100 webhooks with their outcome and errors.
+*Django admin*
+   Every table of the site.
 
 Sign out
 ========

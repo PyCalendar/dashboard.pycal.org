@@ -2,8 +2,9 @@
 # tests, the documentation and the build of the Docker image. The image is pushed to ghcr.io
 # only if all of them pass: "latest" for every commit of main; "stable", "1.2.3" and "1.2" for
 # a tag v1.2.3; each for linux/amd64 and linux/arm64. The push builds from the cache of the
-# docker job, so the image is built in parallel to the tests. The documentation of main is
-# published on GitHub Pages: https://docs.dashboard.pycal.org/
+# docker job, so the image is built in parallel to the tests. Then Sencho updates the stack of
+# the site and the live site is checked as a visitor (docs/how-to/run-docker.rst). The
+# documentation of main is published on GitHub Pages: https://docs.dashboard.pycal.org/
 name: tests
 
 on:
@@ -58,6 +59,7 @@ jobs:
         with:
           enable-cache: false
       - run: make docs
+      - run: make prose
       - run: make workflows
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
@@ -93,6 +95,8 @@ jobs:
         run: make version
       # the health check of the container, and the setup code of the GitHub App in its log
       - run: make docker-test
+      # critical vulnerabilities with a fix fail the build (Trivy)
+      - run: make docker-scan
       - name: Set up QEMU for arm64
         uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
       - name: Set up Docker Buildx
@@ -150,3 +154,65 @@ jobs:
           cache-from: type=gha
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Sencho
+    needs: [push]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    # one deploy at a time: Sencho refuses a second update of the stack while one runs (409)
+    concurrency:
+      group: deploy-sencho-dashboard-pycal
+      cancel-in-progress: false
+    # the secret SENCHO_TOKEN belongs to this environment of the repository
+    environment:
+      name: dashboard.pycal.org
+      url: https://dashboard.pycal.org
+    steps:
+      - name: Update the stack
+        run: |
+          # no deployment without the token: the job fails until the stack and the token exist
+          if [ -z "$SENCHO_TOKEN" ]; then
+            echo "::error::No SENCHO_TOKEN in the environment dashboard.pycal.org: nothing is deployed."
+            exit 1
+          fi
+          # Sencho answers 409 while the stack is deploying, such as by hand, and 5xx for passing
+          # errors: wait and retry
+          for attempt in $(seq 10); do
+            status=$(curl --silent --output response.json --write-out "%{http_code}" \
+              --request POST \
+              --url "https://sencho.pycal.org/api/stacks/${SENCHO_STACK}/update" \
+              --header "Authorization: Bearer $SENCHO_TOKEN")
+            cat response.json; echo
+            if [ "$status" = 409 ] || [ "$status" -ge 500 ]; then
+              echo "::notice::Sencho answered $status; try $attempt of 10, waiting 30 s."
+              sleep 30
+              continue
+            fi
+            [ "$status" -lt 300 ] && exit 0
+            echo "::error::Sencho answered $status"
+            exit 1
+          done
+          echo "::error::The stack was still deploying after 10 tries."
+          exit 1
+        env:
+          SENCHO_TOKEN: ${{ secrets.SENCHO_TOKEN }}
+          SENCHO_STACK: ${{ vars.SENCHO_STACK || 'dashboard-pycal' }}
+
+  live:
+    name: Check the live site
+    needs: [deploy]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    # without secrets: it only visits the public pages, as a visitor (scripts/check_live.py)
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          enable-cache: false
+      # waits while the updated container starts, then walks the public pages
+      - run: make check-live
+        env:
+          LIVE_URL: https://dashboard.pycal.org

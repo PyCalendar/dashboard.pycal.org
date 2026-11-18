@@ -1,0 +1,10 @@
+icalendar
+pycal
+uv
+zizmor
+tailnet
+Sencho
+Trivy
+ghcr
+Deutsch
+gettext

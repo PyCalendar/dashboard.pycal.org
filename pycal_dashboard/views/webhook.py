@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from pycal_dashboard.actions import Trigger, WebhookTrigger
 from pycal_dashboard.errors import (
     DashboardError,
     WebhookError,
@@ -69,16 +70,19 @@ def webhook(request):
     handler = WebhookHandler(event, payload)
     delivery.action = handler.action[:100]
     delivery.repository = handler.repository_name[:200]
-    try:
-        done = handler.handle()
-    except Exception as exception:  # noqa: BLE001 - every failure is logged with the delivery
-        error: DashboardError = translate(exception)
-        if error.code == "UnexpectedError":
-            log.exception("webhook %s", event)
-        delivery.outcome, delivery.error, delivery.detail = "failed", error.code, str(error)
-        delivery.save()
-        # 200: GitHub would not deliver it again anyway; the deliveries of GitHub show why
-        return JsonResponse(error.as_json(), status=200 if error.status < 500 else error.status)
+    with Trigger.start("webhook", f"Webhook {event}", delivery=delivery.delivery) as trigger:
+        try:
+            done = handler.handle()
+        except Exception as exception:  # noqa: BLE001 - every failure is logged with the delivery
+            error: DashboardError = translate(exception)
+            if error.code == "UnexpectedError":
+                log.exception("webhook %s", event)
+            delivery.outcome, delivery.error, delivery.detail = "failed", error.code, str(error)
+            delivery.save()
+            WebhookTrigger.complete(trigger, event, payload, error.code)
+            # 200: GitHub would not deliver it again anyway; the deliveries of GitHub show why
+            return JsonResponse(error.as_json(), status=200 if error.status < 500 else error.status)
+        WebhookTrigger.complete(trigger, event, payload, done)
     delivery.outcome = "ignored" if done.startswith("ignored") else "done"
     delivery.detail = done
     delivery.save()

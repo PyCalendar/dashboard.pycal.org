@@ -49,6 +49,22 @@ class GitHubIdentity:
         return bool(identity and identity.login.lower() in settings.SITE_ADMINS)
 
     @classmethod
+    def rights_differ(cls, user) -> bool:
+        """Whether the rights of the Django admin of a person differ from ``SITE_ADMINS``.
+
+        Args:
+            user: The user.
+
+        Returns:
+            True if :meth:`keep_rights` would change them.
+        """
+        identity = cls.of(user)
+        if identity is None:
+            return False
+        admin = identity.login.lower() in settings.SITE_ADMINS
+        return user.is_staff != admin or user.is_superuser != admin
+
+    @classmethod
     def keep_rights(cls, user) -> bool:
         """Give the people of ``SITE_ADMINS`` the rights of the Django admin, and only them.
 
@@ -68,4 +84,7 @@ class GitHubIdentity:
             return False
         user.is_staff = user.is_superuser = admin
         user.save(update_fields=["is_staff", "is_superuser"])
+        from pycal_dashboard.actions import AdminRightsChanged
+
+        AdminRightsChanged(identity.login, admin).run()
         return True
