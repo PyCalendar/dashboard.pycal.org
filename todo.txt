@@ -47,4 +47,4 @@ community: where to start, what waits for a review, who contributes.
 - [ ] A queue for webhooks (now handled while GitHub waits, which is fast for one pull request)
 - [ ] Translations (German, Spanish) like sign.pycal.org
 - [ ] Email digest of the preferences: the preference is stored; the sending is not built yet
-- [ ] The first CI run on GitHub: check that all jobs pass and the image appears on ghcr.io
+- [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io
