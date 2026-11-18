@@ -12,33 +12,40 @@ from django.http import HttpResponseServerError
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.templatetags.static import static
+from django.utils.translation import gettext_lazy as _
 
 log = logging.getLogger(__name__)
 
 PAGES = {
     400: (
-        "Bad request",
-        "The site could not understand the request. Go back, reload the page and try again.",
+        _("Bad request"),
+        _("The site could not understand the request. Go back, reload the page and try again."),
     ),
     403: (
-        "Access denied",
-        "You may not open this page. It shows private information: sign in with the "
-        "GitHub account it belongs to.",
+        _("Access denied"),
+        _(
+            "You may not open this page. It shows private information: sign in with the "
+            "GitHub account it belongs to."
+        ),
     ),
     404: (
-        "Page not found",
-        "This page does not exist or has moved. Check the address, or start again.",
+        _("Page not found"),
+        _("This page does not exist or has moved. Check the address, or start again."),
     ),
     500: (
-        "Something went wrong",
-        "The site could not answer this time. The problem was logged. "
-        "Please try again in a few minutes.",
+        _("Something went wrong"),
+        _(
+            "The site could not answer this time. The problem was logged. "
+            "Please try again in a few minutes."
+        ),
     ),
 }
 CSRF = (
-    "The form has expired",
-    "The site accepts a form only from its own pages, with its cookie. Go back, reload the "
-    "page and send the form again. Allow cookies for this site if this happens again.",
+    _("The form has expired"),
+    _(
+        "The site accepts a form only from its own pages, with its cookie. Go back, reload the "
+        "page and send the form again. Allow cookies for this site if this happens again."
+    ),
 )
 
 

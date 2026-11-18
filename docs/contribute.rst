@@ -16,6 +16,41 @@ of the prompts and what is open.
 Every change that people notice has a news fragment in ``news/``, such as
 ``news/12.feature.rst``, and updates the documentation.
 
+.. _translate:
+
+Translate
+=========
+
+The site speaks English, German and Spanish. The language comes from the
+browser; the menu with the globe at the top keeps another choice in a cookie.
+The texts are in ``pycal_dashboard/locale/<language>/LC_MESSAGES/django.po``.
+
+Improve a translation
+---------------------
+
+#. Change the ``msgstr`` of the text in :file:`django.po`.
+#. Run ``make messages``: it updates the texts of all languages and compiles
+   them into :file:`django.mo`. It uses gettext, or Docker if gettext is not
+   installed.
+#. ``make test`` checks that every text of German and Spanish is translated,
+   that none is marked ``fuzzy`` and that :file:`django.mo` is compiled.
+
+A changed English text makes ``make messages`` mark its translation
+``#, fuzzy`` or add an empty ``msgstr``: translate it and remove the mark.
+
+Add a language
+--------------
+
+#. Add it to ``LANGUAGES`` in ``pycal_dashboard/settings.py`` and to
+   ``MESSAGES`` in the ``Makefile``, such as ``-l fr``.
+#. Run ``make messages`` and translate
+   :file:`pycal_dashboard/locale/fr/LC_MESSAGES/django.po`.
+
+Texts in the templates are in ``{% translate %}`` or ``{% blocktranslate %}``;
+texts in Python in ``gettext``. A text without them stays English, and a test
+finds it. The JSON of the pages, the log and the details of errors to copy stay
+English.
+
 .. _license:
 
 License

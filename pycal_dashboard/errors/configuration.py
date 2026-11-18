@@ -3,6 +3,8 @@
 The settings are environment variables, listed in :doc:`/reference/settings`.
 """
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -13,10 +15,10 @@ class ConfigurationError(DashboardError):
     ``.env``, and restart the site.
     """
 
-    title = "A setting of the site is wrong"
+    title = _("A setting of the site is wrong")
     status = 500
     guide = "reference/settings.html"
-    guide_title = "Settings"
+    guide_title = _("Settings")
 
 
 class UnknownColor(ConfigurationError):
@@ -26,7 +28,7 @@ class UnknownColor(ConfigurationError):
     ``COLOR_PRIMARY`` or ``COLOR_DARK_ACCENT``.
     """
 
-    title = "Unknown color"
+    title = _("Unknown color")
 
 
 class InvalidColor(ConfigurationError):
@@ -36,7 +38,7 @@ class InvalidColor(ConfigurationError):
     ``#3b79aa``.
     """
 
-    title = "Invalid color"
+    title = _("Invalid color")
 
 
 class InvalidOrganizationSetting(ConfigurationError):
@@ -46,7 +48,7 @@ class InvalidOrganizationSetting(ConfigurationError):
     ``PyCalendar``.
     """
 
-    title = "Invalid organization in the settings"
+    title = _("Invalid organization in the settings")
 
 
 class FaviconNotFound(ConfigurationError):
@@ -58,7 +60,7 @@ class FaviconNotFound(ConfigurationError):
     :doc:`/reference/settings`.
     """
 
-    title = "The favicon was not found"
+    title = _("The favicon was not found")
 
 
 class UnsupportedFavicon(ConfigurationError):
@@ -68,7 +70,7 @@ class UnsupportedFavicon(ConfigurationError):
     the file with its extension: ``.png``, ``.ico`` or ``.svg``.
     """
 
-    title = "The favicon has an unsupported format"
+    title = _("The favicon has an unsupported format")
 
 
 class InvalidFooterLink(ConfigurationError):
@@ -81,4 +83,4 @@ class InvalidFooterLink(ConfigurationError):
     Leave it empty for no extra links. See :doc:`/reference/settings`.
     """
 
-    title = "A link of the footer is invalid"
+    title = _("A link of the footer is invalid")

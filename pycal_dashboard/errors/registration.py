@@ -5,6 +5,8 @@ The site registers its own GitHub App on ``/setup/github-app/``, see
 report.
 """
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -16,9 +18,9 @@ class RegistrationError(DashboardError):
     the page into a bug report.
     """
 
-    title = "The GitHub App could not be registered"
+    title = _("The GitHub App could not be registered")
     guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide_title = _("Register the GitHub App")
 
 
 class AppAlreadyRegistered(RegistrationError):
@@ -29,7 +31,7 @@ class AppAlreadyRegistered(RegistrationError):
     the ``GITHUB_...`` settings from both and restart the site.
     """
 
-    title = "The site already has a GitHub App"
+    title = _("The site already has a GitHub App")
     status = 409
 
 
@@ -42,7 +44,7 @@ class PrivateKeyFileExists(RegistrationError):
     file away and register again.
     """
 
-    title = "A private key exists already"
+    title = _("A private key exists already")
     status = 409
 
 
@@ -55,7 +57,7 @@ class AppSettingsInEnvironment(RegistrationError):
     them for an app that exists.
     """
 
-    title = "Settings of a GitHub App are set in the environment"
+    title = _("Settings of a GitHub App are set in the environment")
     status = 409
 
 
@@ -68,7 +70,7 @@ class SetupCodeWrong(RegistrationError):
     ``docker compose exec dashboard python manage.py github_app_setup_code``.
     """
 
-    title = "The setup code is wrong"
+    title = _("The setup code is wrong")
     status = 403
 
 
@@ -79,7 +81,7 @@ class InvalidAppName(RegistrationError):
     such as ``dashboard-pycal-org``.
     """
 
-    title = "The name of the GitHub App is invalid"
+    title = _("The name of the GitHub App is invalid")
 
 
 class InvalidOrganization(RegistrationError):
@@ -89,7 +91,7 @@ class InvalidOrganization(RegistrationError):
     field empty to register the app on your own account.
     """
 
-    title = "The organization is invalid"
+    title = _("The organization is invalid")
 
 
 class RegistrationExpired(RegistrationError):
@@ -101,7 +103,7 @@ class RegistrationExpired(RegistrationError):
     again.
     """
 
-    title = "The registration does not belong to this browser"
+    title = _("The registration does not belong to this browser")
 
 
 class RegistrationCodeMissing(RegistrationError):
@@ -111,7 +113,7 @@ class RegistrationCodeMissing(RegistrationError):
     the registration was cancelled on GitHub. Start again.
     """
 
-    title = "GitHub returned without a code"
+    title = _("GitHub returned without a code")
 
 
 class ManifestConversionFailed(RegistrationError):
@@ -121,7 +123,7 @@ class ManifestConversionFailed(RegistrationError):
     the app was created on GitHub, delete it there first.
     """
 
-    title = "GitHub refused the code of the new app"
+    title = _("GitHub refused the code of the new app")
     status = 502
 
 
@@ -134,5 +136,5 @@ class RegistrationNotSaved(RegistrationError):
     and set the ``GITHUB_...`` settings yourself.
     """
 
-    title = "The GitHub App could not be saved"
+    title = _("The GitHub App could not be saved")
     status = 500

@@ -78,6 +78,8 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    # the language: the cookie of the language menu, else the browser (Accept-Language)
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -185,7 +187,12 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=f"dashboard@{SITE_NAME}")
 
 LANGUAGE_CODE = "en"
 TIME_ZONE = "UTC"
-USE_I18N = False
+USE_I18N = True
+# English, German and Spanish; the first one comes from the browser, the menu keeps the choice
+LANGUAGES = [("en", "English"), ("de", "Deutsch"), ("es", "Español")]
+LOCALE_PATHS = [BASE_DIR / "pycal_dashboard" / "locale"]
+LANGUAGE_COOKIE_AGE = 365 * 24 * 3600
+LANGUAGE_COOKIE_SAMESITE = "Lax"
 USE_TZ = True
 
 STATIC_URL = "static/"

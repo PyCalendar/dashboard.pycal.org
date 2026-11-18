@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard import registered_settings
@@ -99,5 +100,5 @@ def oauth_app(request):
             "the OAuth app for signing in was entered",
         ).run()
     AppRegistration.reload_workers(request)
-    messages.success(request, "People now sign in with the OAuth app.")
+    messages.success(request, _("People now sign in with the OAuth app."))
     return redirect("account_login")

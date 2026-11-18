@@ -1,25 +1,25 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load github help %}
-{% block title %}Account · {{ site_name }}{% endblock %}
+{% load i18n github help %}
+{% block title %}{% translate "Account" %} · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>Account · @{{ identity.login }} {% github_link "https://github.com/"|add:identity.login "Your profile on GitHub" %} {% help_link links.account "Your account" %}</h1>
-<p class="muted">Only you see this page.</p>
+<h1>{% translate "Account" %} · @{{ identity.login }} {% translate "Your profile on GitHub" as profile_label %}{% github_link "https://github.com/"|add:identity.login profile_label %} {% translate "Your account" as help %}{% help_link links.account help %}</h1>
+<p class="muted">{% translate "Only you see this page." %}</p>
 <div class="columns">
-<section class="card" id="emails"><h2>Email addresses</h2>
-  {% if emails %}<ul class="list" data-emails>{% for address in emails %}<li>{{ address.email }} {% if address.verified %}<span class="badge badge-success">verified</span>{% else %}<span class="badge badge-warning">not verified</span>{% endif %}{% if address.primary %} <span class="badge">primary</span>{% endif %}</li>{% endfor %}</ul>
-  {% else %}<p>No email address. GitHub did not share a verified one.</p>{% endif %}
-  <p><a class="button button-quiet" href="{% url 'account_email' %}">Add, verify or change email addresses</a></p>
-  <p class="muted">The site sends emails only to verified addresses and only what you choose below.</p>
+<section class="card" id="emails"><h2>{% translate "Email addresses" %}</h2>
+  {% if emails %}<ul class="list" data-emails>{% for address in emails %}<li>{{ address.email }} {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>{% endif %}{% if address.primary %} <span class="badge">{% translate "primary" %}</span>{% endif %}</li>{% endfor %}</ul>
+  {% else %}<p>{% translate "No email address. GitHub did not share a verified one." %}</p>{% endif %}
+  <p><a class="button button-quiet" href="{% url 'account_email' %}">{% translate "Add, verify or change email addresses" %}</a></p>
+  <p class="muted">{% translate "The site sends emails only to verified addresses and only what you choose below." %}</p>
 </section>
-<section class="card" id="preferences"><h2>Preferences</h2>
+<section class="card" id="preferences"><h2>{% translate "Preferences" %}</h2>
 <form method="post" class="stacked">{% csrf_token %}
-  <p><label class="check"><input type="checkbox" name="email_notifications" value="yes"{% if profile.email_notifications %} checked{% endif %}> Email me about my account and news of the site</label></p>
-  <p><button class="button">Save the preferences</button></p>
+  <p><label class="check"><input type="checkbox" name="email_notifications" value="yes"{% if profile.email_notifications %} checked{% endif %}> {% translate "Email me about my account and news of the site" %}</label></p>
+  <p><button class="button">{% translate "Save the preferences" %}</button></p>
 </form></section>
-<section class="card" id="install" data-install><h2>The GitHub App</h2>
-  {% if install_url %}<p>Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub.</p>
-  <p><a class="button" href="{{ install_url }}">Install the GitHub App</a> {% help_link links.install_help "Ways to install the GitHub App" %}</p>
-  {% else %}<p>The site has no GitHub App yet. The people who run the site <a href="{% url 'register_app' %}">register it</a> first.</p>{% endif %}
+<section class="card" id="install" data-install><h2>{% translate "The GitHub App" %}</h2>
+  {% if install_url %}<p>{% translate "Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub." %}</p>
+  <p><a class="button" href="{{ install_url }}">{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>
+  {% else %}{% url 'register_app' as register_url %}<p>{% blocktranslate %}The site has no GitHub App yet. The people who run the site <a href="{{ register_url }}">register it</a> first.{% endblocktranslate %}</p>{% endif %}
 </section>
 </div>
 {% endblock %}

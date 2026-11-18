@@ -1,34 +1,34 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load help %}
-{% block title %}The OAuth app for signing in · {{ site_name }}{% endblock %}
+{% load i18n help %}
+{% block title %}{% translate "The OAuth app for signing in" %} · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>The OAuth app for signing in {% help_link links.oauth_app "The OAuth app for signing in" %}</h1>
-<p class="lead">People sign in with an OAuth app. GitHub tells the site only who they are and their email addresses, read only. It never asks to let the site act on their behalf.</p>
-{% if configured %}<p class="message message-success" data-oauth-configured>People sign in with an OAuth app.</p>
-{% else %}<p class="message message-warning" data-oauth-missing>Until the OAuth app is entered, nobody can sign in.</p>{% endif %}
-{% if from_environment %}<p class="message message-warning" data-oauth-environment>The OAuth app is set in the environment (<code>GITHUB_OAUTH_CLIENT_ID</code>); change it there.</p>
+<h1>{% translate "The OAuth app for signing in" %} {% translate "The OAuth app for signing in" as help %}{% help_link links.oauth_app help %}</h1>
+<p class="lead">{% translate "People sign in with an OAuth app. GitHub tells the site only who they are and their email addresses, read only. It never asks to let the site act on their behalf." %}</p>
+{% if configured %}<p class="message message-success" data-oauth-configured>{% translate "People sign in with an OAuth app." %}</p>
+{% else %}<p class="message message-warning" data-oauth-missing>{% translate "Until the OAuth app is entered, nobody can sign in." %}</p>{% endif %}
+{% if from_environment %}<p class="message message-warning" data-oauth-environment>{% blocktranslate %}The OAuth app is set in the environment (<code>GITHUB_OAUTH_CLIENT_ID</code>); change it there.{% endblocktranslate %}</p>
 {% else %}
 <section class="card">
-  <h2>1. Create the OAuth app on GitHub</h2>
+  <h2>{% translate "1. Create the OAuth app on GitHub" %}</h2>
   <ol class="steps">
-    <li><a href="https://github.com/settings/applications/new">New OAuth app</a> of your account, or <em>Settings → Developer settings → OAuth apps</em> of the organization.</li>
-    <li>Homepage URL: <code>{{ site_url }}</code></li>
-    <li>Authorization callback URL: <code>{{ callback_url }}</code></li>
-    <li>Register the application and generate a client secret.</li>
+    <li>{% blocktranslate %}<a href="https://github.com/settings/applications/new">New OAuth app</a> of your account, or <em>Settings → Developer settings → OAuth apps</em> of the organization.{% endblocktranslate %}</li>
+    <li>{% blocktranslate %}Homepage URL: <code>{{ site_url }}</code>{% endblocktranslate %}</li>
+    <li>{% blocktranslate %}Authorization callback URL: <code>{{ callback_url }}</code>{% endblocktranslate %}</li>
+    <li>{% translate "Register the application and generate a client secret." %}</li>
   </ol>
 </section>
 <section class="card">
-  <h2>2. Enter it here</h2>
-  {% if code_error %}<p class="message message-error" role="alert" data-error="SetupCodeWrong">The setup code is wrong.</p>{% endif %}
-  {% if error %}<p class="message message-error" role="alert" data-error="invalid">Enter the client ID and a client secret as GitHub shows them.</p>{% endif %}
+  <h2>{% translate "2. Enter it here" %}</h2>
+  {% if code_error %}<p class="message message-error" role="alert" data-error="SetupCodeWrong">{% translate "The setup code is wrong." %}</p>{% endif %}
+  {% if error %}<p class="message message-error" role="alert" data-error="invalid">{% translate "Enter the client ID and a client secret as GitHub shows them." %}</p>{% endif %}
   <form method="post" class="stacked">{% csrf_token %}
-    <p><label for="client_id">Client ID</label><input id="client_id" name="client_id" required autocomplete="off" spellcheck="false"></p>
-    <p><label for="secret">Client secret</label><input id="secret" name="secret" type="password" required autocomplete="off"></p>
-    {% if needs_code %}<p><label for="setup_code">Setup code</label><input id="setup_code" name="setup_code" required autocomplete="off" spellcheck="false">
-      <small>Only the people who run the site may enter the OAuth app. The site writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.</small></p>{% endif %}
-    <p><button class="button" type="submit">Save the OAuth app</button></p>
+    <p><label for="client_id">{% translate "Client ID" %}</label><input id="client_id" name="client_id" required autocomplete="off" spellcheck="false"></p>
+    <p><label for="secret">{% translate "Client secret" %}</label><input id="secret" name="secret" type="password" required autocomplete="off"></p>
+    {% if needs_code %}<p><label for="setup_code">{% translate "Setup code" %}</label><input id="setup_code" name="setup_code" required autocomplete="off" spellcheck="false">
+      <small>{% blocktranslate %}Only the people who run the site may enter the OAuth app. The site writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.{% endblocktranslate %}</small></p>{% endif %}
+    <p><button class="button" type="submit">{% translate "Save the OAuth app" %}</button></p>
   </form>
-  <p class="muted">They are kept in the volume of the site (<code>DATA_DIR/.env</code>); settings of the environment take precedence.</p>
+  <p class="muted">{% blocktranslate %}They are kept in the volume of the site (<code>DATA_DIR/.env</code>); settings of the environment take precedence.{% endblocktranslate %}</p>
 </section>
 {% endif %}
 {% endblock %}

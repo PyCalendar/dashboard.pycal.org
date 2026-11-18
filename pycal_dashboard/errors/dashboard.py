@@ -4,6 +4,8 @@ The pages show them with the HTTP status; the JSON of a page answers with the
 same name, title and link, see :doc:`/reference/json`.
 """
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -13,10 +15,10 @@ class LookupFailed(DashboardError):
     Check the address, or start again from the start page.
     """
 
-    title = "Not found"
+    title = _("Not found")
     status = 404
     guide = "tutorial/use.html"
-    guide_title = "Use the dashboard"
+    guide_title = _("Use the dashboard")
 
 
 class InvalidInstallationId(DashboardError):
@@ -27,7 +29,7 @@ class InvalidInstallationId(DashboardError):
     again from its page on GitHub, see :doc:`/how-to/github-app`.
     """
 
-    title = "Invalid installation"
+    title = _("Invalid installation")
     status = 400
     guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide_title = _("Register the GitHub App")

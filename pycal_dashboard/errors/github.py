@@ -1,5 +1,7 @@
 """Errors of talking to GitHub, of the GitHub App and of signing in."""
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -10,7 +12,7 @@ class GitHubError(DashboardError):
     check https://www.githubstatus.com/ and report a bug.
     """
 
-    title = "GitHub answered with an error"
+    title = _("GitHub answered with an error")
     status = 502
 
 
@@ -22,7 +24,7 @@ class GitHubUnreachable(GitHubError):
     ``api.github.com``.
     """
 
-    title = "GitHub could not be reached"
+    title = _("GitHub could not be reached")
     status = 503
 
 
@@ -33,7 +35,7 @@ class GitHubNotFound(GitHubError):
     not visible to the GitHub App.
     """
 
-    title = "Not found on GitHub"
+    title = _("Not found on GitHub")
     status = 404
 
 
@@ -45,7 +47,7 @@ class GitHubLoginExpired(GitHubError):
     the server.
     """
 
-    title = "GitHub did not accept the token"
+    title = _("GitHub did not accept the token")
     status = 502
 
 
@@ -56,7 +58,7 @@ class GitHubRateLimited(GitHubError):
     usually within an hour. The dashboard keeps showing what it read before.
     """
 
-    title = "Too many requests to GitHub"
+    title = _("Too many requests to GitHub")
     status = 503
 
 
@@ -68,10 +70,10 @@ class MissingPermissions(GitHubError):
     installation on GitHub; :doc:`/reference/permissions` lists them.
     """
 
-    title = "The GitHub App lacks a permission"
+    title = _("The GitHub App lacks a permission")
     status = 403
     guide = "reference/permissions.html"
-    guide_title = "Permissions of the GitHub App"
+    guide_title = _("Permissions of the GitHub App")
 
 
 class SignInNotConfigured(GitHubError):
@@ -83,10 +85,10 @@ class SignInNotConfigured(GitHubError):
     :ref:`oauth-app` describes.
     """
 
-    title = "Signing in is not set up"
+    title = _("Signing in is not set up")
     status = 503
     guide = "how-to/github-app.html#oauth-app"
-    guide_title = "The OAuth app for signing in"
+    guide_title = _("The OAuth app for signing in")
 
 
 class GitHubAppNotConfigured(GitHubError):
@@ -98,10 +100,10 @@ class GitHubAppNotConfigured(GitHubError):
     :doc:`/how-to/github-app` describes.
     """
 
-    title = "The site has no GitHub App"
+    title = _("The site has no GitHub App")
     status = 503
     guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide_title = _("Register the GitHub App")
 
 
 class InvalidPrivateKey(GitHubError):
@@ -112,7 +114,7 @@ class InvalidPrivateKey(GitHubError):
     the settings of the app on GitHub and set it.
     """
 
-    title = "The private key of the GitHub App is invalid"
+    title = _("The private key of the GitHub App is invalid")
     status = 500
     guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide_title = _("Register the GitHub App")

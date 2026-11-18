@@ -31,6 +31,16 @@ def private_key() -> str:
 
 
 @pytest.fixture(autouse=True)
+def english():
+    """Every test starts in English: a request in another language may leave it active."""
+    from django.utils import translation
+
+    translation.activate("en")
+    yield
+    translation.activate("en")
+
+
+@pytest.fixture(autouse=True)
 def app_settings(settings, private_key, tmp_path):
     settings.DATA_DIR = tmp_path / "data"
     settings.GITHUB_APP_ID = "1"

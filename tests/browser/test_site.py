@@ -89,3 +89,15 @@ def test_works_without_javascript(browser, site):
     page.get_by_role("button", name="Light").click()
     expect(page.locator("html")).to_have_attribute("data-theme", "light")
     context.close()
+
+
+def test_switch_the_language(page, site):
+    page.goto(f"{site}/about/")
+    page.get_by_label("Language").click()
+    page.get_by_role("button", name="Deutsch").click()
+    expect(page).to_have_url(f"{site}/about/")
+    expect(page.locator("html")).to_have_attribute("lang", "de")
+    expect(page.get_by_role("heading", name="Datenschutz")).to_be_visible()
+    page.get_by_label("Sprache").click()
+    page.get_by_role("button", name="English").click()
+    expect(page.locator("html")).to_have_attribute("lang", "en")

@@ -1,0 +1,975 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-18 14:38+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "As the system"
+msgstr "Wie das System"
+
+msgid "Light"
+msgstr "Hell"
+
+msgid "Dark"
+msgstr "Dunkel"
+
+msgid "The account could not be changed"
+msgstr "Das Konto konnte nicht geändert werden"
+
+msgid "Your account"
+msgstr "Dein Konto"
+
+msgid "The account has no GitHub identity"
+msgstr "Das Konto hat keine GitHub-Identität"
+
+msgid "Something went wrong"
+msgstr "Etwas ist schiefgegangen"
+
+msgid "How to report a bug"
+msgstr "Einen Fehler melden"
+
+msgid "Unexpected error"
+msgstr "Unerwarteter Fehler"
+
+msgid "A setting of the site is wrong"
+msgstr "Eine Einstellung der Seite ist falsch"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Unknown color"
+msgstr "Unbekannte Farbe"
+
+msgid "Invalid color"
+msgstr "Ungültige Farbe"
+
+msgid "Invalid organization in the settings"
+msgstr "Ungültige Organisation in den Einstellungen"
+
+msgid "The favicon was not found"
+msgstr "Das Favicon wurde nicht gefunden"
+
+msgid "The favicon has an unsupported format"
+msgstr "Das Favicon hat ein nicht unterstütztes Format"
+
+msgid "A link of the footer is invalid"
+msgstr "Ein Link der Fußzeile ist ungültig"
+
+msgid "Not found"
+msgstr "Nicht gefunden"
+
+msgid "Use the dashboard"
+msgstr "Das Dashboard benutzen"
+
+msgid "Invalid installation"
+msgstr "Ungültige Installation"
+
+msgid "Register the GitHub App"
+msgstr "Die GitHub App registrieren"
+
+msgid "GitHub answered with an error"
+msgstr "GitHub antwortete mit einem Fehler"
+
+msgid "GitHub could not be reached"
+msgstr "GitHub war nicht erreichbar"
+
+msgid "Not found on GitHub"
+msgstr "Auf GitHub nicht gefunden"
+
+msgid "GitHub did not accept the token"
+msgstr "GitHub hat den Token nicht akzeptiert"
+
+msgid "Too many requests to GitHub"
+msgstr "Zu viele Anfragen an GitHub"
+
+msgid "The GitHub App lacks a permission"
+msgstr "Der GitHub App fehlt eine Berechtigung"
+
+msgid "Permissions of the GitHub App"
+msgstr "Berechtigungen der GitHub App"
+
+msgid "Signing in is not set up"
+msgstr "Die Anmeldung ist nicht eingerichtet"
+
+msgid "The OAuth app for signing in"
+msgstr "Die OAuth-App für die Anmeldung"
+
+msgid "The site has no GitHub App"
+msgstr "Die Seite hat keine GitHub App"
+
+msgid "The private key of the GitHub App is invalid"
+msgstr "Der private Schlüssel der GitHub App ist ungültig"
+
+msgid "The GitHub App could not be registered"
+msgstr "Die GitHub App konnte nicht registriert werden"
+
+msgid "The site already has a GitHub App"
+msgstr "Die Seite hat schon eine GitHub App"
+
+msgid "A private key exists already"
+msgstr "Ein privater Schlüssel existiert schon"
+
+msgid "Settings of a GitHub App are set in the environment"
+msgstr "Einstellungen einer GitHub App stehen in der Umgebung"
+
+msgid "The setup code is wrong"
+msgstr "Der Einrichtungscode ist falsch"
+
+msgid "The name of the GitHub App is invalid"
+msgstr "Der Name der GitHub App ist ungültig"
+
+msgid "The organization is invalid"
+msgstr "Die Organisation ist ungültig"
+
+msgid "The registration does not belong to this browser"
+msgstr "Die Registrierung gehört nicht zu diesem Browser"
+
+msgid "GitHub returned without a code"
+msgstr "GitHub kam ohne Code zurück"
+
+msgid "GitHub refused the code of the new app"
+msgstr "GitHub lehnte den Code der neuen App ab"
+
+msgid "The GitHub App could not be saved"
+msgstr "Die GitHub App konnte nicht gespeichert werden"
+
+msgid "The webhook could not be handled"
+msgstr "Der Webhook konnte nicht verarbeitet werden"
+
+msgid "The site has no webhook secret"
+msgstr "Die Seite hat kein Webhook-Geheimnis"
+
+msgid "The webhook has no signature"
+msgstr "Der Webhook hat keine Signatur"
+
+msgid "The signature of the webhook is invalid"
+msgstr "Die Signatur des Webhooks ist ungültig"
+
+msgid "The content of the webhook is invalid"
+msgstr "Der Inhalt des Webhooks ist ungültig"
+
+msgid "The webhook names no event"
+msgstr "Der Webhook nennt kein Ereignis"
+
+msgid "Email addresses"
+msgstr "E-Mail-Adressen"
+
+msgid "Back to the account"
+msgstr "Zurück zum Konto"
+
+msgid "verified"
+msgstr "bestätigt"
+
+msgid "not verified"
+msgstr "nicht bestätigt"
+
+msgid "primary"
+msgstr "primär"
+
+msgid "No email address yet."
+msgstr "Noch keine E-Mail-Adresse."
+
+msgid "Send verification email"
+msgstr "Bestätigungs-E-Mail senden"
+
+msgid "Make primary"
+msgstr "Zur primären machen"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Add an address"
+msgstr "Eine Adresse hinzufügen"
+
+msgid "Add and verify email"
+msgstr "E-Mail hinzufügen und bestätigen"
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "Sign in with GitHub"
+msgstr "Mit GitHub anmelden"
+
+msgid ""
+"GitHub tells this site who you are and your email addresses. There are no "
+"passwords on this site. Every page is public; signing in adds your account "
+"and your preferences."
+msgstr ""
+"GitHub sagt dieser Seite, wer du bist, und nennt deine E-Mail-Adressen. "
+"Diese Seite hat keine Passwörter. Jede Seite ist öffentlich; die Anmeldung "
+"fügt dein Konto und deine Einstellungen hinzu."
+
+msgid "Signing in is not set up yet: the site has no OAuth app."
+msgstr ""
+"Die Anmeldung ist noch nicht eingerichtet: Die Seite hat keine OAuth-App."
+
+msgid ""
+"The people who run the site create an OAuth app on GitHub and enter it here, "
+"with the setup code of the log. It only tells the site who people are and "
+"their email addresses."
+msgstr ""
+"Die Betreiber der Seite legen eine OAuth-App auf GitHub an und tragen sie "
+"hier ein, mit dem Einrichtungscode aus dem Protokoll. Sie sagt der Seite "
+"nur, wer jemand ist, und nennt die E-Mail-Adressen."
+
+msgid "Set up signing in"
+msgstr "Anmeldung einrichten"
+
+msgid "Account and preferences"
+msgstr "Konto und Einstellungen"
+
+msgid "Install the GitHub App"
+msgstr "Die GitHub App installieren"
+
+msgid "Administration"
+msgstr "Verwaltung"
+
+msgid "Log"
+msgstr "Protokoll"
+
+msgid "Webhook deliveries"
+msgstr "Webhook-Zustellungen"
+
+msgid "Django admin"
+msgstr "Django-Admin"
+
+msgid "Sign out"
+msgstr "Abmelden"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "What this error means and how to solve it"
+msgstr "Was dieser Fehler bedeutet und wie man ihn löst"
+
+msgid "Back to the start"
+msgstr "Zurück zum Anfang"
+
+msgid "Documentation"
+msgstr "Dokumentation"
+
+msgid "Details to copy"
+msgstr "Details zum Kopieren"
+
+msgid "Select the text and copy it into a bug report or a question."
+msgstr ""
+"Markiere den Text und kopiere ihn in eine Fehlermeldung oder eine Frage."
+
+#, python-format
+msgid ""
+"Is this wrong? <a href=\"%(url)s\">Report a bug</a> and say what you did "
+"before."
+msgstr ""
+"Ist das falsch? <a href=\"%(url)s\">Melde einen Fehler</a> und sage, was du "
+"vorher getan hast."
+
+msgid "Colors of the page"
+msgstr "Farben der Seite"
+
+msgid "About"
+msgstr "Über"
+
+#, python-format
+msgid "About %(site_name)s"
+msgstr "Über %(site_name)s"
+
+msgid "A dashboard for the contributor community of"
+msgstr "Ein Dashboard für die Gemeinschaft der Mitwirkenden von"
+
+msgid "where to start, what waits for a review, and who contributes."
+msgstr "wo man anfängt, was auf ein Review wartet und wer mitwirkt."
+
+msgid "Privacy"
+msgstr "Datenschutz"
+
+msgid ""
+"Every page is public, except your account, preferences and email addresses, "
+"which only you see. The dashboard shows public repositories only. Signing in "
+"with GitHub tells the site who you are and your email addresses; it stores "
+"no token."
+msgstr ""
+"Jede Seite ist öffentlich, außer deinem Konto, deinen Einstellungen und E-"
+"Mail-Adressen, die nur du siehst. Das Dashboard zeigt nur öffentliche "
+"Repositorys. Die Anmeldung mit GitHub sagt der Seite, wer du bist, und nennt "
+"deine E-Mail-Adressen; sie speichert keinen Token."
+
+msgid "The GitHub App"
+msgstr "Die GitHub App"
+
+msgid "Events"
+msgstr "Ereignisse"
+
+msgid ""
+"The app only reads: it writes nothing to GitHub, such as labels or comments."
+msgstr ""
+"Die App liest nur: Sie schreibt nichts auf GitHub, etwa Labels oder "
+"Kommentare."
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Commit"
+msgstr "Commit"
+
+msgid "Built"
+msgstr "Gebaut"
+
+msgid "build"
+msgstr "Build"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Report a bug"
+msgstr "Einen Fehler melden"
+
+msgid "Changelog"
+msgstr "Änderungen"
+
+msgid "Account"
+msgstr "Konto"
+
+msgid "Your profile on GitHub"
+msgstr "Dein Profil auf GitHub"
+
+msgid "Only you see this page."
+msgstr "Nur du siehst diese Seite."
+
+msgid "No email address. GitHub did not share a verified one."
+msgstr "Keine E-Mail-Adresse. GitHub hat keine bestätigte geteilt."
+
+msgid "Add, verify or change email addresses"
+msgstr "E-Mail-Adressen hinzufügen, bestätigen oder ändern"
+
+msgid ""
+"The site sends emails only to verified addresses and only what you choose "
+"below."
+msgstr ""
+"Die Seite sendet E-Mails nur an bestätigte Adressen und nur, was du unten "
+"wählst."
+
+msgid "Preferences"
+msgstr "Einstellungen"
+
+msgid "Email me about my account and news of the site"
+msgstr "Schreib mir zu meinem Konto und zu Neuigkeiten der Seite"
+
+msgid "Save the preferences"
+msgstr "Einstellungen speichern"
+
+msgid ""
+"Install the app on the repositories of an organization: on all of them or on "
+"the ones you choose. Owners of the organization install it; other members "
+"ask an owner on GitHub."
+msgstr ""
+"Installiere die App auf den Repositorys einer Organisation: auf allen oder "
+"auf denen, die du wählst. Besitzer der Organisation installieren sie; andere "
+"Mitglieder fragen einen Besitzer auf GitHub."
+
+msgid "Ways to install the GitHub App"
+msgstr "Wege, die GitHub App zu installieren"
+
+#, python-format
+msgid ""
+"The site has no GitHub App yet. The people who run the site <a "
+"href=\"%(register_url)s\">register it</a> first."
+msgstr ""
+"Die Seite hat noch keine GitHub App. Die Betreiber der Seite <a "
+"href=\"%(register_url)s\">registrieren sie</a> zuerst."
+
+msgid "GitHub App registered"
+msgstr "GitHub App registriert"
+
+msgid "The GitHub App is registered"
+msgstr "Die GitHub App ist registriert"
+
+#, python-format
+msgid ""
+"<strong>%(name)s</strong> belongs to <strong>%(owner)s</strong> on GitHub. "
+"The site uses it now."
+msgstr ""
+"<strong>%(name)s</strong> gehört <strong>%(owner)s</strong> auf GitHub. Die "
+"Seite benutzt sie jetzt."
+
+msgid ""
+"The app has no webhook, because GitHub cannot reach this site. When the site "
+"has a public address, add the webhook in the settings of the app on GitHub: "
+"the address of the site plus <code>/github/webhook/</code>, and a secret "
+"that you also set as <code>GITHUB_WEBHOOK_SECRET</code>."
+msgstr ""
+"Die App hat keinen Webhook, weil GitHub diese Seite nicht erreicht. Wenn die "
+"Seite eine öffentliche Adresse hat, füge den Webhook in den Einstellungen "
+"der App auf GitHub hinzu: die Adresse der Seite plus <code>/github/webhook/</"
+"code> und ein Geheimnis, das du auch als <code>GITHUB_WEBHOOK_SECRET</code> "
+"setzt."
+
+msgid "Next"
+msgstr "Weiter"
+
+#, python-format
+msgid ""
+"<a href=\"%(install_url)s\">Install the app on the repositories</a>: all of "
+"the organization or the ones you choose, see the documentation."
+msgstr ""
+"<a href=\"%(install_url)s\">Die App auf den Repositorys installieren</a>: "
+"allen der Organisation oder denen, die du wählst, siehe die Dokumentation."
+
+msgid "The app on GitHub"
+msgstr "Die App auf GitHub"
+
+msgid "Where the credentials are"
+msgstr "Wo die Zugangsdaten sind"
+
+#, python-format
+msgid ""
+"The settings are in <code>%(env_file)s</code>, the private key in "
+"<code>%(key_file)s</code>. Back up the volume; keep both secret."
+msgstr ""
+"Die Einstellungen sind in <code>%(env_file)s</code>, der private Schlüssel "
+"in <code>%(key_file)s</code>. Sichere das Volume; halte beides geheim."
+
+msgid ""
+"The processes of the site restart to read them; this takes a few seconds."
+msgstr ""
+"Die Prozesse der Seite starten neu, um sie zu lesen; das dauert ein paar "
+"Sekunden."
+
+msgid ""
+"The site reads them at every start; settings of the environment take "
+"precedence."
+msgstr ""
+"Die Seite liest sie bei jedem Start; Einstellungen der Umgebung haben "
+"Vorrang."
+
+msgid "Skip to the content"
+msgstr "Zum Inhalt springen"
+
+msgid "Menu"
+msgstr "Menü"
+
+#, python-format
+msgid ""
+"This site has no GitHub App yet. The people who run it <a "
+"href=\"%(register_url)s\">register the GitHub App</a> with the setup code "
+"from the log."
+msgstr ""
+"Diese Seite hat noch keine GitHub App. Ihre Betreiber <a "
+"href=\"%(register_url)s\">registrieren die GitHub App</a> mit dem "
+"Einrichtungscode aus dem Protokoll."
+
+msgid "Source code"
+msgstr "Quellcode"
+
+msgid ""
+"The latest 100 webhooks of GitHub and what the site did. Only the "
+"administrators of the site see them: they may name private repositories."
+msgstr ""
+"Die letzten 100 Webhooks von GitHub und was die Seite tat. Nur die "
+"Administratoren der Seite sehen sie: Sie können private Repositorys nennen."
+
+msgid "Received"
+msgstr "Empfangen"
+
+msgid "Event"
+msgstr "Ereignis"
+
+msgid "Repository"
+msgstr "Repository"
+
+msgid "Outcome"
+msgstr "Ergebnis"
+
+msgid "No webhook yet."
+msgstr "Noch kein Webhook."
+
+msgid "Welcome to the community of PyCalendar"
+msgstr "Willkommen in der Gemeinschaft von PyCalendar"
+
+msgid "This dashboard will guide the contributor community of"
+msgstr "Dieses Dashboard wird die Gemeinschaft der Mitwirkenden leiten von"
+
+msgid ""
+"The numbers and the automation are designed next; until then the site signs "
+"people in and receives the webhooks of its GitHub App."
+msgstr ""
+"Die Zahlen und die Automatisierung werden als Nächstes entworfen; bis dahin "
+"meldet die Seite Menschen an und empfängt die Webhooks ihrer GitHub App."
+
+msgid "Read the documentation"
+msgstr "Die Dokumentation lesen"
+
+msgid "About the site"
+msgstr "Über die Seite"
+
+msgid "GitHub App"
+msgstr "GitHub App"
+
+msgid "registered"
+msgstr "registriert"
+
+msgid ""
+"The app receives the webhooks of the organization. It only reads and writes "
+"nothing to GitHub."
+msgstr ""
+"Die App empfängt die Webhooks der Organisation. Sie liest nur und schreibt "
+"nichts auf GitHub."
+
+msgid "not registered"
+msgstr "nicht registriert"
+
+#, python-format
+msgid ""
+"The people who run the site <a href=\"%(register_url)s\">register it</a>."
+msgstr ""
+"Die Betreiber der Seite <a href=\"%(register_url)s\">registrieren sie</a>."
+
+msgid "You are signed in."
+msgstr "Du bist angemeldet."
+
+msgid "Your account and preferences"
+msgstr "Dein Konto und deine Einstellungen"
+
+msgid "Sign in with GitHub to choose your preferences and email addresses."
+msgstr ""
+"Melde dich mit GitHub an, um deine Einstellungen und E-Mail-Adressen zu "
+"wählen."
+
+msgid "not set up"
+msgstr "nicht eingerichtet"
+
+msgid "Nobody can sign in yet: the site has no OAuth app."
+msgstr "Noch kann sich niemand anmelden: Die Seite hat keine OAuth-App."
+
+msgid "Installed"
+msgstr "Installiert"
+
+msgid "The installation of the GitHub App is updated"
+msgstr "Die Installation der GitHub App ist aktualisiert"
+
+msgid "The GitHub App is installed"
+msgstr "Die GitHub App ist installiert"
+
+msgid ""
+"The app receives the webhooks of the repositories you chose. The site logs "
+"them, but does nothing with them yet: it keeps no data of GitHub and writes "
+"nothing to GitHub."
+msgstr ""
+"Die App empfängt die Webhooks der Repositorys, die du gewählt hast. Die "
+"Seite protokolliert sie, tut aber noch nichts damit: Sie speichert keine "
+"Daten von GitHub und schreibt nichts auf GitHub."
+
+msgid "Licenses"
+msgstr "Lizenzen"
+
+msgid "License"
+msgstr "Lizenz"
+
+#, python-format
+msgid ""
+"%(site_name)s is free software under the <a "
+"href=\"%(license_url)s\">%(license)s</a>: you may use, study, share and "
+"change it; a changed version that you run for others must offer its source "
+"code."
+msgstr ""
+"%(site_name)s ist freie Software unter der <a "
+"href=\"%(license_url)s\">%(license)s</a>: Du darfst sie benutzen, "
+"untersuchen, teilen und ändern; eine geänderte Version, die du für andere "
+"betreibst, muss ihren Quellcode anbieten."
+
+msgid "License texts"
+msgstr "Lizenztexte"
+
+msgid ""
+"The project follows the REUSE specification: every file has its copyright "
+"and license, the texts are in LICENSES/."
+msgstr ""
+"Das Projekt folgt der REUSE-Spezifikation: Jede Datei hat ihr Copyright und "
+"ihre Lizenz, die Texte sind in LICENSES/."
+
+msgid "Code from other projects"
+msgstr "Code aus anderen Projekten"
+
+msgid "Files"
+msgstr "Dateien"
+
+msgid "Copyright"
+msgstr "Copyright"
+
+msgid "Python packages on the server"
+msgstr "Python-Pakete auf dem Server"
+
+msgid ""
+"Read by pip-licenses from the packages installed on this server. The license "
+"links to its text."
+msgstr ""
+"Von pip-licenses aus den auf diesem Server installierten Paketen gelesen. "
+"Die Lizenz verlinkt ihren Text."
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "The log"
+msgstr "Das Protokoll"
+
+msgid ""
+"What happened to the site and what followed from it: webhooks, sign-ins, the "
+"rights of the administrators, the setup and the preferences. Only the "
+"administrators of the site see it."
+msgstr ""
+"Was der Seite passierte und was daraus folgte: Webhooks, Anmeldungen, die "
+"Rechte der Administratoren, die Einrichtung und die Einstellungen. Nur die "
+"Administratoren der Seite sehen es."
+
+msgid "delivery"
+msgstr "Zustellung"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Newer"
+msgstr "Neuer"
+
+#, python-format
+msgid "Page %(number)s of %(count)s"
+msgstr "Seite %(number)s von %(count)s"
+
+msgid "Older"
+msgstr "Älter"
+
+msgid "Nothing yet."
+msgstr "Noch nichts."
+
+msgid ""
+"People sign in with an OAuth app. GitHub tells the site only who they are "
+"and their email addresses, read only. It never asks to let the site act on "
+"their behalf."
+msgstr ""
+"Menschen melden sich mit einer OAuth-App an. GitHub sagt der Seite nur, wer "
+"sie sind, und nennt ihre E-Mail-Adressen, nur lesend. GitHub fragt nie, ob "
+"die Seite in ihrem Namen handeln darf."
+
+msgid "People sign in with an OAuth app."
+msgstr "Menschen melden sich mit einer OAuth-App an."
+
+msgid "Until the OAuth app is entered, nobody can sign in."
+msgstr "Bis die OAuth-App eingetragen ist, kann sich niemand anmelden."
+
+msgid ""
+"The OAuth app is set in the environment (<code>GITHUB_OAUTH_CLIENT_ID</"
+"code>); change it there."
+msgstr ""
+"Die OAuth-App steht in der Umgebung (<code>GITHUB_OAUTH_CLIENT_ID</code>); "
+"ändere sie dort."
+
+msgid "1. Create the OAuth app on GitHub"
+msgstr "1. Die OAuth-App auf GitHub anlegen"
+
+msgid ""
+"<a href=\"https://github.com/settings/applications/new\">New OAuth app</a> "
+"of your account, or <em>Settings → Developer settings → OAuth apps</em> of "
+"the organization."
+msgstr ""
+"<a href=\"https://github.com/settings/applications/new\">Neue OAuth-App</a> "
+"deines Kontos, oder <em>Settings → Developer settings → OAuth apps</em> der "
+"Organisation."
+
+#, python-format
+msgid "Homepage URL: <code>%(site_url)s</code>"
+msgstr "Homepage URL: <code>%(site_url)s</code>"
+
+#, python-format
+msgid "Authorization callback URL: <code>%(callback_url)s</code>"
+msgstr "Authorization callback URL: <code>%(callback_url)s</code>"
+
+msgid "Register the application and generate a client secret."
+msgstr "Registriere die Anwendung und erzeuge ein Client-Secret."
+
+msgid "2. Enter it here"
+msgstr "2. Hier eintragen"
+
+msgid "The setup code is wrong."
+msgstr "Der Einrichtungscode ist falsch."
+
+msgid "Enter the client ID and a client secret as GitHub shows them."
+msgstr "Trage die Client-ID und ein Client-Secret ein, wie GitHub sie zeigt."
+
+msgid "Client ID"
+msgstr "Client-ID"
+
+msgid "Client secret"
+msgstr "Client-Secret"
+
+msgid "Setup code"
+msgstr "Einrichtungscode"
+
+msgid ""
+"Only the people who run the site may enter the OAuth app. The site writes "
+"the code into its log at every start, and <code>manage.py "
+"github_app_setup_code</code> shows it."
+msgstr ""
+"Nur die Betreiber der Seite dürfen die OAuth-App eintragen. Die Seite "
+"schreibt den Code bei jedem Start in ihr Protokoll, und <code>manage.py "
+"github_app_setup_code</code> zeigt ihn."
+
+msgid "Save the OAuth app"
+msgstr "OAuth-App speichern"
+
+msgid ""
+"They are kept in the volume of the site (<code>DATA_DIR/.env</code>); "
+"settings of the environment take precedence."
+msgstr ""
+"Sie werden im Volume der Seite gespeichert (<code>DATA_DIR/.env</code>); "
+"Einstellungen der Umgebung haben Vorrang."
+
+msgid ""
+"The dashboard receives the webhooks of the repositories with its own GitHub "
+"App; it only reads. The site registers the app on GitHub itself and keeps "
+"the credentials in its volume."
+msgstr ""
+"Das Dashboard empfängt die Webhooks der Repositorys mit seiner eigenen "
+"GitHub App; es liest nur. Die Seite registriert die App selbst auf GitHub "
+"und speichert die Zugangsdaten in ihrem Volume."
+
+msgid "This site has a GitHub App"
+msgstr "Diese Seite hat eine GitHub App"
+
+msgid ""
+"Its credentials come from the environment, such as <code>.env</code>. They "
+"take precedence over the volume."
+msgstr ""
+"Ihre Zugangsdaten kommen aus der Umgebung, etwa <code>.env</code>. Sie haben "
+"Vorrang vor dem Volume."
+
+msgid ""
+"It was registered on this site; its credentials are in the volume "
+"(<code>DATA_DIR/.env</code>)."
+msgstr ""
+"Sie wurde auf dieser Seite registriert; ihre Zugangsdaten sind im Volume "
+"(<code>DATA_DIR/.env</code>)."
+
+msgid "A site has one GitHub App, so no other can be registered here."
+msgstr ""
+"Eine Seite hat eine GitHub App, also kann hier keine andere registriert "
+"werden."
+
+msgid "The app has every permission and event the site needs."
+msgstr ""
+"Die App hat jede Berechtigung und jedes Ereignis, das die Seite braucht."
+
+msgid ""
+"The app lacks what the site needs. Its owner changes it in the settings of "
+"the app on GitHub, then the owners of the installations accept the new "
+"permissions."
+msgstr ""
+"Der App fehlt, was die Seite braucht. Ihr Besitzer ändert es in den "
+"Einstellungen der App auf GitHub, dann akzeptieren die Besitzer der "
+"Installationen die neuen Berechtigungen."
+
+msgid "Permission"
+msgstr "Berechtigung"
+
+msgid "The permissions and events of the app on GitHub"
+msgstr "Die Berechtigungen und Ereignisse der App auf GitHub"
+
+msgid "Change them on GitHub"
+msgstr "Auf GitHub ändern"
+
+msgid "The GitHub App on GitHub"
+msgstr "Die GitHub App auf GitHub"
+
+msgid "Install it"
+msgstr "Installieren"
+
+msgid "2. Create the app on GitHub"
+msgstr "2. Die App auf GitHub anlegen"
+
+#, python-format
+msgid ""
+"GitHub opens the form for a new app of the organization "
+"<strong>%(organization)s</strong>, filled in with the manifest below."
+msgstr ""
+"GitHub öffnet das Formular für eine neue App der Organisation "
+"<strong>%(organization)s</strong>, ausgefüllt mit dem Manifest unten."
+
+msgid ""
+"GitHub opens the form for a new app of your account, filled in with the "
+"manifest below."
+msgstr ""
+"GitHub öffnet das Formular für eine neue App deines Kontos, ausgefüllt mit "
+"dem Manifest unten."
+
+msgid ""
+"Check the name and press <em>Create GitHub App</em> there. GitHub then "
+"returns to this site, which saves the credentials."
+msgstr ""
+"Prüfe den Namen und drücke dort <em>Create GitHub App</em>. GitHub kehrt "
+"dann zu dieser Seite zurück, die die Zugangsdaten speichert."
+
+msgid "Continue to GitHub"
+msgstr "Weiter zu GitHub"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "The manifest"
+msgstr "Das Manifest"
+
+msgid "Registration is not possible"
+msgstr "Die Registrierung ist nicht möglich"
+
+msgid "What this means"
+msgstr "Was das bedeutet"
+
+#, python-format
+msgid ""
+"This site runs at <code>%(site_url)s</code>, which GitHub cannot reach. "
+"Signing in works, but webhooks cannot be delivered: the app is registered "
+"without a webhook. Give the site a public address and set <code>SITE_URL</"
+"code> to it to test everything."
+msgstr ""
+"Diese Seite läuft unter <code>%(site_url)s</code>, das GitHub nicht "
+"erreicht. Die Anmeldung funktioniert, aber Webhooks können nicht zugestellt "
+"werden: Die App wird ohne Webhook registriert. Gib der Seite eine "
+"öffentliche Adresse und setze <code>SITE_URL</code> darauf, um alles zu "
+"testen."
+
+msgid "1. Name the app"
+msgstr "1. Die App benennen"
+
+msgid "Name on GitHub"
+msgstr "Name auf GitHub"
+
+msgid "At most 34 characters, and no other GitHub App may have it."
+msgstr "Höchstens 34 Zeichen, und keine andere GitHub App darf ihn haben."
+
+msgid "Organization"
+msgstr "Organisation"
+
+msgid "optional"
+msgstr "optional"
+
+msgid ""
+"The login of the organization that owns the app, such as PyCalendar. Empty: "
+"your own account."
+msgstr ""
+"Der Login der Organisation, der die App gehört, etwa PyCalendar. Leer: dein "
+"eigenes Konto."
+
+msgid ""
+"Only the people who run the site may register its app. The site writes the "
+"code into its log at every start, and <code>manage.py github_app_setup_code</"
+"code> shows it."
+msgstr ""
+"Nur die Betreiber der Seite dürfen ihre App registrieren. Die Seite schreibt "
+"den Code bei jedem Start in ihr Protokoll, und <code>manage.py "
+"github_app_setup_code</code> zeigt ihn."
+
+#, python-format
+msgid ""
+"The app gets the permissions and events the dashboard needs (<a "
+"href=\"%(about_url)s\">About</a>) and the addresses of this site: "
+"<code>%(site_url)s</code>."
+msgstr ""
+"Die App bekommt die Berechtigungen und Ereignisse, die das Dashboard braucht "
+"(<a href=\"%(about_url)s\">Über</a>), und die Adressen dieser Seite: "
+"<code>%(site_url)s</code>."
+
+#, python-format
+msgid "Help: %(label)s (opens in a new tab)"
+msgstr "Hilfe: %(label)s (öffnet einen neuen Tab)"
+
+msgid "just now"
+msgstr "gerade eben"
+
+#, python-format
+msgid "%(count)d minute ago"
+msgid_plural "%(count)d minutes ago"
+msgstr[0] "vor %(count)d Minute"
+msgstr[1] "vor %(count)d Minuten"
+
+#, python-format
+msgid "%(count)d hour ago"
+msgid_plural "%(count)d hours ago"
+msgstr[0] "vor %(count)d Stunde"
+msgstr[1] "vor %(count)d Stunden"
+
+msgid "yesterday"
+msgstr "gestern"
+
+#, python-format
+msgid "%(count)d day ago"
+msgid_plural "%(count)d days ago"
+msgstr[0] "vor %(count)d Tag"
+msgstr[1] "vor %(count)d Tagen"
+
+#, python-format
+msgid "on %(date)s"
+msgstr "am %(date)s"
+
+msgid "Your preferences are saved."
+msgstr "Deine Einstellungen sind gespeichert."
+
+msgid "Bad request"
+msgstr "Ungültige Anfrage"
+
+msgid ""
+"The site could not understand the request. Go back, reload the page and try "
+"again."
+msgstr ""
+"Die Seite konnte die Anfrage nicht verstehen. Geh zurück, lade die Seite neu "
+"und versuche es noch einmal."
+
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+msgid ""
+"You may not open this page. It shows private information: sign in with the "
+"GitHub account it belongs to."
+msgstr ""
+"Du darfst diese Seite nicht öffnen. Sie zeigt private Informationen: Melde "
+"dich mit dem GitHub-Konto an, dem sie gehören."
+
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+msgid ""
+"This page does not exist or has moved. Check the address, or start again."
+msgstr ""
+"Diese Seite gibt es nicht oder sie ist umgezogen. Prüfe die Adresse oder "
+"fang von vorn an."
+
+msgid ""
+"The site could not answer this time. The problem was logged. Please try "
+"again in a few minutes."
+msgstr ""
+"Die Seite konnte diesmal nicht antworten. Das Problem wurde protokolliert. "
+"Bitte versuche es in ein paar Minuten noch einmal."
+
+msgid "The form has expired"
+msgstr "Das Formular ist abgelaufen"
+
+msgid ""
+"The site accepts a form only from its own pages, with its cookie. Go back, "
+"reload the page and send the form again. Allow cookies for this site if this "
+"happens again."
+msgstr ""
+"Die Seite nimmt ein Formular nur von ihren eigenen Seiten an, mit ihrem "
+"Cookie. Geh zurück, lade die Seite neu und sende das Formular noch einmal. "
+"Erlaube Cookies für diese Seite, wenn das wieder passiert."
+
+msgid "People now sign in with the OAuth app."
+msgstr "Menschen melden sich jetzt mit der OAuth-App an."

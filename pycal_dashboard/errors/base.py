@@ -1,6 +1,7 @@
 """The base of all errors."""
 
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 
 class DashboardError(Exception):
@@ -10,11 +11,11 @@ class DashboardError(Exception):
     "Report a bug" at the bottom of the page.
     """
 
-    title = "Something went wrong"
+    title = _("Something went wrong")
     status = 400  # the HTTP status of the page that shows the error
     # a page of the documentation that explains the topic of the error; "" for none
     guide = "how-to/report-bug.html"
-    guide_title = "How to report a bug"
+    guide_title = _("How to report a bug")
 
     def __init__(self, detail: str = "", **context):
         """An error people can meet, with what happened.
@@ -68,7 +69,7 @@ class DashboardError(Exception):
         """
         return {
             "error": self.code,
-            "title": self.title,
+            "title": str(self.title),
             "detail": str(self),
             "documentation": self.docs_url(),
         }
@@ -81,5 +82,5 @@ class UnexpectedError(DashboardError):
     page and include the details of the page.
     """
 
-    title = "Unexpected error"
+    title = _("Unexpected error")
     status = 500

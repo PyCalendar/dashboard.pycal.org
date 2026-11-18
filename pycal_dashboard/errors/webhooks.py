@@ -5,6 +5,8 @@ status of the answer. The site keeps them on the page *Webhook deliveries* for
 its administrators.
 """
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -15,9 +17,9 @@ class WebhookError(DashboardError):
     answer, and :doc:`/how-to/github-app` for the setup.
     """
 
-    title = "The webhook could not be handled"
+    title = _("The webhook could not be handled")
     guide = "how-to/github-app.html"
-    guide_title = "Register the GitHub App"
+    guide_title = _("Register the GitHub App")
 
 
 class WebhookSecretNotConfigured(WebhookError):
@@ -27,7 +29,7 @@ class WebhookSecretNotConfigured(WebhookError):
     so they are refused. Set it to the webhook secret of the GitHub App.
     """
 
-    title = "The site has no webhook secret"
+    title = _("The site has no webhook secret")
     status = 503
 
 
@@ -39,7 +41,7 @@ class WebhookSignatureMissing(WebhookError):
     App.
     """
 
-    title = "The webhook has no signature"
+    title = _("The webhook has no signature")
     status = 401
 
 
@@ -50,7 +52,7 @@ class WebhookSignatureInvalid(WebhookError):
     site differ. Set both to the same value.
     """
 
-    title = "The signature of the webhook is invalid"
+    title = _("The signature of the webhook is invalid")
     status = 401
 
 
@@ -61,7 +63,7 @@ class WebhookPayloadInvalid(WebhookError):
     ``application/json``.
     """
 
-    title = "The content of the webhook is invalid"
+    title = _("The content of the webhook is invalid")
 
 
 class WebhookEventMissing(WebhookError):
@@ -71,4 +73,4 @@ class WebhookEventMissing(WebhookError):
     it does not come from GitHub.
     """
 
-    title = "The webhook names no event"
+    title = _("The webhook names no event")

@@ -24,6 +24,13 @@ whether the GitHub App is registered and whether you can sign in. *About*, at
 the bottom of every page, shows the permissions of the app and the version
 that runs.
 
+The language
+============
+
+The site speaks English, German and Spanish. It starts in the language of your
+browser; the menu with the globe at the top changes it and keeps the choice.
+To help translate, see :ref:`translate`.
+
 The colors
 ==========
 

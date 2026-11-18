@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.actions import PreferencesSaved, Trigger
@@ -31,13 +32,13 @@ def account(request):
     identity = GitHubIdentity.of(request.user)
     if identity is None:
         raise NoGitHubAccount(request.user.username)
-    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile, _created = Profile.objects.get_or_create(user=request.user)
     if request.method == "POST":
         profile.email_notifications = request.POST.get("email_notifications") == "yes"
         with Trigger.start("preferences", f"@{identity.login} saved the preferences"):
             profile.save(update_fields=["email_notifications"])
             PreferencesSaved(identity.login, profile.email_notifications).run()
-        messages.success(request, "Your preferences are saved.")
+        messages.success(request, _("Your preferences are saved."))
         return redirect("account")
     return render(
         request,

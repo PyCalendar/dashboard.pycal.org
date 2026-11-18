@@ -48,6 +48,23 @@ sync: .venv  ## Read the repositories, issues and pull requests of the installat
 app-manifest: .venv  ## Print the manifest of the GitHub App
 	@uv run $(ENV_FILE) python manage.py app_manifest
 
+MESSAGES = makemessages -l de -l es --no-obsolete --no-location --ignore=.venv --ignore=docs \
+	--ignore=tests --ignore=build --ignore=scripts --ignore=data --ignore=staticfiles
+
+.PHONY: messages
+messages: .venv  ## Update the texts to translate in pycal_dashboard/locale and compile them (gettext, else Docker)
+	@if command -v xgettext >/dev/null; then \
+	  uv run python manage.py $(MESSAGES) && uv run python manage.py compilemessages --ignore=.venv; \
+	else \
+	  docker run --rm -v "$(CURDIR):/src" -w /src -e UV_PROJECT_ENVIRONMENT=/tmp/venv \
+	    -e SECRET_KEY=messages -e DATA_DIR=/tmp/data python:3.13-slim sh -c '\
+	    apt-get update -qq && apt-get install -y -qq --no-install-recommends gettext >/dev/null \
+	    && pip install -q uv && uv sync -q --frozen --no-dev \
+	    && uv run --no-sync python manage.py $(MESSAGES) \
+	    && uv run --no-sync python manage.py compilemessages --ignore=.venv \
+	    && chown -R $(shell id -u):$(shell id -g) pycal_dashboard/locale'; \
+	fi
+
 .PHONY: test
 test: .venv  ## Run the unit and API tests on all processors with coverage; check the migrations
 	@uv run python manage.py makemigrations --check --dry-run

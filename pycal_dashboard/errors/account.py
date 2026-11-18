@@ -1,5 +1,7 @@
 """Errors of the account page and the preferences, met by people who signed in."""
 
+from django.utils.translation import gettext_lazy as _
+
 from .base import DashboardError
 
 
@@ -9,9 +11,9 @@ class AccountError(DashboardError):
     Go back to the page *Account*, reload it and try again.
     """
 
-    title = "The account could not be changed"
+    title = _("The account could not be changed")
     guide = "tutorial/account.html"
-    guide_title = "Your account"
+    guide_title = _("Your account")
 
 
 class NoGitHubAccount(AccountError):
@@ -22,5 +24,5 @@ class NoGitHubAccount(AccountError):
     GitHub.
     """
 
-    title = "The account has no GitHub identity"
+    title = _("The account has no GitHub identity")
     status = 403

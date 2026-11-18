@@ -3,6 +3,7 @@
 from allauth.account import views as account_views
 from django.contrib import admin
 from django.urls import include, path
+from django.views import i18n as i18n_views
 
 from .views import account, oauth_app, pages, registration, setup, webhook
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path("licenses/<str:name>/", pages.license_text, name="license_text"),
     path("health/", pages.health, name="health"),
     path("theme/", pages.theme, name="theme"),
+    path("language/", i18n_views.set_language, name="set_language"),
     path("favicon.ico", pages.favicon, name="favicon"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),

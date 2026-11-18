@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from . import build_info
 from .checks import is_url
@@ -10,7 +11,7 @@ from .services.identity import GitHubIdentity
 from .theme import COOKIE, Theme
 
 # the choices of the menu of the colors: value and title
-THEMES = (("auto", "As the system"), ("light", "Light"), ("dark", "Dark"))
+THEMES = (("auto", _("As the system")), ("light", _("Light")), ("dark", _("Dark")))
 
 
 def version_text() -> str:
@@ -41,6 +42,7 @@ def site(request) -> dict:
         "site_name": settings.SITE_NAME,
         "theme_choice": theme,
         "themes": THEMES,
+        "languages": settings.LANGUAGES,
         "color_scheme": "light dark" if theme == "auto" else theme,
         "theme_css": settings.THEME.stylesheet(theme),
         "links": {

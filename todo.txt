@@ -59,7 +59,8 @@ community: where to start, what waits for a review, who contributes.
 - [x] Trivy scan of the image: make docker-scan in CI
 - [x] Vale for the prose of the documentation: make prose in CI
 - [x] Sign out after a time: SIGN_OUT_MINUTES
-- [ ] German and Spanish, with a language menu next to the color menu
+- [x] German and Spanish, with a language menu next to the color menu (make messages; a test checks
+      that every text is marked, translated and compiled)
 - [x] Action log: what triggered what (webhooks, sign-ins, admin rights, setup, preferences),
       on /logs/ for the administrators (migration 0004)
 - [x] Warn at the start about SITE_ADMINS that never signed in
