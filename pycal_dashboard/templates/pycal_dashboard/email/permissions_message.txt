@@ -1,0 +1,16 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate with account=installation.account_login %}Hello,
+
+{{ site_name }} needs more permissions of its GitHub App, which is installed on {{ account }}:{% endblocktranslate %}
+
+{% for name, level in missing %}- {{ name }}: {{ level }}
+{% endfor %}
+{% blocktranslate with url=installation.settings_url %}Until they are accepted, the site misses what GitHub would tell it with them. An owner of the account accepts them on GitHub:
+{{ url }}{% endblocktranslate %}
+
+{% blocktranslate %}What the permissions are for:{% endblocktranslate %}
+{{ docs_url }}reference/permissions.html
+
+{% blocktranslate %}You get this email because you installed or changed the app on this account. Switch these emails off on your account:{% endblocktranslate %}
+{{ site_url }}/account/
+--
+{{ site_name }}{% endautoescape %}

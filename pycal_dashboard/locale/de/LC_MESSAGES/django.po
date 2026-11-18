@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 15:17+0000\n"
+"POT-Creation-Date: 2026-11-18 16:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -470,15 +470,43 @@ msgstr ""
 "Deine Wahl gilt auf jedem Gerät, auf dem du dich anmeldest. Die Menüs oben "
 "ändern sie auch."
 
+msgid "Emails"
+msgstr "E-Mails"
+
+msgid ""
+"Email me when an installation of the GitHub App that I installed or changed "
+"needs more permissions"
+msgstr ""
+"Schreib mir, wenn eine Installation der GitHub App, die ich installiert oder "
+"geändert habe, mehr Berechtigungen braucht"
+
+msgid ""
+"The site sends them to your primary address if it is verified, else to your "
+"newest verified one."
+msgstr ""
+"Die Seite sendet sie an deine primäre Adresse, wenn sie bestätigt ist, sonst "
+"an deine neueste bestätigte."
+
 msgid "Save the preferences"
 msgstr "Einstellungen speichern"
 
-msgid ""
-"The site sends no emails yet. When it does, you choose here which types of "
-"emails you get."
-msgstr ""
-"Die Seite sendet noch keine E-Mails. Wenn sie es tut, wählst du hier, welche "
-"Arten von E-Mails du bekommst."
+msgid "Your installations"
+msgstr "Deine Installationen"
+
+msgid "suspended"
+msgstr "ausgesetzt"
+
+msgid "needs more permissions"
+msgstr "braucht mehr Berechtigungen"
+
+msgid "Accept the permissions on GitHub"
+msgstr "Die Berechtigungen auf GitHub akzeptieren"
+
+msgid "has every permission"
+msgstr "hat jede Berechtigung"
+
+msgid "Configure it on GitHub"
+msgstr "Auf GitHub einrichten"
 
 msgid ""
 "Install the app on the repositories of an organization: on all of them or on "
@@ -604,6 +632,43 @@ msgstr "Ergebnis"
 
 msgid "No webhook yet."
 msgstr "Noch kein Webhook."
+
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"%(site_name)s needs more permissions of its GitHub App, which is installed "
+"on %(account)s:"
+msgstr ""
+"Hallo,\n"
+"\n"
+"%(site_name)s braucht mehr Berechtigungen seiner GitHub App, die auf "
+"%(account)s installiert ist:"
+
+#, python-format
+msgid ""
+"Until they are accepted, the site misses what GitHub would tell it with "
+"them. An owner of the account accepts them on GitHub:\n"
+"%(url)s"
+msgstr ""
+"Bis sie akzeptiert sind, fehlt der Seite, was GitHub ihr damit sagen würde. "
+"Ein Besitzer des Kontos akzeptiert sie auf GitHub:\n"
+"%(url)s"
+
+msgid "What the permissions are for:"
+msgstr "Wofür die Berechtigungen sind:"
+
+msgid ""
+"You get this email because you installed or changed the app on this account. "
+"Switch these emails off on your account:"
+msgstr ""
+"Du bekommst diese E-Mail, weil du die App auf diesem Konto installiert oder "
+"geändert hast. Schalte diese E-Mails in deinem Konto aus:"
+
+#, python-format
+msgid "[%(site_name)s] The GitHub App on %(account)s needs more permissions"
+msgstr ""
+"[%(site_name)s] Die GitHub App auf %(account)s braucht mehr Berechtigungen"
 
 msgid "Welcome to the community of PyCalendar"
 msgstr "Willkommen in der Gemeinschaft von PyCalendar"

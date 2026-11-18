@@ -1,0 +1,1 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate with account=installation.account_login %}[{{ site_name }}] The GitHub App on {{ account }} needs more permissions{% endblocktranslate %}{% endautoescape %}

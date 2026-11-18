@@ -20,8 +20,9 @@ Step by step
 
 The numbers and the automation are separate functionality, designed later.
 For now the site is the frame: it signs people in, receives the webhooks of its
-GitHub App and logs them. It has no models that track or query the GitHub API
-and writes nothing to GitHub.
+GitHub App and logs them. Of GitHub, it keeps only the installations of its
+app with their permissions, to tell people when an installation needs more, and
+it writes nothing to GitHub.
 
 `community-insights <https://community-insights.readthedocs.io/>`_ measures
 response times in depth; the dashboard is the daily start page. It looks like
@@ -38,7 +39,9 @@ Every page is public, except pages based on private information:
 - the webhook deliveries, only for the administrators, because they may name
   private repositories.
 
-Private repositories are never shown. The site keeps no data of GitHub; the
+Private repositories are never shown. Of GitHub, the site keeps only the
+installations of its app: the account, the permissions and events, and the
+people who installed or changed it, who see it on their page *Account*. The
 log of the webhooks keeps only the event, the action and the name of the
 repository, for the administrators.
 

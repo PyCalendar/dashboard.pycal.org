@@ -112,6 +112,17 @@ community: where to start, what waits for a review, who contributes.
       account (migration 0006)
 - [x] People choose the colors (as the system, light, dark) in the account, like on sign.pycal.org
 
+## 2026-11-18: record the permissions; tell people when their installation needs more
+
+- [x] Record the installations of the GitHub App with their permissions and events, from the
+      installation webhooks and, at every start, from GET /app/installations (the only exception of
+      "no models of GitHub data")
+- [x] When an installation lacks permissions that the site needs, email the people who installed
+      or changed it, once for each set of missing permissions, in their language; a type of email
+      that they switch on and off in the account
+- [x] The page Account lists the installations of the person with what they lack and the link to
+      accept the permissions on GitHub
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
@@ -121,6 +132,7 @@ community: where to start, what waits for a review, who contributes.
 
 ## Open: work
 
-- [ ] Types of emails that people switch on and off on the page Account, with the features that send them
+- [ ] More types of emails that people switch on and off on the page Account, with the features that
+      send them (the first one: installations that need more permissions)
 
 - [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io

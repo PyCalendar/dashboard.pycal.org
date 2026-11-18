@@ -25,23 +25,28 @@ Only you see it. It shows:
 - **Email addresses**: those GitHub shared, whether they are verified and which
   one is primary, with *Send a link to verify it* for an address that is not
   verified, see below.
-- **Preferences**: the language and the colors, see below. The site sends
-  no emails yet; the types of emails to switch on and off come with the
-  features that send them.
+- **Preferences**: the language, the colors and the emails, see below.
 - **The GitHub App**: *Install the GitHub App* on the repositories of your
-  account or of an organization, see :doc:`/how-to/install-app`.
+  account or of an organization, see :doc:`/how-to/install-app`. *Your
+  installations* lists those you installed or changed: whether they have every
+  permission, or what they lack with *Accept the permissions on GitHub*, see
+  :ref:`new-permissions`.
 
 .. _administrators:
 
 .. _preferences:
 
-Language and colors
-===================
+Language, colors and emails
+===========================
 
 *Language*
    English, Deutsch or Español, or *As the browser*.
 *Colors*
    *As the system*, *Light* or *Dark*, or *As the menu*.
+
+*Emails*
+   *Email me when an installation of the GitHub App that I installed or
+   changed needs more permissions*, on by default.
 
 Press *Save the preferences*. Your choice applies on every device where you
 sign in. The language menu (the globe) and the colors menu (the sun and the

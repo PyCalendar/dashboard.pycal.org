@@ -34,9 +34,20 @@ Events
    A repository was renamed, archived, made private or deleted.
 
 ``installation`` and ``installation_repositories`` come without a subscription:
-the app was installed or its repositories changed.
+the app was installed, suspended, removed, its repositories changed or new
+permissions were accepted. The site records the installation with its
+permissions and events.
 
-The site logs every webhook and does nothing else with it yet.
+The site logs every webhook and does nothing else with the others yet.
+
+New permissions
+===============
+
+When a new version of the site adds a permission here, the installations lack
+it until their owners accept it. The site tells the people who installed or
+changed each installation, by email and on their page *Account*, see
+:ref:`new-permissions`. ``manage.py check_installations`` reads the
+installations from GitHub; the container runs it at every start.
 
 The app is public: every account can install it, see
 :doc:`/how-to/install-app`.

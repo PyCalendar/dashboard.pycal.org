@@ -57,7 +57,7 @@ def test_the_account(signed_in, site):
     expect(page.get_by_role("link", name="Install the GitHub App").first).to_have_attribute(
         "href", "https://github.com/apps/dashboard-test/installations/new"
     )
-    expect(page.get_by_text("The site sends no emails yet.")).to_be_visible()
+    expect(page.get_by_label("Email me when an installation")).to_be_checked()
 
 
 def test_sign_out(signed_in, site):

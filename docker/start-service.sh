@@ -6,4 +6,7 @@ sed "s/LISTEN_PORT/${PORT}/g" /app/docker/nginx.conf > /tmp/nginx.conf
 nginx -c /tmp/nginx.conf
 # migrates; without a GitHub App it prints where to register it, with the setup code
 python manage.py prepare
+# the installations of the GitHub App: a new version may need more permissions, which the
+# people of each installation are told by email
+(python manage.py check_installations || true) &
 exec gunicorn pycal_dashboard.wsgi -w "$WORKERS" --threads "$THREADS" -b "127.0.0.1:8000" --access-logfile -

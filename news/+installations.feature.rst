@@ -1,0 +1,1 @@
+The site records the installations of its GitHub App with their permissions; when an installation lacks permissions that the site needs, the people who installed or changed it get an email and see it on their page *Account*, with the link to accept them.

@@ -6,7 +6,8 @@ The site has two apps on GitHub with different jobs:
 
 The GitHub App
    Installed on the repositories, it receives their webhooks. It only reads:
-   the site writes nothing to GitHub and keeps no data of GitHub yet.
+   the site writes nothing to GitHub. It records the installations with their
+   permissions, see :ref:`new-permissions`.
 The OAuth app
    Only signs people in. GitHub tells the site who they are and their email
    addresses, read only, and never asks to let the site act on their behalf.

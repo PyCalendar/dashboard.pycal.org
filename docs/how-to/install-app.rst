@@ -4,8 +4,8 @@ Install the GitHub App
 
 The GitHub App of the site receives the webhooks of the repositories it is
 installed on. It only reads: the site writes nothing to GitHub, such as labels
-or comments, and keeps no data of GitHub yet. Installing it is safe for every
-repository of the organization.
+or comments. Of GitHub, it keeps only the installation with its permissions.
+Installing it is safe for every repository of the organization.
 
 The app must be registered on the site first, see :doc:`github-app`.
 
@@ -53,6 +53,27 @@ From GitHub
 From the settings of the organization
    *Settings → GitHub Apps* lists the installed apps. **Configure** changes the
    repositories of an installation.
+
+.. _new-permissions:
+
+When the app needs more permissions
+===================================
+
+The site records each installation with the permissions its owners accepted:
+from the webhooks of the installation, and at every start of the site from
+GitHub (``manage.py check_installations``). When a new version of the site
+needs a permission that an installation lacks:
+
+- the people who installed or changed the installation get an email, once for
+  each set of missing permissions, in their language, with the link to accept
+  them. They switch these emails off on their page *Account*;
+- their page *Account* lists the installation as *needs more permissions*, with
+  the missing permissions and the button *Accept the permissions on GitHub*.
+
+An owner of the account accepts them in the settings of the installation on
+GitHub; the webhook ``new_permissions_accepted`` records them. A person gets
+the emails only with an account on the site and a verified email address, see
+:ref:`email-addresses`.
 
 Change or remove the installation
 =================================

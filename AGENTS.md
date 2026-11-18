@@ -43,7 +43,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
 - The site keeps no data of GitHub for now (no models that track or query the
   GitHub API) and writes nothing to GitHub; numbers and automation are separate
-  functionality, designed later.
+  functionality, designed later. The one exception: the installations of the
+  GitHub App with their permissions (`Installation`), so that people are told
+  when an installation needs more.
 - Every setting that can be set is in `.env.example`, with its description (a `##` line
   directly above it) and its default, in the sections of the file; and in
   `docs/reference/settings.rst`. `tests/test_settings.py` checks both.

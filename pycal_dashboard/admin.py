@@ -2,10 +2,14 @@
 
 from django.contrib import admin
 
-from .models import LogAction, LogTrigger, Preferences, WebhookDelivery
+from .models import Installation, LogAction, LogTrigger, Preferences, WebhookDelivery
 
 admin.site.register(
     WebhookDelivery, list_display=["event", "action", "repository", "outcome", "received"]
+)
+admin.site.register(
+    Installation,
+    list_display=["account_login", "github_id", "account_type", "permissions_notified", "updated"],
 )
 admin.site.register(Preferences, list_display=["user", "language", "theme"])
 admin.site.register(LogTrigger, list_display=["summary", "kind", "actor_login", "created"])

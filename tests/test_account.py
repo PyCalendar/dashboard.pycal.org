@@ -17,7 +17,7 @@ def test_account_page(client, bob):
     client.force_login(bob)
     content = client.get("/account/").content.decode()
     assert "@bob" in content and "bob@example.org" in content
-    assert "data-no-emails" in content and "email_notifications" not in content
+    assert 'name="email_permissions" value="yes" checked' in content
 
 
 def test_account_without_github(client, db):

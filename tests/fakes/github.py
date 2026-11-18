@@ -25,6 +25,7 @@ class FakeGitHub:
         # the app as GET /app describes it; the tests change its permissions and events
         from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 
+        self.installations: list[dict] = []  # GET /app/installations
         self.app = {
             "slug": "dashboard-test",
             "owner": {"login": "PyCalendar", "type": "Organization"},
@@ -50,6 +51,8 @@ class FakeGitHub:
             raise httpx.ConnectError("no network", request=request)
         if self.fail_with:
             return httpx.Response(self.fail_with, json={"message": self.fail_message})
+        if request.method == "GET" and request.url.path == "/app/installations":
+            return httpx.Response(200, json=self.installations)
         if request.method == "GET" and request.url.path == "/app":
             if not request.headers.get("Authorization", "").startswith("Bearer ey"):
                 return httpx.Response(

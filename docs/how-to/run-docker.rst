@@ -41,7 +41,9 @@ The container
 =============
 
 At every start, the container migrates the database and says in the log what
-is missing (``manage.py prepare``).
+is missing (``manage.py prepare``). Then it reads the installations of the
+GitHub App and emails people whose installation lacks permissions
+(``manage.py check_installations``).
 
 The health check of the container calls ``/health/`` with the first host of
 ``ALLOWED_HOSTS``. While the site starts, nginx answers with a page that says

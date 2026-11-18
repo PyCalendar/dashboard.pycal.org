@@ -69,3 +69,19 @@ def manifest(name: str, url: str, public: bool = True) -> dict:
         "default_permissions": dict(REQUIRED),
         "default_events": list(EVENTS),
     }
+
+
+def describe(permissions: dict[str, str]) -> str:
+    """The permissions as text, sorted, such as ``issues:read``.
+
+    Args:
+        permissions: The permissions with their levels.
+
+    Returns:
+        The text; the same for the same permissions.
+
+    Examples:
+        >>> describe({"pull_requests": "read", "issues": "read"})
+        'issues:read, pull_requests:read'
+    """
+    return ", ".join(f"{name}:{level}" for name, level in sorted(permissions.items()))

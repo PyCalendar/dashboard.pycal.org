@@ -31,7 +31,7 @@ def test_the_account_chooses_the_language_on_every_device(client, alice):
     assert "Deine Einstellungen sind gespeichert." in page.content.decode()
     assert '<option value="de" lang="de" selected>Deutsch</option>' in page.content.decode()
     action = LogAction.objects.get(kind="preferences")
-    assert action.text == "@alice saved the preferences: language de, colors dark"
+    assert action.text == "@alice saved the preferences: language de, colors dark, no emails"
 
 
 def test_the_account_overrides_the_cookie_of_the_menus(client, alice):

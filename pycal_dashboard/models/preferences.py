@@ -16,6 +16,8 @@ class Preferences(models.Model):
     )
     language = models.CharField(max_length=10, blank=True, default="")  # such as de; "": browser
     theme = models.CharField(max_length=10, blank=True, default="")  # auto, light, dark; "": cookie
+    # the types of emails: an installation that the person manages needs more permissions
+    email_permissions = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "preferences"

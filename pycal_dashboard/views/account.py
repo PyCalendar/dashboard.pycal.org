@@ -14,9 +14,27 @@ from django.views.decorators.http import require_http_methods
 from pycal_dashboard.actions import PreferencesSaved, Trigger
 from pycal_dashboard.context import THEMES
 from pycal_dashboard.errors import NoGitHubAccount, UnknownPreference
-from pycal_dashboard.models import LogTrigger, Preferences, WebhookDelivery
+from pycal_dashboard.models import Installation, LogTrigger, Preferences, WebhookDelivery
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.theme import CHOICES
+
+
+def installations_of(identity) -> list[Installation]:
+    """The installations of the GitHub App that a person manages.
+
+    Args:
+        identity: The GitHub account of the person.
+
+    Returns:
+        Those the person installed or changed, and those on their own account.
+    """
+    github_id = int(identity.github_id)
+    return [
+        installation
+        for installation in Installation.objects.filter(removed=False)
+        if github_id in installation.admin_github_ids
+        or installation.account_login.lower() == identity.login.lower()
+    ]
 
 
 def save_preferences(request, login: str) -> None:
@@ -35,11 +53,13 @@ def save_preferences(request, login: str) -> None:
         raise UnknownPreference(f"language={language!r}")
     if theme and theme not in CHOICES:
         raise UnknownPreference(f"theme={theme!r}")
+    email_permissions = request.POST.get("email_permissions") == "yes"
     with Trigger.start("preferences", f"@{login} saved the preferences", actor_login=login):
         Preferences.objects.update_or_create(
-            user=request.user, defaults={"language": language, "theme": theme}
+            user=request.user,
+            defaults={"language": language, "theme": theme, "email_permissions": email_permissions},
         )
-        PreferencesSaved(login, language, theme).run()
+        PreferencesSaved(login, language, theme, email_permissions).run()
 
 
 @login_required
@@ -76,6 +96,7 @@ def account(request):
         {
             "identity": identity,
             "preferences": Preferences.of(request.user) or Preferences(),
+            "installations": installations_of(identity),
             "language_choices": settings.LANGUAGES,
             "theme_choices": THEMES,
             "emails": EmailAddress.objects.filter(user=request.user).order_by("-primary", "email"),

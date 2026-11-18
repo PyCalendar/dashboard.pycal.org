@@ -49,8 +49,6 @@ def test_ping(client, db):
 
 
 EVENTS = [
-    ("installation", {"action": "created"}),
-    ("installation_repositories", {"action": "added"}),
     ("issues", {"action": "opened", "issue": {"number": 9}}),
     ("issue_comment", {"action": "created", "issue": {"number": 9}}),
     ("pull_request_review", {"action": "submitted", "pull_request": {"number": 6}}),

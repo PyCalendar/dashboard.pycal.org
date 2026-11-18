@@ -10,8 +10,10 @@ the site:
   the email addresses, see :doc:`account`,
 - lets people install its GitHub App on repositories, see
   :doc:`/how-to/install-app`,
-- receives the webhooks of the app and logs them for the administrators. It
-  keeps no data of GitHub and writes nothing to GitHub.
+- receives the webhooks of the app and logs them for the administrators. Of
+  GitHub, it keeps only the installations of the app with their permissions,
+  and tells people when their installation needs more. It writes nothing to
+  GitHub.
 
 Every page is public, except the account, the preferences, the email addresses
 and the webhook deliveries.
