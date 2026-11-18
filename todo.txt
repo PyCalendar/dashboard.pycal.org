@@ -93,6 +93,13 @@ community: where to start, what waits for a review, who contributes.
 - [x] The flag "Email me about my account and news of the site" is removed (migration); types of
       emails to switch on and off come later
 
+## 2026-11-18: people verify their email addresses
+
+- [x] People verify their email addresses: a link by email, from the page Account and the page
+      Email addresses; tested from adding an address to the verified address
+- [x] Add another address and choose the primary one (only a verified address; the primary one
+      cannot be removed)
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now

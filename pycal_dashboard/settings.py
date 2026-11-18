@@ -134,6 +134,8 @@ SOCIALACCOUNT_ONLY = True
 # People sign in with GitHub only, so allauth must not ask them to confirm an address first.
 # The emails of the site go only to addresses that GitHub or a link confirmed.
 ACCOUNT_EMAIL_VERIFICATION = "none"
+# the emails of allauth, such as the link that verifies an address, name the site
+ACCOUNT_EMAIL_SUBJECT_PREFIX = f"[{SITE_NAME}] "
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https" if SITE_URL.startswith("https://") else "http"
 ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["username*"]

@@ -49,6 +49,7 @@ def site(request) -> dict:
             "documentation": docs,
             "use": f"{docs}tutorial/use.html",
             "account": f"{docs}tutorial/account.html",
+            "emails_help": f"{docs}tutorial/account.html#email-addresses",
             "app_setup": f"{docs}how-to/github-app.html",
             "install_help": f"{docs}how-to/install-app.html",
             "oauth_app": f"{docs}how-to/github-app.html#oauth-app",

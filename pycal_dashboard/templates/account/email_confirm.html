@@ -1,0 +1,20 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Verify your email address" %} · {{ site_name }}{% endblock %}
+{% block main %}
+<div class="card narrow" data-confirm>
+  <h1>{% translate "Verify your email address" %}</h1>
+  {% if confirmation %}{% with address=confirmation.email_address.email %}
+  {% if can_confirm %}
+  <p>{% blocktranslate %}Is <strong>{{ address }}</strong> your email address? Verify it to receive emails of this site at it.{% endblocktranslate %}</p>
+  <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">{% csrf_token %}{{ redirect_field }}
+    <button class="button" type="submit">{% translate "Verify" %}</button>
+  </form>
+  {% else %}
+  <p class="message message-warning" data-confirm-taken>{% blocktranslate %}<strong>{{ address }}</strong> cannot be verified here: another account verified it already.{% endblocktranslate %}</p>
+  {% endif %}{% endwith %}
+  {% else %}
+  {% url 'account_email' as email_url %}<p class="message message-warning" data-confirm-invalid>{% blocktranslate %}This link has expired or is invalid. <a href="{{ email_url }}">Send a new link</a> from the page Email addresses.{% endblocktranslate %}</p>
+  {% endif %}
+</div>
+{% endblock %}

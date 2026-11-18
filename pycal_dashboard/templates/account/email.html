@@ -1,8 +1,28 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n %}
+{% load i18n help %}
 {% block title %}{% translate "Email addresses" %} · {{ site_name }}{% endblock %}
-{% block main %}<h1>{% translate "Email addresses" %}</h1><p><a href="{% url 'account' %}">{% translate "Back to the account" %}</a></p>
-<form method="post" action="{% url 'account_email' %}" class="card">{% csrf_token %}
-{% for item in emailaddress_radios %}<p><label class="check"><input type="radio" name="email" value="{{ item.emailaddress.email }}" {% if item.checked %}checked{% endif %}> {{ item.emailaddress.email }} · {% if item.emailaddress.verified %}{% translate "verified" %}{% else %}{% translate "not verified" %}{% endif %}{% if item.emailaddress.primary %} · {% translate "primary" %}{% endif %}</label></p>{% empty %}<p>{% translate "No email address yet." %}</p>{% endfor %}
-{% if emailaddress_radios %}<button class="button" name="action_send">{% translate "Send verification email" %}</button> <button class="button button-quiet" name="action_primary">{% translate "Make primary" %}</button> <button class="button button-quiet" name="action_remove">{% translate "Remove" %}</button>{% endif %}</form>
-{% if can_add_email %}<h2>{% translate "Add an address" %}</h2><form method="post" action="{% url 'account_email' %}" class="card stacked">{% csrf_token %}{{ form.as_p }}<button class="button" name="action_add">{% translate "Add and verify email" %}</button></form>{% endif %}{% endblock %}
+{% block main %}
+<h1>{% translate "Email addresses" %} {% translate "Your email addresses" as help %}{% help_link links.emails_help help %}</h1>
+<p><a href="{% url 'account' %}">{% translate "Back to the account" %}</a></p>
+<p class="lead">{% translate "The site sends emails only to verified addresses, and to the primary one. Verify an address with the link that the site sends to it." %}</p>
+<section class="card">
+  {% if emailaddress_radios %}<ul class="list addresses" data-addresses>{% for item in emailaddress_radios %}{% with address=item.emailaddress %}
+  <li data-address="{{ address.email }}"><span class="address">{{ address.email }}</span>
+    {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>{% endif %}
+    {% if address.primary %}<span class="badge">{% translate "primary" %}</span>{% endif %}
+    <form method="post" action="{% url 'account_email' %}" class="inline">{% csrf_token %}<input type="hidden" name="email" value="{{ address.email }}">
+      {% if not address.verified %}<button class="button" name="action_send">{% translate "Send a link to verify it" %}</button>{% endif %}
+      {% if not address.primary %}{% if address.verified %}<button class="button button-quiet" name="action_primary">{% translate "Make primary" %}</button>{% endif %}
+      <button class="button button-quiet" name="action_remove">{% translate "Remove" %}</button>{% endif %}
+    </form>
+  </li>{% endwith %}{% endfor %}</ul>
+  <p class="muted">{% translate "Only a verified address can become the primary one. The primary address cannot be removed: make another one primary first." %}</p>
+  {% else %}<p>{% translate "No email address yet." %}</p>{% endif %}
+</section>
+{% if can_add_email %}<section class="card"><h2>{% translate "Add an address" %}</h2>
+<form method="post" action="{% url 'account_email' %}" class="stacked">{% csrf_token %}
+  {% if form.errors %}<div class="message message-error" role="alert">{{ form.email.errors|join:" " }}{{ form.non_field_errors|join:" " }}</div>{% endif %}
+  <p><label for="id_email">{% translate "Email address" %}</label><input id="id_email" type="email" name="email" required autocomplete="email" value="{{ form.email.value|default:'' }}"></p>
+  <p><button class="button" name="action_add">{% translate "Add it and send a link to verify it" %}</button></p>
+</form></section>{% endif %}
+{% endblock %}

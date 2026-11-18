@@ -6,9 +6,10 @@
 <p class="muted">{% translate "Only you see this page." %}</p>
 <div class="columns">
 <section class="card" id="emails"><h2>{% translate "Email addresses" %}</h2>
-  {% if emails %}<ul class="list" data-emails>{% for address in emails %}<li>{{ address.email }} {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>{% endif %}{% if address.primary %} <span class="badge">{% translate "primary" %}</span>{% endif %}</li>{% endfor %}</ul>
+  {% if emails %}<ul class="list addresses" data-emails>{% for address in emails %}<li data-address="{{ address.email }}"><span class="address">{{ address.email }}</span> {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>
+    <form method="post" action="{% url 'account_email' %}" class="inline">{% csrf_token %}<input type="hidden" name="email" value="{{ address.email }}"><button class="button button-quiet" name="action_send">{% translate "Send a link to verify it" %}</button></form>{% endif %}{% if address.primary %} <span class="badge">{% translate "primary" %}</span>{% endif %}</li>{% endfor %}</ul>
   {% else %}<p>{% translate "No email address. GitHub did not share a verified one." %}</p>{% endif %}
-  <p><a class="button button-quiet" href="{% url 'account_email' %}">{% translate "Add, verify or change email addresses" %}</a></p>
+  <p><a class="button button-quiet" href="{% url 'account_email' %}">{% translate "Add an address or choose the primary one" %}</a></p>
   <p class="muted">{% translate "The site sends emails only to verified addresses and only what you choose below." %}</p>
 </section>
 <section class="card" id="preferences"><h2>{% translate "Preferences" %}</h2>

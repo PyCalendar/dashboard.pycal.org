@@ -41,6 +41,14 @@ def english():
 
 
 @pytest.fixture(autouse=True)
+def empty_cache():
+    """The limits of allauth, such as one link to verify an address in 3 minutes, start empty."""
+    from django.core.cache import cache
+
+    cache.clear()
+
+
+@pytest.fixture(autouse=True)
 def app_settings(settings, private_key, tmp_path):
     settings.DATA_DIR = tmp_path / "data"
     settings.GITHUB_APP_ID = "1"
