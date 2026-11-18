@@ -55,6 +55,8 @@ community: where to start, what waits for a review, who contributes.
 
 - [x] The administrators (SITE_ADMINS) reach the Django admin, like sign.pycal.org
 - [x] Every model shows up in the Django admin (a test checks it; rule in AGENTS.md)
+- [x] The admin rights follow SITE_ADMINS at every request, also for sessions of before a change
+      (a bug that sign.pycal.org had and fixed in 36d19dc)
 - [x] The app is installable on repositories: signed in, people find "Install the GitHub App"
       in the menu, on the start page and on the page Account
 - [x] The documentation says the ways to install the app (docs/how-to/install-app.rst)

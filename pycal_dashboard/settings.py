@@ -81,6 +81,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    # the rights of the Django admin follow SITE_ADMINS, also for sessions of before a change
+    "pycal_dashboard.admin_rights.AdminRightsMiddleware",
     "pycal_dashboard.middleware.ErrorPageMiddleware",
 ]
 

@@ -59,7 +59,8 @@ People
 
 ``SITE_ADMINS``
    GitHub handles, comma separated, that administer the site: the Django admin
-   and the webhook deliveries.
+   and the webhook deliveries. The rights follow the setting at every request,
+   also for people who signed in before it changed.
 ``SESSION_HOURS``
    Hours after which people are signed out. Default: two weeks.
 
