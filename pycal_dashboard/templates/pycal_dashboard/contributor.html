@@ -1,0 +1,18 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}@{{ login }} · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>@{{ login }}</h1>
+<p><a class="button button-quiet" href="https://github.com/{{ login }}">On GitHub</a></p>
+<ul class="stats-tiles" aria-label="Numbers">
+  <li><strong>{{ numbers.merged }}</strong> merged</li>
+  <li><strong>{{ numbers.pulls }}</strong> pull requests</li>
+  <li><strong>{{ numbers.issues }}</strong> issues</li>
+  <li><strong>{{ numbers.repositories }}</strong> repositories</li>
+  {% if numbers.since %}<li>since <strong>{{ numbers.since|date:"Y-m-d" }}</strong></li>{% endif %}
+</ul>
+<div class="columns">
+  <section class="card"><h2>Open pull requests</h2>{% include "pycal_dashboard/_items.html" with items=open_pulls empty="No open pull request." %}</section>
+  <section class="card"><h2>Asked to review</h2>{% include "pycal_dashboard/_items.html" with items=review_requests empty="No review is requested." %}</section>
+</div>
+<section class="card"><h2>Latest</h2>{% include "pycal_dashboard/_items.html" with items=recent empty="Nothing yet." %}</section>
+{% endblock %}

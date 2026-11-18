@@ -1,0 +1,55 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}Register the GitHub App · {{ site_name }}{% endblock %}
+{% block main %}
+<section class="hero">
+  <h1>Register the GitHub App</h1>
+  <p class="lead">The dashboard reads the repositories, receives webhooks, labels pull requests and signs people in with its own GitHub App. The site registers the app on GitHub itself and keeps the credentials in its volume.</p>
+</section>
+
+{% if source %}
+<div class="card" data-registered="{{ source }}">
+  <h2>This site has a GitHub App</h2>
+  <p>{% if source == "environment" %}Its credentials come from the environment, such as <code>.env</code>. They take precedence over the volume.{% else %}It was registered on this site; its credentials are in the volume (<code>DATA_DIR/.env</code>).{% endif %}</p>
+  <p>A site has one GitHub App, so no other can be registered here.</p>
+  {% if slug %}<p><a class="button" href="https://github.com/apps/{{ slug }}">The GitHub App</a> <a class="button button-quiet" href="https://github.com/apps/{{ slug }}/installations/new">Install it</a></p>{% endif %}
+</div>
+
+{% elif started %}
+<div class="card" data-step="github">
+  <h2>2. Create the app on GitHub</h2>
+  <p>{% if started.organization %}GitHub opens the form for a new app of the organization <strong>{{ started.organization }}</strong>{% else %}GitHub opens the form for a new app of your account{% endif %}, filled in with the manifest below. Check the name and press <em>Create GitHub App</em> there. GitHub then returns to this site, which saves the credentials.</p>
+  <form method="post" action="{{ started.action }}">
+    <input type="hidden" name="manifest" value="{{ manifest_json }}">
+    <button class="button button-accent" type="submit">Continue to GitHub</button>
+    <a class="button button-quiet" href="{% url 'register_app' %}">Back</a>
+  </form>
+  <details><summary>The manifest</summary><pre class="code">{{ manifest_preview }}</pre></details>
+</div>
+
+{% elif app_registration_obstacle %}
+<div class="card" data-step="blocked">
+  <h2>Registration is not possible</h2>
+  <p class="message message-warning" data-registration-blocked="{{ app_registration_obstacle.code }}"><strong>{{ app_registration_obstacle.title }}</strong>: <code>{{ app_registration_obstacle.detail }}</code> <a href="{{ app_registration_obstacle.docs_url }}">What this means</a></p>
+</div>
+
+{% else %}
+{% if local %}<p class="message message-warning" data-local>This site runs at <code>{{ site_url }}</code>, which GitHub cannot reach. Signing in works, but webhooks cannot be delivered: the app is registered without a webhook, so pull requests are not labeled. Give the site a public address and set <code>SITE_URL</code> to it to test everything.</p>{% endif %}
+{% if error %}<div class="message message-error" role="alert" data-error="{{ error.code }}"><strong>{{ error.title }}</strong>{% if error.detail %}: <code>{{ error.detail }}</code>{% endif %} <a href="{{ error.docs_url }}">What this means</a></div>{% endif %}
+<div class="card" data-step="details">
+  <h2>1. Name the app</h2>
+  <form method="post" class="stacked">{% csrf_token %}
+    <p><label for="name">Name on GitHub</label>
+      <input id="name" name="name" value="{{ name }}" maxlength="34" required>
+      <small>At most 34 characters, and no other GitHub App may have it.</small></p>
+    <p><label for="organization">Organization <span class="muted">(optional)</span></label>
+      <input id="organization" name="organization" value="{{ organization }}" maxlength="39" autocomplete="off">
+      <small>The login of the organization that owns the app, such as PyCalendar. Empty: your own account.</small></p>
+    {% if needs_code %}<p><label for="setup_code">Setup code</label>
+      <input id="setup_code" name="setup_code" required autocomplete="off" spellcheck="false">
+      <small>Only the people who run the site may register its app. The site writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.</small></p>{% endif %}
+    <p><button class="button" type="submit">Register the GitHub App</button></p>
+  </form>
+  <p class="muted">The app gets the permissions and events the dashboard needs (<a href="{% url 'about' %}">About</a>) and the addresses of this site: <code>{{ site_url }}</code>.</p>
+</div>
+{% endif %}
+{% endblock %}

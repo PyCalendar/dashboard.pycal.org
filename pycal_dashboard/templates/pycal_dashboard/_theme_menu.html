@@ -1,0 +1,8 @@
+<details class="theme-menu">
+  <summary title="Colors of the page" aria-label="Colors of the page">{% include "pycal_dashboard/_theme_icon.html" with icon=theme_choice %}</summary>
+  <form method="post" action="{% url 'theme' %}">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    {% for value, title in themes %}<button name="theme" value="{{ value }}" aria-pressed="{% if theme_choice == value %}true{% else %}false{% endif %}">{% include "pycal_dashboard/_theme_icon.html" with icon=value %} {{ title }}</button>
+    {% endfor %}
+  </form>
+</details>

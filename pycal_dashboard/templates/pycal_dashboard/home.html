@@ -1,0 +1,37 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block main %}
+<section class="hero">
+  <h1>Welcome to the community of PyCalendar</h1>
+  <p class="lead">This dashboard shows where you can help in the repositories of
+  {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}:
+  issues for newcomers, pull requests that wait for a review and the people who make it happen.</p>
+  <p><a class="button" href="{% url 'contribute' %}">Find something to work on</a> <a class="button button-quiet" href="{{ links.use }}">How to use the dashboard</a></p>
+</section>
+<ul class="stats-tiles" aria-label="Numbers">
+  <li><a href="{% url 'repositories' %}"><strong>{{ counts.repositories }}</strong> repositories</a></li>
+  <li><a href="{% url 'contribute' %}"><strong>{{ counts.starter_issues }}</strong> issues for newcomers</a></li>
+  <li><a href="{% url 'reviews' %}"><strong>{{ counts.waiting_for_review }}</strong> pull requests to review</a></li>
+  <li><a href="{% url 'contribute' %}#unanswered"><strong>{{ counts.unanswered }}</strong> issues without an answer</a></li>
+  <li><strong>{{ counts.merged }}</strong> merged in {{ days }} days</li>
+  <li><a href="{% url 'contributors' %}?days={{ days }}"><strong>{{ counts.contributors }}</strong> contributors in {{ days }} days</a></li>
+</ul>
+{% if watched %}<section class="card"><h2>Repositories you watch</h2>
+<table class="table"><thead><tr><th>Repository</th><th>Open issues</th><th>Open pull requests</th><th>To review</th></tr></thead><tbody>
+{% for row in watched %}<tr><td><a href="{% url 'repository' row.repository.owner row.repository.name %}">{{ row.repository.full_name }}</a></td><td>{{ row.open_issues }}</td><td>{{ row.open_pulls }}</td><td>{{ row.waiting }}</td></tr>{% endfor %}
+</tbody></table></section>{% endif %}
+<div class="columns">
+  <section class="card"><h2>Start here</h2>
+    {% include "pycal_dashboard/_items.html" with items=starter empty="No issue is labeled for newcomers right now." %}
+    <p><a href="{% url 'contribute' %}">All issues for newcomers</a></p></section>
+  <section class="card"><h2>Waiting for a review</h2>
+    {% include "pycal_dashboard/_items.html" with items=waiting empty="No pull request waits for a review." %}
+    <p><a href="{% url 'reviews' %}">All pull requests to review</a></p></section>
+  <section class="card"><h2>Issues without an answer</h2>
+    {% include "pycal_dashboard/_items.html" with items=unanswered empty="Every issue has an answer." %}</section>
+  <section class="card"><h2>Welcome, first contributors</h2>
+    {% include "pycal_dashboard/_items.html" with items=first empty="No first contribution in this period yet: yours could be the next." %}</section>
+</div>
+<section class="card"><div class="card-title"><h2>Most active in {{ days }} days</h2>{% include "pycal_dashboard/_days.html" %}</div>
+  {% if contributors %}<ol class="people">{% for person in contributors %}<li><a href="{% url 'contributor' person.login %}">@{{ person.login }}</a> <span class="muted">{{ person.merged }} merged, {{ person.pulls }} pull request{{ person.pulls|pluralize }}, {{ person.issues }} issue{{ person.issues|pluralize }}</span></li>{% endfor %}</ol>
+  {% else %}<p class="muted empty">Nobody contributed in this period yet.</p>{% endif %}</section>
+{% endblock %}

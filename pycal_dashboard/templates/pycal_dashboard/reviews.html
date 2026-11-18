@@ -1,0 +1,13 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}Reviews · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Reviews</h1>
+<p class="lead">Everybody can review: read the change, try it, and say what you found. The longest waiting come first.</p>
+<section class="card"><h2>Waiting for a review</h2>
+  {% include "pycal_dashboard/_items.html" with items=waiting empty="No pull request waits for a review." %}
+</section>
+<section class="card"><h2>Without activity for {{ stale_days }} days</h2>
+  <p class="muted">These pull requests may need a reminder, help or a decision.</p>
+  {% include "pycal_dashboard/_items.html" with items=stale empty="No pull request is stale." %}
+</section>
+{% endblock %}

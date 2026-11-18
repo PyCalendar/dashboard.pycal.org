@@ -1,0 +1,13 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}Labels · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>Labels of pull requests</h1>
+<p class="lead">The GitHub App labels open pull requests when they are opened or changed. It only changes its own labels; those of people stay. <a href="{{ links.labels }}">More in the documentation</a>.</p>
+{% for rule in rules %}<section class="card" data-rule="{{ rule.name }}"><h2>{{ rule.name }}</h2><p>{{ rule.description }}</p>
+<p>{% for label in rule.labels %}<span class="label">{{ label }}</span> {% endfor %}</p></section>
+{% empty %}<p class="message message-warning">The site labels no pull request: <code>PULL_REQUEST_LABELS</code> is empty.</p>{% endfor %}
+<h2>Latest changes</h2>
+{% if page.object_list %}<ul class="list">{% for change in page.object_list %}<li><a href="{{ change.repository.html_url }}/pull/{{ change.number }}">{{ change.repository.full_name }}#{{ change.number }}</a> {% if change.added %}+{% else %}−{% endif %} <span class="label">{{ change.label }}</span> <span class="muted">{{ change.rule }} · {{ change.time|timesince }} ago</span></li>{% endfor %}</ul>
+{% include "pycal_dashboard/_pages.html" %}
+{% else %}<p class="muted empty">No label set yet.</p>{% endif %}
+{% endblock %}

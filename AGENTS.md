@@ -1,0 +1,60 @@
+# Rules for AI agents
+
+These rules are for AI agents (Claude Code and others) that change this
+repository. People who use AI follow the [AI policy of icalendar and the Python
+Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/index.html).
+
+## Prompts and todos
+
+- The prompts are recorded in `.prompts/` by the hook of
+  [ai-prompt-auto-commit](https://github.com/PyCalendar/ai-prompt-auto-commit)
+  (`.claude/settings.json`). Do not edit or delete them.
+- Every prompt becomes items of `todo.txt` (markdown checkboxes), which is
+  committed. Mark items `- [x]` when they are done and tested. Decisions that
+  belong to the person (names, accounts, releases) stay open items.
+
+## Commits
+
+- The person has given standing authorization to commit and push finished
+  work, with the migrations it needs. Commit, push and check that the branch
+  matches the remote.
+- Ask before deleting or overwriting outside the files the agent made.
+- Commits written by an agent end with the attribution of the model.
+
+## Constraints of the code
+
+- One class per module; a module that would need more becomes a package. The
+  errors are the exception: they are grouped by topic in
+  `pycal_dashboard/errors/`. `tests/quality/test_structure.py` checks this.
+- Errors are split up as finely as possible: one class per cause, with a title
+  and a docstring that says what happened and how to solve it. They are shown
+  with a link to their documentation (`docs/reference/errors.rst`).
+- Every class and function has a docstring in the Google style; `make lint`
+  checks it.
+- The tests never use the network: GitHub is faked (`tests/fakes/github.py`).
+- Never change a migration that may be applied somewhere; add a new one.
+- No inline JavaScript in templates. Every page works without JavaScript.
+- All pages are public, except those based on private information: the
+  account, the preferences, the email addresses and the webhook deliveries.
+  Private repositories are never shown.
+- New permissions or events of the GitHub App go into
+  `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`.
+
+## Tests
+
+- Every change comes with tests, also of the errors people can see.
+- Run `make lint`, `make test`, `make browser-test` and `make docs` and report
+  the results as they are.
+
+## Changelog and documentation
+
+- Every change people notice has a news fragment in `news/`.
+- The documentation (`docs/`) is updated with the change.
+
+<!-- ai-prompt-auto-commit: start -->
+## AI prompt recording
+
+At the start of a session, read [.github/assistant-guidelines.md](.github/assistant-guidelines.md).
+Follow its instructions for reminding contributors to activate prompt-recording
+hooks and for storing prompts without duplicates.
+<!-- ai-prompt-auto-commit: end -->

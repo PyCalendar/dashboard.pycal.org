@@ -1,0 +1,12 @@
+/* the colors of the site: the blue and the yellow of the pycal logo */
+html[data-theme="light"] {
+  --pst-color-primary: #2b5b84;
+  --pst-color-secondary: #3b79aa;
+  --pst-color-accent: #b38600;
+}
+html[data-theme="dark"] {
+  --pst-color-primary: #8fbbe0;
+  --pst-color-secondary: #ffd43b;
+  --pst-color-accent: #ffd43b;
+}
+.bd-header { border-bottom: .3rem solid #ffd43b; }

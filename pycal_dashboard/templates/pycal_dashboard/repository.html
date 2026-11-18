@@ -1,0 +1,22 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}{{ repository.full_name }} · {{ site_name }}{% endblock %}
+{% block main %}
+<h1><a href="{% url 'repositories' %}">{{ repository.owner }}</a> / {{ repository.name }}</h1>
+{% if repository.description %}<p class="lead">{{ repository.description }}</p>{% endif %}
+<p><a class="button button-quiet" href="{{ repository.html_url }}">On GitHub</a>{% if repository.language %} <span class="badge">{{ repository.language }}</span>{% endif %}{% if repository.archived %} <span class="badge">archived</span>{% endif %}</p>
+<ul class="stats-tiles" aria-label="Numbers">
+  <li><strong>{{ counts.open_issues }}</strong> open issues</li>
+  <li><strong>{{ counts.open_pulls }}</strong> open pull requests</li>
+  <li><strong>{{ counts.starter_issues }}</strong> issues for newcomers</li>
+  <li><strong>{{ counts.waiting_for_review }}</strong> to review</li>
+  <li><strong>{{ counts.merged }}</strong> merged in {{ days }} days</li>
+</ul>
+<form class="inline-form" method="get">
+  <label for="state">State</label><select id="state" name="state"><option value="open"{% if state == "open" %} selected{% endif %}>open</option><option value="closed"{% if state == "closed" %} selected{% endif %}>closed</option></select>
+  <label for="kind">Kind</label><select id="kind" name="kind"><option value="all"{% if kind == "all" %} selected{% endif %}>all</option><option value="pulls"{% if kind == "pulls" %} selected{% endif %}>pull requests</option><option value="issues"{% if kind == "issues" %} selected{% endif %}>issues</option></select>
+  <button class="button button-small">Show</button>
+</form>
+{% include "pycal_dashboard/_items.html" with items=page.object_list empty="Nothing here." %}
+{% include "pycal_dashboard/_pages.html" %}
+{% if label_changes %}<section class="card"><h2>Latest labels of the GitHub App</h2><ul class="list">{% for change in label_changes %}<li>#{{ change.number }} {% if change.added %}+{% else %}−{% endif %} <span class="label">{{ change.label }}</span> <span class="muted">{{ change.time|timesince }} ago</span></li>{% endfor %}</ul><p><a href="{% url 'labels' %}">Why pull requests get labels</a></p></section>{% endif %}
+{% endblock %}

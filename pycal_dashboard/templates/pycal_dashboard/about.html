@@ -1,0 +1,20 @@
+{% extends "pycal_dashboard/base.html" %}
+{% block title %}About · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>About {{ site_name }}</h1>
+<p class="lead">A dashboard for the contributor community of {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}: where to start, what waits for a review, and who contributes. <a href="{{ links.documentation }}">Documentation</a>.</p>
+<div class="columns">
+<section class="card"><h2>Privacy</h2>
+<p>Every page is public, except your account, preferences and email addresses, which only you see. The dashboard shows public repositories only. Signing in with GitHub tells the site who you are and your email addresses; it stores no token.</p></section>
+<section class="card"><h2>The GitHub App</h2>
+<dl class="facts-list">{% for name, level in permissions.items %}<dt>{{ name }}</dt><dd>{{ level }}</dd>{% endfor %}</dl>
+<p>Events: {{ events|join:", " }}</p>
+<p>Labels: {% for rule in rules %}<a href="{% url 'labels' %}">{{ rule.name }}</a>{% if not forloop.last %}, {% endif %}{% empty %}none{% endfor %}</p></section>
+<section class="card"><h2>Version</h2>
+<dl class="facts-list"><dt>Version</dt><dd>{{ build.version }}</dd>
+{% if build.commit %}<dt>Commit</dt><dd><a href="{{ build.commit_url }}">{{ build.commit }}</a> {{ build.message }}</dd>{% endif %}
+{% if build.built_at %}<dt>Built</dt><dd>{{ build.built_at|date:"Y-m-d H:i" }} UTC{% if build.build_url %} · <a href="{{ build.build_url }}">build</a>{% endif %}</dd>{% endif %}
+<dt>Code</dt><dd><a href="{{ build.code_url }}">{{ links.source }}</a> (AGPL-3.0-or-later)</dd></dl>
+<p><a href="{{ links.issues }}">Report a bug</a> · <a href="{{ links.changelog }}">Changelog</a></p></section>
+</div>
+{% endblock %}

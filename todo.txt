@@ -1,0 +1,50 @@
+# todo.txt: the prompts as items. [x] done and tested; [ ] open.
+
+## 2026-11-18: a dashboard for github.com/PyCalendar, like sign.pycal.org
+
+Purpose: a dashboard for the organization github.com/PyCalendar that guides the contributor
+community: where to start, what waits for a review, who contributes.
+
+- [x] Look at sign.pycal.org and community-insights: same structure, conventions and tools
+- [x] Django, the same colors as sign.pycal.org (pycal blue #3b79aa, yellow #ffd43b), light/dark switch
+- [x] Documentation (Sphinx, pydata theme) that describes the usage and the purpose
+- [x] Documentation on Read the Docs (.readthedocs.yml)
+- [x] Makefile (dev, run, test, lint, docs, browser-test, docker-...)
+- [x] pre-commit (ruff, ai-prompt-auto-commit, the usual hooks)
+- [x] Slim README
+- [x] Fine-grained errors: one class per cause, title, docstring with the solution, link to the docs
+- [x] At the start a GitHub App must be registered: the start prints the setup code, the site asks for the registration (manifest flow)
+- [x] The GitHub App receives webhooks (signature checked) and labels pull requests
+- [x] People sign in with GitHub only (allauth, no passwords)
+- [x] A page for the account, preferences (weekly summary, drafts, period, watched repositories) and email addresses
+- [x] All pages are public, except those based on private information (account, preferences, email, deliveries)
+- [x] Docker container (nginx + gunicorn, health check, compose example); reads all installations every SYNC_HOURS
+- [x] Dashboard pages: start, contribute (issues for newcomers, without an answer), reviews (waiting, stale),
+      repositories, contributors, labels, about; JSON API /api/v1/; private repositories never shown
+- [x] Unit tests, API tests and browser tests (Playwright)
+- [x] Parallel test execution (pytest-xdist)
+- [x] CI: lint, tests, browser tests, docs run in parallel with the Docker build; the image is pushed only when all of them pass
+- [x] The prompts become items of todo.txt, which is committed
+- [x] Commits and migrations made by the agent and pushed
+- [x] Nice error pages (in the design, also 404/403/500) with a link to the documentation of the error
+- [x] The documentation of each error says why it appears and how to resolve it (checked by a test)
+- [x] Notify the person when the work is done; ask for clarification at the end
+
+## Open: decisions of the person
+
+- [ ] Which labels should the app set? Now: size (size: XS ... XL) and "first contribution";
+      more rules are easy to add (pycal_dashboard/labels/)
+- [ ] Sign in: with the client of the GitHub App (default now, no extra setup) or a separate OAuth app
+      (GITHUB_OAUTH_CLIENT_ID, as sign.pycal.org, which never asks to act on your behalf)?
+- [ ] Address of the documentation on Read the Docs (now https://dashboard-pycal-org.readthedocs.io/en/latest/);
+      the project on Read the Docs has to be created by a person
+- [ ] Who registers the GitHub App on PyCalendar and where the site runs (Sencho stack, like sign.pycal.org?)
+- [ ] Which numbers matter most for the community (response times as in community-insights?)
+
+## Open: work
+
+- [ ] Deploy job (Sencho) after the push of the image, like sign.pycal.org, once the stack exists
+- [ ] A queue for webhooks (now handled while GitHub waits, which is fast for one pull request)
+- [ ] Translations (German, Spanish) like sign.pycal.org
+- [ ] Email digest of the preferences: the preference is stored; the sending is not built yet
+- [ ] The first CI run on GitHub: check that all jobs pass and the image appears on ghcr.io

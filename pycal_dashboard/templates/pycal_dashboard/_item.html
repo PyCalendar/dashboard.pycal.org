@@ -1,0 +1,6 @@
+<li class="item item-{{ item.status }}">
+  <span class="badge badge-{{ item.status }}" title="{{ item.kind }}">{% if item.is_pull %}PR{% else %}Issue{% endif %} · {{ item.status }}</span>
+  <a class="item-title" href="{{ item.html_url }}">{{ item.title }}</a>
+  <span class="item-meta muted"><a href="{% url 'repository' item.repository.owner item.repository.name %}">{{ item.repository.name }}</a>#{{ item.number }} by <a href="{% url 'contributor' item.author_login %}">@{{ item.author_login }}</a> · updated {{ item.updated_at|timesince }} ago{% if item.comments %} · {{ item.comments }} comment{{ item.comments|pluralize }}{% endif %}</span>
+  {% if item.labels %}<span class="labels">{% for label in item.labels %}<span class="label">{{ label }}</span>{% endfor %}</span>{% endif %}
+</li>

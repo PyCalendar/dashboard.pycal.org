@@ -1,0 +1,22 @@
+# The setup of https://dashboard-pycal-org.readthedocs.io/en/latest/how-to/run-docker.html
+#   cp .env.example .env    # then edit .env
+#   docker compose up -d
+#   docker compose logs dashboard   # the setup code of the GitHub App
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  dashboard:
+    image: ghcr.io/pycalendar/dashboard.pycal.org:latest
+    # build: .   # to use the local code instead
+    ports:
+      - "5000:5000"
+    env_file: .env
+    volumes:
+      - ./data:/app/data   # the database, the secret key and the GitHub App
+    restart: unless-stopped
+    logging: *logging
