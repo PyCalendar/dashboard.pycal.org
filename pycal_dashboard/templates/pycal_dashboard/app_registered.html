@@ -1,8 +1,9 @@
 {% extends "pycal_dashboard/base.html" %}
+{% load help %}
 {% block title %}GitHub App registered · {{ site_name }}{% endblock %}
 {% block main %}
 <section class="hero" data-registered-app="{{ app.slug }}">
-  <h1>The GitHub App is registered</h1>
+  <h1>The GitHub App is registered {% help_link links.install_help "Install the GitHub App" %}</h1>
   <p class="lead"><strong>{{ app.name }}</strong> belongs to <strong>{{ app.owner.login }}</strong> on GitHub. The site uses it now.</p>
 </section>
 {% if local %}<p class="message message-warning">The app has no webhook, because GitHub cannot reach this site. When the site has a public address, add the webhook in the settings of the app on GitHub: the address of the site plus <code>/github/webhook/</code>, and a secret that you also set as <code>GITHUB_WEBHOOK_SECRET</code>.</p>{% endif %}

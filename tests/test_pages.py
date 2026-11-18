@@ -2,7 +2,15 @@
 
 import pytest
 
-PUBLIC = ["/", "/about/", "/accounts/login/", "/setup/github-app/", "/health/", "/api/v1/"]
+PUBLIC = [
+    "/",
+    "/about/",
+    "/licenses/",
+    "/accounts/login/",
+    "/setup/github-app/",
+    "/health/",
+    "/favicon.ico",
+]
 # the pages of GitHub data are gone: the site keeps no data of GitHub for now
 REMOVED = [
     "/contribute/",

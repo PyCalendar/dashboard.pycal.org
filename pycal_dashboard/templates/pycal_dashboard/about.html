@@ -1,4 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
+{% load times github help %}
 {% block title %}About · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>About {{ site_name }}</h1>
@@ -13,8 +14,8 @@
 <section class="card"><h2>Version</h2>
 <dl class="facts-list"><dt>Version</dt><dd>{{ build.version }}</dd>
 {% if build.commit %}<dt>Commit</dt><dd><a href="{{ build.commit_url }}">{{ build.commit }}</a> {{ build.message }}</dd>{% endif %}
-{% if build.built_at %}<dt>Built</dt><dd>{{ build.built_at|date:"Y-m-d H:i" }} UTC{% if build.build_url %} · <a href="{{ build.build_url }}">build</a>{% endif %}</dd>{% endif %}
-<dt>Code</dt><dd><a href="{{ build.code_url }}">{{ links.source }}</a> (AGPL-3.0-or-later)</dd></dl>
+{% if build.built_at %}<dt>Built</dt><dd>{% when build.built_at %}{% if build.build_url %} · <a href="{{ build.build_url }}">build</a>{% endif %}</dd>{% endif %}
+<dt>Code</dt><dd>{% github_link build.code_url links.source links.source %} · <a href="{% url 'licenses' %}">AGPL-3.0-or-later</a></dd></dl>
 <p><a href="{{ links.issues }}">Report a bug</a> · <a href="{{ links.changelog }}">Changelog</a></p></section>
 </div>
 {% endblock %}

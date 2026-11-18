@@ -22,7 +22,6 @@ from .configuration import (
     UnsupportedFavicon,
 )
 from .dashboard import (
-    ApiEndpointNotFound,
     InvalidInstallationId,
     LookupFailed,
 )
@@ -60,7 +59,6 @@ from .webhooks import (
 
 __all__ = [
     "AccountError",
-    "ApiEndpointNotFound",
     "AppAlreadyRegistered",
     "AppSettingsInEnvironment",
     "ConfigurationError",

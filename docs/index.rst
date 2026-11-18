@@ -17,7 +17,7 @@ GitHub and writes nothing to GitHub, such as labels or comments.
 - **People who run the site** start the container, register the GitHub App
   and the OAuth app, and install the app: :doc:`how-to/run-docker`,
   :doc:`how-to/github-app` and :doc:`how-to/install-app`.
-- **Developers** read :doc:`how-to/develop` and :doc:`reference/api`.
+- **Developers** read :doc:`how-to/develop` and :doc:`reference/json`.
 
 Why the dashboard exists and what it shows publicly is in
 :doc:`explanation/purpose`.

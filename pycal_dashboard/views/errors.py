@@ -13,9 +13,6 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.templatetags.static import static
 
-from pycal_dashboard.errors import ApiEndpointNotFound
-from pycal_dashboard.middleware import error_page, is_api
-
 log = logging.getLogger(__name__)
 
 PAGES = {
@@ -100,10 +97,8 @@ def page_not_found(request, exception=None):
         exception: What Django raised.
 
     Returns:
-        The page; for the API the JSON of :class:`~pycal_dashboard.errors.ApiEndpointNotFound`.
+        The page.
     """
-    if is_api(request):
-        return error_page(request, ApiEndpointNotFound(request.path))
     return status_page(request, 404)
 
 

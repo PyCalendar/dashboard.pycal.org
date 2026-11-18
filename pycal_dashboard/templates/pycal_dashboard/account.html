@@ -1,8 +1,9 @@
 {% extends "pycal_dashboard/base.html" %}
+{% load github help %}
 {% block title %}Account · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>Account · @{{ identity.login }}</h1>
-<p class="muted">Only you see this page. <a href="https://github.com/{{ identity.login }}">Your profile on GitHub</a> · <a href="{{ links.account }}">Help</a></p>
+<h1>Account · @{{ identity.login }} {% github_link "https://github.com/"|add:identity.login "Your profile on GitHub" %} {% help_link links.account "Your account" %}</h1>
+<p class="muted">Only you see this page.</p>
 <div class="columns">
 <section class="card" id="emails"><h2>Email addresses</h2>
   {% if emails %}<ul class="list" data-emails>{% for address in emails %}<li>{{ address.email }} {% if address.verified %}<span class="badge badge-success">verified</span>{% else %}<span class="badge badge-warning">not verified</span>{% endif %}{% if address.primary %} <span class="badge">primary</span>{% endif %}</li>{% endfor %}</ul>
@@ -17,7 +18,7 @@
 </form></section>
 <section class="card" id="install" data-install><h2>The GitHub App</h2>
   {% if install_url %}<p>Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub.</p>
-  <p><a class="button" href="{{ install_url }}">Install the GitHub App</a> <a class="button button-quiet" href="{{ links.install_help }}">Ways to install it</a></p>
+  <p><a class="button" href="{{ install_url }}">Install the GitHub App</a> {% help_link links.install_help "Ways to install the GitHub App" %}</p>
   {% else %}<p>The site has no GitHub App yet. The people who run the site <a href="{% url 'register_app' %}">register it</a> first.</p>{% endif %}
 </section>
 </div>

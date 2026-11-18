@@ -4,11 +4,14 @@ from allauth.account import views as account_views
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import account, api, oauth_app, pages, registration, setup, webhook
+from .views import account, oauth_app, pages, registration, setup, webhook
 
 urlpatterns = [
     path("", pages.home, name="home"),
     path("about/", pages.about, name="about"),
+    path("licenses/", pages.licenses_page, name="licenses"),
+    path("licenses/packages/<str:name>/", pages.package_license, name="package_license"),
+    path("licenses/<str:name>/", pages.license_text, name="license_text"),
     path("health/", pages.health, name="health"),
     path("theme/", pages.theme, name="theme"),
     path("favicon.ico", pages.favicon, name="favicon"),
@@ -19,7 +22,6 @@ urlpatterns = [
     path("setup/installed/", setup.installed, name="installed"),
     path("setup/oauth-app/", oauth_app.oauth_app, name="oauth_app"),
     path("github/webhook/", webhook.webhook, name="webhook"),
-    path("api/v1/", api.index, name="api"),
     # the email addresses: allauth leaves them out with SOCIALACCOUNT_ONLY
     path("accounts/email/", account_views.email, name="account_email"),
     path(

@@ -1,7 +1,7 @@
 """Errors of the pages and the API of the dashboard, met by visitors.
 
-The pages show them with the HTTP status; the API answers with the same name,
-title and link as JSON, see :doc:`/reference/api`.
+The pages show them with the HTTP status; the JSON of a page answers with the
+same name, title and link, see :doc:`/reference/json`.
 """
 
 from .base import DashboardError
@@ -17,18 +17,6 @@ class LookupFailed(DashboardError):
     status = 404
     guide = "tutorial/use.html"
     guide_title = "Use the dashboard"
-
-
-class ApiEndpointNotFound(LookupFailed):
-    """The API has no such address.
-
-    The addresses of the API start with ``/api/v1/`` and are listed in
-    :doc:`/reference/api`.
-    """
-
-    title = "No such address in the API"
-    guide = "reference/api.html"
-    guide_title = "API"
 
 
 class InvalidInstallationId(DashboardError):

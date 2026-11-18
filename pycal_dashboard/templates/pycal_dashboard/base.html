@@ -8,6 +8,7 @@
 <link rel="icon" href="{{ favicon_url }}">
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <style>{{ theme_css }}</style>
+<script src="{% static 'local-time.js' %}" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the content</a>
@@ -37,7 +38,6 @@
   <div class="wrap footer-row">
     <ul class="footer-links">
       <li><a href="{% url 'about' %}">About</a></li>
-      <li><a href="{% url 'api' %}">API</a></li>
       <li><a href="{{ links.documentation }}">Documentation</a></li>
       <li><a href="{{ links.source }}">Source code</a></li>
       {% for title, url in footer_links %}<li><a href="{{ url }}">{{ title }}</a></li>{% endfor %}

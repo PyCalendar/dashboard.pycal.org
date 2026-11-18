@@ -61,14 +61,14 @@ community: where to start, what waits for a review, who contributes.
 - [ ] German and Spanish, with a language menu next to the color menu
 - [ ] Action log: what triggered what, a global log for the administrators
 - [x] Warn at the start about SITE_ADMINS that never signed in
-- [ ] JSON of every public page with CORS
-- [ ] The page of the licenses: /licenses/
-- [ ] Local times in the browser (a small static script; works without JavaScript)
+- [x] JSON of every public page with CORS (replaces /api/v1/)
+- [x] The page of the licenses: /licenses/
+- [x] Local times in the browser (a small static script; works without JavaScript)
 - [x] FOOTER_LINKS and FAVICON settings
 - [ ] Guide: test the GitHub App locally through a tunnel (Tailscale Funnel)
 - [ ] A development .env (.env.development.example) that make run reads
 - [ ] Show the permissions and events that the registered app misses (setup page, command)
-- [ ] Links to the documentation as a question mark that opens a new tab; the GitHub mark on links to GitHub
+- [x] Links to the documentation as a question mark that opens a new tab; the GitHub mark on links to GitHub
 
 ## 2026-11-18: admins, the Django admin, installing the app, CI
 

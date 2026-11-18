@@ -8,4 +8,4 @@ Reference
    errors
    settings
    permissions
-   api
+   json

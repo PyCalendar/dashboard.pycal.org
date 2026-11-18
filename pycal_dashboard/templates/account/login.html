@@ -1,5 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load socialaccount %}
+{% load socialaccount help %}
 {% block title %}Sign in · {{ site_name }}{% endblock %}
 {% block main %}
 <div class="card narrow">
@@ -14,7 +14,7 @@
   {% else %}
   <p class="message message-warning" data-no-sign-in>Signing in is not set up yet: the site has no OAuth app.</p>
   <p>The people who run the site create an OAuth app on GitHub and enter it here, with the setup code of the log. It only tells the site who people are and their email addresses.</p>
-  <p><a class="button" href="{% url 'oauth_app' %}">Set up signing in</a> <a href="{{ links.oauth_app }}">How</a></p>
+  <p><a class="button" href="{% url 'oauth_app' %}">Set up signing in</a> {% help_link links.oauth_app "The OAuth app for signing in" %}</p>
   {% endif %}
 </div>
 {% endblock %}

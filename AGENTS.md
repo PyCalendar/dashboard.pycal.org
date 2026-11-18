@@ -34,7 +34,8 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   checks it.
 - The tests never use the network: GitHub is faked (`tests/fakes/github.py`).
 - Never change a migration that may be applied somewhere; add a new one.
-- No inline JavaScript in templates. Every page works without JavaScript.
+- No inline JavaScript in templates; small static scripts in `static/` may enhance a
+  page. Every page works without JavaScript.
 - All pages are public, except those based on private information: the
   account, the preferences, the email addresses and the webhook deliveries.
   Private repositories are never shown.

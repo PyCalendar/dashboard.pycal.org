@@ -11,20 +11,20 @@ from .errors import DashboardError, SignInNotConfigured, UnexpectedError
 log = logging.getLogger(__name__)
 
 
-def is_api(request) -> bool:
-    """Whether a request is for the API, which answers errors as JSON.
+def is_json(request) -> bool:
+    """Whether a request is for the JSON of a page, which answers errors as JSON.
 
     Args:
         request: The request.
 
     Returns:
-        True for addresses that start with ``/api/``.
+        True for ``<page>.json``, see :mod:`pycal_dashboard.public_json`.
     """
-    return request.path.startswith("/api/")
+    return getattr(request, "public_json", False)
 
 
 def error_page(request, error: DashboardError, status: int | None = None):
-    """The page of an error, or its JSON for the API.
+    """The page of an error, or its JSON for ``<page>.json``.
 
     Args:
         request: The request.
@@ -34,7 +34,7 @@ def error_page(request, error: DashboardError, status: int | None = None):
     Returns:
         The answer.
     """
-    if is_api(request):
+    if is_json(request):
         return JsonResponse(error.as_json(), status=status or error.status)
     return render(
         request, "pycal_dashboard/error.html", {"error": error}, status=status or error.status

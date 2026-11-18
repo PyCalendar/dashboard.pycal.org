@@ -1,9 +1,10 @@
 {% extends "pycal_dashboard/base.html" %}
+{% load times %}
 {% block title %}Webhook deliveries · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>Webhook deliveries</h1>
 <p class="muted">The latest 100 webhooks of GitHub and what the site did. Only the administrators of the site see them: they may name private repositories.</p>
 {% if deliveries %}<div class="table-wrap"><table class="table"><thead><tr><th>Received</th><th>Event</th><th>Repository</th><th>Outcome</th></tr></thead><tbody>
-{% for delivery in deliveries %}<tr><td>{{ delivery.received|date:"Y-m-d H:i:s" }}</td><td>{{ delivery.event }}{% if delivery.action %}.{{ delivery.action }}{% endif %}</td><td>{{ delivery.repository }}</td><td><span class="badge badge-{{ delivery.outcome }}">{{ delivery.outcome }}</span> {% if delivery.error %}<code>{{ delivery.error }}</code> {% endif %}{{ delivery.detail }}</td></tr>{% endfor %}
+{% for delivery in deliveries %}<tr><td>{% when delivery.received %}</td><td>{{ delivery.event }}{% if delivery.action %}.{{ delivery.action }}{% endif %}</td><td>{{ delivery.repository }}</td><td><span class="badge badge-{{ delivery.outcome }}">{{ delivery.outcome }}</span> {% if delivery.error %}<code>{{ delivery.error }}</code> {% endif %}{{ delivery.detail }}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p class="muted empty">No webhook yet.</p>{% endif %}
 {% endblock %}

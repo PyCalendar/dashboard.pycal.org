@@ -28,6 +28,8 @@ RUN uv sync --no-dev --no-install-project --frozen
 COPY manage.py ./
 COPY pycal_dashboard pycal_dashboard
 COPY static static
+COPY LICENSES LICENSES
+COPY REUSE.toml ./
 COPY docker/start-service.sh docker/healthcheck.py ./
 COPY docker/nginx.conf docker/starting.html docker/
 # throwaway key: nothing secret is written into the image

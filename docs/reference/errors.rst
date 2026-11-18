@@ -10,16 +10,16 @@ solve it*, which leads to its entry. Each entry gives:
 - in its first sentence, **why the error appears**,
 - after it, **how to resolve it**.
 
-The API and the webhooks answer errors as JSON with the same name, title and
-link:
+The JSON of the pages and the webhooks answer errors as JSON with the same name,
+title and link:
 
 .. code-block:: json
 
    {
-     "error": "ApiEndpointNotFound",
-     "title": "No such address in the API",
-     "detail": "/api/v1/nothing/",
-     "documentation": "https://docs.dashboard.pycal.org/reference/errors.html#pycal_dashboard.errors.dashboard.ApiEndpointNotFound"
+     "error": "WebhookSignatureMissing",
+     "title": "The webhook has no signature",
+     "detail": "X-Hub-Signature-256",
+     "documentation": "https://docs.dashboard.pycal.org/reference/errors.html#pycal_dashboard.errors.webhooks.WebhookSignatureMissing"
    }
 
 An error the site does not know is shown as

@@ -30,7 +30,7 @@ The tests run in parallel with `pytest-xdist
 They never use the network: GitHub is faked in ``tests/fakes/github.py``.
 
 - ``tests/`` are the unit tests of the services, the webhooks and the pages.
-- ``tests/api/`` are the tests of the JSON API.
+- ``tests/test_public_json.py`` tests the JSON of the pages.
 - ``tests/browser/`` start the site and click through it in Chromium.
 
 The models

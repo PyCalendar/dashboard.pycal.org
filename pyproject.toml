@@ -12,6 +12,8 @@ dependencies = [
     "django-environ>=0.14.0",
     "gunicorn>=23",
     "httpx>=0.28.1",
+    "pip-licenses>=5.5.5",
+    "reuse>=6.3.0",
     "whitenoise>=6.9",
 ]
 

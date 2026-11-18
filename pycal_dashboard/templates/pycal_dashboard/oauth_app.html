@@ -1,8 +1,9 @@
 {% extends "pycal_dashboard/base.html" %}
+{% load help %}
 {% block title %}The OAuth app for signing in · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>The OAuth app for signing in</h1>
-<p class="lead">People sign in with an OAuth app. GitHub tells the site only who they are and their email addresses, read only. It never asks to let the site act on their behalf. <a href="{{ links.oauth_app }}">More in the documentation</a>.</p>
+<h1>The OAuth app for signing in {% help_link links.oauth_app "The OAuth app for signing in" %}</h1>
+<p class="lead">People sign in with an OAuth app. GitHub tells the site only who they are and their email addresses, read only. It never asks to let the site act on their behalf.</p>
 {% if configured %}<p class="message message-success" data-oauth-configured>People sign in with an OAuth app.</p>
 {% else %}<p class="message message-warning" data-oauth-missing>Until the OAuth app is entered, nobody can sign in.</p>{% endif %}
 {% if from_environment %}<p class="message message-warning" data-oauth-environment>The OAuth app is set in the environment (<code>GITHUB_OAUTH_CLIENT_ID</code>); change it there.</p>

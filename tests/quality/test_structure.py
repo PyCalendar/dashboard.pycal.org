@@ -22,10 +22,13 @@ def test_one_class_per_module(module):
     assert len(classes) <= 1, classes
 
 
-def test_no_javascript_in_templates():
+def test_no_inline_javascript_in_templates():
+    """Small static scripts may enhance a page; no JavaScript is written into a template."""
     for template in (PACKAGE / "templates").rglob("*.html"):
         text = template.read_text()
-        assert "<script" not in text and "javascript:" not in text, template
+        scripts = re.findall(r"<script[^>]*>", text)
+        assert all(re.fullmatch(r'<script src="[^"]+" defer>', s) for s in scripts), template
+        assert "javascript:" not in text, template
         assert not re.search(r"\son[a-z]+=", text), template
 
 
