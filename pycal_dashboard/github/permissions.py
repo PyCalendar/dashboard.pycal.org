@@ -16,6 +16,23 @@ REQUIRED = {
 # a subscription.
 EVENTS = ["issues", "issue_comment", "pull_request", "pull_request_review", "repository"]
 LEVELS = {"read": 1, "write": 2, "admin": 3}
+# The permission that each event needs, so that GitHub sends it.
+EVENT_PERMISSIONS = {
+    "issues": "issues",
+    "issue_comment": "issues",
+    "pull_request": "pull_requests",
+    "pull_request_review": "pull_requests",
+    "repository": "metadata",
+}
+# The data that the site keeps of GitHub, and the events that tell of its changes: a webhook
+# updates the repository it is about, so that the data follows GitHub without waiting for the
+# daily renewal. "installation" events keep the installations.
+DATA_EVENTS = {
+    "Repository": ["repository"],
+    "Issue": ["issues", "issue_comment", "pull_request", "pull_request_review"],
+    "GitHubUser": ["issues", "pull_request"],
+    "Installation": ["installation", "installation_repositories"],
+}
 
 
 def missing(granted: dict[str, str], required: dict[str, str] | None = None) -> dict[str, str]:

@@ -2,6 +2,7 @@
 
 import pytest
 
+from pycal_dashboard.github.permissions import DATA_EVENTS
 from pycal_dashboard.models import WebhookDelivery
 from tests.conftest import REPOSITORY, pull_payload, repository_payload, send_webhook
 
@@ -119,7 +120,13 @@ def test_failure_is_logged(client, db, monkeypatch):
     assert WebhookDelivery.objects.get().outcome == "failed"
 
 
-@pytest.mark.parametrize("event", ["pull_request", "issues", "issue_comment", "repository"])
+@pytest.mark.parametrize(
+    "event",
+    sorted(
+        {e for es in DATA_EVENTS.values() for e in es}
+        - {"installation", "installation_repositories"}
+    ),
+)
 def test_activity_updates_the_repository_of_a_project(client, github, bob, event):
     """Activity on GitHub updates its repository in the background: only what changed."""
     from pycal_dashboard.models import Issue, Repository, UpdateJob

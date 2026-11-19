@@ -46,7 +46,13 @@ the app was installed, suspended, removed, its repositories changed or new
 permissions were accepted. The site records the installation with its
 permissions and events.
 
-The site logs every webhook and does nothing else with the others yet.
+The site logs every webhook. Those of a repository of a project update that
+repository in the background, see :ref:`project-update`: every kind of data the
+site keeps of GitHub has events that tell of its changes, and the app has the
+permissions that GitHub needs to send them
+(``DATA_EVENTS`` and ``EVENT_PERMISSIONS``; ``tests/test_permissions.py``
+checks them). Every hour, the site also renews the repositories not read in the
+last day, for what no event tells of.
 
 New permissions
 ===============

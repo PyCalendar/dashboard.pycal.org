@@ -110,6 +110,8 @@ of the projects with a repository of the installation get an email with the
 link to the page on GitHub where the permissions are accepted, see
 :ref:`new-permissions`.
 
+.. _project-update:
+
 The overview and the update
 ===========================
 

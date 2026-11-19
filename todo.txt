@@ -239,7 +239,7 @@ community: where to start, what waits for a review, who contributes.
       updated; after each update a signal, so that the places that show it are updated: the same
       code path for the button Update, a webhook and the daily update (trigger -> update in the
       background -> notice of the update)
-- [ ] For all data read from GitHub: the app subscribes to its webhooks with the permissions they
+- [x] For all data read from GitHub: the app subscribes to its webhooks with the permissions they
       need, so that it is updated by webhooks, not by jobs in the background
 - [x] The overview of a project: the information of the update at the bottom
 - [x] The roles of collaborators link the documentation of what each may do
