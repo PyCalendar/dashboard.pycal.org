@@ -209,9 +209,27 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .choices { list-style: none; padding: 0; columns: 18rem; }
 .choices li { margin: .2rem 0; break-inside: avoid; }
 
-/* the pull requests of a project */
-.filters { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; margin: 0 0 1rem; }
-.filters a[aria-current] { font-weight: 700; text-decoration: none; }
+/* the pull requests of a project: a table whose columns the checkboxes of "Display" show and hide
+   with CSS alone; without the column Status, the colour of the first cell tells it */
+.table-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; }
+.table-head h2 { margin: 0; }
+.per-page { display: flex; align-items: center; gap: .4rem; margin-left: auto; }
+.columns-choice { margin: .75rem 0; }
+.columns-choice summary { cursor: pointer; }
+.columns-checks { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: .5rem 0 0; }
+.columns-checks label.check { display: inline-flex; gap: .3rem; align-items: center; }
+.pull-requests .col-link { width: 1%; white-space: nowrap; border-left: .3rem solid transparent; }
+.pull-requests .col-number, .pull-requests .col-created { white-space: nowrap; }
+.pull-table:has(#column-status:not(:checked)) .col-status,
+.pull-table:has(#column-title:not(:checked)) .col-title,
+.pull-table:has(#column-organization:not(:checked)) .col-organization,
+.pull-table:has(#column-repository:not(:checked)) .col-repository,
+.pull-table:has(#column-number:not(:checked)) .col-number,
+.pull-table:has(#column-creator:not(:checked)) .col-creator,
+.pull-table:has(#column-created:not(:checked)) .col-created { display: none; }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="open"] .col-link { border-left-color: var(--success); }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="merged"] .col-link { border-left-color: var(--merged); }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="closed"] .col-link { border-left-color: var(--danger); }
 .pagination { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
 
 /* the proposals of a field, such as the people to share a project with */
@@ -247,3 +265,6 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .notice h2 { font-size: 1.05rem; margin: 0 0 .4rem; }
 .notice-error { border-color: var(--danger); background: var(--danger-bg); }
 .notice-close { position: absolute; top: .4rem; right: .4rem; font-size: 1.2rem; line-height: 1; }
+
+/* text only for screen readers, such as the header of a column of icons */
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

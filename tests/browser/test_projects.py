@@ -86,12 +86,24 @@ def test_create_a_project(signed_in, site, github, update_worker):
 
     # the pull requests of all its repositories, from the tile with their number
     page.locator("[data-open-pull-requests] a").click()
-    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/pull-requests/\?state=open$"))
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/pull-requests/$"))
     expect(page.get_by_role("link", name="Pull requests")).to_have_attribute("aria-current", "page")
     expect(page.locator("[data-pull-request]")).to_have_count(2)
     expect(page.locator("[data-pull-request] [data-github-user='octocat']").first).to_be_visible()
-    page.get_by_role("link", name="All", exact=True).click()
-    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    # the columns: hidden by CSS, the choice kept by the browser
+    table = page.locator("[data-pull-requests]")
+    table.get_by_text("Display:").click()
+    expect(table.locator("td.col-title").first).to_be_visible()
+    table.get_by_label("Title").uncheck()
+    expect(table.locator("td.col-title").first).to_be_hidden()
+    expect(table.locator("[data-columns-shown]")).not_to_contain_text("Title")
+    table.get_by_label("Status").uncheck()
+    link = table.locator("[data-status='open'] td.col-link").first
+    expect(link).to_have_css("border-left-color", "rgb(29, 107, 51)")  # open: green
+    page.reload()
+    expect(page.locator("td.col-title").first).to_be_hidden()
+    page.get_by_label("Per page").select_option("10")
+    expect(page).to_have_url(re.compile(r"per_page=10"))
     assert github.writes() == []
 
 

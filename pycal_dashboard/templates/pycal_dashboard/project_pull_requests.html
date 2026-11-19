@@ -1,21 +1,39 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n github times %}
+{% load i18n github times static %}
 {% block title %}{% translate "Pull requests" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}<script src="{% static 'pull-table.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
-<section class="card" data-pull-requests>
-<h2>{% blocktranslate count counter=pull_requests.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
-<p class="muted">{% translate "The pull requests of all repositories of the project, the newest first, as of the last update." %}</p>
-<ul class="filters" aria-label="{% translate "Show" %}">{% for value, title in states %}<li><a href="?state={{ value }}"{% if value == state %} aria-current="page"{% endif %} data-state="{{ value }}">{{ title }}</a></li>{% endfor %}</ul>
-{% if pull_requests %}<ul class="items">{% for pull in pull_requests %}<li class="item" data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}">
-  <span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span>
-  <a class="item-title" href="{{ pull.url }}">{{ pull.title }}</a>
-  <span class="item-meta muted">{{ pull.repository.full_name }}#{{ pull.number }} · {% github_user pull.author %} · {% translate "created" %} {% when pull.created %}</span>
-</li>{% endfor %}</ul>
+<section class="card pull-table" data-pull-requests>
+<div class="table-head">
+  <h2>{% blocktranslate count counter=pull_requests.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
+  <form method="get" class="per-page" data-per-page>
+    <label for="per-page">{% translate "Per page" %}</label>
+    <select id="per-page" name="per_page">{% for size in per_page_choices %}<option value="{{ size }}"{% if size == per_page %} selected{% endif %}>{{ size }}</option>{% endfor %}</select>
+    <button class="button button-quiet button-small" data-per-page-submit>{% translate "Show" %}</button>
+  </form>
+</div>
+<details class="columns-choice" data-columns>
+  <summary>{% translate "Display" %}: <span data-columns-shown>{% for key, title in columns %}{{ title }}{% if not forloop.last %}, {% endif %}{% endfor %}</span></summary>
+  <p class="columns-checks">{% for key, title in columns %}<label class="check"><input type="checkbox" id="column-{{ key }}" data-column="{{ key }}" checked> {{ title }}</label>{% endfor %}</p>
+</details>
+{% if pull_requests %}<div class="table-wrap"><table class="table pull-requests">
+  <thead><tr><th class="col-link"><span class="visually-hidden">{% translate "On GitHub" %}</span></th>{% for key, title in columns %}<th class="col-{{ key }}">{{ title }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for pull in pull_requests %}<tr data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}" data-status="{{ pull.status }}">
+    <td class="col-link">{% blocktranslate with name=pull.repository.full_name number=pull.number asvar label %}{{ name }}#{{ number }} on GitHub{% endblocktranslate %}{% github_link pull.url label %}</td>
+    <td class="col-status"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span></td>
+    <td class="col-title"><a href="{{ pull.url }}">{{ pull.title }}</a></td>
+    <td class="col-organization">{{ pull.repository.owner }}</td>
+    <td class="col-repository">{{ pull.repository.name }}</td>
+    <td class="col-number">#{{ pull.number }}</td>
+    <td class="col-creator">{% github_user pull.author %}</td>
+    <td class="col-created">{% when pull.created %}</td>
+  </tr>{% endfor %}</tbody>
+</table></div>
 {% if pull_requests.paginator.num_pages > 1 %}<nav class="pagination" aria-label="{% translate "Pages" %}">
-  {% if pull_requests.has_previous %}<a href="?state={{ state }}&amp;page={{ pull_requests.previous_page_number }}" rel="prev">{% translate "Newer" %}</a>{% endif %}
+  {% if pull_requests.has_previous %}<a href="?per_page={{ per_page }}&amp;page={{ pull_requests.previous_page_number }}" rel="prev">{% translate "Newer" %}</a>{% endif %}
   <span>{% blocktranslate with number=pull_requests.number total=pull_requests.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
-  {% if pull_requests.has_next %}<a href="?state={{ state }}&amp;page={{ pull_requests.next_page_number }}" rel="next">{% translate "Older" %}</a>{% endif %}
+  {% if pull_requests.has_next %}<a href="?per_page={{ per_page }}&amp;page={{ pull_requests.next_page_number }}" rel="next">{% translate "Older" %}</a>{% endif %}
 </nav>{% endif %}
 {% elif not repositories %}<p data-no-repositories>{% translate "The project has no repositories yet." %}</p>
 {% else %}<p data-no-pull-requests>{% translate "No pull requests here. The update of the project reads them from GitHub." %}</p>{% endif %}

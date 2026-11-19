@@ -7,10 +7,11 @@ from typing import TYPE_CHECKING
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.errors import (
@@ -296,32 +297,51 @@ def project(request: HttpRequest, slug: str):
     )
 
 
-PULL_REQUEST_STATES = {"all", "open", "merged", "closed"}
-PER_PAGE = 50
+# the pull requests of a page, which the visitor chooses: at most 100, also in the JSON
+PER_PAGE_CHOICES = (10, 25, 50, 100)
+PER_PAGE = 25
+# the columns of the table of pull requests that the visitor shows or hides
+PULL_REQUEST_COLUMNS = (
+    ("status", gettext_lazy("Status")),
+    ("title", gettext_lazy("Title")),
+    ("organization", gettext_lazy("Organization")),
+    ("repository", gettext_lazy("Repository")),
+    ("number", gettext_lazy("Number")),
+    ("creator", gettext_lazy("Creator")),
+    ("created", gettext_lazy("Created")),
+)
 
 
-def pull_requests_of(repositories: list[Repository], state: str):
+def pull_requests_of(repositories: list[Repository]) -> QuerySet[Issue]:
     """The pull requests of repositories together, the newest first.
 
     Parameters:
         repositories: The repositories that the person sees.
-        state: ``all``, ``open``, ``merged`` or ``closed`` (closed without merging).
 
     Returns:
         The query of the pull requests.
     """
-    found = (
+    return (
         Issue.objects.filter(repository__in=repositories, pull_request=True)
         .select_related("author", "repository")
         .order_by("-created", "-pk")
     )
-    if state == "open":
-        found = found.filter(state=Issue.OPEN)
-    elif state == "merged":
-        found = found.filter(merged__isnull=False)
-    elif state == "closed":
-        found = found.filter(state=Issue.CLOSED, merged__isnull=True)
-    return found
+
+
+def per_page(request: HttpRequest) -> int:
+    """How many pull requests a page shows: ``per_page`` of the request, at most 100.
+
+    Parameters:
+        request: The request.
+
+    Returns:
+        A number of :data:`PER_PAGE_CHOICES`; the default for another one.
+    """
+    try:
+        wanted = int(request.GET.get("per_page", PER_PAGE))
+    except ValueError:
+        return PER_PAGE
+    return wanted if wanted in PER_PAGE_CHOICES else PER_PAGE
 
 
 def issue_data(issue: Issue) -> dict:
@@ -351,7 +371,8 @@ def project_pull_requests(request: HttpRequest, slug: str):
     """The pull requests of all repositories of a project together, public like the project.
 
     Parameters:
-        request: The request; ``state`` filters, ``page`` is the page of the list.
+        request: The request; ``page`` is the page of the list, ``per_page`` its size: 10, 25,
+            50 or 100.
         slug: The project.
 
     Returns:
@@ -360,11 +381,9 @@ def project_pull_requests(request: HttpRequest, slug: str):
     access, moved = opened(request, slug, "pull-requests/")
     if moved:
         return moved
-    state = request.GET.get("state", "all")
-    if state not in PULL_REQUEST_STATES:
-        state = "all"
     repositories = shown_repositories(access)
-    pages = Paginator(pull_requests_of(repositories, state), PER_PAGE)
+    size = per_page(request)
+    pages = Paginator(pull_requests_of(repositories), size)
     shown = pages.get_page(request.GET.get("page"))
     return page(
         request,
@@ -373,21 +392,17 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "project": access.project,
             "access": access,
             "pull_requests": shown,
-            "state": state,
-            "states": [
-                ("all", _("All")),
-                ("open", _("Open")),
-                ("merged", _("Merged")),
-                ("closed", _("Closed")),
-            ],
+            "per_page": size,
+            "per_page_choices": PER_PAGE_CHOICES,
+            "columns": PULL_REQUEST_COLUMNS,
             "repositories": repositories,
             "tab": "pull-requests",
         },
         lambda: {
-            "state": state,
             "count": pages.count,
             "page": shown.number,
             "pages": pages.num_pages,
+            "per_page": size,
             "pull_requests": [issue_data(issue) for issue in shown],
         },
     )

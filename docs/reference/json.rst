@@ -28,7 +28,8 @@ Every public page has its information as JSON at the address of the page with
        ``slug``, ``description``, ``url`` and public ``repositories``
    * - ``/projects/<slug>/pull-requests/``
      - ``/projects/<slug>/pull-requests.json``: the pull requests of a public
-       project, with ``state`` and ``page`` as on the page: each with its
+       project, the newest first, with ``page`` and ``per_page`` (10, 25, 50 or
+       100, at most 100) as on the page: each with its
        ``repository``, ``number``, ``title``, ``url``, ``author``, ``status``
        and times
    * - ``/projects/<slug>/``

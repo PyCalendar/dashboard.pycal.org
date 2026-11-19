@@ -181,22 +181,56 @@ def test_the_pull_requests_of_a_project_are_public(client, project, github):
     assert 'href="https://github.com/collective/icalendar/pull/2"' in page
 
 
-@pytest.mark.parametrize(
-    ("state", "titles"),
-    [("open", ["Fix the bug"]), ("merged", ["Merged"]), ("closed", ["Refused"])],
-)
-def test_filter_the_pull_requests(client, project, state, titles):
-    page = client.get(f"/projects/{project.slug}/pull-requests/?state={state}")
-    data = client.get(f"/projects/{project.slug}/pull-requests.json?state={state}").json()
-    assert [p["title"] for p in data["pull_requests"]] == titles
-    assert f'data-state="{state}" ' not in page.content.decode()  # the current one is marked
-    assert data["pull_requests"][0]["status"] == ("closed" if state == "closed" else state)
+def test_the_pull_requests_are_a_table_with_columns_to_choose(client, project):
+    """No filters; a details of the columns to display, which CSS shows and hides."""
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert "?state=" not in page and "the newest first, as of the last update" not in page
+    choice = page.split("data-columns>")[1].split("</details>")[0]
+    assert (
+        "Display: <span data-columns-shown>Status, Title, Organization, Repository, Number, Creator, Created</span>"
+        in choice
+    )
+    for column in ("status", "title", "organization", "repository", "number", "creator", "created"):
+        assert f'id="column-{column}" data-column="{column}" checked' in choice
+        assert f'<th class="col-{column}">' in page and f'<td class="col-{column}">' in page
+    row = page.split('data-pull-request="collective/icalendar#2" data-status="open">')[1]
+    row = row.split("</tr>")[0]
+    assert (
+        'class="col-link"' in row and 'href="https://github.com/collective/icalendar/pull/2"' in row
+    )
+    assert '<td class="col-organization">collective</td>' in row
+    assert '<td class="col-repository">icalendar</td>' in row
+    assert '<td class="col-number">#2</td>' in row
+    assert 'data-status="merged"' in page and 'data-status="closed"' in page
+    assert "pull-table.js" in page
+
+
+def test_the_columns_are_hidden_by_css():
+    """Each column has its rule; without Status, the first cell has the color of the status."""
+    from pathlib import Path
+
+    css = (Path(__file__).parent.parent / "static" / "style.css").read_text()
+    for column in ("status", "title", "organization", "repository", "number", "creator", "created"):
+        assert f".pull-table:has(#column-{column}:not(:checked)) .col-{column}" in css
+    for status, color in (("open", "success"), ("merged", "merged"), ("closed", "danger")):
+        assert (
+            f'.pull-table:has(#column-status:not(:checked)) tr[data-status="{status}"] .col-link '
+            f"{{ border-left-color: var(--{color}); }}"
+        ) in css
+
+
+@pytest.mark.parametrize(("asked", "size"), [("10", 10), ("100", 100), ("1000", 25), ("x", 25)])
+def test_the_number_per_page(client, project, asked, size):
+    page = client.get(f"/projects/{project.slug}/pull-requests/?per_page={asked}").content.decode()
+    assert f'<option value="{size}" selected>' in page
+    data = client.get(f"/projects/{project.slug}/pull-requests.json?per_page={asked}").json()
+    assert data["per_page"] == size
 
 
 def test_the_tile_of_open_pull_requests_leads_to_them(client, project):
     page = client.get(f"/projects/{project.slug}/").content.decode()
     tile = page.split("data-open-pull-requests>")[1].split("</li>")[0]
-    assert f'href="/projects/{project.slug}/pull-requests/?state=open"' in tile
+    assert f'href="/projects/{project.slug}/pull-requests/"' in tile
 
 
 def test_the_tabs_are_in_order_overview_public_private(client, project, bob):
@@ -217,9 +251,12 @@ def test_many_pull_requests_have_pages(client, github, bob):
     project.repositories.add(big)
     RepositoryUpdate(big).run()
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
-    assert "Page 1 of 2" in page and page.count("data-pull-request=") == 50
-    page = client.get(f"/projects/{project.slug}/pull-requests/?page=2").content.decode()
-    assert page.count("data-pull-request=") == 10
+    assert "Page 1 of 3" in page and page.count("data-pull-request=") == 25
+    assert 'href="?per_page=25&amp;page=2"' in page
+    page = client.get(f"/projects/{project.slug}/pull-requests/?per_page=50&page=2")
+    assert page.content.decode().count("data-pull-request=") == 10
+    data = client.get(f"/projects/{project.slug}/pull-requests.json?per_page=100").json()
+    assert (data["count"], data["pages"], len(data["pull_requests"])) == (60, 1, 60)
 
 
 def test_private_repositories_hide_their_pull_requests(client, project, repository):

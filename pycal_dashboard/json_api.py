@@ -31,9 +31,9 @@ JSON_API = [
     {
         "name": "project_pull_requests",
         "page": "/projects/<slug>/pull-requests/",
-        "json": "/projects/<slug>/pull-requests.json?state=all&page=1",
-        "holds": "the pull requests of all repositories of a project, the newest first, 50 a "
-        "page: state is all, open, merged or closed; count, page and pages say how many",
+        "json": "/projects/<slug>/pull-requests.json?per_page=100&page=1",
+        "holds": "the pull requests of all repositories of a project, the newest first: "
+        "per_page is 10, 25, 50 or 100 (at most); count, page and pages say how many",
     },
     {
         "name": "about",

@@ -8,7 +8,7 @@
 {% if project.description %}<div class="lead markdown" data-description>{{ project.description|markdown }}</div>{% endif %}
 <ul class="stats-tiles" data-totals>
   <li data-open-issues><strong>{% if open_issues is None %}–{% else %}{{ open_issues }}{% endif %}</strong>{% translate "open issues" %}</li>
-  <li data-open-pull-requests><a href="{% url 'project_pull_requests' project.slug %}?state=open"><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</a></li>
+  <li data-open-pull-requests><a href="{% url 'project_pull_requests' project.slug %}"><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</a></li>
   <li><strong>{{ repositories|length }}</strong>{% translate "repositories" %}</li>
 </ul>
 {% if repositories %}<div class="table-wrap"><table class="table" data-repositories>

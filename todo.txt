@@ -296,6 +296,9 @@ community: where to start, what waits for a review, who contributes.
       the time of the failure (Repository.error_at)
 - [x] Failed updates at the top of the overview, in a notice that can be clicked away, with
       details to copy for a person or an AI, without tokens or data of people
+- [x] Pull requests: without the sentence and the filters (later); 10, 25, 50, 100 a page at the
+      top right, also the JSON (at most 100); a table whose columns Display chooses (CSS), the
+      status as the color of the link to GitHub when its column is hidden
 - [ ] The person: translate the new texts (asked before translating)
 
 ## Open: decisions of the person

@@ -153,10 +153,16 @@ Pull requests
 =============
 
 The tab *Pull requests*, public like the project, lists the pull requests of
-all its repositories together, the newest first, with the avatar and GitHub
-name of who created them. It shows all of them, or only the open, merged or
-closed ones. The tile with the number of open pull requests on the overview
-leads there.
+all its repositories together, the newest first: 10, 25, 50 or 100 a page,
+as the menu at its top right chooses. The tile with the number of open pull
+requests on the overview leads there.
+
+*Display* chooses the columns: the status, the title, the organization, the
+repository, the number, the creator with their avatar, and when it was
+created. The browser keeps the choice. Without the status, the first cell of
+each row, which links the pull request on GitHub, has the color of its status:
+green while it is open, purple when it was merged, red when it was closed
+without merging. Without any column, only these links remain.
 
 The tabs of a project are always in this order: the overview, the public tabs,
 then those of the collaborators.

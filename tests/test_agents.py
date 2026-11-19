@@ -49,7 +49,7 @@ def test_every_json_of_the_guideline_answers(client, project):
         assert answer["Access-Control-Allow-Origin"] == "*", address
     data = client.get("/projects.json").json()
     assert data["projects"][0]["slug"] == "icalendar"  # how to navigate: projects -> slug
-    pulls = client.get("/projects/icalendar/pull-requests.json?state=all&page=1").json()
+    pulls = client.get("/projects/icalendar/pull-requests.json?per_page=25&page=1").json()
     assert (pulls["count"], pulls["page"], pulls["pages"]) == (1, 1, 1)
 
 
