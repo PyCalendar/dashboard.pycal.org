@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 12:22+0000\n"
+"POT-Creation-Date: 2026-11-19 12:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,6 +219,186 @@ msgstr "Der Inhalt des Webhooks ist ungültig"
 msgid "The webhook names no event"
 msgstr "Der Webhook nennt kein Ereignis"
 
+msgid ""
+"Your account on GitHub as GitHub describes it when you sign in: your GitHub "
+"name and id, your name, your avatar and the other public details of your "
+"profile; your verified email addresses; the time you signed in."
+msgstr ""
+"Dein Konto auf GitHub, wie GitHub es bei der Anmeldung beschreibt: dein "
+"GitHub-Name und deine ID, dein Name, dein Avatar und die anderen "
+"öffentlichen Angaben deines Profils; deine bestätigten E-Mail-Adressen; die "
+"Zeit deiner Anmeldung."
+
+msgid "People who sign in"
+msgstr "Personen, die sich anmelden"
+
+msgid "You and the people who run the site"
+msgstr "Du und die Personen, die die Seite betreiben"
+
+msgid "To know who you are, and to send you the emails you choose."
+msgstr ""
+"Um zu wissen, wer du bist, und dir die E-Mails zu schicken, die du wählst."
+
+msgid ""
+"The token that GitHub gives the site when you sign in, with the scopes "
+"user:email and read:org."
+msgstr ""
+"Das Token, das GitHub der Seite bei deiner Anmeldung gibt, mit den Scopes "
+"user:email und read:org."
+
+msgid "Nobody: the site uses it for you"
+msgstr "Niemand: Die Seite nutzt es für dich"
+
+msgid ""
+"To list your organizations and the repositories you may add to a project, "
+"and to check that you may read a private repository."
+msgstr ""
+"Um deine Organisationen und die Repositorys aufzulisten, die du einem "
+"Projekt hinzufügen darfst, und um zu prüfen, ob du ein privates Repository "
+"lesen darfst."
+
+msgid "Your language, your colors and the emails you want."
+msgstr "Deine Sprache, deine Farben und die E-Mails, die du möchtest."
+
+msgid "To show the site as you like on every device."
+msgstr "Um dir die Seite auf jedem Gerät so zu zeigen, wie du es magst."
+
+msgid ""
+"The projects you create, and the role of each collaborator with their GitHub "
+"name."
+msgstr ""
+"Die Projekte, die du erstellst, und die Rolle jeder mitwirkenden Person mit "
+"ihrem GitHub-Namen."
+
+msgid "Collaborators of projects"
+msgstr "Mitwirkende von Projekten"
+
+msgid ""
+"Everybody sees public projects; only the collaborators see who the "
+"collaborators are, and the private projects."
+msgstr ""
+"Alle sehen öffentliche Projekte; nur die Mitwirkenden sehen, wer mitwirkt, "
+"und die privaten Projekte."
+
+msgid "To show the projects and to decide who may change them."
+msgstr "Um die Projekte zu zeigen und zu entscheiden, wer sie ändern darf."
+
+msgid ""
+"The issues and pull requests of the repositories of the projects: their "
+"title, description and times, and who created them with their GitHub name, "
+"id, name and the address of their avatar."
+msgstr ""
+"Die Issues und Pull Requests der Repositorys der Projekte: Titel, "
+"Beschreibung und Zeiten, und wer sie erstellt hat, mit GitHub-Name, ID, Name "
+"und der Adresse des Avatars."
+
+msgid "People on GitHub, also those who never use this site"
+msgstr "Personen auf GitHub, auch solche, die diese Seite nie nutzen"
+
+msgid ""
+"Everybody, for public repositories, as on GitHub; for private repositories, "
+"only the collaborators of their private projects."
+msgstr ""
+"Alle, bei öffentlichen Repositorys, wie auf GitHub; bei privaten Repositorys "
+"nur die Mitwirkenden ihrer privaten Projekte."
+
+msgid "To show the work of the community together."
+msgstr "Um die Arbeit der Gemeinschaft zusammen zu zeigen."
+
+msgid ""
+"The installations of the GitHub App: the account, its permissions, and the "
+"GitHub ids of the people who installed or changed it."
+msgstr ""
+"Die Installationen der GitHub App: das Konto, ihre Berechtigungen und die "
+"GitHub-IDs der Personen, die sie installiert oder geändert haben."
+
+msgid "People who install the GitHub App"
+msgstr "Personen, die die GitHub App installieren"
+
+msgid "The people who run the site"
+msgstr "Die Personen, die die Seite betreiben"
+
+msgid "To email them when the app needs more permissions."
+msgstr "Um ihnen zu schreiben, wenn die App mehr Berechtigungen braucht."
+
+msgid ""
+"The log of the site and the webhooks GitHub sent: what happened, when, and "
+"the GitHub name of who caused it."
+msgstr ""
+"Das Protokoll der Seite und die Webhooks, die GitHub geschickt hat: was "
+"geschah, wann, und der GitHub-Name dessen, der es auslöste."
+
+msgid "People who sign in or act on the repositories"
+msgstr "Personen, die sich anmelden oder in den Repositorys handeln"
+
+msgid "To find and solve errors."
+msgstr "Um Fehler zu finden und zu beheben."
+
+msgid ""
+"Every request in the log of the server: the address it came from, the time, "
+"the page and the browser."
+msgstr ""
+"Jede Anfrage im Protokoll des Servers: die Adresse, von der sie kam, die "
+"Zeit, die Seite und der Browser."
+
+msgid "Everybody who visits the site"
+msgstr "Alle, die die Seite besuchen"
+
+msgid "The people who run the site and its server"
+msgstr "Die Personen, die die Seite betreiben, und ihr Server"
+
+msgid "To keep the site running and safe."
+msgstr "Um die Seite am Laufen und sicher zu halten."
+
+msgid "GitHub"
+msgstr "GitHub"
+
+msgid ""
+"When you sign in, GitHub tells the site who you are; the site asks GitHub "
+"for repositories, issues and pull requests with your token or that of the "
+"GitHub App. Your browser loads the avatars of people from GitHub "
+"(avatars.githubusercontent.com), which sees the address of your browser, but "
+"not the page: the site sends no referrer. Links to GitHub lead there."
+msgstr ""
+"Bei der Anmeldung sagt GitHub der Seite, wer du bist; die Seite fragt GitHub "
+"mit deinem Token oder dem der GitHub App nach Repositorys, Issues und Pull "
+"Requests. Dein Browser lädt die Avatare von Personen von GitHub "
+"(avatars.githubusercontent.com), das die Adresse deines Browsers sieht, aber "
+"nicht die Seite: Die Seite sendet keinen Referrer. Links zu GitHub führen "
+"dorthin."
+
+msgid "The mail server of the site"
+msgstr "Der Mailserver der Seite"
+
+msgid ""
+"Your email address and the text of each email the site sends you, such as "
+"the notice that an installation needs more permissions."
+msgstr ""
+"Deine E-Mail-Adresse und der Text jeder E-Mail, die die Seite dir schickt, "
+"etwa der Hinweis, dass eine Installation mehr Berechtigungen braucht."
+
+msgid "The server and the people who run the site"
+msgstr "Der Server und die Personen, die die Seite betreiben"
+
+msgid ""
+"Everything the site keeps: they run the server and see the Django admin, the "
+"log and the webhooks GitHub sent."
+msgstr ""
+"Alles, was die Seite speichert: Sie betreiben den Server und sehen den "
+"Django-Admin, das Protokoll und die Webhooks von GitHub."
+
+msgid "Keeps you signed in."
+msgstr "Hält dich angemeldet."
+
+msgid "Protects the forms against other sites."
+msgstr "Schützt die Formulare vor anderen Seiten."
+
+msgid "The language you chose."
+msgstr "Die Sprache, die du gewählt hast."
+
+msgid "The colors you chose."
+msgstr "Die Farben, die du gewählt hast."
+
 msgid "Email addresses"
 msgstr "E-Mail-Adressen"
 
@@ -354,6 +534,19 @@ msgstr ""
 "hier ein, mit dem Einrichtungscode aus dem Protokoll. Sie sagt der Seite "
 "nur, wer jemand ist, und nennt die E-Mail-Adressen."
 
+#, python-format
+msgid "About %(site_name)s"
+msgstr "Über %(site_name)s"
+
+msgid "About"
+msgstr "Über"
+
+msgid "Privacy"
+msgstr "Datenschutz"
+
+msgid "Licenses"
+msgstr "Lizenzen"
+
 msgid "Account and preferences"
 msgstr "Konto und Einstellungen"
 
@@ -375,6 +568,9 @@ msgstr "Django-Admin"
 msgid "Sign out"
 msgstr "Abmelden"
 
+msgid "unknown"
+msgstr "unbekannt"
+
 msgid "Language"
 msgstr "Sprache"
 
@@ -386,6 +582,9 @@ msgstr "Projekt"
 
 msgid "Overview"
 msgstr "Übersicht"
+
+msgid "Pull requests"
+msgstr "Pull Requests"
 
 msgid "Repositories"
 msgstr "Repositorys"
@@ -420,35 +619,25 @@ msgstr ""
 msgid "Colors of the page"
 msgstr "Farben der Seite"
 
-msgid "About"
-msgstr "Über"
-
-#, python-format
-msgid "About %(site_name)s"
-msgstr "Über %(site_name)s"
-
 msgid "A dashboard for the contributor community of"
 msgstr "Ein Dashboard für die Gemeinschaft der Mitwirkenden von"
 
 msgid "where to start, what waits for a review, and who contributes."
 msgstr "wo man anfängt, was auf ein Review wartet und wer mitwirkt."
 
-msgid "Privacy"
-msgstr "Datenschutz"
-
 msgid ""
 "Every page is public, except your account, preferences, email addresses and "
 "private projects: those only you and the collaborators of the project see. "
-"Signing in with GitHub tells the site who you are, your email addresses and "
-"your organizations; it keeps the token of GitHub to list the repositories "
-"you may add to a project."
+"No analytics, no advertising, and nothing from other sites but the avatars "
+"of GitHub."
 msgstr ""
 "Jede Seite ist öffentlich, außer deinem Konto, deinen Einstellungen, deinen "
 "E-Mail-Adressen und privaten Projekten: Diese siehst nur du und die "
-"Mitwirkenden des Projekts. Die Anmeldung mit GitHub sagt der Seite, wer du "
-"bist, deine E-Mail-Adressen und deine Organisationen; sie behält das Token "
-"von GitHub, um die Repositorys aufzulisten, die du einem Projekt hinzufügen "
-"darfst."
+"Mitwirkenden des Projekts. Keine Analyse, keine Werbung und nichts von "
+"anderen Seiten außer den Avataren von GitHub."
+
+msgid "The privacy policy: which data goes to whom"
+msgstr "Die Datenschutzerklärung: welche Daten an wen gehen"
 
 msgid "The GitHub App"
 msgstr "Die GitHub App"
@@ -783,12 +972,6 @@ msgstr ""
 "Seite protokolliert sie, tut aber noch nichts damit: Sie speichert keine "
 "Daten von GitHub und schreibt nichts auf GitHub."
 
-msgid "Licenses"
-msgstr "Lizenzen"
-
-msgid "License"
-msgstr "Lizenz"
-
 #, python-format
 msgid ""
 "%(site_name)s is free software under the <a "
@@ -803,6 +986,9 @@ msgstr ""
 
 msgid "Source code"
 msgstr "Quellcode"
+
+msgid "License"
+msgstr "Lizenz"
 
 msgid "License texts"
 msgstr "Lizenztexte"
@@ -948,6 +1134,76 @@ msgid ""
 msgstr ""
 "Sie werden im Volume der Seite gespeichert (<code>DATA_DIR/.env</code>); "
 "Einstellungen der Umgebung haben Vorrang."
+
+msgid ""
+"Which data of people the site keeps, who sees it, and who else gets it. This "
+"page is part of the code of the site: it changes with what the site does."
+msgstr ""
+"Welche Daten von Personen die Seite speichert, wer sie sieht und wer sie "
+"sonst bekommt. Diese Seite ist Teil des Codes der Seite: Sie ändert sich mit "
+"dem, was die Seite tut."
+
+msgid "What the site keeps"
+msgstr "Was die Seite speichert"
+
+msgid "Data"
+msgstr "Daten"
+
+msgid "Of whom"
+msgstr "Von wem"
+
+msgid "Who sees it"
+msgstr "Wer sie sieht"
+
+msgid "Why"
+msgstr "Warum"
+
+msgid "Who else gets data"
+msgstr "Wer sonst Daten bekommt"
+
+msgid "Its privacy statement"
+msgstr "Seine Datenschutzerklärung"
+
+#, python-format
+msgid "The mail server of the site is %(email_host)s."
+msgstr "Der Mailserver der Seite ist %(email_host)s."
+
+msgid "The site sends no emails: it writes them into its log."
+msgstr "Die Seite verschickt keine E-Mails: Sie schreibt sie in ihr Protokoll."
+
+msgid ""
+"Nothing else: no analytics, no advertising, and no fonts, scripts or styles "
+"of other sites. The pages load from other sites only:"
+msgstr ""
+"Sonst nichts: keine Analyse, keine Werbung und keine Schriften, Skripte oder "
+"Stile anderer Seiten. Die Seiten laden von anderen Seiten nur:"
+
+msgid "Cookies"
+msgstr "Cookies"
+
+msgid "Only cookies of this site, none of other sites."
+msgstr "Nur Cookies dieser Seite, keine anderer Seiten."
+
+msgid "Your data"
+msgstr "Deine Daten"
+
+msgid ""
+"Your account shows what the site keeps of you. To have your account and data "
+"deleted, or to ask about them, write to the people who run the site:"
+msgstr ""
+"Dein Konto zeigt, was die Seite von dir speichert. Um dein Konto und deine "
+"Daten löschen zu lassen oder danach zu fragen, schreib den Personen, die die "
+"Seite betreiben:"
+
+msgid "the people who run the site"
+msgstr "die Personen, die die Seite betreiben"
+
+msgid ""
+"Issues and pull requests are public on GitHub; the site shows them as GitHub "
+"does, and deletes them when GitHub no longer has them."
+msgstr ""
+"Issues und Pull Requests sind auf GitHub öffentlich; die Seite zeigt sie wie "
+"GitHub und löscht sie, wenn GitHub sie nicht mehr hat."
 
 msgid "open issues"
 msgstr "offene Issues"
@@ -1139,6 +1395,44 @@ msgstr "Seine Repositorys bleiben auf GitHub und in anderen Projekten."
 
 msgid "Yes, delete this project"
 msgstr "Ja, dieses Projekt löschen"
+
+#, python-format
+msgid "%(counter)s pull request"
+msgid_plural "%(counter)s pull requests"
+msgstr[0] "%(counter)s Pull Request"
+msgstr[1] "%(counter)s Pull Requests"
+
+msgid ""
+"The pull requests of all repositories of the project, the newest first, as "
+"of the last update."
+msgstr ""
+"Die Pull Requests aller Repositorys des Projekts, die neuesten zuerst, Stand "
+"der letzten Aktualisierung."
+
+msgid "Show"
+msgstr "Zeigen"
+
+msgid "merged"
+msgstr "gemergt"
+
+msgid "open"
+msgstr "offen"
+
+msgid "closed"
+msgstr "geschlossen"
+
+msgid "created"
+msgstr "erstellt"
+
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Seite %(number)s von %(total)s"
+
+msgid ""
+"No pull requests here. The update of the project reads them from GitHub."
+msgstr ""
+"Hier sind keine Pull Requests. Die Aktualisierung des Projekts liest sie von "
+"GitHub."
 
 msgid "Repositories of the project"
 msgstr "Repositorys des Projekts"
@@ -1512,6 +1806,18 @@ msgstr "Menschen melden sich jetzt mit der OAuth-App an."
 #, python-format
 msgid "The project %(name)s is created. Add its repositories."
 msgstr "Das Projekt %(name)s ist erstellt. Füge seine Repositorys hinzu."
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Open"
+msgstr "Offen"
+
+msgid "Merged"
+msgstr "Gemergt"
+
+msgid "Closed"
+msgstr "Geschlossen"
 
 msgid "Tick the box to confirm that the project is deleted."
 msgstr ""

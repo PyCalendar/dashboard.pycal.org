@@ -1,0 +1,27 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n github %}
+{% block title %}{% translate "Privacy" %} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_about_tabs.html" with tab="privacy" %}
+<p class="lead">{% translate "Which data of people the site keeps, who sees it, and who else gets it. This page is part of the code of the site: it changes with what the site does." %}</p>
+<section class="card" id="kept" data-kept><h2>{% translate "What the site keeps" %}</h2>
+<div class="table-wrap"><table class="table">
+  <thead><tr><th>{% translate "Data" %}</th><th>{% translate "Of whom" %}</th><th>{% translate "Who sees it" %}</th><th>{% translate "Why" %}</th></tr></thead>
+  <tbody>{% for key, entry in data.items %}<tr data-kept="{{ key }}"><td>{{ entry.what }}</td><td>{{ entry.whose }}</td><td>{{ entry.seen_by }}</td><td>{{ entry.why }}</td></tr>{% endfor %}</tbody>
+</table></div>
+</section>
+<section class="card" id="parties" data-parties><h2>{% translate "Who else gets data" %}</h2>
+<ul class="items">{% for party in parties %}<li class="item"><span class="item-title">{{ party.name }}</span><span class="item-meta">{{ party.gets }}{% if party.policy %} <a href="{{ party.policy }}">{% translate "Its privacy statement" %}</a>{% endif %}</span></li>{% endfor %}</ul>
+<p>{% if email_host %}{% blocktranslate %}The mail server of the site is {{ email_host }}.{% endblocktranslate %}{% else %}{% translate "The site sends no emails: it writes them into its log." %}{% endif %}</p>
+<p>{% translate "Nothing else: no analytics, no advertising, and no fonts, scripts or styles of other sites. The pages load from other sites only:" %} {% for host in external_hosts %}<code>{{ host }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</p>
+</section>
+<section class="card" id="cookies" data-cookies><h2>{% translate "Cookies" %}</h2>
+<dl class="facts-list">{% for name, purpose in cookies %}<dt><code>{{ name }}</code></dt><dd>{{ purpose }}</dd>{% endfor %}</dl>
+<p class="muted">{% translate "Only cookies of this site, none of other sites." %}</p>
+</section>
+<section class="card" id="your-data" data-your-data><h2>{% translate "Your data" %}</h2>
+<p>{% translate "Your account shows what the site keeps of you. To have your account and data deleted, or to ask about them, write to the people who run the site:" %}
+{% for login in admins %}{% github_user login %}{% if not forloop.last %}, {% endif %}{% empty %}{% translate "the people who run the site" %}{% endfor %}.</p>
+<p class="muted">{% translate "Issues and pull requests are public on GitHub; the site shows them as GitHub does, and deletes them when GitHub no longer has them." %}</p>
+</section>
+{% endblock %}

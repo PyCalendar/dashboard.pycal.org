@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.services.app_registration import AppRegistration
+from pycal_dashboard.services.update_queue import UpdateQueue
 
 
 class Command(BaseCommand):
@@ -32,6 +33,12 @@ class Command(BaseCommand):
             pk=settings.SITE_ID, defaults={"domain": domain, "name": settings.SITE_NAME}
         )
         self.stdout.write(f"prepared {domain}")
+        outdated = UpdateQueue.outdated()
+        if outdated:
+            self.stdout.write(
+                f"{outdated} projects have older data of GitHub: manage.py update_projects "
+                "updates them"
+            )
         unknown = self.unknown_admins()
         if unknown:
             self.stdout.write(

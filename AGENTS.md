@@ -42,11 +42,24 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   their people see it; it is added only through the GitHub App installed on it,
   by a person who may read it (`RepositoryLookup`). Who may do what in a project
   is decided in one place, `ProjectAccess`.
+- The privacy policy (`pycal_dashboard/privacy.py`, the page `/about/privacy/`)
+  always says which data of people the site keeps and who gets it: change it
+  with every change of what the site keeps or sends. `tests/test_privacy.py`
+  fails for a model or field it does not list.
+- Nothing is loaded from other sites: no fonts (such as Google Fonts), scripts
+  or styles. Only the avatars of GitHub (`EXTERNAL_HOSTS` of the privacy
+  policy); `tests/test_privacy.py` checks the files and the pages.
+- People of GitHub are shown with `{% github_user %}` (`templatetags/github.py`):
+  their avatar from GitHub before their name, linked to GitHub.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
 - Of GitHub, the site keeps the installations of the GitHub App with their
-  permissions (`Installation`) and the repositories of the projects with what
-  it read of them (`Repository`). It reads GitHub in the background only
+  permissions (`Installation`), the repositories of the projects with what
+  it read of them (`Repository`), all their issues and pull requests (`Issue`)
+  and the accounts that created them (`GitHubUser`, linked to the `User` who
+  signs in with it). When what it keeps of GitHub changes, raise `DATA_VERSION`
+  (`pycal_dashboard/github/data_version.py`) with the migration: the
+  repositories are read completely again in the background after it. It reads GitHub in the background only
   (`UpdateQueue`, run by `UpdateWorker`), never while a page waits, except to
   find what a person adds. It writes nothing to GitHub yet; the app may write
   labels and a comment on pull requests for the automation, designed later.

@@ -1,0 +1,260 @@
+"""The issues and pull requests of the repositories, their authors, and the version of the data."""
+
+import importlib
+from io import StringIO
+
+import pytest
+from django.apps import apps
+from django.core.management import call_command
+
+from pycal_dashboard.github.data_version import DATA_VERSION
+from pycal_dashboard.models import GitHubUser, Issue, Repository, UpdateJob
+from pycal_dashboard.services.identity import GitHubIdentity
+from pycal_dashboard.services.project_editor import ProjectEditor
+from pycal_dashboard.services.repository_update import PER_PAGE, RepositoryUpdate
+from pycal_dashboard.services.update_queue import UpdateQueue
+from tests.conftest import person
+
+pytestmark = pytest.mark.django_db
+
+ALICE = {"id": 11, "login": "alice", "avatar_url": "https://avatars.example/a", "type": "User"}
+
+
+@pytest.fixture
+def repository(github):
+    github.add_repository("collective/icalendar")
+    github.add_issue("collective/icalendar", "A bug", user=ALICE, body="It breaks.")
+    github.add_issue("collective/icalendar", "Fix the bug", pull_request=True, user=ALICE)
+    github.add_issue("collective/icalendar", "Old", state="closed")
+    github.add_issue(
+        "collective/icalendar", "Merged", pull_request=True, state="closed", merged=True
+    )
+    github.add_issue("collective/icalendar", "Refused", pull_request=True, state="closed")
+    return Repository.objects.create(full_name="collective/icalendar")
+
+
+def test_all_issues_and_pull_requests_are_kept(repository):
+    assert RepositoryUpdate(repository).run()
+    issues = {i.title: i for i in Issue.objects.all()}
+    assert len(issues) == 5
+    bug = issues["A bug"]
+    assert (bug.number, bug.pull_request, bug.status, bug.description) == (
+        1,
+        False,
+        "open",
+        "It breaks.",
+    )
+    assert bug.author.login == "alice" and bug.author.avatar_url == "https://avatars.example/a"
+    assert bug.created.isoformat() == "2026-10-01T09:00:00+00:00"
+    assert bug.url == "https://github.com/collective/icalendar/issues/1"
+    assert issues["Fix the bug"].url == "https://github.com/collective/icalendar/pull/2"
+    assert [issues[t].status for t in ("Old", "Merged", "Refused")] == [
+        "closed",
+        "merged",
+        "closed",
+    ]
+    assert issues["Merged"].merged and issues["Old"].closed
+    assert GitHubUser.objects.count() == 2  # alice and octocat, once each
+    assert set(repository.issues.values_list("author__login", flat=True)) == {"alice", "octocat"}
+    repository.refresh_from_db()
+    assert repository.data_version == DATA_VERSION
+    assert (repository.open_issues, repository.open_pull_requests) == (1, 1)
+
+
+def test_the_next_update_reads_only_what_changed(github, repository):
+    RepositoryUpdate(repository).run()
+    assert github.issue_requests[-1].get("since") is None
+    github.add_issue("collective/icalendar", "New", updated="2026-11-05T10:00:00Z")
+    repository.refresh_from_db()
+    RepositoryUpdate(repository).run()
+    assert github.issue_requests[-1]["since"].startswith("2026-11-01T10:00:00")
+    assert Issue.objects.filter(title="New").exists() and Issue.objects.count() == 6
+
+
+def test_a_complete_reading_removes_what_github_no_longer_has(github, repository):
+    RepositoryUpdate(repository).run()
+    github.repositories["collective/icalendar"]["issues"].pop(0)  # deleted or transferred
+    repository.refresh_from_db()
+    RepositoryUpdate(repository).run()
+    assert Issue.objects.count() == 5  # only the changes were read
+    Repository.objects.update(data_version=0)  # older data: read completely again
+    repository.refresh_from_db()
+    RepositoryUpdate(repository).run()
+    assert not Issue.objects.filter(title="A bug").exists() and Issue.objects.count() == 4
+
+
+def test_many_issues_are_read_page_by_page(github):
+    github.add_repository("big/one", issues=PER_PAGE + 5)
+    repository = Repository.objects.create(full_name="big/one")
+    assert RepositoryUpdate(repository).run()
+    assert Issue.objects.count() == PER_PAGE + 5
+    assert [r["page"] for r in github.issue_requests] == ["1", "2"]
+
+
+def test_an_error_keeps_the_older_version(github, repository, monkeypatch):
+    def broken(self, item):
+        raise ValueError("broken")
+
+    monkeypatch.setattr(RepositoryUpdate, "keep", broken)
+    assert not RepositoryUpdate(repository).run()
+    repository.refresh_from_db()
+    assert repository.data_version == 0 and repository.error_code
+
+
+def test_the_github_user_is_linked_to_the_person_who_signs_in(repository, github):
+    RepositoryUpdate(repository).run()
+    alice = GitHubUser.objects.get(login="alice")
+    assert alice.user is None and alice.url == "https://github.com/alice"
+    user = person(11, "alice")
+    GitHubIdentity.keep_profile(user)
+    alice.refresh_from_db()
+    assert alice.user == user and user.github_user == alice
+    assert list(user.github_user.issues.values_list("title", flat=True)) == ["Fix the bug", "A bug"]
+
+
+def test_a_github_user_recorded_later_finds_the_person(repository):
+    user = person(11, "alice")  # signed in before
+    RepositoryUpdate(repository).run()
+    assert GitHubUser.objects.get(github_id=11).user == user
+
+
+def test_a_renamed_account_keeps_its_issues(repository, github):
+    RepositoryUpdate(repository).run()
+    GitHubUser.record({**ALICE, "login": "alice-new"})
+    assert GitHubUser.objects.filter(github_id=11).get().login == "alice-new"
+    assert Issue.objects.filter(author__login="alice-new").count() == 2
+
+
+def test_projects_with_older_data_are_updated_after_the_migration(github, repository, bob):
+    project = ProjectEditor.create(bob, "iCalendar")
+    project.repositories.add(repository)
+    ProjectEditor.create(bob, "Empty")
+    out = StringIO()
+    call_command("prepare", stdout=out)
+    assert "1 projects have older data of GitHub" in out.getvalue()
+    job = UpdateJob.objects.get()
+    assert (job.project, job.status) == (project, UpdateJob.QUEUED)
+    out = StringIO()
+    call_command("update_projects", stdout=out)
+    assert "1 project updates done" in out.getvalue()
+    repository.refresh_from_db()
+    assert repository.data_version == DATA_VERSION and Issue.objects.count() == 5
+    assert UpdateQueue.outdated() == 0  # up to date: nothing more to do
+
+
+def test_the_migration_records_the_people_who_signed_in(db):
+    user = person(42, "carol")
+    user.socialaccount_set.update(
+        extra_data={"login": "carol", "avatar_url": "https://a.example/c"}
+    )
+    migration = importlib.import_module("pycal_dashboard.migrations.0010_issues_and_github_users")
+    migration.record_github_users(apps, None)
+    carol = GitHubUser.objects.get(github_id=42)
+    assert (carol.login, carol.avatar_url, carol.user) == ("carol", "https://a.example/c", user)
+
+
+# the tab Pull requests
+
+
+@pytest.fixture
+def project(bob, repository):
+    project = ProjectEditor.create(bob, "iCalendar")
+    project.repositories.add(repository)
+    RepositoryUpdate(repository).run()
+    return project
+
+
+def test_the_pull_requests_of_a_project_are_public(client, project, github):
+    github.add_repository("PyCalendar/plann")
+    github.add_issue("PyCalendar/plann", "Plann change", pull_request=True)
+    plann = Repository.objects.create(full_name="PyCalendar/plann")
+    project.repositories.add(plann)
+    RepositoryUpdate(plann).run()
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert "4 pull requests" in page  # of both repositories, together
+    for title in ("Fix the bug", "Merged", "Refused", "Plann change"):
+        assert title in page
+    assert "A bug" not in page  # an issue
+    assert 'data-github-user="alice"' in page
+    assert 'src="https://avatars.example/a?s=40"' in page
+    assert 'href="https://github.com/alice"' in page
+    assert 'href="https://github.com/collective/icalendar/pull/2"' in page
+
+
+@pytest.mark.parametrize(
+    ("state", "titles"),
+    [("open", ["Fix the bug"]), ("merged", ["Merged"]), ("closed", ["Refused"])],
+)
+def test_filter_the_pull_requests(client, project, state, titles):
+    page = client.get(f"/projects/{project.slug}/pull-requests/?state={state}")
+    data = client.get(f"/projects/{project.slug}/pull-requests.json?state={state}").json()
+    assert [p["title"] for p in data["pull_requests"]] == titles
+    assert f'data-state="{state}" ' not in page.content.decode()  # the current one is marked
+    assert data["pull_requests"][0]["status"] == ("closed" if state == "closed" else state)
+
+
+def test_the_tile_of_open_pull_requests_leads_to_them(client, project):
+    page = client.get(f"/projects/{project.slug}/").content.decode()
+    tile = page.split("data-open-pull-requests>")[1].split("</li>")[0]
+    assert f'href="/projects/{project.slug}/pull-requests/?state=open"' in tile
+
+
+def test_the_tabs_are_in_order_overview_public_private(client, project, bob):
+    client.force_login(bob)
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
+    names = [part.split("<")[0] for part in tabs.split('">')[1:] if part.split("<")[0]]
+    assert names == ["Overview", "Pull requests", "Repositories", "Collaborators", "Settings"]
+    client.logout()
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert "Repositories</a>" not in page.split('<ul class="tabs">')[1].split("</ul>")[0]
+
+
+def test_many_pull_requests_have_pages(client, github, bob):
+    github.add_repository("big/one", pulls=60)
+    big = Repository.objects.create(full_name="big/one")
+    project = ProjectEditor.create(bob, "Big")
+    project.repositories.add(big)
+    RepositoryUpdate(big).run()
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert "Page 1 of 2" in page and page.count("data-pull-request=") == 50
+    page = client.get(f"/projects/{project.slug}/pull-requests/?page=2").content.decode()
+    assert page.count("data-pull-request=") == 10
+
+
+def test_private_repositories_hide_their_pull_requests(client, project, repository):
+    Repository.objects.filter(pk=repository.pk).update(private=True)
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert "Fix the bug" not in page
+
+
+def test_a_person_without_a_github_user_is_unknown():
+    from pycal_dashboard.templatetags.github import github_user
+
+    assert github_user(None)["login"] == ""
+    assert github_user("octocat")["avatar"] == "https://avatars.githubusercontent.com/octocat?s=40"
+
+
+# the people of GitHub with their avatar, and the completion when sharing
+
+
+def test_the_collaborators_have_their_avatar(client, project, bob):
+    client.force_login(bob)
+    page = client.get(f"/projects/{project.slug}/collaborators/").content.decode()
+    row = page.split('data-member="bob"')[1].split("</tr>")[0]
+    assert 'data-github-user="bob"' in row and 'class="avatar"' in row
+    assert 'href="https://github.com/bob"' in row
+    assert "data-complete-people=" in page and "person-complete.js" in page
+
+
+def test_complete_the_people_to_share_with(client, bob, alice):
+    GitHubUser.objects.filter(login="alice").update(
+        name="Alice Liddell", avatar_url="https://a.x/1"
+    )
+    GitHubUser.record({"id": 999, "login": "alicia"})  # never signed in: no role possible
+    assert client.get("/people/complete/?q=al").status_code == 302  # sign in first
+    client.force_login(bob)
+    people = client.get("/people/complete/?q=@AL").json()["people"]
+    assert people == [{"login": "alice", "name": "Alice Liddell", "avatar": "https://a.x/1?s=40"}]
+    assert client.get("/people/complete/?q=liddell").json()["people"][0]["login"] == "alice"
+    assert client.get("/people/complete/?q=").json()["people"] == []

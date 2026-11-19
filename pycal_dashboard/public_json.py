@@ -11,7 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from django.urls import Resolver404, resolve
 
 # the pages that have JSON: those that are public
-JSON_PAGES = {"home", "about", "licenses", "projects", "project"}
+JSON_PAGES = {"home", "about", "licenses", "projects", "project", "project_pull_requests"}
 CORS = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",

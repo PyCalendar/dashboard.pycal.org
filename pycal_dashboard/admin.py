@@ -3,7 +3,9 @@
 from django.contrib import admin
 
 from .models import (
+    GitHubUser,
     Installation,
+    Issue,
     LogAction,
     LogTrigger,
     Preferences,
@@ -37,3 +39,10 @@ admin.site.register(
     UpdateJob, list_display=["project", "status", "done", "total", "errors", "created"]
 )
 admin.site.register(ProjectSlug, list_display=["slug", "project", "since", "until"])
+admin.site.register(GitHubUser, list_display=["login", "github_id", "type", "user"])
+admin.site.register(
+    Issue,
+    list_display=["repository", "number", "pull_request", "title", "author", "state", "created"],
+    list_filter=["pull_request", "state"],
+    search_fields=["title", "repository__full_name", "author__login"],
+)

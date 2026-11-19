@@ -213,18 +213,35 @@ community: where to start, what waits for a review, who contributes.
 - [x] The only owner cannot change their role or leave on the page (the site refused it before)
 - [x] Addresses without the name: /projects/<slug>/..., the addresses with the name lead there
 - [x] "Updated", not "Read", for the update of repositories, everywhere
-- [ ] The issues and pull requests of the repositories, all of them, open and closed: title, who
+- [x] The issues and pull requests of the repositories, all of them, open and closed: title, who
       created them, when, the description; a version of the data from GitHub, so that after a
       migration that changes it, the repositories are updated in the background
-- [ ] The tab Pull requests (public): all pull requests of the repositories of the project
+- [x] The tab Pull requests (public): all pull requests of the repositories of the project
       together; the tile with the number on the overview leads there. Tabs: Overview, the public
       ones, then the private ones
-- [ ] Share the project: completion of the GitHub name with avatar and name
-- [ ] People of GitHub everywhere with their avatar in front of their name: one partial/tag; the
+- [x] Share the project: completion of the GitHub name with avatar and name
+- [x] People of GitHub everywhere with their avatar in front of their name: one partial/tag; the
       avatar is loaded from GitHub and links to GitHub
-- [ ] The page About gets tabs, one of them the privacy policy: which data of people goes to which
+- [x] The page About gets tabs, one of them the privacy policy: which data of people goes to which
       parties; kept up to date
-- [ ] Nothing loaded from other sites, such as Google Fonts (the avatars of GitHub excepted)
+- [x] Nothing loaded from other sites, such as Google Fonts (the avatars of GitHub excepted)
+
+## 2026-11-19: GitHub users, conditions, webhooks
+
+- [x] A model of GitHub users (GitHubUser): the creators of issues and pull requests, linked to the
+      User who signs in with it (and back: user.github_user)
+- [x] Commits each time a small feature can be released safely
+- [ ] Webhooks: activity on GitHub updates the repository it is about, and its data, in the
+      background
+- [ ] The submodule conditions: conditions checked on a pull request, each with an id, an input
+      spec (fields such as str, int, positive int, range, string-label) that can make a form, a
+      data spec (what the background process reads, whether the data is complete to assess it),
+      a documentation page linking the API reference. label_exists, label_absent, ci_passes,
+      ci_fails, merge_conflict, branch_outdated, auto_merge_enabled. The labels with their
+      descriptions and colors as a model. Only models and specs: not in the UI yet
+- [ ] The person: look at the page of the pull requests before the conditions go into the UI
+- [ ] The person: deleting one's account on the site (the privacy policy says: ask the people who
+      run the site)
 
 ## Open: decisions of the person
 

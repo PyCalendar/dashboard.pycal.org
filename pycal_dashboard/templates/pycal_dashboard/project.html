@@ -7,7 +7,7 @@
 {% if project.description %}<p class="lead">{{ project.description|linebreaksbr }}</p>{% endif %}
 <ul class="stats-tiles" data-totals>
   <li data-open-issues><strong>{% if open_issues is None %}–{% else %}{{ open_issues }}{% endif %}</strong>{% translate "open issues" %}</li>
-  <li data-open-pull-requests><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</li>
+  <li data-open-pull-requests><a href="{% url 'project_pull_requests' project.slug %}?state=open"><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</a></li>
   <li><strong>{{ repositories|length }}</strong>{% translate "repositories" %}</li>
 </ul>
 <section class="card" data-status="{{ status.state }}">

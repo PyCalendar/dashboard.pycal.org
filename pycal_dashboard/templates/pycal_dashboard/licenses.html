@@ -2,8 +2,8 @@
 {% load i18n github help %}
 {% block title %}{% translate "Licenses" %} · {{ site_name }}{% endblock %}
 {% block main %}
-<h1>{% translate "Licenses" %} {% translate "License" as help %}{% help_link links.licenses_help help %}</h1>
-{% url 'license_text' project_license as license_url %}<p class="lead">{% blocktranslate with license=project_license %}{{ site_name }} is free software under the <a href="{{ license_url }}">{{ license }}</a>: you may use, study, share and change it; a changed version that you run for others must offer its source code.{% endblocktranslate %} {% translate "Source code" as source %}{% github_link links.source source source %}</p>
+{% include "pycal_dashboard/_about_tabs.html" with tab="licenses" %}
+{% url 'license_text' project_license as license_url %}<p class="lead">{% blocktranslate with license=project_license %}{{ site_name }} is free software under the <a href="{{ license_url }}">{{ license }}</a>: you may use, study, share and change it; a changed version that you run for others must offer its source code.{% endblocktranslate %} {% translate "Source code" as source %}{% github_link links.source source source %} {% translate "License" as help %}{% help_link links.licenses_help help %}</p>
 <section class="card" id="texts">
   <h2>{% translate "License texts" %}</h2>
   <p class="muted">{% translate "The project follows the REUSE specification: every file has its copyright and license, the texts are in LICENSES/." %}</p>

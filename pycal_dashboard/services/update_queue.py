@@ -8,6 +8,7 @@ from datetime import timedelta
 from django.db import OperationalError, transaction
 from django.utils import timezone
 
+from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.models import Project, UpdateJob
 
 from .repository_update import RepositoryUpdate
@@ -48,7 +49,7 @@ class UpdateQueue:
     """Updates of projects, which the worker runs one after another in the background."""
 
     @staticmethod
-    def add(project: Project, user=None, changed: bool = False) -> UpdateJob:
+    def add(project: Project, user=None, changed: bool = False, start: bool = True) -> UpdateJob:
         """Queue an update of a project, unless one waits or runs, and start the worker.
 
         Args:
@@ -56,6 +57,8 @@ class UpdateQueue:
             user: Who asked for it, None for the site.
             changed: The repositories of the project changed: an update that runs already read
                 them before, so only a waiting one reads the new ones too.
+            start: Start the worker thread of this process; False for a command that ends
+                before the job, whose job ``manage.py update_projects`` runs.
 
         Returns:
             The job that waits or runs.
@@ -66,8 +69,25 @@ class UpdateQueue:
             job = UpdateJob.objects.create(
                 project=project, requested_by=user, total=project.repositories.count()
             )
-        UpdateWorker.start()
+        if start:
+            UpdateWorker.start()
         return job
+
+    @classmethod
+    def outdated(cls) -> int:
+        """Queue the updates of the projects whose repositories have older data from GitHub.
+
+        A repository read with an older version of what the site keeps of GitHub, or never read
+        completely, has ``data_version`` below :data:`DATA_VERSION`; ``manage.py prepare`` calls
+        this after the migration.
+
+        Returns:
+            How many projects wait for an update.
+        """
+        projects = Project.objects.filter(repositories__data_version__lt=DATA_VERSION).distinct()
+        for project in projects:
+            cls.add(project, start=False)
+        return len(projects)
 
     @staticmethod
     def claim() -> UpdateJob | None:

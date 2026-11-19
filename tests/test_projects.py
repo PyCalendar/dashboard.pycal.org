@@ -434,7 +434,7 @@ def test_update_a_project(client, project, bob, repositories):
     page = client.get(f"/projects/{project.slug}/").content.decode()
     assert "Up to date" in page and 'http-equiv="refresh"' not in page
     assert "<li data-open-issues><strong>4</strong>" in page
-    assert "<li data-open-pull-requests><strong>2</strong>" in page
+    assert "<strong>2</strong>" in page.split("data-open-pull-requests>")[1].split("</li>")[0]
     icalendar = Repository.objects.get(full_name="collective/icalendar")
     assert (icalendar.open_issues, icalendar.open_pull_requests) == (3, 2)
     assert repositories.writes() == []

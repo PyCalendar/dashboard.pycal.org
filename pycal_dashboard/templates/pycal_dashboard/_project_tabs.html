@@ -3,6 +3,7 @@
 </div>
 <nav aria-label="{% translate "Project" %}"><ul class="tabs">
   <li><a href="{% url 'project' project.slug %}"{% if tab == 'overview' %} aria-current="page"{% endif %}>{% translate "Overview" %}</a></li>
+  <li><a href="{% url 'project_pull_requests' project.slug %}"{% if tab == 'pull-requests' %} aria-current="page"{% endif %}>{% translate "Pull requests" %}</a></li>
   {% if access.can_write %}<li><a href="{% url 'project_repositories' project.slug %}"{% if tab == 'repositories' %} aria-current="page"{% endif %}>{% translate "Repositories" %}</a></li>{% endif %}
   {% if user.is_authenticated and access.is_member %}<li><a href="{% url 'project_collaborators' project.slug %}"{% if tab == 'collaborators' %} aria-current="page"{% endif %}>{% translate "Collaborators" %}</a></li>{% endif %}
   {% if access.can_write %}<li><a href="{% url 'project_edit' project.slug %}"{% if tab == 'settings' %} aria-current="page"{% endif %}>{% translate "Settings" %}</a></li>{% endif %}

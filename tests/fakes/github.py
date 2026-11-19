@@ -40,6 +40,7 @@ class FakeGitHub:
         self.repositories: dict[str, dict] = {}
         self.organizations: list[str] = []  # GET /user/orgs of the person
         self.person_login = "bob"
+        self.issue_requests: list[dict] = []  # the parameters of each GET of the issues
 
     def add_repository(
         self,
@@ -75,7 +76,12 @@ class FakeGitHub:
             "installation": installation,
             "collaborators": collaborators or {},
         }
+        repository["issues"] = []  # the issues and pull requests, see add_issue
         self.repositories[full_name.lower()] = repository
+        for _ in range(issues):
+            self.add_issue(full_name, "An issue")
+        for _ in range(pulls):
+            self.add_issue(full_name, "A pull request", pull_request=True)
         if installation is not None and not any(
             i["id"] == installation for i in self.installations
         ):
@@ -89,13 +95,86 @@ class FakeGitHub:
             )
         return repository
 
+    OCTOCAT = {
+        "id": 583231,
+        "login": "octocat",
+        "avatar_url": "https://avatars.githubusercontent.com/u/583231?v=4",
+        "type": "User",
+    }
+
+    def add_issue(
+        self,
+        full_name: str,
+        title: str,
+        *,
+        pull_request: bool = False,
+        state: str = "open",
+        merged: bool = False,
+        user: dict | None = None,
+        body: str = "",
+        updated: str = "2026-11-01T10:00:00Z",
+    ) -> dict:
+        """An issue or a pull request of a repository of the fake GitHub.
+
+        Args:
+            full_name: The repository.
+            title: Its title.
+            pull_request: Whether it is a pull request.
+            state: ``open`` or ``closed``.
+            merged: Whether the closed pull request was merged.
+            user: Who created it, as GitHub describes accounts; octocat by default.
+            body: Its description.
+            updated: When it changed last, as GitHub writes times.
+
+        Returns:
+            The issue as GitHub lists it.
+        """
+        repository = self.repositories[full_name.lower()]
+        number = len(repository["issues"]) + 1
+        issue = {
+            "id": 90000 + 1000 * repository["id"] + number,
+            "number": number,
+            "title": title,
+            "user": dict(user or self.OCTOCAT),
+            "body": body or None,
+            "state": state,
+            "created_at": f"2026-10-{min(number, 28):02d}T09:00:00Z",
+            "updated_at": updated,
+            "closed_at": "2026-11-01T09:00:00Z" if state == "closed" else None,
+        }
+        if pull_request:
+            issue["pull_request"] = {
+                "url": f"https://api.github.com/repos/{full_name}/pulls/{number}",
+                "merged_at": "2026-11-01T09:00:00Z" if merged else None,
+            }
+        repository["issues"].append(issue)
+        # GitHub counts the open pull requests among the open issues
+        repository["open_issues_count"] = sum(i["state"] == "open" for i in repository["issues"])
+        repository["pulls"] = sum(
+            i["state"] == "open" and "pull_request" in i for i in repository["issues"]
+        )
+        return issue
+
     @staticmethod
     def public(repository: dict) -> dict:
         return {
             k: v
             for k, v in repository.items()
-            if k not in ("pulls", "installation", "collaborators")
+            if k not in ("pulls", "installation", "collaborators", "issues")
         }
+
+    def issues_of(self, request: httpx.Request, repository: dict) -> httpx.Response:
+        """A page of the issues and pull requests, as GitHub lists them, with ``since``."""
+        params = request.url.params
+        items = sorted(repository["issues"], key=lambda i: (i["updated_at"], i["number"]))
+        if params.get("state", "open") != "all":
+            items = [i for i in items if i["state"] == params.get("state", "open")]
+        if params.get("since"):
+            since = params["since"].replace("+00:00", "Z")
+            items = [i for i in items if i["updated_at"] >= since]
+        per_page, page = int(params.get("per_page", 30)), int(params.get("page", 1))
+        self.issue_requests.append(dict(params))
+        return httpx.Response(200, json=items[(page - 1) * per_page : page * per_page])
 
     def token_of(self, request: httpx.Request) -> str:
         return request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
@@ -210,6 +289,8 @@ class FakeGitHub:
             return httpx.Response(
                 200, json=[{"number": n} for n in range(min(pulls, 1))], headers=headers
             )
+        if rest == "/issues":
+            return self.issues_of(request, repository)
         match = re.fullmatch(r"/collaborators/([^/]+)/permission", rest)
         if match:
             role = repository["collaborators"].get(match[1], "none")

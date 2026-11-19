@@ -27,6 +27,11 @@ welcomes you; the menu at the top leads to the projects, to signing in and to
 your account, where you install the GitHub App. *About*, at
 the bottom of every page, shows the permissions of the app, the version that
 runs, and links the documentation and the code: the footer repeats none of it.
+Its tabs are *Privacy*, the privacy policy, which says which data of people the
+site keeps and who else gets which, and *Licenses*.
+
+The pages load nothing from other sites, such as fonts, except the avatars of
+people from GitHub.
 
 The language
 ============

@@ -125,6 +125,23 @@ repository that could not be updated shows why.
 
 The site reads a repository with the token of the GitHub App when the app is
 installed on it, else without a token, which works for public repositories.
+An update reads all issues and pull requests, open and closed: their title,
+description, times, and who created them. The first update reads them all;
+the next ones read only those that changed.
+
+.. _project-pull-requests:
+
+Pull requests
+=============
+
+The tab *Pull requests*, public like the project, lists the pull requests of
+all its repositories together, the newest first, with the avatar and GitHub
+name of who created them. It shows all of them, or only the open, merged or
+closed ones. The tile with the number of open pull requests on the overview
+leads there.
+
+The tabs of a project are always in this order: the overview, the public tabs,
+then those of the collaborators.
 
 .. _project-roles:
 
@@ -132,7 +149,8 @@ Roles in a project
 ==================
 
 On the tab *Collaborators*, the owners share the project with other people by
-their GitHub name, the name of their account on GitHub. The person must have
+their GitHub name, the name of their account on GitHub: the field proposes the
+people who signed in, with their avatar and name. The person must have
 signed in to the site once. A project always has an owner: the only owner can
 neither change their role nor leave until they share the project with another
 owner.
@@ -188,6 +206,8 @@ Public projects have their JSON, such as ``/projects.json`` and
      - Address
    * - Overview
      - ``/projects/<address>/``
+   * - Pull requests
+     - ``/projects/<address>/pull-requests/``
    * - Repositories
      - ``/projects/<address>/repositories/``
    * - Collaborators

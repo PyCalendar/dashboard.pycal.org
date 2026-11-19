@@ -30,7 +30,7 @@ def test_the_footer_repeats_nothing_of_the_page_about(client, db, settings):
     links = re.findall(r'href="([^"]+)"', footer)
     assert links == ["/about/"]
     for shown in re.findall(r'href="([^"]+)"', main):
-        assert shown not in links
+        assert shown not in links or shown == "/about/"  # the tab of the page itself
     version = build_info.get(settings.SOURCE_URL)["version"]
     assert version in main and version not in footer
 

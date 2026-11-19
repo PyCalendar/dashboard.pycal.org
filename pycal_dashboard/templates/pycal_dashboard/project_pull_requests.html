@@ -1,0 +1,23 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n github times %}
+{% block title %}{% translate "Pull requests" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card" data-pull-requests>
+<h2>{% blocktranslate count counter=pull_requests.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
+<p class="muted">{% translate "The pull requests of all repositories of the project, the newest first, as of the last update." %}</p>
+<ul class="filters" aria-label="{% translate "Show" %}">{% for value, title in states %}<li><a href="?state={{ value }}"{% if value == state %} aria-current="page"{% endif %} data-state="{{ value }}">{{ title }}</a></li>{% endfor %}</ul>
+{% if pull_requests %}<ul class="items">{% for pull in pull_requests %}<li class="item" data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}">
+  <span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span>
+  <a class="item-title" href="{{ pull.url }}">{{ pull.title }}</a>
+  <span class="item-meta muted">{{ pull.repository.full_name }}#{{ pull.number }} · {% github_user pull.author %} · {% translate "created" %} {% when pull.created %}</span>
+</li>{% endfor %}</ul>
+{% if pull_requests.paginator.num_pages > 1 %}<nav class="pagination" aria-label="{% translate "Pages" %}">
+  {% if pull_requests.has_previous %}<a href="?state={{ state }}&amp;page={{ pull_requests.previous_page_number }}" rel="prev">{% translate "Newer" %}</a>{% endif %}
+  <span>{% blocktranslate with number=pull_requests.number total=pull_requests.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
+  {% if pull_requests.has_next %}<a href="?state={{ state }}&amp;page={{ pull_requests.next_page_number }}" rel="next">{% translate "Older" %}</a>{% endif %}
+</nav>{% endif %}
+{% elif not repositories %}<p data-no-repositories>{% translate "The project has no repositories yet." %}</p>
+{% else %}<p data-no-pull-requests>{% translate "No pull requests here. The update of the project reads them from GitHub." %}</p>{% endif %}
+</section>
+{% endblock %}

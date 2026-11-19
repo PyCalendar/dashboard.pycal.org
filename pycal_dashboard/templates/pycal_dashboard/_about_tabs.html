@@ -1,0 +1,8 @@
+{% load i18n %}<div class="heading-row">
+  <h1>{% blocktranslate %}About {{ site_name }}{% endblocktranslate %}</h1>
+</div>
+<nav aria-label="{% translate "About" %}"><ul class="tabs">
+  <li><a href="{% url 'about' %}"{% if tab == 'about' %} aria-current="page"{% endif %}>{% translate "About" %}</a></li>
+  <li><a href="{% url 'privacy' %}"{% if tab == 'privacy' %} aria-current="page"{% endif %}>{% translate "Privacy" %}</a></li>
+  <li><a href="{% url 'licenses' %}"{% if tab == 'licenses' %} aria-current="page"{% endif %}>{% translate "Licenses" %}</a></li>
+</ul></nav>

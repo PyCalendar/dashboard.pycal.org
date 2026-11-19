@@ -64,6 +64,18 @@ After a change of the models:
 ``make test`` fails if a migration is missing. Never change a migration that
 may be applied somewhere; add a new one.
 
+When what the site keeps of GitHub changes, such as a new field of the issues,
+raise ``DATA_VERSION`` in ``pycal_dashboard/github/data_version.py`` together
+with the migration. At the next start, ``manage.py prepare`` queues the updates
+of the projects whose repositories were read with an older version, and
+``manage.py update_projects`` reads them completely again in the background.
+A repository whose update failed keeps its older version and is read
+completely at the next update.
+
+A new model or field of data of people also goes into the privacy policy,
+``pycal_dashboard/privacy.py``: ``tests/test_privacy.py`` fails until it is
+there.
+
 Continuous integration
 ======================
 

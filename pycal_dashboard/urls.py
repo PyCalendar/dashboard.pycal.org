@@ -12,6 +12,7 @@ register_converter(ProjectSlugConverter, "project_slug")
 urlpatterns = [
     path("", pages.home, name="home"),
     path("about/", pages.about, name="about"),
+    path("about/privacy/", pages.privacy, name="privacy"),
     path("licenses/", pages.licenses_page, name="licenses"),
     path("licenses/packages/<str:name>/", pages.package_license, name="package_license"),
     path("licenses/<str:name>/", pages.license_text, name="license_text"),
@@ -23,6 +24,11 @@ urlpatterns = [
     path("projects/new/", projects.project_new, name="project_new"),
     path("projects/<project_slug:slug>/", projects.project, name="project"),
     path("projects/<project_slug:slug>/update/", projects.project_update, name="project_update"),
+    path(
+        "projects/<project_slug:slug>/pull-requests/",
+        projects.project_pull_requests,
+        name="project_pull_requests",
+    ),
     path("projects/<project_slug:slug>/settings/", projects.project_edit, name="project_edit"),
     path("projects/<project_slug:slug>/address/", projects.project_slug, name="project_slug"),
     path(
@@ -40,6 +46,7 @@ urlpatterns = [
     path("projects/<project_slug:slug>/<str:name>/", projects.project_moved),
     path("projects/<project_slug:slug>/<str:name>/<str:page>/", projects.project_moved),
     path("repositories/complete/", projects.repository_complete, name="repository_complete"),
+    path("people/complete/", projects.people_complete, name="people_complete"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
     path("logs/", account.logs, name="logs"),

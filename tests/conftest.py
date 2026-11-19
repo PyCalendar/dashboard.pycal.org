@@ -85,7 +85,7 @@ def person(github_id: int, login: str, **user_fields):
     """A person who signed in with GitHub: account, profile and the token of the OAuth app."""
     from allauth.socialaccount.models import SocialToken
 
-    from pycal_dashboard.models import Profile
+    from pycal_dashboard.models import GitHubUser, Profile
     from tests.fakes.github import FakeGitHub
 
     user = get_user_model().objects.create(username=login, **user_fields)
@@ -94,6 +94,7 @@ def person(github_id: int, login: str, **user_fields):
     )
     SocialToken.objects.create(account=account, token=FakeGitHub.PERSON_TOKEN)
     Profile.objects.create(user=user, github_name=login, github_id=str(github_id))
+    GitHubUser.record({"id": github_id, "login": login, "type": "User"}, user=user)
     return user
 
 

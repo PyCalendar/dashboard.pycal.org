@@ -59,3 +59,43 @@ def github_link(url: str, label: str, text: str = "", css: str = "") -> str:
         label,
         mark(),
     )
+
+
+def avatar_url(person, size: int) -> str:
+    """The address of the avatar on GitHub, in the size shown, for twice as many pixels.
+
+    Args:
+        person: A ``GitHubUser``, or a GitHub name.
+        size: The width shown, in CSS pixels.
+
+    Returns:
+        The address on avatars.githubusercontent.com, or that of the GitHub user.
+
+    Examples:
+        >>> avatar_url("octocat", 20)
+        'https://avatars.githubusercontent.com/octocat?s=40'
+    """
+    url = getattr(person, "avatar_url", "") or f"https://avatars.githubusercontent.com/{person}"
+    return f"{url}{'&' if '?' in url else '?'}s={2 * size}"
+
+
+@register.inclusion_tag("pycal_dashboard/_github_user.html")
+def github_user(person, size: int = 20, name: str = "") -> dict:
+    """A person of GitHub: their avatar from GitHub before their name, linked to GitHub.
+
+    Args:
+        person: A ``GitHubUser``, a GitHub name, or None when GitHub does not say who.
+        size: The width of the avatar, in CSS pixels.
+        name: Their full name, shown after the GitHub name; "" for none, or the name of the
+            GitHub user.
+
+    Returns:
+        The context of the partial.
+    """
+    login = getattr(person, "login", None) or (str(person) if person else "")
+    return {
+        "login": login,
+        "name": name or getattr(person, "name", ""),
+        "avatar": avatar_url(person, size) if login else "",
+        "size": size,
+    }

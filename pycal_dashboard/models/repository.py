@@ -6,8 +6,9 @@ from django.db import models
 class Repository(models.Model):
     """A repository on GitHub, in one or more projects (``Project.repositories``).
 
-    The site reads its description, whether it is private and the numbers of open issues and
-    pull requests in the background (``UpdateJob``). A private repository is only in private
+    The site reads its description, whether it is private, the numbers of open issues and
+    pull requests, and all its issues and pull requests (``Issue``) in the background
+    (``UpdateJob``). A private repository is only in private
     projects, see ``ProjectAccess``.
     """
 
@@ -28,6 +29,12 @@ class Repository(models.Model):
     updated = models.DateTimeField(null=True, blank=True)
     error_code = models.CharField(max_length=100, blank=True)
     error_detail = models.CharField(max_length=500, blank=True)
+    # the version of what the site keeps of GitHub when it was read completely the last time,
+    # 0 for never: below DATA_VERSION (github/data_version.py), it is read completely again
+    data_version = models.PositiveSmallIntegerField(default=0)
+    # when GitHub last changed the issues and pull requests the site has: the next update
+    # reads only those changed since
+    issues_changed = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

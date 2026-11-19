@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.db import connection
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import cache_control
@@ -17,6 +18,7 @@ from pycal_dashboard import build_info, licenses
 from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.models import Preferences
+from pycal_dashboard.privacy import COOKIES, DATA, EXTERNAL_HOSTS, PARTIES
 from pycal_dashboard.public_json import json_address
 from pycal_dashboard.theme import COOKIE, Theme
 from pycal_dashboard.views.json_page import page
@@ -75,6 +77,29 @@ def about(request):
                 "events": EVENTS,
                 "organizations": settings.GITHUB_ORGANIZATIONS,
             },
+        },
+    )
+
+
+def privacy(request):
+    """The privacy policy: which data of people the site keeps, and who gets which.
+
+    Args:
+        request: The request.
+
+    Returns:
+        The page, made from :mod:`pycal_dashboard.privacy`.
+    """
+    return render(
+        request,
+        "pycal_dashboard/privacy.html",
+        {
+            "data": DATA,
+            "parties": PARTIES,
+            "cookies": COOKIES,
+            "external_hosts": sorted(EXTERNAL_HOSTS),
+            "email_host": settings.EMAIL_HOST,
+            "admins": settings.SITE_ADMINS,
         },
     )
 

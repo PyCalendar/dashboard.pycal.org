@@ -2,6 +2,7 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import redirect, render
@@ -10,7 +11,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.errors import DashboardError, GitHubTokenMissing, ProjectNotFound, translate
 from pycal_dashboard.github.person_client import PersonClient
-from pycal_dashboard.models import ProjectMember, Repository
+from pycal_dashboard.models import GitHubUser, Issue, ProjectMember, Repository
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -18,6 +19,7 @@ from pycal_dashboard.services.project_status import ProjectStatus
 from pycal_dashboard.services.repository_lookup import RepositoryLookup
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.services.update_worker import UpdateWorker
+from pycal_dashboard.templatetags.github import avatar_url
 
 from .json_page import page
 
@@ -193,6 +195,7 @@ def project_new(request):
 
 PAGES = {"": "", "update": "", "settings": "settings/", "address": "settings/"}
 PAGES |= {"repositories": "repositories/", "collaborators": "collaborators/"}
+PAGES["pull-requests"] = "pull-requests/"
 PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
 
 
@@ -249,6 +252,103 @@ def project(request, slug: str):
             "tab": "overview",
         },
         lambda: project_data(access, repositories),
+    )
+
+
+PULL_REQUEST_STATES = {"all", "open", "merged", "closed"}
+PER_PAGE = 50
+
+
+def pull_requests_of(repositories: list[Repository], state: str):
+    """The pull requests of repositories together, the newest first.
+
+    Args:
+        repositories: The repositories that the person sees.
+        state: ``all``, ``open``, ``merged`` or ``closed`` (closed without merging).
+
+    Returns:
+        The query of the pull requests.
+    """
+    found = (
+        Issue.objects.filter(repository__in=repositories, pull_request=True)
+        .select_related("author", "repository")
+        .order_by("-created", "-pk")
+    )
+    if state == "open":
+        found = found.filter(state=Issue.OPEN)
+    elif state == "merged":
+        found = found.filter(merged__isnull=False)
+    elif state == "closed":
+        found = found.filter(state=Issue.CLOSED, merged__isnull=True)
+    return found
+
+
+def issue_data(issue: Issue) -> dict:
+    """The public information of an issue or pull request, for the JSON.
+
+    Args:
+        issue: The issue.
+
+    Returns:
+        The data.
+    """
+    return {
+        "repository": issue.repository.full_name,
+        "number": issue.number,
+        "title": issue.title,
+        "url": issue.url,
+        "author": issue.author.login if issue.author else None,
+        "status": issue.status,
+        "created": issue.created.isoformat(),
+        "closed": issue.closed.isoformat() if issue.closed else None,
+        "merged": issue.merged.isoformat() if issue.merged else None,
+    }
+
+
+@require_http_methods(["GET", "HEAD"])
+def project_pull_requests(request, slug: str):
+    """The pull requests of all repositories of a project together, public like the project.
+
+    Args:
+        request: The request; ``state`` filters, ``page`` is the page of the list.
+        slug: The project.
+
+    Returns:
+        The page or its JSON.
+    """
+    access, moved = opened(request, slug, "pull-requests/")
+    if moved:
+        return moved
+    state = request.GET.get("state", "all")
+    if state not in PULL_REQUEST_STATES:
+        state = "all"
+    repositories = shown_repositories(access)
+    pages = Paginator(pull_requests_of(repositories, state), PER_PAGE)
+    shown = pages.get_page(request.GET.get("page"))
+    return page(
+        request,
+        "pycal_dashboard/project_pull_requests.html",
+        {
+            "project": access.project,
+            "access": access,
+            "pull_requests": shown,
+            "state": state,
+            "states": [
+                ("all", _("All")),
+                ("open", _("Open")),
+                ("merged", _("Merged")),
+                ("closed", _("Closed")),
+            ],
+            "repositories": repositories,
+            "tab": "pull-requests",
+        },
+        lambda: {
+            "state": state,
+            "count": pages.count,
+            "page": shown.number,
+            "pages": pages.num_pages,
+            "pull_requests": [issue_data(issue) for issue in shown],
+        },
     )
 
 
@@ -474,6 +574,37 @@ def project_repositories(request, slug: str):
             "suggestion": ProjectEditor(access).suggestion() if access.is_owner else None,
             **choices(request, owner, search),
         },
+    )
+
+
+@login_required
+@require_http_methods(["GET"])
+def people_complete(request):
+    """The people whose GitHub name is like what an owner types, to share a project with them.
+
+    Only people who signed in to the site can get a role, so only they are proposed.
+
+    Args:
+        request: The request, with ``q``.
+
+    Returns:
+        The people as JSON: their GitHub name, full name and avatar.
+    """
+    text = request.GET.get("q", "").strip().removeprefix("@")
+    if not text:
+        return JsonResponse({"people": []})
+    found = (
+        GitHubUser.objects.filter(user__isnull=False)
+        .filter(Q(login__istartswith=text) | Q(name__icontains=text))
+        .order_by("login")[:10]
+    )
+    return JsonResponse(
+        {
+            "people": [
+                {"login": person.login, "name": person.name, "avatar": avatar_url(person, 20)}
+                for person in found
+            ]
+        }
     )
 
 

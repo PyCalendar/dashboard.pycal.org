@@ -35,7 +35,7 @@ class GitHubIdentity:
 
     @classmethod
     def keep_profile(cls, user):
-        """Keep the GitHub name and id of a person in their profile, as GitHub says now.
+        """Keep the GitHub name and id of a person in their profile, and their GitHub user.
 
         A person who renamed their account on GitHub gets the new name at the next sign in.
 
@@ -49,12 +49,17 @@ class GitHubIdentity:
         if identity is None:
             return None
         with IMPORT_GUARD:  # see import_guard.py
-            from pycal_dashboard.models import Profile
+            from pycal_dashboard.models import GitHubUser, Profile
 
         profile, _created = Profile.objects.get_or_create(user=user)
         if (profile.github_name, profile.github_id) != (identity.login, identity.github_id):
             profile.github_name, profile.github_id = identity.login, identity.github_id
             profile.save(update_fields=["github_name", "github_id"])
+        account = user.socialaccount_set.filter(provider="github").first()
+        data = dict(account.extra_data or {}) if account else {}
+        if identity.github_id.isdigit():  # the person behind the GitHub user
+            data.update(id=int(identity.github_id), login=identity.login)
+            GitHubUser.record(data, user=user)
         return profile
 
     @staticmethod

@@ -82,11 +82,20 @@ def test_create_a_project(signed_in, site, github):
     expect(page.locator("[data-last-updated]")).not_to_contain_text("never")
     expect(page.locator("[data-repository='collective/icalendar']")).to_contain_text("3")
     assert Project.objects.get().updated is not None
+
+    # the pull requests of all its repositories, from the tile with their number
+    page.locator("[data-open-pull-requests] a").click()
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/pull-requests/\?state=open$"))
+    expect(page.get_by_role("link", name="Pull requests")).to_have_attribute("aria-current", "page")
+    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    expect(page.locator("[data-pull-request] [data-github-user='octocat']").first).to_be_visible()
+    page.get_by_role("link", name="All", exact=True).click()
+    expect(page.locator("[data-pull-request]")).to_have_count(2)
     assert github.writes() == []
 
 
 def test_share_a_project(signed_in, site, alice):
-    """The owner gives another person a role by their GitHub name."""
+    """The owner gives another person a role by their GitHub name, which the field proposes."""
     page = signed_in
     page.goto(f"{site}/projects/new/")
     page.get_by_label("Name").fill("Shared")
@@ -94,7 +103,11 @@ def test_share_a_project(signed_in, site, alice):
     page.get_by_label("Private").check()
     page.get_by_role("button", name="Create the project").click()
     page.get_by_role("link", name="Collaborators").click()
-    page.get_by_label("GitHub name").fill("alice")
+    page.get_by_label("GitHub name").press_sequentially("ali")
+    proposal = page.get_by_role("option", name="@alice")
+    expect(proposal.locator("img.avatar")).to_have_count(1)
+    proposal.click()
+    expect(page.get_by_label("GitHub name")).to_have_value("alice")
     page.locator("[data-share]").get_by_label("Role").select_option("write")
     page.get_by_role("button", name="Share").click()
     expect(page.get_by_text("@alice may change the project.")).to_be_visible()
