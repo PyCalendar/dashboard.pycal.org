@@ -126,6 +126,7 @@ def project_filters(request: HttpRequest, slug: str):
                 "columns": columns,
                 "path": access.project.path("pull-requests/") + address,
                 "edit": access.project.path("filters/save/") + address,
+                "in_force": sum(column.filter != "all" for column in columns),
                 "counts": access.project.path(f"filters/{saved.pk}/"),
             }
         )
@@ -172,7 +173,8 @@ def project_filter_counts(request: HttpRequest, slug: str, number: int):
         .select_related("pull_state")
         .prefetch_related("labels")
     )
-    rows = summary(columns)
+    # only the conditions in force: those that are off are no part of the filter
+    rows = [item for item in summary(columns) if item["filters"]]
     for item in rows:
         item["count"] = sum(item["column"].applies(pull) is True for pull in pulls)
     context = {

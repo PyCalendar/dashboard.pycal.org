@@ -98,7 +98,7 @@ def test_save_a_filter_and_open_it(client, project, bob):
     client.logout()
     page = client.get("/projects/icalendar/filters/").content.decode()  # public
     item = page.split('data-filter="Ready to merge"')[1].split("</li>\n</ul>")[0]
-    assert "<strong>Open</strong> ones" in item and "3 conditions" in item
+    assert "<strong>Open</strong> ones" in item and "2 conditions" in item  # in force
     counts = client.get(f"/projects/icalendar/filters/{saved.pk}/?fragment=1").content.decode()
     assert "The filter shows 3 pull requests." in counts  # counted when opened
     assert "<!doctype" not in counts  # the part alone
@@ -211,7 +211,9 @@ def test_the_numbers_of_each_condition_come_when_opened(client, project):
     assert "data-condition-count" not in page  # not counted with the list
     counts = client.get(f"/projects/icalendar/filters/{saved.pk}/").content.decode()
     rows = counts.split('data-condition-count="')[1:]
-    assert [row.split('numeric">')[1].split("<")[0] for row in rows] == ["2", "1", "1"]
+    # only those in force: the third shows both and is no part of the filter
+    assert [row.split('numeric">')[1].split("<")[0] for row in rows] == ["2", "1"]
+    assert "conflict" not in counts.split("data-filter-counts-loaded")[1]
     assert "← Back to the filters" in counts  # a page of its own without JavaScript
     assert "font-weight" not in counts
 

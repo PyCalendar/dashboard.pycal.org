@@ -10,7 +10,7 @@
   {% if access.can_write %}<a class="button button-quiet" href="{{ item.edit }}" data-edit-filter>{% translate "Edit" %}</a>{% endif %}</span></div>
   {% if item.saved.description %}<div class="markdown">{{ item.saved.description|markdown }}</div>{% endif %}
   <details class="filter-details" data-filter-details data-counts="{{ item.counts }}?fragment=1">
-    <summary>{% blocktranslate count counter=item.columns|length %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>
+    <summary>{% blocktranslate count counter=item.in_force %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>
     <div data-filter-counts><a href="{{ item.counts }}">{% translate "Count the pull requests of each condition" %}</a></div>
   </details>
 </li>{% endfor %}</ul>

@@ -220,8 +220,11 @@ what it does not apply to, the page suggests its opposite where it is the same,
 such as *label absent* for not *label present*; **Use it** switches it.
 
 The tab *Filters*, public like the project, lists the saved filters with their
-description, their columns and how many pull requests each shows; the number
-opens the pull requests with the filter. There it can be changed, and saved
+description; opening one counts the pull requests it shows and those each of its
+conditions applies to. It shows only the conditions in force: those that are
+off are no part of the filter and appear only in the table of pull requests and
+when the filter is edited. **Pull requests** opens them with the filter, and
+**Edit** opens the page of saving. There it can be changed, and saved
 under its name or as a new filter. Writers and owners save filters.
 
 A filter names its labels; a label of that name in any repository of the

@@ -373,6 +373,8 @@ community: where to start, what waits for a review, who contributes.
 
 - [x] The switches look and work the same everywhere: one partial (_switch.html), tested
 
+- [x] The tab Filters shows only the conditions in force
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
