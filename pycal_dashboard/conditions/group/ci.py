@@ -1,14 +1,17 @@
 """The group of the continuous integration: passing or failing."""
 
-from django.utils.translation import gettext_noop
+from django.utils.translation import gettext, gettext_noop
 
 from pycal_dashboard.conditions.condition.ci_fails import CiFails
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
+from pycal_dashboard.conditions.condition.ci_unknown import CiUnknown
 from pycal_dashboard.conditions.group.switches import SwitchesGroup
+from pycal_dashboard.conditions.spec.checks import ChecksData
+from pycal_dashboard.models import Issue
 
 
 class CiGroup(SwitchesGroup):
-    """The checks of a pull request: ``ci_passes`` or ``ci_fails``.
+    """The checks of a pull request: ``ci_passes``, ``ci_fails`` or ``ci_unknown``.
 
     The last complete result counts while new checks run. Its cell shows ``passing`` in green
     or ``failing`` in red.
@@ -19,4 +22,28 @@ class CiGroup(SwitchesGroup):
     switches = (
         ("passing", CiPasses, gettext_noop("passing")),
         ("failing", CiFails, gettext_noop("failing")),
+        ("unknown", CiUnknown, gettext_noop("unknown")),
     )
+    exclusive = ("passing", "failing", "unknown")
+
+    @classmethod
+    def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
+        """Why the result of the checks is not known.
+
+        Parameters:
+            issue: The pull request.
+            choices: The switches that are on.
+
+        Returns:
+            The reason, translated: closed, the permissions of the app, or not read yet.
+        """
+        if issue.state != Issue.OPEN:
+            return gettext("not known: the checks are read for open pull requests only")
+        installation = issue.repository.installation
+        granted = dict(installation.permissions or {}) if installation else {}
+        if not ChecksData().enabled(granted):
+            return gettext(
+                "not known: the GitHub App may not read the checks yet; the owners of its "
+                "installation accept the permissions checks and statuses on GitHub"
+            )
+        return gettext("not known yet: no check of the last commit has completed")

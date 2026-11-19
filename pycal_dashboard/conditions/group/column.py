@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
-from urllib.parse import quote, unquote
+from urllib.parse import unquote
 
 from pycal_dashboard.conditions.group.branch import BranchGroup
 from pycal_dashboard.conditions.group.ci import CiGroup
@@ -30,8 +30,8 @@ FILTERS = ("all", "applies", "not")
 class Column:
     """A column of conditions, kept in the address of the table as ``col``.
 
-    The value is ``<group>~<filter>~<choice>~...``, each part quoted, such as
-    ``branch~all~outdated~conflict`` or ``labels~applies~present~needs%20review``.
+    The value is ``<group>~<filter>~<choice>~...``, with ``%`` and ``~`` of a part escaped,
+    such as ``branch~all~outdated~conflict`` or ``labels~applies~present~needs review``.
 
     Attributes:
         group: The group of conditions.
@@ -97,7 +97,8 @@ class Column:
             Such as ``branch~all~outdated``.
         """
         parts = (self.group.id, self.filter, *self.choices)
-        return "~".join(quote(part, safe="").replace("~", "%7E") for part in parts)
+        # only % and the separator ~ are escaped: the address escapes the rest once
+        return "~".join(part.replace("%", "%25").replace("~", "%7E") for part in parts)
 
     def applies(self, issue: Issue) -> bool | None:
         """Whether the condition of the column applies to a pull request.
@@ -163,6 +164,26 @@ class Column:
         if self.filter == result:
             return other  # the last one that was on: the other one instead
         return "all"  # switch this one on too
+
+    def opposite(self) -> Column | None:
+        """The opposite of a column that shows only those it does not apply to.
+
+        It shows those that the opposite applies to, when that is the same for sure, such as
+        label absent for label present.
+
+        Returns:
+            The opposite column; None if there is none for sure, or the column does not show
+            only those it does not apply to.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.group.labels import LabelsGroup
+            >>> Column(LabelsGroup, ("present", "bug"), "not").opposite().encode()
+            'labels~applies~absent~bug'
+        """
+        if self.filter != "not":
+            return None
+        choices = self.group.opposite(self.choices)
+        return Column(self.group, choices, "applies") if choices else None
 
     def shown(self, result: str) -> bool:
         """Whether the toggle of the check marks (``applies``) or crosses (``not``) is on.

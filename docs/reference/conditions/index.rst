@@ -20,6 +20,8 @@ pages yet.
      - The checks of the last commit of a pull request passed.
    * - :doc:`ci_fails`
      - A check of the last commit of a pull request failed.
+   * - :doc:`ci_unknown`
+     - The result of the checks of a pull request is not known.
    * - :doc:`merge_conflict`
      - A pull request has a merge conflict with its base branch.
    * - :doc:`branch_outdated`
@@ -42,6 +44,7 @@ pages yet.
    label_absent
    ci_passes
    ci_fails
+   ci_unknown
    merge_conflict
    branch_outdated
    branch_up_to_date

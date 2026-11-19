@@ -334,3 +334,13 @@ community: where to start, what waits for a review, who contributes.
       states chosen), a gear and toggles of check marks and crosses, one always on
 - [x] The bar at the top was misaligned on phones (the menus of the columns took its class)
 - [x] The menus of + and of the gear have a cross that closes them without a change (and Escape)
+- [x] Saved filters: Save next to the number of pull requests, a page of saving in the tab Filters
+      (name unique in the project, description in Markdown, the columns in three groups, the
+      opposite suggested for those that show only what they do not apply to), the tab Filters
+      with how many pull requests each shows, opened again in the table, saved again or as new
+- [x] The table of pull requests links its JSON (the JSON was there)
+- [x] CI: passing, failing, unknown as three switches, each a condition (ci_unknown)
+- [x] The question marks say why: closed, the permissions checks and statuses not accepted yet,
+      or not read yet. Live: the installation of PyCalendar has not accepted checks and statuses
+      (the branch is read, the checks are not), and closed pull requests have no checks
+- [ ] The person: accept the permissions checks and statuses for the installation on PyCalendar

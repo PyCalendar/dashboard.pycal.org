@@ -242,7 +242,14 @@ def test_the_tabs_are_in_order_overview_public_private(client, project, bob):
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
     tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
     names = [part.split("<")[0] for part in tabs.split('">')[1:] if part.split("<")[0]]
-    assert names == ["Overview", "Pull requests", "Repositories", "Collaborators", "Settings"]
+    assert names == [
+        "Overview",
+        "Pull requests",
+        "Filters",
+        "Repositories",
+        "Collaborators",
+        "Settings",
+    ]
     client.logout()
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
     assert "Repositories</a>" not in page.split('<ul class="tabs">')[1].split("</ul>")[0]

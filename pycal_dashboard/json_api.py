@@ -36,6 +36,13 @@ JSON_API = [
         "per_page is 10, 25, 50 or 100 (at most); count, page and pages say how many",
     },
     {
+        "name": "project_filters",
+        "page": "/projects/<slug>/filters/",
+        "json": "/projects/<slug>/filters.json",
+        "holds": "the saved filters of a project: name, description, columns of conditions, "
+        "how many pull requests each shows, and the address of its pull requests",
+    },
+    {
         "name": "about",
         "page": "/about/",
         "json": "/about.json",

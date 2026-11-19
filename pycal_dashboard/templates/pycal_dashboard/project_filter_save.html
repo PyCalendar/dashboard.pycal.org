@@ -1,0 +1,21 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n static %}
+{% block title %}{% translate "Save the filter" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script>{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<p><a href="{{ back }}" data-back>← {% translate "Back to the pull requests" %}</a></p>
+<form method="post" class="stacked card" data-save-filter>{% csrf_token %}
+  <h2>{% if saved %}{% blocktranslate with name=saved.name %}Save the filter {{ name }}{% endblocktranslate %}{% else %}{% translate "Save the filter" %}{% endif %}</h2>
+  {% for column in columns %}<input type="hidden" name="col" value="{{ column.encode }}">{% endfor %}
+  {% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}
+  <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ saved.name }}"></p>
+  {% translate "Description" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id="description" name="description" label=description_label value=saved.description rows=4 %}
+  <h3>{% blocktranslate count counter=count %}The filter shows {{ counter }} pull request now:{% plural %}The filter shows {{ counter }} pull requests now:{% endblocktranslate %}</h3>
+  {% include "pycal_dashboard/conditions/_summary.html" with suggest=True %}
+  <p class="muted">{% translate "The order of the columns and what each shows are saved." %}</p>
+  <p class="save-buttons">{% if saved %}<button class="button" name="save" value="this">{% blocktranslate with name=saved.name %}Save {{ name }}{% endblocktranslate %}</button>
+    <button class="button button-quiet" name="save" value="new">{% translate "Save as a new filter" %}</button>
+    {% else %}<button class="button" name="save" value="new">{% translate "Save the filter" %}</button>{% endif %}</p>
+</form>
+{% endblock %}

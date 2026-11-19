@@ -1,0 +1,10 @@
+{% load i18n %}<div class="filter-summary" data-filter-summary>
+{% if summary.applies %}<div data-summary="applies"><h3><span class="result result-yes" aria-hidden="true">✓</span> {% translate "Shows the pull requests they apply to" %}</h3>
+  <ul class="list">{% for item in summary.applies %}<li title="{{ item.column.summary }}">{% include "pycal_dashboard/conditions/_head.html" with column=item.column %}</li>{% endfor %}</ul></div>{% endif %}
+{% if summary.not %}<div data-summary="not"><h3><span class="result result-no" aria-hidden="true">✗</span> {% translate "Shows the pull requests they do not apply to" %}</h3>
+  <ul class="list">{% for item in summary.not %}<li title="{{ item.column.summary }}">{% include "pycal_dashboard/conditions/_head.html" with column=item.column %}{% if suggest and item.opposite %}
+    <span class="opposite" data-opposite>{% translate "the same as" %} <span class="result result-yes" aria-hidden="true">✓</span> {% include "pycal_dashboard/conditions/_head.html" with column=item.opposite %} <a class="button button-quiet button-small" href="{{ address }}&amp;swap={{ item.index }}">{% translate "Use it" %}</a></span>{% endif %}</li>{% endfor %}</ul></div>{% endif %}
+{% if summary.both %}<div data-summary="both"><h3>{% translate "Do not filter: they show all pull requests" %}</h3>
+  <ul class="list">{% for item in summary.both %}<li title="{{ item.column.summary }}">{% include "pycal_dashboard/conditions/_head.html" with column=item.column %}</li>{% endfor %}</ul></div>{% endif %}
+{% if not summary.applies and not summary.not and not summary.both %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}
+</div>

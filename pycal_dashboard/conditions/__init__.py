@@ -17,6 +17,7 @@ from pycal_dashboard.conditions.condition.branch_outdated import BranchOutdated
 from pycal_dashboard.conditions.condition.branch_up_to_date import BranchUpToDate
 from pycal_dashboard.conditions.condition.ci_fails import CiFails
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
+from pycal_dashboard.conditions.condition.ci_unknown import CiUnknown
 from pycal_dashboard.conditions.condition.closed import Closed
 from pycal_dashboard.conditions.condition.label_absent import LabelAbsent
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
@@ -36,6 +37,7 @@ CONDITIONS: dict[str, type[Condition]] = {
         LabelAbsent,
         CiPasses,
         CiFails,
+        CiUnknown,
         MergeConflict,
         BranchOutdated,
         BranchUpToDate,

@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path, register_converter
 
 from .project_slug_converter import ProjectSlugConverter
-from .views import account, oauth_app, pages, projects, registration, setup, webhook
+from .views import account, filters, oauth_app, pages, projects, registration, setup, webhook
 
 register_converter(ProjectSlugConverter, "project_slug")
 
@@ -31,6 +31,12 @@ urlpatterns = [
         "projects/<project_slug:slug>/pull-requests/",
         projects.project_pull_requests,
         name="project_pull_requests",
+    ),
+    path("projects/<project_slug:slug>/filters/", filters.project_filters, name="project_filters"),
+    path(
+        "projects/<project_slug:slug>/filters/save/",
+        filters.project_filter_save,
+        name="project_filter_save",
     ),
     path("projects/<project_slug:slug>/settings/", projects.project_edit, name="project_edit"),
     path("projects/<project_slug:slug>/address/", projects.project_slug, name="project_slug"),

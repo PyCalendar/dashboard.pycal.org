@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 18:52+0000\n"
+"POT-Creation-Date: 2026-11-19 19:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "not known yet: the data of the pull request is not read yet"
+msgstr ""
+"noch nicht bekannt: Die Daten des Pull Requests sind noch nicht gelesen"
 
 msgid "Branch"
 msgstr "Branch"
@@ -30,6 +34,12 @@ msgstr "veraltet"
 msgid "conflict"
 msgstr "Konflikt"
 
+msgid "not known: GitHub tells the branch of open pull requests only"
+msgstr "nicht bekannt: GitHub nennt den Branch nur bei offenen Pull Requests"
+
+msgid "not known yet: GitHub computes whether it can be merged"
+msgstr "noch nicht bekannt: GitHub berechnet, ob er gemergt werden kann"
+
 msgid "CI"
 msgstr "CI"
 
@@ -38,6 +48,23 @@ msgstr "erfolgreich"
 
 msgid "failing"
 msgstr "fehlerhaft"
+
+msgid "unknown"
+msgstr "unbekannt"
+
+msgid "not known: the checks are read for open pull requests only"
+msgstr "nicht bekannt: Die Checks werden nur bei offenen Pull Requests gelesen"
+
+msgid ""
+"not known: the GitHub App may not read the checks yet; the owners of its "
+"installation accept the permissions checks and statuses on GitHub"
+msgstr ""
+"nicht bekannt: Die GitHub App darf die Checks noch nicht lesen; wem die "
+"Installation gehört, akzeptiert die Berechtigungen checks und statuses auf "
+"GitHub"
+
+msgid "not known yet: no check of the last commit has completed"
+msgstr "noch nicht bekannt: Kein Check des letzten Commits ist fertig"
 
 msgid "Label"
 msgstr "Label"
@@ -258,6 +285,15 @@ msgstr "Keine Adresse eines Projekts"
 
 msgid "The address is taken"
 msgstr "Die Adresse ist vergeben"
+
+msgid "Filter not found"
+msgstr "Filter nicht gefunden"
+
+msgid "The filter needs a name"
+msgstr "Der Filter braucht einen Namen"
+
+msgid "The project has a filter of this name"
+msgstr "Das Projekt hat einen Filter mit diesem Namen"
 
 msgid "The GitHub App could not be registered"
 msgstr "Die GitHub App konnte nicht registriert werden"
@@ -659,9 +695,6 @@ msgstr "Django-Admin"
 msgid "Sign out"
 msgstr "Abmelden"
 
-msgid "unknown"
-msgstr "unbekannt"
-
 msgid "Language"
 msgstr "Sprache"
 
@@ -710,6 +743,9 @@ msgstr "Übersicht"
 
 msgid "Pull requests"
 msgstr "Pull Requests"
+
+msgid "Filters"
+msgstr "Filter"
 
 msgid "Repositories"
 msgstr "Repositorys"
@@ -1076,6 +1112,24 @@ msgstr "Die Spalte ändern"
 
 msgid "Add the column"
 msgstr "Die Spalte hinzufügen"
+
+msgid "Shows the pull requests they apply to"
+msgstr "Zeigt die Pull Requests, auf die sie zutreffen"
+
+msgid "Shows the pull requests they do not apply to"
+msgstr "Zeigt die Pull Requests, auf die sie nicht zutreffen"
+
+msgid "the same as"
+msgstr "dasselbe wie"
+
+msgid "Use it"
+msgstr "Übernehmen"
+
+msgid "Do not filter: they show all pull requests"
+msgstr "Filtern nicht: Sie zeigen alle Pull Requests"
+
+msgid "No conditions: all pull requests."
+msgstr "Keine Bedingungen: alle Pull Requests."
 
 msgid ""
 "The latest 100 webhooks of GitHub and what the site did. Only the "
@@ -1518,6 +1572,52 @@ msgstr ""
 msgid "The owners of the project share it."
 msgstr "Die Eigentümer des Projekts teilen es."
 
+msgid "Save the filter"
+msgstr "Den Filter speichern"
+
+msgid "Back to the pull requests"
+msgstr "Zurück zu den Pull Requests"
+
+#, python-format
+msgid "Save the filter %(name)s"
+msgstr "Den Filter %(name)s speichern"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+#, python-format
+msgid "The filter shows %(counter)s pull request now:"
+msgid_plural "The filter shows %(counter)s pull requests now:"
+msgstr[0] "Der Filter zeigt jetzt %(counter)s Pull Request:"
+msgstr[1] "Der Filter zeigt jetzt %(counter)s Pull Requests:"
+
+msgid "The order of the columns and what each shows are saved."
+msgstr "Die Reihenfolge der Spalten und was jede zeigt, werden gespeichert."
+
+#, python-format
+msgid "Save %(name)s"
+msgstr "%(name)s speichern"
+
+msgid "Save as a new filter"
+msgstr "Als neuen Filter speichern"
+
+#, python-format
+msgid "%(counter)s pull request"
+msgid_plural "%(counter)s pull requests"
+msgstr[0] "%(counter)s Pull Request"
+msgstr[1] "%(counter)s Pull Requests"
+
+#, python-format
+msgid ""
+"No filters yet. Add columns of conditions on the tab <a "
+"href=\"%(pulls)s\">Pull requests</a> and save them there as a filter."
+msgstr ""
+"Noch keine Filter. Füge auf dem Tab <a href=\"%(pulls)s\">Pull Requests</a> "
+"Spalten mit Bedingungen hinzu und speichere sie dort als Filter."
+
 msgid "Create a project"
 msgstr "Ein Projekt erstellen"
 
@@ -1525,12 +1625,6 @@ msgid "Next, you add its repositories and install the GitHub App on them."
 msgstr ""
 "Danach fügst du seine Repositorys hinzu und installierst die GitHub App "
 "darauf."
-
-msgid "Name"
-msgstr "Name"
-
-msgid "Description"
-msgstr "Beschreibung"
 
 msgid "Address (optional)"
 msgstr "Adresse (freiwillig)"
@@ -1584,9 +1678,6 @@ msgstr "Adresse ändern"
 msgid "Suggestion, after the repository of the project:"
 msgstr "Vorschlag, nach dem Repository des Projekts:"
 
-msgid "Use it"
-msgstr "Übernehmen"
-
 msgid ""
 "Letters a to z, digits, single hyphens and one ~ between an account and a "
 "repository. Old addresses keep leading to the project, and no other project "
@@ -1611,11 +1702,11 @@ msgstr "Ja, dieses Projekt löschen"
 msgid "switch one on"
 msgstr "schalte eine ein"
 
-#, python-format
-msgid "%(counter)s pull request"
-msgid_plural "%(counter)s pull requests"
-msgstr[0] "%(counter)s Pull Request"
-msgstr[1] "%(counter)s Pull Requests"
+msgid "The pull requests of this table as JSON"
+msgstr "Die Pull Requests dieser Tabelle als JSON"
+
+msgid "JSON"
+msgstr "JSON"
 
 msgid "Per page"
 msgstr "Pro Seite"
@@ -1653,9 +1744,6 @@ msgstr "Eine Bedingung hinzufügen"
 #, python-format
 msgid "%(name)s#%(number)s on GitHub"
 msgstr "%(name)s#%(number)s auf GitHub"
-
-msgid "not known yet"
-msgstr "noch nicht bekannt"
 
 msgid "applies"
 msgstr "trifft zu"
@@ -2044,6 +2132,10 @@ msgstr ""
 "Die Seite nimmt ein Formular nur von ihren eigenen Seiten an, mit ihrem "
 "Cookie. Geh zurück, lade die Seite neu und sende das Formular noch einmal. "
 "Erlaube Cookies für diese Seite, wenn das wieder passiert."
+
+#, python-format
+msgid "The filter %(name)s is saved."
+msgstr "Der Filter %(name)s ist gespeichert."
 
 msgid "People now sign in with the OAuth app."
 msgstr "Menschen melden sich jetzt mit der OAuth-App an."

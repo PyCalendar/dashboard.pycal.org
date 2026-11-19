@@ -6,7 +6,9 @@
 {% include "pycal_dashboard/_project_tabs.html" %}
 <section class="card pull-table" data-pull-requests data-choose-one="{% translate "switch one on" %}">
 <div class="table-head">
-  <h2>{% blocktranslate count counter=rows.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
+  <div class="table-title"><h2>{% if saved %}{{ saved.name }}: {% endif %}{% blocktranslate count counter=rows.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
+    {% if access.can_write %}<a class="button button-small" href="{% url 'project_filter_save' project.slug %}{{ address }}" data-save>{% translate "Save" %}</a>{% endif %}
+    <a class="button button-quiet button-small" href="{{ json_address }}" data-json title="{% translate "The pull requests of this table as JSON" %}">{% translate "JSON" %}</a></div>
   <form method="get" class="per-page" data-per-page>
     {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
     <label for="per-page">{% translate "Per page" %}</label>
@@ -41,7 +43,7 @@
     <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}</a></td>
     <td class="col-creator">{% github_user pull.author %}</td>
     <td class="col-created">{% when pull.created %}</td>
-    {% for cell in row.cells %}<td class="col-condition" data-result="{% if cell.result is None %}unknown{% elif cell.result %}yes{% else %}no{% endif %}">{% if cell.result is None %}<span class="result result-unknown" role="img" aria-label="{% translate "not known yet" %}" title="{% translate "not known yet" %}">?</span>{% elif cell.result %}<span class="result result-yes" role="img" aria-label="{% translate "applies" %}" title="{% translate "applies" %}">✓</span>{% else %}<span class="result result-no" role="img" aria-label="{% translate "does not apply" %}" title="{% translate "does not apply" %}">✗</span>{% endif %}
+    {% for cell in row.cells %}<td class="col-condition" data-result="{% if cell.result is None %}unknown{% elif cell.result %}yes{% else %}no{% endif %}">{% if cell.result is None %}<span class="result result-unknown" role="img" aria-label="{{ cell.reason }}" title="{{ cell.reason }}">?</span>{% elif cell.result %}<span class="result result-yes" role="img" aria-label="{% translate "applies" %}" title="{% translate "applies" %}">✓</span>{% else %}<span class="result result-no" role="img" aria-label="{% translate "does not apply" %}" title="{% translate "does not apply" %}">✗</span>{% endif %}
       {% for part in cell.parts %}{% if part.kind == "label" %}<span class="label-chip" style="--label: #{% label_color label_colors part.text %}">{{ part.text }}</span>{% else %}<span class="state state-{{ part.kind }}">{{ part.text }}</span>{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}</td>{% endfor %}
     <td class="col-add"></td>
   </tr>{% endwith %}{% empty %}<tr><td colspan="{{ columns|length|add:2 }}" class="muted" data-no-match>{% translate "No pull request matches the filters of the columns." %}</td></tr>{% endfor %}</tbody>

@@ -14,6 +14,7 @@ from .models import (
     Project,
     ProjectMember,
     ProjectSlug,
+    PullRequestFilter,
     PullRequestState,
     Repository,
     UpdateJob,
@@ -53,3 +54,4 @@ admin.site.register(
     PullRequestState,
     list_display=["issue", "mergeable_state", "auto_merge", "checks", "updated"],
 )
+admin.site.register(PullRequestFilter, list_display=["name", "project", "created_by", "updated"])

@@ -19,13 +19,22 @@ from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
 from pycal_dashboard.errors import (
     ConditionInputUnknown,
     DashboardError,
+    FilterNotFound,
     GitHubTokenMissing,
     ProjectNotFound,
     all_errors,
     translate,
 )
 from pycal_dashboard.github.person_client import PersonClient
-from pycal_dashboard.models import GitHubUser, Issue, Label, Project, ProjectMember, Repository
+from pycal_dashboard.models import (
+    GitHubUser,
+    Issue,
+    Label,
+    Project,
+    ProjectMember,
+    PullRequestFilter,
+    Repository,
+)
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -217,6 +226,7 @@ def project_new(request: HttpRequest):
 PAGES = {"": "", "update": "", "settings": "settings/", "address": "settings/"}
 PAGES |= {"repositories": "repositories/", "collaborators": "collaborators/"}
 PAGES["pull-requests"] = "pull-requests/"
+PAGES["filters"] = "filters/"
 PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
 
 
@@ -370,17 +380,43 @@ def issue_data(issue: Issue) -> dict:
     }
 
 
-def table_address(columns: list[Column], size: int) -> str:
+def table_address(columns: list[Column], size: int, saved: int | None = None) -> str:
     """The query of the table of pull requests with its columns of conditions and its size.
 
     Parameters:
         columns: The columns of conditions, in their order.
         size: The pull requests of a page.
+        saved: The number of the saved filter that the table shows, None for none.
 
     Returns:
         Such as ``?col=branch~all~outdated&per_page=25``.
     """
-    return "?" + urlencode([("col", column.encode()) for column in columns] + [("per_page", size)])
+    query = [("col", column.encode()) for column in columns] + [("per_page", size)]
+    if saved:
+        query.append(("saved", saved))
+    return "?" + urlencode(query)
+
+
+def saved_filter(project: Project, number: str | None) -> PullRequestFilter | None:
+    """A saved filter of a project by its number.
+
+    Parameters:
+        project: The project.
+        number: The number of the filter, such as from ``saved`` of the address; None or ""
+            for none.
+
+    Returns:
+        The filter, None for none.
+
+    Raises:
+        FilterNotFound: The project has no filter of this number.
+    """
+    if not number:
+        return None
+    try:
+        return project.filters.get(pk=int(number))
+    except (ValueError, PullRequestFilter.DoesNotExist):
+        raise FilterNotFound(str(number)) from None
 
 
 def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
@@ -455,6 +491,7 @@ def condition_rows(pulls: QuerySet[Issue], columns: list[Column]) -> list[dict]:
                     "column": column,
                     "result": result,
                     "parts": column.group.cell(pull, column.choices),
+                    "reason": column.group.unknown(pull, column.choices) if result is None else "",
                 }
                 for column, result in zip(columns, results, strict=True)
             ]
@@ -481,10 +518,15 @@ def project_pull_requests(request: HttpRequest, slug: str):
     if moved:
         return moved
     size = per_page(request)
-    columns = [Column.decode(value) for value in request.GET.getlist("col")]
+    saved = saved_filter(access.project, request.GET.get("saved"))
+    values = request.GET.getlist("col")
+    if saved and not values:  # a saved filter, opened from the tab Filters
+        values = saved.columns
+    columns = [Column.decode(value) for value in values]
     changed = changed_columns(request, columns)
     if changed is not None:
-        return redirect(access.project.path("pull-requests/") + table_address(changed, size))
+        address = table_address(changed, size, saved.pk if saved else None)
+        return redirect(access.project.path("pull-requests/") + address)
     repositories = shown_repositories(access)
     rows = condition_rows(pull_requests_of(repositories), columns)
     pages = Paginator(rows, size)
@@ -505,7 +547,11 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "filters": FILTERS,
             "label_names": sorted({label.name for label in labels}),
             "label_colors": {label.name.lower(): label.color for label in labels},
-            "address": table_address(columns, size),
+            "address": table_address(columns, size, saved.pk if saved else None),
+            "json_address": access.project.path("pull-requests").rstrip("/")
+            + ".json"
+            + table_address(columns, size, saved.pk if saved else None),
+            "saved": saved,
             "repositories": repositories,
             "tab": "pull-requests",
         },

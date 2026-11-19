@@ -90,6 +90,18 @@ class LabelsGroup(ConditionGroup):
         return []
 
     @classmethod
+    def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...]:
+        """Absent for present, present for absent, of the same label.
+
+        Parameters:
+            choices: The mode and the name.
+
+        Returns:
+            The other mode and the name.
+        """
+        return ("absent" if choices[0] == "present" else "present", choices[1])
+
+    @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
         """The label with its border and color; struck through when it must be absent.
 

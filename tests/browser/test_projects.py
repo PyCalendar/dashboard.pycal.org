@@ -319,3 +319,31 @@ def test_the_bar_at_the_top_is_one_row_on_a_phone(page, site, signed_in):
         )
     ]
     assert max(tops) - min(tops) < 20, tops
+
+
+def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
+    """Save the columns as a filter, with the suggested opposite; open it from the tab Filters."""
+    pull_request_project(github, bob)
+    page = signed_in
+    page.goto(
+        f"{site}/projects/icalendar/pull-requests/"
+        "?col=labels~not~present~needs+review&col=status~applies~open"
+    )
+    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    page.get_by_role("link", name="Save", exact=True).click()
+    expect(page.get_by_role("link", name="Filters")).to_have_attribute("aria-current", "page")
+    page.locator("[data-opposite]").get_by_role("link", name="Use it").click()
+    expect(page.locator("[data-summary='not']")).to_have_count(0)
+    expect(page.locator("[data-summary='applies'] .label-absent")).to_have_text("needs review")
+    page.get_by_label("Name").fill("Waiting")
+    page.get_by_label("Description", exact=True).fill("Not *reviewed* yet")
+    page.get_by_role("button", name="Save the filter").click()
+    expect(page.get_by_text("The filter Waiting is saved.")).to_be_visible()
+    item = page.locator("[data-filter='Waiting']")
+    expect(item.locator("em")).to_have_text("reviewed")
+    item.get_by_role("link", name="2 pull requests").click()
+    expect(page.get_by_role("heading", name="Waiting: 2 pull requests")).to_be_visible()
+    page.get_by_role("link", name="Save", exact=True).click()
+    expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()
+    page.get_by_role("link", name="← Back to the pull requests").click()
+    expect(page.get_by_role("heading", name="Waiting: 2 pull requests")).to_be_visible()

@@ -34,6 +34,10 @@ Every public page has its information as JSON at the address of the page with
        ``repository``, ``number``, ``title``, ``url``, ``author``, ``status``,
        times and ``conditions``, whether each column applies (``null`` while
        not known)
+   * - ``/projects/<slug>/filters/``
+     - ``/projects/<slug>/filters.json``: the saved filters of a public project:
+       each with its ``name``, ``description``, ``columns``, ``count`` of pull
+       requests and the address of its ``pull_requests``
    * - ``/projects/<slug>/``
      - ``/projects/<slug>.json``: a public
        project with its ``open_issues``,

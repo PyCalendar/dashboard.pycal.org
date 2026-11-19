@@ -53,6 +53,9 @@ from .github import (
     SignInNotConfigured,
 )
 from .projects import (
+    FilterNameMissing,
+    FilterNameTaken,
+    FilterNotFound,
     GitHubTokenMissing,
     LastOwner,
     PersonNotFound,
@@ -93,6 +96,9 @@ from .webhooks import (
 )
 
 __all__ = [
+    "FilterNameMissing",
+    "FilterNameTaken",
+    "FilterNotFound",
     "AccountDeletionNotConfirmed",
     "AccountOwnsSharedProjects",
     "ConditionError",

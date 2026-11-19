@@ -5,6 +5,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
+from django.utils.translation import gettext
+
 if TYPE_CHECKING:
     from django.http import QueryDict
 
@@ -82,6 +84,34 @@ class ConditionGroup(ABC):
             Parts of the cell: ``text`` and ``kind``, such as ``open`` or ``label``, for its
             color.
         """
+
+    @classmethod
+    def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
+        """Why the condition cannot be assessed for a pull request, for its question mark.
+
+        Parameters:
+            issue: The pull request.
+            choices: The choices.
+
+        Returns:
+            The reason, translated.
+        """
+        return gettext("not known yet: the data of the pull request is not read yet")
+
+    @classmethod
+    def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """The choices that apply exactly when these do not, if the group knows them.
+
+        A column that shows only the pull requests it does not apply to can then show those
+        that its opposite applies to, which reads more easily.
+
+        Parameters:
+            choices: The choices.
+
+        Returns:
+            The opposite choices; None if there are none for sure.
+        """
+        return None
 
     @classmethod
     @abstractmethod

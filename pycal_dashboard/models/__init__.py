@@ -15,6 +15,7 @@ from .profile import Profile
 from .project import Project
 from .project_member import ProjectMember
 from .project_slug import ProjectSlug
+from .pull_request_filter import PullRequestFilter
 from .pull_request_state import PullRequestState
 from .repository import Repository
 from .update_job import UpdateJob
@@ -32,6 +33,7 @@ __all__ = [
     "Project",
     "ProjectMember",
     "ProjectSlug",
+    "PullRequestFilter",
     "PullRequestState",
     "Repository",
     "UpdateJob",

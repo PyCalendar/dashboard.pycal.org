@@ -1,11 +1,12 @@
 """The group of the branch: up to date, outdated or in conflict."""
 
-from django.utils.translation import gettext_noop
+from django.utils.translation import gettext, gettext_noop
 
 from pycal_dashboard.conditions.condition.branch_outdated import BranchOutdated
 from pycal_dashboard.conditions.condition.branch_up_to_date import BranchUpToDate
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
 from pycal_dashboard.conditions.group.switches import SwitchesGroup
+from pycal_dashboard.models import Issue
 
 
 class BranchGroup(SwitchesGroup):
@@ -22,3 +23,19 @@ class BranchGroup(SwitchesGroup):
         ("outdated", BranchOutdated, gettext_noop("outdated")),
         ("conflict", MergeConflict, gettext_noop("conflict")),
     )
+    exclusive = ("up_to_date", "outdated", "conflict")
+
+    @classmethod
+    def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
+        """Why the state of the branch is not known.
+
+        Parameters:
+            issue: The pull request.
+            choices: The switches that are on.
+
+        Returns:
+            The reason, translated.
+        """
+        if issue.state != Issue.OPEN:
+            return gettext("not known: GitHub tells the branch of open pull requests only")
+        return gettext("not known yet: GitHub computes whether it can be merged")

@@ -24,6 +24,8 @@ class SwitchesGroup(ConditionGroup):
     """
 
     switches: ClassVar[tuple[tuple[str, type[Condition], str], ...]] = ()
+    # the switches of which exactly one holds for a pull request whose data is known
+    exclusive: ClassVar[tuple[str, ...]] = ()
 
     @classmethod
     def names(cls) -> list[str]:
@@ -109,6 +111,22 @@ class SwitchesGroup(ConditionGroup):
             for name, _condition, text in cls.switches
             if results[name]
         ]
+
+    @classmethod
+    def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """The other switches of those of which exactly one holds.
+
+        Such as closed and merged for open.
+
+        Parameters:
+            choices: The switches that are on.
+
+        Returns:
+            The other switches; None if a switch is not one of those, or all are on.
+        """
+        if not set(choices) <= set(cls.exclusive) or set(choices) == set(cls.exclusive):
+            return None
+        return tuple(name for name in cls.exclusive if name not in choices)
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:

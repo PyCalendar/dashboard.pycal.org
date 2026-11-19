@@ -55,11 +55,11 @@ def results(page: str) -> dict[str, list[str]]:
     [
         (
             {"group": "labels", "mode": "present", "label": "needs review"},
-            "labels~all~present~needs%20review",
+            "labels~all~present~needs review",
         ),
         (
             {"group": "labels", "mode": "absent", "label": "new one", "filter": "applies"},
-            "labels~applies~absent~new%20one",
+            "labels~applies~absent~new one",
         ),
         ({"group": "branch", "branch": ["conflict", "outdated"]}, "branch~all~outdated~conflict"),
         ({"group": "ci", "ci": "failing", "filter": "not"}, "ci~not~failing"),
@@ -225,3 +225,32 @@ def test_the_toggles_filter_at_once(
         + f"?col=status~{filter}~open&filter_of=0&filter={after_applies}"
     )
     assert columns_of(answer) == [f"status~{after_applies}~open"]
+
+
+def test_a_question_mark_says_why(client, project, github):
+    """Unknown results say why: closed, the permissions of the app, or not read yet."""
+    from pycal_dashboard.models import Installation
+
+    page = page_of(client, project, "ci~all~passing", "branch~all~conflict")
+    merged = page.split('data-pull-request="collective/icalendar#4"')[1].split("</tr>")[0]
+    assert 'title="not known: the checks are read for open pull requests only"' in merged
+    Installation.objects.update(permissions={"pull_requests": "write", "contents": "read"})
+    from pycal_dashboard.models import PullRequestState
+
+    PullRequestState.objects.update(checks_complete="")
+    page = page_of(client, project, "ci~all~passing")
+    ready = page.split('data-pull-request="collective/icalendar#1"')[1].split("</tr>")[0]
+    assert "accept the permissions checks and statuses on GitHub" in ready
+
+
+def test_ci_has_three_switches(client, project):
+    page = page_of(client, project, "ci~all~unknown")
+    assert results(page) == {
+        "Merged": ["yes"],
+        "Behind": ["no"],
+        "Conflict": ["no"],
+        "Ready": ["no"],
+    }
+    add = page.split("data-add-condition>")[1]
+    for name in ("passing", "failing", "unknown"):
+        assert f'name="ci" value="{name}"' in add

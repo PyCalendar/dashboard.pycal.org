@@ -1,0 +1,1 @@
+{% load conditions %}{% for part in column.head %}{% if part.kind == "label" %}<span class="label-chip{% if part.absent %} label-absent{% endif %}" style="--label: #{% label_color label_colors part.text %}">{{ part.text }}</span>{% else %}<span class="state state-{{ part.kind }}">{{ part.text }}</span>{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}

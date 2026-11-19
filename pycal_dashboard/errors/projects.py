@@ -160,3 +160,34 @@ class ProjectSlugTaken(ProjectError):
     """
 
     title = _("The address is taken")
+
+
+class FilterNotFound(ProjectError):
+    """The project has no saved filter of this number.
+
+    It may have been deleted. Open the tab *Filters* of the project for those it has.
+    """
+
+    title = _("Filter not found")
+    status = 404
+
+
+class FilterNameMissing(ProjectError):
+    """A filter needs a name.
+
+    Give the filter a name that says what it shows, such as *Ready to merge*.
+    """
+
+    title = _("The filter needs a name")
+    status = 400
+
+
+class FilterNameTaken(ProjectError):
+    """The project has a filter of this name already.
+
+    The names of the filters of a project are unique: choose another name, or open that filter
+    and save it under its name to change it.
+    """
+
+    title = _("The project has a filter of this name")
+    status = 409

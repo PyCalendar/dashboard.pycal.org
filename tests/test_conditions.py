@@ -22,6 +22,7 @@ IDS = [
     "label_absent",
     "ci_passes",
     "ci_fails",
+    "ci_unknown",
     "merge_conflict",
     "branch_outdated",
     "branch_up_to_date",
