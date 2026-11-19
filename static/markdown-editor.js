@@ -33,6 +33,22 @@
         })
         .catch(function () {});
     });
+    // the menu Variables: a click inserts the variable where the cursor is, and closes it
+    var menu = field.querySelector("[data-variables-menu]");
+    if (menu) {
+      menu.querySelectorAll("[data-variable]").forEach(function (item) {
+        item.addEventListener("click", function () {
+          var text = item.dataset.variable;
+          var start = area.selectionStart === undefined ? area.value.length : area.selectionStart;
+          var end = area.selectionEnd === undefined ? start : area.selectionEnd;
+          area.value = area.value.slice(0, start) + text + area.value.slice(end);
+          menu.open = false;
+          mode(false);
+          area.focus();
+          area.selectionStart = area.selectionEnd = start + text.length;
+        });
+      });
+    }
     bar.hidden = false;
     field.dataset.markdownConnected = "";
   }

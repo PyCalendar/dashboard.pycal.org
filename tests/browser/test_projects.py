@@ -396,12 +396,13 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     detail.get_by_label("Name", exact=True).fill("Waiting for a review")
     detail.locator(".condition-edit > summary").click()
     detail.get_by_label("Summary", exact=True).last.fill("A person reviews it")
-    detail.get_by_label("Description: how to remove it").fill("Ask @")
-    detail.locator("[data-insert-variable^='description'] select").select_option("{author}")
-    detail.locator("[data-insert-variable^='description']").get_by_role(
-        "button", name="Insert"
-    ).click()
-    expect(detail.get_by_label("Description: how to remove it")).to_have_value("Ask @{author}")
+    description = detail.get_by_label("Description: how to remove it")
+    description.fill("Ask @")
+    editor = detail.locator("[data-markdown-field]:has(#description-0)")
+    editor.get_by_text("Variables", exact=True).click()  # the menu of the bar of the editor
+    editor.get_by_role("menuitem", name="{author}").click()  # inserted at once, no button
+    expect(description).to_have_value("Ask @{author}")
+    expect(editor.locator("[data-variables-menu]")).not_to_have_attribute("open", "")
     detail.get_by_role("button", name="Save the step").click()
     expect(page.locator("[data-step-bar]")).to_contain_text("Waiting for a review")
     expect(page.locator(".condition-description")).to_contain_text("Ask @octocat")

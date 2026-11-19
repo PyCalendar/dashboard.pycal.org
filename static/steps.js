@@ -69,21 +69,6 @@
     });
   }
 
-  // a variable of the templates, inserted where the cursor is
-  document.querySelectorAll("[data-insert-variable]").forEach(function (insert) {
-    var field = document.getElementById(insert.dataset.insertVariable);
-    if (!field) { return; }
-    insert.hidden = false;
-    insert.querySelector("button").addEventListener("click", function () {
-      var text = insert.querySelector("select").value;
-      var start = field.selectionStart || field.value.length;
-      var end = field.selectionEnd || start;
-      field.value = field.value.slice(0, start) + text + field.value.slice(end);
-      field.focus();
-      field.selectionStart = field.selectionEnd = start + text.length;
-    });
-  });
-
   // the tab Filters: a filter becomes a step without a new page
   document.querySelectorAll("form[data-make-step]").forEach(function (form) {
     form.addEventListener("submit", function (event) {

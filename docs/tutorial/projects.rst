@@ -254,8 +254,9 @@ A click on a step shows it below the bar. Its name is that of its filter until
 you change it, and its summary is a template in Markdown. The pencil next to each
 condition of the filter edits its summary, a line of text, and its description,
 which guides people to remove the condition, such as with a link to the
-documentation. The summary and the descriptions take variables, which the menu
-next to them inserts: ``{author}``, ``{title}``, ``{number}``, ``{url}``,
+documentation. Both are written in the editor of Markdown, the description too.
+They take variables: the menu **Variables** in the bar of the editor inserts the
+one you click where the cursor is: ``{author}``, ``{title}``, ``{number}``, ``{url}``,
 ``{repository}``, ``{full_name}``, ``{owner}``, ``{project}`` and ``{step}``. Their
 values are text: a title such as ``[click](https://example.org)`` stays text, and
 nothing else of a template is evaluated. The page shows them with an example

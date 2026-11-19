@@ -21,8 +21,7 @@
 {% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">
 {% if access.can_write %}<form method="post" action="{% url 'project_step_edit' project.slug shown.pk %}" class="stacked" data-edit-step>{% csrf_token %}
   <p><label for="step-name">{% translate "Name" %}</label><input id="step-name" name="name" maxlength="100" value="{{ shown.name }}" placeholder="{{ shown.filter.name }}"></p>
-  {% translate "Summary" as summary_label %}{% include "pycal_dashboard/_markdown_field.html" with id="summary" name="summary" label=summary_label value=shown.summary rows=4 %}
-  {% include "pycal_dashboard/_variables.html" with target="summary" %}
+  {% translate "Summary" as summary_label %}{% include "pycal_dashboard/_markdown_field.html" with id="summary" name="summary" label=summary_label value=shown.summary rows=4 variables=variables %}
   {% if summary_preview %}<div class="template-preview"><small class="muted">{% translate "With an example pull request:" %}</small><div class="markdown">{{ summary_preview|markdown }}</div></div>{% endif %}
   <h3>{% translate "Conditions" %}</h3>
   <p class="muted">{% blocktranslate with name=shown.filter.name %}The conditions of the filter {{ name }} that keep a pull request in this step. Guide people to remove each one.{% endblocktranslate %}</p>
@@ -30,8 +29,7 @@
     <input type="hidden" name="value-{{ condition.index }}" value="{{ condition.value }}">
     <details class="condition-edit"><summary><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %} <span class="pencil" title="{% translate "Edit the summary and the description" %}" aria-label="{% translate "Edit the summary and the description" %}">✎</span></summary>
       <p><label for="summary-{{ condition.index }}">{% translate "Summary" %}</label><input id="summary-{{ condition.index }}" name="summary-{{ condition.index }}" maxlength="200" value="{{ condition.summary }}"></p>
-      <p><label for="description-{{ condition.index }}">{% translate "Description: how to remove it" %}</label><textarea id="description-{{ condition.index }}" name="description-{{ condition.index }}" rows="4">{{ condition.description }}</textarea></p>
-      {% include "pycal_dashboard/_variables.html" with target=condition.target %}
+      {% translate "Description: how to remove it" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id=condition.target name=condition.target label=description_label value=condition.description rows=4 variables=variables %}
     </details>
     {% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}
   </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: no pull request is in this step." %}</li>{% endfor %}</ul>

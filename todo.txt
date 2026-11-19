@@ -386,6 +386,9 @@ community: where to start, what waits for a review, who contributes.
       installations, and with Check again
 - [x] The filters of the tab Filters without bullets
 
+- [x] Variables: a menu in the bar of the editor of Markdown, a click inserts; no button Insert;
+      the descriptions of conditions in the editor of Markdown too
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where

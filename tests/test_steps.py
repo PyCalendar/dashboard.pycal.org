@@ -110,7 +110,9 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     detail = page.split("data-step-detail")[1]
     assert "It has the label needs review" in detail
     assert "It is open" not in detail  # off: no part of the filter
-    assert "✎" in detail and 'data-insert-variable="summary"' in detail
+    assert "✎" in detail and detail.count("data-variables-menu") == 2  # summary, condition
+    assert 'role="menuitem" data-variable="{author}"' in detail and "Insert</button>" not in detail
+    assert '<textarea id="description-0" name="description-0"' in detail  # the editor
     client.post(
         f"/projects/icalendar/steps/{step.pk}/edit/",
         {

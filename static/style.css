@@ -398,6 +398,11 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .condition-edit .pencil { margin-left: .3rem; color: var(--primary); }
 .condition-description { margin: .3rem 0 0 1rem; color: var(--text-muted); }
 .template-preview { margin: .5rem 0 1rem; padding: .5rem .75rem; border-left: .25rem solid var(--border); }
-.insert-variable { display: inline-flex; gap: .3rem; align-items: center; margin: .25rem 0; }
-.insert-variable select { max-width: 22rem; }
-.variables-help { font-size: .9rem; }
+
+/* the menu Variables of the editor of Markdown: a click inserts the variable */
+.variables-menu { position: relative; display: inline-block; margin: 0; }
+.variables-menu > summary { list-style: none; }
+.variables-menu > summary::-webkit-details-marker { display: none; }
+.variables-list { position: absolute; z-index: 15; left: 0; top: calc(100% + .25rem); min-width: 18rem; max-width: calc(100vw - 2rem); margin: 0; padding: .3rem; list-style: none; background: var(--surface); border: 1px solid var(--border); border-radius: .4rem; box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, .2); }
+.variables-list button { display: block; width: 100%; padding: .35rem .5rem; border: 0; border-radius: .3rem; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.variables-list button:hover, .variables-list button:focus-visible { background: var(--surface-tint); }
