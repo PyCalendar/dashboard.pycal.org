@@ -36,8 +36,6 @@ Only you see it. It shows:
   permission, or what they lack with *Accept the permissions on GitHub*, see
   :ref:`new-permissions`.
 
-.. _administrators:
-
 .. _preferences:
 
 Language, colors and emails
@@ -85,6 +83,8 @@ Remove an address
 
 The site sends emails only when the people who run it set ``EMAIL_HOST``, see
 :doc:`/reference/settings`; without it, the emails are written into its log.
+
+.. _administrators:
 
 Administrators
 ==============

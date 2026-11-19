@@ -6,12 +6,13 @@ what it explains, for screen readers and on hover.
 
 from django import template
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext
 
 register = template.Library()
 
 # an open book, drawn with the color of the text: the two pages and their spine
-BOOK = format_html(
+BOOK = mark_safe(  # noqa: S308 - a constant
     '<svg class="icon book" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" '
     'focusable="false" fill="none" stroke="currentColor" stroke-width="2" '
     'stroke-linecap="round" stroke-linejoin="round">'

@@ -16,7 +16,7 @@
 <dl class="facts-list"><dt>{% translate "Version" %}</dt><dd>{{ build.version }}</dd>
 {% if build.commit %}<dt>{% translate "Commit" %}</dt><dd><a href="{{ build.commit_url }}">{{ build.commit }}</a> {{ build.message }}</dd>{% endif %}
 {% if build.built_at %}<dt>{% translate "Built" %}</dt><dd>{% when build.built_at %}{% if build.build_url %} · <a href="{{ build.build_url }}">{% translate "build" %}</a>{% endif %}</dd>{% endif %}
-<dt>{% translate "Code" %}</dt><dd>{% github_link build.code_url links.source links.source %} · <a href="{% url 'licenses' %}">AGPL-3.0-or-later</a></dd></dl>
+<dt>{% translate "Code" %}</dt><dd>{% github_link build.code_url links.source links.source %} · <a href="{% url 'licenses' %}">AGPL-3.0-or-later</a> · <a href="{% url 'licenses' %}" data-all-licenses>{% translate "All licenses" %}</a></dd></dl>
 <p><a href="{{ links.issues }}">{% translate "Report a bug" %}</a> · <a href="{{ links.changelog }}">{% translate "Changelog" %}</a></p></section>
 </div>
 {% endblock %}

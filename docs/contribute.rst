@@ -54,7 +54,7 @@ texts in Python in ``gettext``. A text without them stays English, and a test
 finds it. The JSON of the pages, the log and the details of errors to copy stay
 English.
 
-.. _license:
+.. _lazy-imports:
 
 Lazy imports
 ============
@@ -75,6 +75,8 @@ the same time cannot stop each other in a deadlock:
 
 ``tests/quality/test_lazy_imports.py`` checks that every import inside a
 function is inside ``with IMPORT_GUARD:``.
+
+.. _license:
 
 License
 =======
