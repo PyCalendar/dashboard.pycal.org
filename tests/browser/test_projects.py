@@ -239,19 +239,27 @@ def test_columns_of_conditions(page, site, github, bob):
     expect(menu.get_by_label("Name of the label")).to_be_hidden()
     menu.get_by_text("outdated", exact=True).click()
     menu.get_by_text("conflict", exact=True).click()
-    menu.get_by_text("only those it applies to").click()
     menu.get_by_role("button", name="Add the column").click()
-    expect(page).to_have_url(re.compile(r"col=branch~applies~outdated~conflict"))
-    expect(page.locator("[data-pull-request]")).to_have_count(2)
-    expect(page.locator("td.col-condition .result-yes")).to_have_count(2)
-    # its gear: show all, then the crosses of those it does not apply to
-    page.get_by_label("Change the column").click()
-    gear = page.locator("[data-condition-column='0'] [data-condition-form]")
-    gear.get_by_text("all pull requests").click()
-    gear.get_by_role("button", name="Change the column").click()
+    expect(page).to_have_url(re.compile(r"col=branch~all~outdated~conflict"))
     expect(page.locator("[data-pull-request]")).to_have_count(3)
     expect(page.locator(".result-no")).to_have_count(1)
     expect(page.locator(".result-no")).to_have_attribute("aria-label", "does not apply")
+    # the toggles: without the crosses, then without the check marks: the crosses come back
+    page.get_by_role("button", name="Show those it does not apply to").click()
+    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    page.get_by_role("button", name="Show those it applies to").click()
+    expect(page.locator("[data-pull-request]")).to_have_count(1)
+    expect(page.get_by_role("button", name="Show those it does not apply to")).to_have_attribute(
+        "aria-pressed", "true"
+    )
+    page.get_by_role("button", name="Show those it applies to").click()  # both again
+    expect(page.locator("[data-pull-request]")).to_have_count(3)
+    # its gear: other states
+    page.get_by_label("Change the column").click()
+    gear = page.locator("[data-condition-column='0'] [data-condition-form]")
+    gear.get_by_text("outdated", exact=True).click()
+    gear.get_by_role("button", name="Change the column").click()
+    expect(page).to_have_url(re.compile(r"col=branch~all~conflict&"))
     # a second column: a label, chosen from those of the repositories
     page.get_by_label("Add a condition").click()
     menu = page.locator("[data-add-condition] [data-condition-form]")
@@ -261,7 +269,7 @@ def test_columns_of_conditions(page, site, github, bob):
     menu.get_by_role("button", name="Add the column").click()
     expect(page.locator(".label-chip").first).to_have_text("needs review")
     heads = page.locator("th.col-condition")
-    expect(heads.nth(1)).to_contain_text("Label needs review: present")
+    expect(heads.nth(1).locator(".label-chip")).to_have_text("needs review")
     heads.nth(1).drag_to(heads.nth(0))
     expect(page).to_have_url(re.compile(r"col=labels~[^&]+&col=branch"))
 

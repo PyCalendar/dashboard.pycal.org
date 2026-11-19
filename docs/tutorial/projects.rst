@@ -186,9 +186,12 @@ check mark, or not, with a red cross, and why:
 **Status**
    Open, closed, merged or auto-merging, with their colors.
 
-Under the condition, *Show* filters the table: all pull requests, only those
-it applies to, or only those it does not apply to. The gear of a column changes
-it, moves it or removes it; drag a column onto another one to move it. The
+The header of a column is short: the label, struck through when it must be
+absent, or the states chosen, such as *conflict*. Below it, the gear changes
+the column, moves it or removes it, and two toggles filter the table at once:
+the check mark shows the pull requests the condition applies to, the cross
+those it does not apply to. One of them is always on: switching off the last
+one switches the other one on. Drag a column onto another one to move it. The
 columns of conditions stay right of the other columns. The address of the page
 keeps them, so it can be bookmarked and shared; the JSON has the result of each
 column for each pull request (``conditions``), see :doc:`/reference/json`. A

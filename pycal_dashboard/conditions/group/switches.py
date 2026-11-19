@@ -111,6 +111,19 @@ class SwitchesGroup(ConditionGroup):
         ]
 
     @classmethod
+    def head(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The switches that are on, such as ``conflict``, without the name of the group.
+
+        Parameters:
+            choices: The switches that are on.
+
+        Returns:
+            Each text, with its name as its kind for its color.
+        """
+        texts = {name: text for name, _condition, text in cls.switches}
+        return [{"text": gettext(texts[name]), "kind": name} for name in choices]
+
+    @classmethod
     def summary(cls, choices: tuple[str, ...]) -> str:
         """Such as ``Branch: outdated, conflict``.
 

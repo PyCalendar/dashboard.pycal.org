@@ -386,8 +386,9 @@ def table_address(columns: list[Column], size: int) -> str:
 def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
     """The columns after a change that the menus of the table ask for, None without one.
 
-    ``add`` adds the column of the form, ``edit=<i>`` replaces a column with it, ``remove=<i>``
-    removes one and ``move=<i>&to=<j>`` moves one, such as by dragging it.
+    ``add`` adds the column of the form, ``edit=<i>`` replaces a column with it,
+    ``filter_of=<i>&filter=<f>`` sets its filter, ``remove=<i>`` removes one and
+    ``move=<i>&to=<j>`` moves one, such as by dragging it.
 
     Parameters:
         request: The request, with the fields of the menu.
@@ -412,6 +413,13 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
             return [*found, Column.of_form(request.GET)]
         if "edit" in request.GET:
             found[index("edit")] = Column.of_form(request.GET)
+            return found
+        if "filter_of" in request.GET:  # a toggle of the check marks or crosses
+            number = index("filter_of")
+            filter = request.GET.get("filter", "all")
+            if filter not in FILTERS:
+                raise ConditionInputUnknown(f"filter: {filter}")
+            found[number] = Column(found[number].group, found[number].choices, filter)
             return found
         if "remove" in request.GET:
             del found[index("remove")]

@@ -85,6 +85,18 @@ class ConditionGroup(ABC):
 
     @classmethod
     @abstractmethod
+    def head(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The shortest header of the column: the parts it shows, such as the states chosen.
+
+        Parameters:
+            choices: The choices.
+
+        Returns:
+            Parts with ``text`` and ``kind`` for their color; a label also with ``absent``.
+        """
+
+    @classmethod
+    @abstractmethod
     def summary(cls, choices: tuple[str, ...]) -> str:
         """The header of the column: the group and its choices, translated.
 

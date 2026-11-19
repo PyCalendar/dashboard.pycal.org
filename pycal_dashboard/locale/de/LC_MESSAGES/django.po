@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 18:16+0000\n"
+"POT-Creation-Date: 2026-11-19 18:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1036,6 +1036,10 @@ msgstr ""
 "Die Seite liest sie bei jedem Start; Einstellungen der Umgebung haben "
 "Vorrang."
 
+#, python-format
+msgid "on %(date)s"
+msgstr "am %(date)s"
+
 msgid "Skip to the content"
 msgstr "Zum Inhalt springen"
 
@@ -1066,18 +1070,6 @@ msgstr "Name des Labels"
 
 msgid "Choose a label of the repositories or type another one."
 msgstr "Wähle ein Label der Repositorys oder gib ein anderes ein."
-
-msgid "Show"
-msgstr "Zeigen"
-
-msgid "all pull requests"
-msgstr "alle Pull Requests"
-
-msgid "only those it applies to"
-msgstr "nur die, auf die sie zutrifft"
-
-msgid "only those it does not apply to"
-msgstr "nur die, auf die sie nicht zutrifft"
 
 msgid "Change the column"
 msgstr "Die Spalte ändern"
@@ -1628,6 +1620,9 @@ msgstr[1] "%(counter)s Pull Requests"
 msgid "Per page"
 msgstr "Pro Seite"
 
+msgid "Show"
+msgstr "Zeigen"
+
 msgid "Display"
 msgstr "Anzeigen"
 
@@ -1642,6 +1637,12 @@ msgstr "Nach rechts"
 
 msgid "Remove the column"
 msgstr "Die Spalte entfernen"
+
+msgid "Show those it applies to"
+msgstr "Die zeigen, auf die sie zutrifft"
+
+msgid "Show those it does not apply to"
+msgstr "Die zeigen, auf die sie nicht zutrifft"
 
 msgid "Add a condition"
 msgstr "Eine Bedingung hinzufügen"
@@ -1982,10 +1983,6 @@ msgid "%(count)d day ago"
 msgid_plural "%(count)d days ago"
 msgstr[0] "vor %(count)d Tag"
 msgstr[1] "vor %(count)d Tagen"
-
-#, python-format
-msgid "on %(date)s"
-msgstr "am %(date)s"
 
 msgid "Your preferences are saved."
 msgstr "Deine Einstellungen sind gespeichert."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 18:16+0000\n"
+"POT-Creation-Date: 2026-11-19 18:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1029,6 +1029,10 @@ msgid ""
 msgstr ""
 "El sitio los lee en cada inicio; los ajustes del entorno tienen prioridad."
 
+#, python-format
+msgid "on %(date)s"
+msgstr "el %(date)s"
+
 msgid "Skip to the content"
 msgstr "Saltar al contenido"
 
@@ -1059,18 +1063,6 @@ msgstr "Nombre de la etiqueta"
 
 msgid "Choose a label of the repositories or type another one."
 msgstr "Elige una etiqueta de los repositorios o escribe otra."
-
-msgid "Show"
-msgstr "Mostrar"
-
-msgid "all pull requests"
-msgstr "todos los pull requests"
-
-msgid "only those it applies to"
-msgstr "solo aquellos a los que se aplica"
-
-msgid "only those it does not apply to"
-msgstr "solo aquellos a los que no se aplica"
 
 msgid "Change the column"
 msgstr "Cambiar la columna"
@@ -1621,6 +1613,9 @@ msgstr[1] "%(counter)s pull requests"
 msgid "Per page"
 msgstr "Por página"
 
+msgid "Show"
+msgstr "Mostrar"
+
 msgid "Display"
 msgstr "Mostrar"
 
@@ -1635,6 +1630,12 @@ msgstr "A la derecha"
 
 msgid "Remove the column"
 msgstr "Quitar la columna"
+
+msgid "Show those it applies to"
+msgstr "Mostrar aquellos a los que se aplica"
+
+msgid "Show those it does not apply to"
+msgstr "Mostrar aquellos a los que no se aplica"
 
 msgid "Add a condition"
 msgstr "Añadir una condición"
@@ -1967,10 +1968,6 @@ msgid "%(count)d day ago"
 msgid_plural "%(count)d days ago"
 msgstr[0] "hace %(count)d día"
 msgstr[1] "hace %(count)d días"
-
-#, python-format
-msgid "on %(date)s"
-msgstr "el %(date)s"
 
 msgid "Your preferences are saved."
 msgstr "Tus preferencias están guardadas."

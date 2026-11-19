@@ -103,7 +103,7 @@ def test_the_cells_show_whether_it_applies_and_why(client, project):
         "Ready": ["yes", "yes", "yes", "yes"],
     }
     ready = page.split('data-pull-request="collective/icalendar#1"')[1].split("</tr>")[0]
-    assert '<span class="label-chip" style="--label: #fbca04">needs review</span>' in ready
+    assert "label-chip" not in ready  # the label is in the header only
     assert 'role="img" aria-label="applies" title="applies">✓</span>' in ready
     assert '<span class="state state-up_to_date">up to date</span>' in ready
     assert '<span class="state state-passing">passing</span>' in ready
@@ -113,7 +113,10 @@ def test_the_cells_show_whether_it_applies_and_why(client, project):
     assert '<span class="state state-failing">failing</span>' in conflict
     behind = page.split('data-pull-request="collective/icalendar#3"')[1].split("</tr>")[0]
     assert 'state-open">open</span>, <span class="state state-auto_merge">auto-merging' in behind
-    assert "Label needs review: present" in page and "Branch: up to date" in page
+    head = page.split("<thead>")[1].split("</thead>")[0]
+    assert '<span class="label-chip" style="--label: #fbca04">needs review</span>' in head
+    assert '<span class="state state-up_to_date">up to date</span>' in head
+    assert 'title="Label needs review: present"' in head  # in words for screen readers
 
 
 @pytest.mark.parametrize(
@@ -181,3 +184,39 @@ def test_the_column_encodes_its_choices():
     assert column.choices == ("absent", "a~b c") and Column.decode(column.encode()) == column
     with pytest.raises(errors.UnknownCondition):
         Column.decode("weather~all")
+
+
+def test_the_header_is_short(client, project):
+    """Only what was chosen: an absent label struck through, no group, no filter in words."""
+    page = page_of(client, project, "labels~applies~absent~needs%20review", "branch~not~conflict")
+    head = page.split("<thead>")[1].split("</thead>")[0]
+    shown = head.split('<span aria-hidden="true">')
+    assert 'label-chip label-absent" style="--label: #fbca04">needs review</span>' in shown[1]
+    assert shown[2].startswith('<span class="state state-conflict">conflict</span></span>')
+    assert "only those" not in head and "(" not in shown[2].split("</span></span>")[0]
+    assert 'class="icon gear"' in head
+
+
+@pytest.mark.parametrize(
+    ("filter", "applies", "not_", "after_applies", "after_not"),
+    [
+        ("all", "true", "true", "not", "applies"),  # switch one off
+        ("applies", "true", "false", "not", "all"),  # the last one on: the other one instead
+        ("not", "false", "true", "all", "applies"),
+    ],
+)
+def test_the_toggles_filter_at_once(
+    client, project, filter, applies, not_, after_applies, after_not
+):
+    """Check marks and crosses toggle the filter; never both are off."""
+    page = page_of(client, project, f"status~{filter}~open")
+    yes = page.split('class="toggle toggle-yes"')[1].split(">")[0]
+    no = page.split('class="toggle toggle-no"')[1].split(">")[0]
+    assert f'aria-pressed="{applies}"' in yes and f'aria-pressed="{not_}"' in no
+    assert f"filter_of=0&amp;filter={after_applies}" in yes
+    assert f"filter_of=0&amp;filter={after_not}" in no
+    answer = client.get(
+        project.path("pull-requests/")
+        + f"?col=status~{filter}~open&filter_of=0&filter={after_applies}"
+    )
+    assert columns_of(answer) == [f"status~{after_applies}~open"]

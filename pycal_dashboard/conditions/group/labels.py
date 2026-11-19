@@ -78,16 +78,28 @@ class LabelsGroup(ConditionGroup):
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...]) -> list[dict]:
-        """The label, always with its border and color.
+        """Nothing: the label is in the header, the cell says whether it applies.
 
         Parameters:
             issue: The pull request.
             choices: The mode and the name.
 
         Returns:
+            No parts.
+        """
+        return []
+
+    @classmethod
+    def head(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The label with its border and color; struck through when it must be absent.
+
+        Parameters:
+            choices: The mode and the name.
+
+        Returns:
             The label as one part.
         """
-        return [{"text": choices[1], "kind": "label"}]
+        return [{"text": choices[1], "kind": "label", "absent": choices[0] == "absent"}]
 
     @classmethod
     def summary(cls, choices: tuple[str, ...]) -> str:

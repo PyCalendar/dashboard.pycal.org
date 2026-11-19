@@ -127,5 +127,50 @@ class Column:
 
     @property
     def summary(self) -> str:
-        """The header of the column."""
+        """The header of the column in words, for its title and screen readers."""
         return self.group.summary(self.choices)
+
+    @property
+    def head(self) -> list[dict]:
+        """The shortest header of the column, see ``ConditionGroup.head``."""
+        return self.group.head(self.choices)
+
+    def toggled(self, result: str) -> str:
+        """The filter after a click on the toggle of the check marks or the crosses.
+
+        Both are on to show all pull requests. Switching off the last one that is on switches
+        the other one on, so that the column always shows some.
+
+        Parameters:
+            result: ``applies`` for the check marks, ``not`` for the crosses.
+
+        Returns:
+            The filter: ``all``, ``applies`` or ``not``.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.group.status import StatusGroup
+            >>> column = Column(StatusGroup, ("open",))
+            >>> column.toggled("applies"), column.toggled("not")
+            ('not', 'applies')
+            >>> Column(StatusGroup, ("open",), "applies").toggled("applies")
+            'not'
+            >>> Column(StatusGroup, ("open",), "not").toggled("applies")
+            'all'
+        """
+        other = "not" if result == "applies" else "applies"
+        if self.filter == "all":
+            return other  # switch this one off
+        if self.filter == result:
+            return other  # the last one that was on: the other one instead
+        return "all"  # switch this one on too
+
+    def shown(self, result: str) -> bool:
+        """Whether the toggle of the check marks (``applies``) or crosses (``not``) is on.
+
+        Parameters:
+            result: ``applies`` or ``not``.
+
+        Returns:
+            True if the column shows the pull requests with this result.
+        """
+        return self.filter in ("all", result)

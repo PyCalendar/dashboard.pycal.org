@@ -14,8 +14,6 @@
   {% for id, group in groups.items %}{% if group.switches %}<fieldset class="group-fields fields-{{ id }}" data-switches="{{ id }}"><legend>{% translate group.title %}</legend>
     {% for name, condition, text in group.switches %}<label class="switch"><input type="checkbox" name="{{ id }}" value="{{ name }}"{% if column.group.id == id and name in column.choices %} checked{% endif %}> <span>{% translate text %}</span></label>{% endfor %}
   </fieldset>{% endif %}{% endfor %}
-  <fieldset><legend>{% translate "Show" %}</legend>
-    {% for value in filters %}<label class="check"><input type="radio" name="filter" value="{{ value }}"{% if column and column.filter == value or not column and value == "all" %} checked{% endif %}> {% if value == "all" %}{% translate "all pull requests" %}{% elif value == "applies" %}{% translate "only those it applies to" %}{% else %}{% translate "only those it does not apply to" %}{% endif %}</label>{% endfor %}
-  </fieldset>
+  {% if column %}<input type="hidden" name="filter" value="{{ column.filter }}">{% endif %}
   <p><button class="button">{% if column %}{% translate "Change the column" %}{% else %}{% translate "Add the column" %}{% endif %}</button></p>
 </form>
