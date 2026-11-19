@@ -1,0 +1,140 @@
+"""Errors of projects: who may do what, the repositories and the people of a project."""
+
+from django.utils.translation import gettext_lazy as _
+
+from .base import DashboardError
+
+
+class ProjectError(DashboardError):
+    """A project could not be shown or changed.
+
+    Go back to the project, reload it and try again.
+    """
+
+    title = _("The project could not be changed")
+    guide = "tutorial/projects.html"
+    guide_title = _("Projects")
+
+
+class ProjectNotFound(ProjectError):
+    """There is no project at this address, or it is private and you are not one of its people.
+
+    Check the address on the page *Projects*. To see a private project, sign in
+    with the GitHub account that its owners shared it with.
+    """
+
+    title = _("Project not found")
+    status = 404
+
+
+class ProjectReadOnly(ProjectError):
+    """You may read this project but not change it.
+
+    Only its writers and owners change a project and update it. Ask an owner of
+    the project to give you the role *write*, see :ref:`project-roles`.
+    """
+
+    title = _("You may not change this project")
+    status = 403
+
+
+class ProjectOwnersOnly(ProjectError):
+    """Only the owners of a project share it, make it public or private and delete it.
+
+    Ask an owner of the project, or ask them for the role *owner*, see
+    :ref:`project-roles`.
+    """
+
+    title = _("Only the owners may do this")
+    status = 403
+
+
+class ProjectNameMissing(ProjectError):
+    """A project needs a name.
+
+    Enter a name of up to 100 characters, such as *icalendar*.
+    """
+
+    title = _("The project needs a name")
+
+
+class RepositoryNameInvalid(ProjectError):
+    """The repository is not given as ``owner/name``.
+
+    Enter the account and the name of the repository, such as
+    ``collective/icalendar``, or a link to it on GitHub.
+    """
+
+    title = _("Not the name of a repository")
+
+
+class RepositoryNotFound(ProjectError):
+    """GitHub knows no repository of this name that you may see.
+
+    Check the name. A private repository can be added only if the GitHub App is
+    installed on it and you may read it, see :ref:`private-repositories`.
+    """
+
+    title = _("Repository not found")
+    status = 404
+
+
+class PrivateRepositoryInPublicProject(ProjectError):
+    """A private repository can only be part of a private project.
+
+    Everybody sees a public project. Make the project private first, then add
+    the repository, see :ref:`private-repositories`.
+    """
+
+    title = _("A private repository needs a private project")
+
+
+class PrivateRepositoriesInProject(ProjectError):
+    """A project with private repositories cannot be public.
+
+    Remove the private repositories first, or keep the project private, see
+    :ref:`private-repositories`.
+    """
+
+    title = _("The project has private repositories")
+
+
+class PersonNotFound(ProjectError):
+    """Nobody with this GitHub name has signed in to the site yet.
+
+    A project is shared with people who have an account on the site. Ask the
+    person to sign in with GitHub once, then share the project again.
+    """
+
+    title = _("Nobody with this GitHub name")
+    status = 404
+
+
+class UnknownRole(ProjectError):
+    """The form sent a role that the site does not know.
+
+    The roles are *read*, *write* and *owner*. Reload the page and try again.
+    """
+
+    title = _("Unknown role")
+
+
+class LastOwner(ProjectError):
+    """A project needs at least one owner.
+
+    Give another person the role *owner* first, then change or remove your own
+    role. To end the project, delete it.
+    """
+
+    title = _("The project needs an owner")
+
+
+class GitHubTokenMissing(ProjectError):
+    """The site has no token of your GitHub account to list your organizations and repositories.
+
+    Sign out and sign in with GitHub again: GitHub then gives the site a token
+    that reads your organizations and public repositories. It never writes.
+    """
+
+    title = _("Sign in again to list your repositories")
+    status = 401

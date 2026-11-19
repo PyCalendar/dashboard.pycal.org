@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 16:58+0000\n"
+"POT-Creation-Date: 2026-11-19 08:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,6 +119,48 @@ msgstr "Die Seite hat keine GitHub App"
 
 msgid "The private key of the GitHub App is invalid"
 msgstr "Der private Schlüssel der GitHub App ist ungültig"
+
+msgid "The project could not be changed"
+msgstr "Das Projekt konnte nicht geändert werden"
+
+msgid "Projects"
+msgstr "Projekte"
+
+msgid "Project not found"
+msgstr "Projekt nicht gefunden"
+
+msgid "You may not change this project"
+msgstr "Du darfst dieses Projekt nicht ändern"
+
+msgid "Only the owners may do this"
+msgstr "Nur die Eigentümer dürfen das"
+
+msgid "The project needs a name"
+msgstr "Das Projekt braucht einen Namen"
+
+msgid "Not the name of a repository"
+msgstr "Nicht der Name eines Repositorys"
+
+msgid "Repository not found"
+msgstr "Repository nicht gefunden"
+
+msgid "A private repository needs a private project"
+msgstr "Ein privates Repository braucht ein privates Projekt"
+
+msgid "The project has private repositories"
+msgstr "Das Projekt hat private Repositorys"
+
+msgid "Nobody with this GitHub name"
+msgstr "Niemand mit diesem GitHub-Namen"
+
+msgid "Unknown role"
+msgstr "Unbekannte Rolle"
+
+msgid "The project needs an owner"
+msgstr "Das Projekt braucht einen Eigentümer"
+
+msgid "Sign in again to list your repositories"
+msgstr "Melde dich erneut an, um deine Repositorys aufzulisten"
 
 msgid "The GitHub App could not be registered"
 msgstr "Die GitHub App konnte nicht registriert werden"
@@ -285,13 +327,13 @@ msgid "Sign in with GitHub"
 msgstr "Mit GitHub anmelden"
 
 msgid ""
-"GitHub tells this site who you are and your email addresses. There are no "
-"passwords on this site. Every page is public; signing in adds your account "
-"and your preferences."
+"GitHub tells this site who you are, your email addresses and your "
+"organizations; it only reads. There are no passwords on this site. Signing "
+"in adds your account, your preferences and your projects."
 msgstr ""
-"GitHub sagt dieser Seite, wer du bist, und nennt deine E-Mail-Adressen. "
-"Diese Seite hat keine Passwörter. Jede Seite ist öffentlich; die Anmeldung "
-"fügt dein Konto und deine Einstellungen hinzu."
+"GitHub sagt dieser Seite, wer du bist, deine E-Mail-Adressen und deine "
+"Organisationen; sie liest nur. Auf dieser Seite gibt es keine Passwörter. "
+"Die Anmeldung fügt dein Konto, deine Einstellungen und deine Projekte hinzu."
 
 msgid "Signing in is not set up yet: the site has no OAuth app."
 msgstr ""
@@ -329,6 +371,21 @@ msgstr "Abmelden"
 
 msgid "Language"
 msgstr "Sprache"
+
+msgid "private"
+msgstr "privat"
+
+msgid "Project"
+msgstr "Projekt"
+
+msgid "Overview"
+msgstr "Übersicht"
+
+msgid "Repositories"
+msgstr "Repositorys"
+
+msgid "People"
+msgstr "Personen"
 
 msgid "What this error means and how to solve it"
 msgstr "Was dieser Fehler bedeutet und wie man ihn löst"
@@ -426,6 +483,9 @@ msgstr "Dein Profil auf GitHub"
 msgid "Only you see this page."
 msgstr "Nur du siehst diese Seite."
 
+msgid "GitHub name"
+msgstr "GitHub-Name"
+
 msgid "No email address. GitHub did not share a verified one."
 msgstr "Keine E-Mail-Adresse. GitHub hat keine bestätigte geteilt."
 
@@ -474,11 +534,13 @@ msgid "Emails"
 msgstr "E-Mails"
 
 msgid ""
-"Email me when an installation of the GitHub App that I installed or changed "
-"needs more permissions"
+"Email me when an installation of the GitHub App needs more permissions: one "
+"that I installed or changed, or one on a repository of a project that I "
+"change"
 msgstr ""
-"Schreib mir, wenn eine Installation der GitHub App, die ich installiert oder "
-"geändert habe, mehr Berechtigungen braucht"
+"Schreib mir eine E-Mail, wenn eine Installation der GitHub App mehr "
+"Berechtigungen braucht: eine, die ich installiert oder geändert habe, oder "
+"eine auf einem Repository eines Projekts, das ich ändere"
 
 msgid ""
 "The site sends them to your primary address if it is verified, else to your "
@@ -659,11 +721,13 @@ msgid "What the permissions are for:"
 msgstr "Wofür die Berechtigungen sind:"
 
 msgid ""
-"You get this email because you installed or changed the app on this account. "
-"Switch these emails off on your account:"
+"You get this email because you installed or changed the app on this account, "
+"or because you change a project with a repository it is installed on. Switch "
+"these emails off on your account:"
 msgstr ""
 "Du bekommst diese E-Mail, weil du die App auf diesem Konto installiert oder "
-"geändert hast. Schalte diese E-Mails in deinem Konto aus:"
+"geändert hast, oder weil du ein Projekt mit einem Repository änderst, auf "
+"dem sie installiert ist. Schalte diese E-Mails in deinem Konto aus:"
 
 #, python-format
 msgid "[%(site_name)s] The GitHub App on %(account)s needs more permissions"
@@ -911,6 +975,256 @@ msgstr ""
 "Sie werden im Volume der Seite gespeichert (<code>DATA_DIR/.env</code>); "
 "Einstellungen der Umgebung haben Vorrang."
 
+msgid "open issues"
+msgstr "offene Issues"
+
+msgid "open pull requests"
+msgstr "offene Pull Requests"
+
+msgid "repositories"
+msgstr "Repositorys"
+
+msgid "Updating"
+msgstr "Wird aktualisiert"
+
+msgid "Repositories read from GitHub"
+msgstr "Von GitHub gelesene Repositorys"
+
+#, python-format
+msgid ""
+"%(done)s of %(total)s repositories read from GitHub. The page reloads itself."
+msgstr ""
+"%(done)s von %(total)s Repositorys von GitHub gelesen. Die Seite lädt sich "
+"selbst neu."
+
+msgid "Up to date"
+msgstr "Aktuell"
+
+msgid "Not read yet"
+msgstr "Noch nicht gelesen"
+
+msgid "Some repositories could not be read"
+msgstr "Einige Repositorys konnten nicht gelesen werden"
+
+msgid "Out of date"
+msgstr "Veraltet"
+
+msgid "Last updated:"
+msgstr "Zuletzt aktualisiert:"
+
+msgid "never"
+msgstr "nie"
+
+msgid "Update"
+msgstr "Aktualisieren"
+
+msgid "The writers and owners of the project update it."
+msgstr "Die Schreibenden und Eigentümer des Projekts aktualisieren es."
+
+msgid "Open issues"
+msgstr "Offene Issues"
+
+msgid "Open pull requests"
+msgstr "Offene Pull Requests"
+
+msgid "Read"
+msgstr "Gelesen"
+
+msgid "could not be read"
+msgstr "konnte nicht gelesen werden"
+
+msgid "The project has no repositories yet."
+msgstr "Das Projekt hat noch keine Repositorys."
+
+msgid "Add repositories"
+msgstr "Repositorys hinzufügen"
+
+msgid "Create a project"
+msgstr "Ein Projekt erstellen"
+
+msgid "Next, you add its repositories and install the GitHub App on them."
+msgstr ""
+"Danach fügst du seine Repositorys hinzu und installierst die GitHub App "
+"darauf."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Who sees it"
+msgstr "Wer es sieht"
+
+msgid "Public: everybody sees the project and its repositories"
+msgstr "Öffentlich: alle sehen das Projekt und seine Repositorys"
+
+msgid "Private: only its people see it; it may contain private repositories"
+msgstr ""
+"Privat: nur seine Personen sehen es; es kann private Repositorys enthalten"
+
+msgid "Only the owners change it."
+msgstr "Nur die Eigentümer ändern das."
+
+msgid "Create the project"
+msgstr "Das Projekt erstellen"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Delete the project"
+msgstr "Das Projekt löschen"
+
+msgid "Its repositories stay on GitHub and in other projects."
+msgstr "Seine Repositorys bleiben auf GitHub und in anderen Projekten."
+
+msgid "Yes, delete this project"
+msgstr "Ja, dieses Projekt löschen"
+
+msgid "People of the project"
+msgstr "Personen des Projekts"
+
+msgid "Roles in a project"
+msgstr "Rollen in einem Projekt"
+
+msgid "Role"
+msgstr "Rolle"
+
+msgid "Change"
+msgstr "Ändern"
+
+msgid "Share the project"
+msgstr "Das Projekt teilen"
+
+msgid "Share"
+msgstr "Teilen"
+
+msgid ""
+"The person signs in to the site with GitHub once before. Read: sees the "
+"project, also a private one. Change: also changes and updates it. Own: also "
+"shares it, makes it public or private and deletes it."
+msgstr ""
+"Die Person meldet sich vorher einmal mit GitHub auf der Seite an. Lesen: "
+"sieht das Projekt, auch ein privates. Ändern: ändert und aktualisiert es "
+"auch. Besitzen: teilt es auch, macht es öffentlich oder privat und löscht es."
+
+msgid "The owners of the project share it."
+msgstr "Die Eigentümer des Projekts teilen es."
+
+msgid "Repositories of the project"
+msgstr "Repositorys des Projekts"
+
+msgid "the app needs more permissions"
+msgstr "die App braucht mehr Berechtigungen"
+
+msgid "app installed"
+msgstr "App installiert"
+
+msgid "app not installed"
+msgstr "App nicht installiert"
+
+msgid "No repositories yet: add them below."
+msgstr "Noch keine Repositorys: füge sie unten hinzu."
+
+msgid "The GitHub App, installed on the repositories, lets the site:"
+msgstr "Die GitHub App, auf den Repositorys installiert, lässt die Seite:"
+
+msgid "receive the webhooks of the changes in the repositories,"
+msgstr "die Webhooks der Änderungen in den Repositorys empfangen,"
+
+msgid "add and remove labels of pull requests,"
+msgstr "Labels von Pull Requests hinzufügen und entfernen,"
+
+msgid "create and update a comment of the site on a pull request."
+msgstr ""
+"einen Kommentar der Seite auf einem Pull Request erstellen und aktualisieren."
+
+msgid "The permissions it asks for and why"
+msgstr "Die Berechtigungen, die sie verlangt, und warum"
+
+#, python-format
+msgid "%(counter)s repository has no GitHub App yet."
+msgid_plural "%(counter)s repositories have no GitHub App yet."
+msgstr[0] "%(counter)s Repository hat noch keine GitHub App."
+msgstr[1] "%(counter)s Repositorys haben noch keine GitHub App."
+
+msgid "An owner of their account installs it."
+msgstr "Ein Eigentümer ihres Kontos installiert sie."
+
+msgid "After installing, update the project to see the change."
+msgstr ""
+"Aktualisiere nach dem Installieren das Projekt, um die Änderung zu sehen."
+
+msgid "The app is installed on every repository of the project."
+msgstr "Die App ist auf jedem Repository des Projekts installiert."
+
+msgid "By name"
+msgstr "Nach Name"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid ""
+"Type owner/name or paste a link. While you type, the field proposes the "
+"repositories that the site knows and those of GitHub."
+msgstr ""
+"Gib owner/name ein oder füge einen Link ein. Während du tippst, schlägt das "
+"Feld die Repositorys vor, die die Seite kennt, und die von GitHub."
+
+msgid "From an account"
+msgstr "Aus einem Konto"
+
+msgid "Organization or account"
+msgstr "Organisation oder Konto"
+
+msgid "Show its repositories"
+msgstr "Seine Repositorys zeigen"
+
+msgid "Add the chosen repositories"
+msgstr "Die gewählten Repositorys hinzufügen"
+
+msgid "No repositories that you may see."
+msgstr "Keine Repositorys, die du sehen darfst."
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Nothing found."
+msgstr "Nichts gefunden."
+
+msgid ""
+"A private repository is added by its name. It needs a private project, the "
+"GitHub App installed on it and your access to it."
+msgstr ""
+"Ein privates Repository wird über seinen Namen hinzugefügt. Es braucht ein "
+"privates Projekt, die darauf installierte GitHub App und deinen Zugriff "
+"darauf."
+
+msgid "Private repositories"
+msgstr "Private Repositorys"
+
+msgid "Go to the overview"
+msgstr "Zur Übersicht"
+
+msgid ""
+"A project is a set of repositories on GitHub. Open one to see its open "
+"issues and pull requests."
+msgstr ""
+"Ein Projekt ist eine Menge von Repositorys auf GitHub. Öffne eines, um seine "
+"offenen Issues und Pull Requests zu sehen."
+
+#, python-format
+msgid "%(counter)s repository"
+msgid_plural "%(counter)s repositories"
+msgstr[0] "%(counter)s Repository"
+msgstr[1] "%(counter)s Repositorys"
+
+msgid "No projects yet."
+msgstr "Noch keine Projekte."
+
+msgid "Private projects are listed only for their people."
+msgstr "Private Projekte werden nur ihren Personen gezeigt."
+
 msgid ""
 "The dashboard receives the webhooks of the repositories with its own GitHub "
 "App; it only reads. The site registers the app on GitHub itself and keeps "
@@ -1149,3 +1463,47 @@ msgstr ""
 
 msgid "People now sign in with the OAuth app."
 msgstr "Menschen melden sich jetzt mit der OAuth-App an."
+
+#, python-format
+msgid "The project %(name)s is created. Add its repositories."
+msgstr "Das Projekt %(name)s ist erstellt. Füge seine Repositorys hinzu."
+
+msgid "Tick the box to confirm that the project is deleted."
+msgstr ""
+"Kreuze das Kästchen an, um zu bestätigen, dass das Projekt gelöscht wird."
+
+#, python-format
+msgid "The project %(name)s is deleted."
+msgstr "Das Projekt %(name)s ist gelöscht."
+
+msgid "The project is saved."
+msgstr "Das Projekt ist gespeichert."
+
+#, python-format
+msgid "%(name)s is added."
+msgstr "%(name)s ist hinzugefügt."
+
+#, python-format
+msgid "%(name)s is in the project already."
+msgstr "%(name)s ist schon im Projekt."
+
+#, python-format
+msgid "%(name)s is removed."
+msgstr "%(name)s ist entfernt."
+
+#, python-format
+msgid "@%(name)s has no role any more."
+msgstr "@%(name)s hat keine Rolle mehr."
+
+#, python-format
+msgid "@%(name)s may %(role)s the project."
+msgstr "@%(name)s darf das Projekt %(role)s."
+
+msgid "read"
+msgstr "lesen"
+
+msgid "change"
+msgstr "ändern"
+
+msgid "own"
+msgstr "besitzen"

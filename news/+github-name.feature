@@ -1,0 +1,1 @@
+The site keeps the GitHub name of each person, their handle on GitHub, taken at every sign in; projects are shared by it. The sign in also reads the organizations of the person (scope ``read:org``, read only).

@@ -66,6 +66,14 @@ def app_settings(settings, private_key, tmp_path):
 
 
 @pytest.fixture(autouse=True)
+def no_update_thread(monkeypatch):
+    """The tests of the code run the updates themselves (UpdateQueue.work); browser tests not."""
+    from pycal_dashboard.services.update_worker import UpdateWorker
+
+    monkeypatch.setattr(UpdateWorker, "enabled", False)
+
+
+@pytest.fixture(autouse=True)
 def github(monkeypatch) -> FakeGitHub:
     """The fake GitHub that answers all requests of the site."""
     fake = FakeGitHub()
@@ -74,10 +82,18 @@ def github(monkeypatch) -> FakeGitHub:
 
 
 def person(github_id: int, login: str, **user_fields):
+    """A person who signed in with GitHub: account, profile and the token of the OAuth app."""
+    from allauth.socialaccount.models import SocialToken
+
+    from pycal_dashboard.models import Profile
+    from tests.fakes.github import FakeGitHub
+
     user = get_user_model().objects.create(username=login, **user_fields)
-    SocialAccount.objects.create(
+    account = SocialAccount.objects.create(
         user=user, provider="github", uid=str(github_id), extra_data={"login": login}
     )
+    SocialToken.objects.create(account=account, token=FakeGitHub.PERSON_TOKEN)
+    Profile.objects.create(user=user, github_name=login, github_id=str(github_id))
     return user
 
 

@@ -3,9 +3,10 @@ Install the GitHub App
 ======================
 
 The GitHub App of the site receives the webhooks of the repositories it is
-installed on. It only reads: the site writes nothing to GitHub, such as labels
-or comments. Of GitHub, it keeps only the installation with its permissions.
-Installing it is safe for every repository of the organization.
+installed on, and reads their open issues and pull requests for the projects,
+see :doc:`/tutorial/projects`. It may add labels and a comment to pull
+requests, for the automation that is designed next; until then the site
+writes nothing to GitHub.
 
 The app must be registered on the site first, see :doc:`github-app`.
 
@@ -33,7 +34,8 @@ GitHub asks for the account and where to install the app:
 **Only select repositories**
    The repositories you choose. Add or remove repositories later, see below.
 
-Private repositories are never shown on the site.
+A private repository is shown only in private projects, to their people, see
+:ref:`private-repositories`.
 
 The ways to install it
 ======================
@@ -64,9 +66,11 @@ from the webhooks of the installation, and at every start of the site from
 GitHub (``manage.py check_installations``). When a new version of the site
 needs a permission that an installation lacks:
 
-- the people who installed or changed the installation get an email, once for
-  each set of missing permissions, in their language, with the link to accept
-  them. They switch these emails off on their page *Account*;
+- the people who installed or changed the installation, and the writers and
+  owners of the projects with a repository of it, get an email, once for each
+  set of missing permissions, in their language, with the link to the page on
+  GitHub where the permissions are accepted. They switch these emails off on
+  their page *Account*;
 - their page *Account* lists the installation as *needs more permissions*, with
   the missing permissions and the button *Accept the permissions on GitHub*.
 

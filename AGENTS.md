@@ -37,15 +37,21 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - No inline JavaScript in templates; small static scripts in `static/` may enhance a
   page. Every page works without JavaScript.
 - All pages are public, except those based on private information: the
-  account, the preferences, the email addresses and the webhook deliveries.
-  Private repositories are never shown.
+  account, the preferences, the email addresses, the webhook deliveries and
+  private projects. A private repository is only in private projects and only
+  their people see it; it is added only through the GitHub App installed on it,
+  by a person who may read it (`RepositoryLookup`). Who may do what in a project
+  is decided in one place, `ProjectAccess`.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
-- The site keeps no data of GitHub for now (no models that track or query the
-  GitHub API) and writes nothing to GitHub; numbers and automation are separate
-  functionality, designed later. The one exception: the installations of the
-  GitHub App with their permissions (`Installation`), so that people are told
-  when an installation needs more.
+- Of GitHub, the site keeps the installations of the GitHub App with their
+  permissions (`Installation`) and the repositories of the projects with what
+  it read of them (`Repository`). It reads GitHub in the background only
+  (`UpdateQueue`, run by `UpdateWorker`), never while a page waits, except to
+  find what a person adds. It writes nothing to GitHub yet; the app may write
+  labels and a comment on pull requests for the automation, designed later.
+- Every flow of people (signing in, creating a project, ...) has a browser test
+  in `tests/browser/`. The browser reaches nothing but the site.
 - Every setting that can be set is in `.env.example`, with its description (a `##` line
   directly above it) and its default, in the sections of the file; and in
   `docs/reference/settings.rst`. `tests/test_settings.py` checks both.

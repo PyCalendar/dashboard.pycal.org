@@ -5,12 +5,16 @@ Register the GitHub App and the OAuth app
 The site has two apps on GitHub with different jobs:
 
 The GitHub App
-   Installed on the repositories, it receives their webhooks. It only reads:
-   the site writes nothing to GitHub. It records the installations with their
+   Installed on the repositories, it receives their webhooks and reads the
+   repositories of the projects. It may write labels and a comment on pull
+   requests, for the automation that is designed next; until then the site
+   writes nothing to GitHub. It records the installations with their
    permissions, see :ref:`new-permissions`.
 The OAuth app
-   Only signs people in. GitHub tells the site who they are and their email
-   addresses, read only, and never asks to let the site act on their behalf.
+   Signs people in. GitHub tells the site who they are, their email addresses
+   and their organizations, read only, and never asks to let the site act on
+   their behalf. The site keeps the token to list the organizations and
+   repositories that people add to projects.
 
 The people who run the site register both through the pages of the site. The
 banner *This site has no GitHub App yet* and the page of an error of a missing

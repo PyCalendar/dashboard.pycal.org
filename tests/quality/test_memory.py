@@ -14,7 +14,16 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # loaded only when the site speaks with GitHub or reads the licenses itself
 HEAVY = ["httpx", "jwt", "cryptography", "reuse", "piplicenses"]
-PAGES = ["/health/", "/", "/about/", "/licenses/", "/accounts/login/", "/about.json"]
+PAGES = [
+    "/health/",
+    "/",
+    "/about/",
+    "/licenses/",
+    "/accounts/login/",
+    "/about.json",
+    "/projects/",
+    "/projects.json",
+]
 
 SERVE = """
 import json, sys

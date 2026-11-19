@@ -1,4 +1,7 @@
-"""The sign-in: a trigger of the log; the people of ``SITE_ADMINS`` get the Django admin."""
+"""The sign-in: a trigger of the log, the GitHub name in the profile, the Django admin.
+
+The people of ``SITE_ADMINS`` get the Django admin.
+"""
 
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
@@ -9,7 +12,7 @@ from .services.identity import GitHubIdentity
 
 @receiver(user_logged_in)
 def admin_rights(sender, request, user, **kwargs):
-    """Log the sign-in; give or take the rights of the Django admin, as ``SITE_ADMINS`` says.
+    """Log the sign-in; keep the GitHub name; give or take the rights of the Django admin.
 
     Args:
         sender: The class of the user.
@@ -20,4 +23,5 @@ def admin_rights(sender, request, user, **kwargs):
     identity = GitHubIdentity.of(user)
     login = identity.login if identity else user.username
     with Trigger.start("sign-in", f"@{login} signed in", actor_login=login):
+        GitHubIdentity.keep_profile(user)
         GitHubIdentity.keep_rights(user)

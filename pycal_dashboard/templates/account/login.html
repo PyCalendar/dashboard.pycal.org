@@ -5,7 +5,7 @@
 <div class="card narrow">
   <h1>{% translate "Sign in with GitHub" %}</h1>
   {% if sign_in_configured %}
-  <p>{% translate "GitHub tells this site who you are and your email addresses. There are no passwords on this site. Every page is public; signing in adds your account and your preferences." %}</p>
+  <p>{% translate "GitHub tells this site who you are, your email addresses and your organizations; it only reads. There are no passwords on this site. Signing in adds your account, your preferences and your projects." %}</p>
   <form method="post" action="{% provider_login_url 'github' %}">
     {% csrf_token %}
     {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}

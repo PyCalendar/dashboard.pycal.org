@@ -2,21 +2,22 @@
 Use the dashboard
 =================
 
-The dashboard will guide the contributor community of PyCalendar. Its numbers
-and its automation are designed next, as separate functionality. Until then
-the site:
+The dashboard guides the contributor community of PyCalendar. Its automation
+is designed next. The site:
 
+- lists projects, sets of repositories with their open issues and pull
+  requests, which people create and share, see :doc:`projects`,
 - signs people in with GitHub, with an account page for the preferences and
   the email addresses, see :doc:`account`,
 - lets people install its GitHub App on repositories, see
   :doc:`/how-to/install-app`,
-- receives the webhooks of the app and logs them for the administrators. Of
-  GitHub, it keeps only the installations of the app with their permissions,
-  and tells people when their installation needs more. It writes nothing to
-  GitHub.
+- receives the webhooks of the app and logs them for the administrators, and
+  tells people when an installation needs more permissions. It writes nothing
+  to GitHub yet.
 
-Every page is public, except the account, the preferences, the email addresses
-and the webhook deliveries.
+Every page is public, except the account, the preferences, the email
+addresses, the webhook deliveries, and the private projects, which only their
+people see.
 
 The start page
 ==============

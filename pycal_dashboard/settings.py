@@ -145,7 +145,8 @@ ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["username*"]
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = False  # a button with POST: no sign in by a link of another site
-SOCIALACCOUNT_STORE_TOKENS = False  # the site only reads who signed in
+# the token reads the organizations and repositories of a person who adds them to a project
+SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_QUERY_EMAIL = True  # the verified addresses of GitHub
 # People sign in with a separate OAuth app (GITHUB_OAUTH_CLIENT_ID, pycal_dashboard/sign_in.py),
 # entered on /setup/oauth-app/ or set here; without it nobody can sign in.

@@ -46,9 +46,12 @@ class SignIn:
         """``SOCIALACCOUNT_PROVIDERS`` of allauth with this OAuth app.
 
         Returns:
-            The settings of the provider ``github``: the identity and the email addresses.
+            The settings of the provider ``github``: the identity, the email addresses and the
+            organizations.
         """
-        github: dict = {"SCOPE": ["user:email"]}  # the identity and the email addresses, read only
+        # read only: the identity, the email addresses and the organizations of the person, whose
+        # repositories they add to projects
+        github: dict = {"SCOPE": ["user:email", "read:org"]}
         if self.configured:
             github["APP"] = {"client_id": self.client_id, "secret": self.secret}
         return {"github": github}

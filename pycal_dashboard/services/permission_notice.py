@@ -9,7 +9,7 @@ from django.utils import translation
 
 from pycal_dashboard.actions import EmailSent
 from pycal_dashboard.github.permissions import describe
-from pycal_dashboard.models import Installation
+from pycal_dashboard.models import Installation, ProjectMember
 
 from .email_addresses import recipients
 
@@ -26,6 +26,23 @@ class PermissionNotice:
             installation: The installation, with the permissions that GitHub last told.
         """
         self.installation = installation
+
+    def github_ids(self) -> list[int]:
+        """The people who are told about the installation.
+
+        They are those who installed or changed it, and the writers and owners of the projects
+        with a repository it is installed on.
+
+        Returns:
+            Their GitHub ids.
+        """
+        found = {int(i) for i in self.installation.admin_github_ids}
+        members = ProjectMember.objects.filter(
+            project__repositories__installation=self.installation,
+            role__in=[ProjectMember.WRITE, ProjectMember.OWNER],
+        ).values_list("user__profile__github_id", flat=True)
+        found |= {int(i) for i in members if i}
+        return sorted(found)
 
     def send_if_needed(self) -> int:
         """Email the people of the installation if it lacks permissions nobody was told about.
@@ -46,7 +63,7 @@ class PermissionNotice:
             return 0
         if installation.permissions_notified == described:
             return 0
-        people = recipients(installation.admin_github_ids, "email_permissions")
+        people = recipients(self.github_ids(), "email_permissions")
         if not people:
             log.warning("%s lacks %s and nobody gets an email", installation, described)
             return 0

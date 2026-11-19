@@ -183,3 +183,20 @@ pre.code { white-space: pre-wrap; background: var(--surface-tint); padding: .75r
 .log > li > p { margin: 0 0 .25rem; }
 .addresses li { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .addresses .address { overflow-wrap: anywhere; font-weight: 600; }
+
+/* projects: tabs of a project, the progress of an update, the forms */
+.tabs { display: flex; flex-wrap: wrap; gap: .25rem 1rem; list-style: none; padding: 0; margin: 0 0 1rem; border-bottom: 1px solid var(--border); }
+.tabs a { display: inline-block; padding: .4rem 0; text-decoration: none; }
+.tabs a[aria-current="page"] { font-weight: 700; color: var(--text); border-bottom: .2rem solid var(--accent); }
+.heading-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
+.heading-row h1 { margin: .5rem 0; }
+.progress { width: 100%; max-width: 32rem; height: 1rem; accent-color: var(--primary); }
+.project-list { list-style: none; padding: 0; margin: 0; }
+.project-list li { padding: .75rem 0; border-bottom: 1px solid var(--border); }
+.project-list h2 { font-size: 1.15rem; margin: 0 0 .25rem; }
+.project-list p { margin: .2rem 0; }
+form.stacked textarea { width: 100%; max-width: 40rem; box-sizing: border-box; font: inherit; padding: .35rem .5rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--surface); color: var(--text); }
+form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
+.numeric { text-align: right; white-space: nowrap; }
+.choices { list-style: none; padding: 0; columns: 18rem; }
+.choices li { margin: .2rem 0; break-inside: avoid; }

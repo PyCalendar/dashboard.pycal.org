@@ -1,0 +1,25 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "People" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card"><h2>{% translate "People of the project" %} {% translate "Roles in a project" as help %}{% help_link links.project_roles help %}</h2>
+<div class="table-wrap"><table class="table" data-members>
+  <thead><tr><th>{% translate "GitHub name" %}</th><th>{% translate "Role" %}</th>{% if access.is_owner %}<th></th>{% endif %}</tr></thead>
+  <tbody>{% for member in members %}<tr data-member="{{ member.user.profile.github_name|default:member.user.username }}">
+    <td><a href="https://github.com/{{ member.user.profile.github_name|default:member.user.username }}">@{{ member.user.profile.github_name|default:member.user.username }}</a></td>
+    <td>{% if access.is_owner %}<form method="post" class="inline">{% csrf_token %}<input type="hidden" name="github_name" value="{{ member.user.profile.github_name|default:member.user.username }}"><select name="role" aria-label="{% translate "Role" %}">{% for value, title in roles %}<option value="{{ value }}"{% if member.role == value %} selected{% endif %}>{{ title }}</option>{% endfor %}</select> <button class="button button-quiet button-small">{% translate "Change" %}</button></form>
+      {% else %}{% for value, title in roles %}{% if member.role == value %}{{ title }}{% endif %}{% endfor %}{% endif %}</td>
+    {% if access.is_owner %}<td><form method="post" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="remove" value="{{ member.pk }}">{% translate "Remove" %}</button></form></td>{% endif %}
+  </tr>{% endfor %}</tbody>
+</table></div>
+</section>
+{% if access.is_owner %}<section class="card"><h2>{% translate "Share the project" %}</h2>
+<form method="post" class="inline-form" data-share>{% csrf_token %}
+  <label for="github_name">{% translate "GitHub name" %}</label><input id="github_name" name="github_name" placeholder="octocat" required>
+  <label for="role">{% translate "Role" %}</label><select id="role" name="role">{% for value, title in roles %}<option value="{{ value }}">{{ title }}</option>{% endfor %}</select>
+  <button class="button">{% translate "Share" %}</button>
+</form>
+<p class="muted">{% translate "The person signs in to the site with GitHub once before. Read: sees the project, also a private one. Change: also changes and updates it. Own: also shares it, makes it public or private and deletes it." %}</p>
+</section>{% else %}<p class="muted">{% translate "The owners of the project share it." %}</p>{% endif %}
+{% endblock %}

@@ -9,13 +9,17 @@ Sign in
 =======
 
 1. Press **Sign in with GitHub** at the top.
-2. GitHub asks whether the dashboard may know who you are and read your email
-   addresses. Accept.
+2. GitHub asks whether the dashboard may know who you are, read your email
+   addresses and your organizations. Accept.
 3. You return to the site.
 
 There are no passwords on the dashboard. The site signs people in with an
-OAuth app: it stores no token of yours and never writes anything to GitHub on
-your behalf.
+OAuth app. It keeps your **GitHub name**, your handle on GitHub, which the page
+*Account* shows and by which owners share projects with you; it is updated at
+every sign in. It keeps the token that GitHub gives it, which only reads: it
+lists your organizations and their repositories when you add repositories to
+a project, see :doc:`projects`. It never writes anything to GitHub on your
+behalf.
 
 The page Account
 ================

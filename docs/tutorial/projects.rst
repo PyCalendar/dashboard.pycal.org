@@ -1,0 +1,150 @@
+========
+Projects
+========
+
+A project is a set of repositories on GitHub that people look at together,
+such as the repositories of the Python Calendaring Ecosystem. Its page shows
+how many issues and pull requests are open.
+
+The page *Projects*, in the menu at the top, lists every public project, and
+the private projects you have a role in.
+
+Create a project
+================
+
+Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
+
+- the **name**, such as *icalendar*,
+- the **description**: what the project is about,
+- **who sees it**: public, for everybody, or private, only for its people.
+
+You own the project you create. Next, the site asks for its repositories.
+
+.. _add-repositories:
+
+Add repositories
+================
+
+On the tab *Repositories* of the project, add repositories in one of three
+ways:
+
+By name
+   Type ``owner/name``, such as ``collective/icalendar``, or paste a link to
+   the repository. While you type, the field proposes the repositories that the
+   site knows and those of all of GitHub. Without JavaScript, it proposes those
+   the site knows.
+From an account
+   Choose yourself or one of your organizations and press *Show its
+   repositories*, then tick the repositories and press *Add the chosen
+   repositories*.
+Search
+   Search all of GitHub by name and tick the repositories you want.
+
+A repository can be in several projects. To list your organizations, the site
+reads them with the token that GitHub gave it when you signed in (the scope
+``read:org``, read only). If the site has no token of yours, it says so: sign
+out and sign in again.
+
+.. _private-repositories:
+
+Private repositories
+====================
+
+A private repository can be added only
+
+- to a private project, and
+- if the GitHub App is installed on it, and
+- if you may read it on GitHub.
+
+The site finds it through its GitHub App: type its name. It never asks your
+GitHub account for access to private repositories. A project with private
+repositories cannot be made public. Only the people of the project see them;
+if a repository of a public project becomes private, the visitors no longer
+see it.
+
+Install the GitHub App
+======================
+
+After adding repositories, the tab *Repositories* says on which of them the
+GitHub App is installed. Installed, the app lets the site
+
+- receive the webhooks of the changes in the repositories,
+- add and remove labels of pull requests,
+- create and update a comment of the site on a pull request.
+
+:doc:`/reference/permissions` lists the permissions it asks for and why. An
+owner of the account of a repository installs it with **Install the GitHub
+App**, see :doc:`/how-to/install-app`.
+
+When a new version of the site needs more permissions, the writers and owners
+of the projects with a repository of the installation get an email with the
+link to the page on GitHub where the permissions are accepted, see
+:ref:`new-permissions`.
+
+The overview and the update
+===========================
+
+The overview of a project shows the number of open issues and open pull
+requests of all its repositories and of each one, and when it was last
+updated, in your time zone.
+
+**Update** reads the repositories from GitHub in the background. A progress bar
+shows how many are read; the page reloads itself until the update ends. The
+project is *up to date* when every repository was read in the last day without
+an error. A repository that could not be read shows why.
+
+The site reads a repository with the token of the GitHub App when the app is
+installed on it, else without a token, which works for public repositories.
+
+.. _project-roles:
+
+Roles in a project
+==================
+
+On the tab *People*, the owners share the project with other people by their
+GitHub name, the name of their account on GitHub. The person must have signed
+in to the site once.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Action
+     - Visitor
+     - Read
+     - Change
+     - Own
+   * - See a public project
+     - yes
+     - yes
+     - yes
+     - yes
+   * - See a private project and private repositories
+     - no
+     - yes
+     - yes
+     - yes
+   * - Change the name, the description and the repositories
+     - no
+     - no
+     - yes
+     - yes
+   * - Update it from GitHub
+     - no
+     - no
+     - yes
+     - yes
+   * - Share it, make it public or private, delete it
+     - no
+     - no
+     - no
+     - yes
+
+A project always has an owner: give another person the role *own* before you
+give up yours. The administrators of the site (``SITE_ADMINS``) have the rights
+of an owner in every project.
+
+The JSON
+========
+
+Public projects have their JSON, such as ``/projects.json`` and
+``/projects/icalendar.json``, see :doc:`/reference/json`.

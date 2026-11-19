@@ -4,7 +4,7 @@ from allauth.account import views as account_views
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import account, oauth_app, pages, registration, setup, webhook
+from .views import account, oauth_app, pages, projects, registration, setup, webhook
 
 urlpatterns = [
     path("", pages.home, name="home"),
@@ -16,6 +16,18 @@ urlpatterns = [
     path("theme/", pages.theme, name="theme"),
     path("language/", pages.language, name="set_language"),
     path("favicon.ico", pages.favicon, name="favicon"),
+    path("projects/", projects.projects, name="projects"),
+    path("projects/new/", projects.project_new, name="project_new"),
+    path("projects/<slug:slug>/", projects.project, name="project"),
+    path("projects/<slug:slug>/update/", projects.project_update, name="project_update"),
+    path("projects/<slug:slug>/settings/", projects.project_edit, name="project_edit"),
+    path(
+        "projects/<slug:slug>/repositories/",
+        projects.project_repositories,
+        name="project_repositories",
+    ),
+    path("projects/<slug:slug>/people/", projects.project_people, name="project_people"),
+    path("repositories/complete/", projects.repository_complete, name="repository_complete"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
     path("logs/", account.logs, name="logs"),

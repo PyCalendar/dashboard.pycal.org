@@ -41,7 +41,7 @@ def test_enter_the_oauth_app(no_oauth_app, client, db):
     assert saved["GITHUB_OAUTH_CLIENT_ID"] == CLIENT_ID
     assert settings.SIGN_IN == SignIn(CLIENT_ID, SECRET)
     assert settings.SOCIALACCOUNT_PROVIDERS["github"]["APP"]["client_id"] == CLIENT_ID
-    assert settings.SOCIALACCOUNT_PROVIDERS["github"]["SCOPE"] == ["user:email"]
+    assert settings.SOCIALACCOUNT_PROVIDERS["github"]["SCOPE"] == ["user:email", "read:org"]
     assert b"Sign in with GitHub</button>" in client.get("/accounts/login/").content
 
 

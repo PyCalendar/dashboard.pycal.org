@@ -108,3 +108,13 @@ def test_choose_the_language_and_the_colors_in_the_account(signed_in, site):
     expect(page.locator("html")).to_have_attribute("lang", "de")
     expect(page.locator("html")).to_have_attribute("data-theme", "dark")
     expect(page.locator("body")).to_have_css("background-color", "rgb(17, 24, 32)")
+
+
+def test_the_browser_reaches_nothing_but_the_site(page, site):
+    """Also without the routes, and for redirects that they miss, nothing leaves the machine."""
+    import pytest
+    from playwright.sync_api import Error
+
+    page.context.unroute_all()
+    with pytest.raises(Error):
+        page.goto("https://github.com/login", timeout=5000)

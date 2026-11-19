@@ -147,9 +147,39 @@ community: where to start, what waits for a review, who contributes.
 - [x] Seen in community-insights: some imports inside functions there (of its own modules, to
       avoid cycles) are outside heavy.LOCK; not changed there
 
+## 2026-11-19: projects
+
+- [x] The page Projects lists all public projects (and the private ones of the person), linked in
+      the menu like on sign.pycal.org
+- [x] The GitHub name: the handle on GitHub, kept in the profile at every sign in (Profile.github_name,
+      a name of one platform, so that GitLab can follow)
+- [x] People create several projects; projects are shared with roles read, write (change) and own;
+      the permissions of each action and the scope of private repositories are in ProjectAccess and
+      documented (tutorial/projects.rst#project-roles)
+- [x] A project is a set of repositories (many to many); "+ Create a project" needs a sign in; name
+      and description
+- [x] Add repositories: from an organization of the person (or their own account), by choosing the
+      repositories, and by typing with proposals of the repositories the site knows and of all of
+      GitHub (static script; without JavaScript: the known ones and a search)
+- [x] Next step: install the app on the repositories, for the webhooks, the labels of pull requests
+      and the comment of the site; permissions issues:read, pull_requests:write; documented and linked
+      to DOCS_URL (localhost in development)
+- [x] The emails about missing permissions also go to the writers and owners of projects with a
+      repository of the installation; they link to the page on GitHub where the permissions are accepted
+- [x] Browser tests for the flows: sign in (through the OAuth flow, fake GitHub), create a project
+      (add repositories, install step, update), share a project
+- [x] Fetching happens in the background: UpdateQueue, run by a thread (UpdateWorker) that starts with
+      a job and ends with the queue; a stuck job is taken again
+- [x] The overview of a project: Update button, progress bar, up to date or not, last updated, open
+      issues and open pull requests
+- [x] Translations into German and Spanish, done in parallel
+- [x] Found on the way: the browser could leave the machine on a redirect (a request reached
+      github.com); a proxy now stops everything but the site
+
 ## Open: decisions of the person
 
-- [ ] Design of the automation (labels, comments ...): the site writes nothing to GitHub for now
+- [ ] Design of the automation (labels, comments ...): the app asks for the permissions; the site
+      writes nothing to GitHub yet
 - [ ] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
       secret SENCHO_TOKEN; until then the jobs Deploy to Sencho and Check the live site fail
 - [ ] DNS: docs.dashboard.pycal.org needs a CNAME to pycalendar.github.io

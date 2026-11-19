@@ -1,0 +1,61 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help static %}
+{% block title %}{% translate "Repositories" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}<script src="{% static 'repository-complete.js' %}" defer></script>{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card" id="repositories"><h2>{% translate "Repositories of the project" %}</h2>
+{% if repositories %}<ul class="list" data-project-repositories>{% for repository in repositories %}<li data-repository="{{ repository.full_name }}">
+  <a href="{{ repository.url }}">{{ repository.full_name }}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
+  {% if repository.app_installed %}{% if repository.installation.missing_permissions %}<span class="badge badge-warning">{% translate "the app needs more permissions" %}</span> <a href="{{ repository.installation.settings_url }}">{% translate "Accept the permissions on GitHub" %}</a>{% else %}<span class="badge badge-success" data-app-installed>{% translate "app installed" %}</span>{% endif %}{% else %}<span class="badge badge-warning" data-app-missing>{% translate "app not installed" %}</span>{% endif %}
+  <form method="post" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="remove" value="{{ repository.pk }}">{% translate "Remove" %}</button></form></li>{% endfor %}</ul>
+{% else %}<p data-no-repositories>{% translate "No repositories yet: add them below." %}</p>{% endif %}
+</section>
+{% if repositories %}<section class="card" id="install" data-install-step><h2>{% translate "Install the GitHub App" %} {% translate "Permissions of the GitHub App" as help %}{% help_link links.permissions help %}</h2>
+  <p>{% translate "The GitHub App, installed on the repositories, lets the site:" %}</p>
+  <ul class="list">
+    <li>{% translate "receive the webhooks of the changes in the repositories," %}</li>
+    <li>{% translate "add and remove labels of pull requests," %}</li>
+    <li>{% translate "create and update a comment of the site on a pull request." %}</li>
+  </ul>
+  <p><a href="{{ links.permissions }}">{% translate "The permissions it asks for and why" %}</a></p>
+  {% if without_app %}<p>{% blocktranslate count counter=without_app|length %}{{ counter }} repository has no GitHub App yet.{% plural %}{{ counter }} repositories have no GitHub App yet.{% endblocktranslate %} {% translate "An owner of their account installs it." %}</p>
+  {% if install_url %}<p><a class="button" href="{{ install_url }}" data-install-link>{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>{% endif %}
+  <p class="muted">{% translate "After installing, update the project to see the change." %}</p>
+  {% else %}<p data-all-installed>{% translate "The app is installed on every repository of the project." %}</p>{% endif %}
+</section>{% endif %}
+<section class="card" id="add"><h2>{% translate "Add repositories" %} {% translate "Add repositories" as help %}{% help_link links.add_repositories help %}</h2>
+  {% if github_error %}<p class="message message-error" data-github-error>{{ github_error.title }}: {{ github_error }} {% help_link github_error.docs_url github_error.title %}</p>{% endif %}
+  <h3>{% translate "By name" %}</h3>
+  <form method="post" class="inline-form" data-add-by-name>{% csrf_token %}
+    <label for="repository">{% translate "Repository" %}</label>
+    <input id="repository" name="repository" list="repository-choices" placeholder="collective/icalendar" autocomplete="off" data-complete="{% url 'repository_complete' %}">
+    <datalist id="repository-choices">{% for name in known %}<option value="{{ name }}">{% endfor %}</datalist>
+    <button class="button">{% translate "Add" %}</button>
+  </form>
+  <p class="muted">{% translate "Type owner/name or paste a link. While you type, the field proposes the repositories that the site knows and those of GitHub." %}</p>
+  <h3>{% translate "From an account" %}</h3>
+  <form method="get" action="#add" class="inline-form" data-choose-owner>
+    <label for="owner">{% translate "Organization or account" %}</label>
+    <select id="owner" name="owner">{% for name in owners %}<option value="{{ name }}"{% if name == owner %} selected{% endif %}>{{ name }}</option>{% endfor %}</select>
+    <button class="button button-quiet">{% translate "Show its repositories" %}</button>
+  </form>
+  {% if owner %}<form method="post" data-owner-repositories>{% csrf_token %}
+    {% if listed %}<ul class="choices">{% for repository in listed %}<li><label class="check"><input type="checkbox" name="repository" value="{{ repository.full_name }}"> {{ repository.name }}</label>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}</li>{% endfor %}</ul>
+    <p><button class="button">{% translate "Add the chosen repositories" %}</button></p>
+    {% else %}<p class="muted">{% translate "No repositories that you may see." %}</p>{% endif %}
+  </form>{% endif %}
+  <h3>{% translate "Search" %}</h3>
+  <form method="get" action="#add" class="inline-form" data-search>
+    <label for="search">{% translate "Name" %}</label><input id="search" name="search" value="{{ search }}">
+    <button class="button button-quiet">{% translate "Search" %}</button>
+  </form>
+  {% if search %}<form method="post" data-search-results>{% csrf_token %}
+    {% if found %}<ul class="choices">{% for name in found %}<li><label class="check"><input type="checkbox" name="repository" value="{{ name }}"> {{ name }}</label></li>{% endfor %}</ul>
+    <p><button class="button">{% translate "Add the chosen repositories" %}</button></p>
+    {% else %}<p class="muted">{% translate "Nothing found." %}</p>{% endif %}
+  </form>{% endif %}
+  <p class="muted">{% translate "A private repository is added by its name. It needs a private project, the GitHub App installed on it and your access to it." %} {% translate "Private repositories" as help %}{% help_link links.private_repositories help %}</p>
+</section>
+<p><a class="button" href="{% url 'project' project.slug %}" data-to-overview>{% translate "Go to the overview" %}</a></p>
+{% endblock %}

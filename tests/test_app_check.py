@@ -20,10 +20,10 @@ def test_the_app_lacks_permissions_and_events(github):
     github.app["permissions"] = {"metadata": "read"}
     github.app["events"] = ["issues"]
     check = AppCheck.read()
-    assert check.missing_permissions == {"issues": "read", "pull_requests": "read"}
+    assert check.missing_permissions == {"issues": "read", "pull_requests": "write"}
     assert "repository" in check.missing_events and not check.complete
     assert check.describe() == (
-        "The GitHub App lacks the permissions issues: read, pull_requests: read and does not "
+        "The GitHub App lacks the permissions issues: read, pull_requests: write and does not "
         "receive the events issue_comment, pull_request, pull_request_review, repository: "
         "change them on https://github.com/organizations/PyCalendar/settings/apps/"
         "dashboard-test/permissions"

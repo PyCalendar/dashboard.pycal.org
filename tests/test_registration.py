@@ -129,15 +129,14 @@ def test_setup_code_command(no_app, db, capsys):
 def test_manifest_command(capsys):
     call_command("app_manifest")
     output = capsys.readouterr().out
-    assert '"pull_requests": "read"' in output and "email_addresses" not in output
+    assert '"pull_requests": "write"' in output and "email_addresses" not in output
 
 
 def test_every_account_may_install_the_app():
     assert manifest("dashboard", "https://dashboard.example.org")["public"] is True
 
 
-def test_the_app_only_reads():
-    """The site writes nothing to GitHub for now: the app asks for no write permission."""
+def test_the_app_writes_only_to_pull_requests():
+    """Labels and the comment of the site on pull requests; everything else is read."""
     permissions = manifest("dashboard", "https://dashboard.example.org")["default_permissions"]
-    assert permissions["pull_requests"] == "read"
-    assert set(permissions.values()) == {"read"}
+    assert permissions == {"metadata": "read", "issues": "read", "pull_requests": "write"}

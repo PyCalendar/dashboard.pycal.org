@@ -22,11 +22,17 @@ Every public page has its information as JSON at the address of the page with
      - ``/licenses.json``: ``license`` of the project, the ``licenses`` in
        ``LICENSES/``, the code from other projects (``reused``) and the Python
        ``packages``
+   * - ``/projects/``
+     - ``/projects.json``: the public ``projects``, each with its ``name``,
+       ``slug``, ``description``, ``url`` and public ``repositories``
+   * - ``/projects/<slug>/``
+     - ``/projects/<slug>.json``: a public project with its ``open_issues``,
+       ``open_pull_requests``, when it was ``updated``, and its
+       ``repositories`` with their numbers
 
 The JSON holds what a visitor who is not signed in sees, also when the request
 carries the cookie of a session. Pages for signed-in people, such as
-``/account/``, have no JSON. The site keeps no data of GitHub yet; the pages of
-the numbers come with their JSON later.
+``/account/``, have no JSON. Private projects have none.
 
 Read it from other sites
 ========================

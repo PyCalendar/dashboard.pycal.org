@@ -10,7 +10,7 @@
 {% blocktranslate %}What the permissions are for:{% endblocktranslate %}
 {{ docs_url }}reference/permissions.html
 
-{% blocktranslate %}You get this email because you installed or changed the app on this account. Switch these emails off on your account:{% endblocktranslate %}
+{% blocktranslate %}You get this email because you installed or changed the app on this account, or because you change a project with a repository it is installed on. Switch these emails off on your account:{% endblocktranslate %}
 {{ site_url }}/account/
 --
 {{ site_name }}{% endautoescape %}

@@ -18,11 +18,12 @@ The dashboard will put the organization on one page and guide the community:
 Step by step
 ============
 
-The numbers and the automation are separate functionality, designed later.
-For now the site is the frame: it signs people in, receives the webhooks of its
-GitHub App and logs them. Of GitHub, it keeps only the installations of its
-app with their permissions, to tell people when an installation needs more, and
-it writes nothing to GitHub.
+The first numbers are those of the projects: the open issues and pull
+requests of their repositories. The automation is designed next. The site
+signs people in, receives the webhooks of its GitHub App and logs them. Of
+GitHub, it keeps the installations of its app with their permissions, to tell
+people when an installation needs more, and the repositories of the projects
+with what it read of them. It writes nothing to GitHub yet.
 
 `community-insights <https://community-insights.readthedocs.io/>`_ measures
 response times in depth; the dashboard is the daily start page. It looks like
@@ -37,13 +38,15 @@ Every page is public, except pages based on private information:
 - the page *Account* with the preferences and the email addresses, only for
   the person,
 - the webhook deliveries, only for the administrators, because they may name
-  private repositories.
+  private repositories,
+- private projects, only for their people, see :ref:`project-roles`.
 
-Private repositories are never shown. Of GitHub, the site keeps only the
-installations of its app: the account, the permissions and events, and the
-people who installed or changed it, who see it on their page *Account*. The
-log of the webhooks keeps only the event, the action and the name of the
-repository, for the administrators.
+A private repository is shown only in private projects, to their people. Of
+GitHub, the site keeps the installations of its app (the account, the
+permissions and events, and the people who installed or changed it, who see it
+on their page *Account*) and the repositories of the projects with their
+numbers. The log of the webhooks keeps only the event, the action and the name
+of the repository, for the administrators.
 
 Signing in
 ==========

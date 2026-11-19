@@ -40,7 +40,7 @@ def test_the_start_page_without_apps(client, settings):
 def test_the_about_and_licenses(client):
     about = read(client, "/about.json")
     assert (
-        about["build"]["version"] and about["github_app"]["permissions"]["pull_requests"] == "read"
+        about["build"]["version"] and about["github_app"]["permissions"]["pull_requests"] == "write"
     )
     licenses = read(client, "/licenses.json")
     assert licenses["license"] == "AGPL-3.0-or-later" and licenses["packages"]

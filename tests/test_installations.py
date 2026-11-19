@@ -51,7 +51,7 @@ def test_an_installation_is_recorded(client, alice_with_email):
 def test_missing_permissions_are_told_once(client, alice_with_email):
     done = webhook(client, "created", installation({"metadata": "read"}))
     assert done["done"] == (
-        "recorded the installation on PyCalendar; it lacks issues:read, pull_requests:read; 1 email"
+        "recorded the installation on PyCalendar; it lacks issues:read, pull_requests:write; 1 email"
     )
     (message,) = mail.outbox
     assert message.to == ["alice@example.org"]

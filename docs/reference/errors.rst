@@ -44,6 +44,13 @@ Pages and API
    :members:
    :show-inheritance:
 
+Projects
+========
+
+.. automodule:: pycal_dashboard.errors.projects
+   :members:
+   :show-inheritance:
+
 Account
 =======
 

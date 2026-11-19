@@ -1,0 +1,38 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help times %}
+{% block title %}{{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}{% if status.updating %}<meta http-equiv="refresh" content="3">{% endif %}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+{% if project.description %}<p class="lead">{{ project.description|linebreaksbr }}</p>{% endif %}
+<ul class="stats-tiles" data-totals>
+  <li data-open-issues><strong>{% if open_issues is None %}–{% else %}{{ open_issues }}{% endif %}</strong>{% translate "open issues" %}</li>
+  <li data-open-pull-requests><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</li>
+  <li><strong>{{ repositories|length }}</strong>{% translate "repositories" %}</li>
+</ul>
+<section class="card" data-status="{{ status.state }}">
+  {% if status.updating %}
+  <h2>{% translate "Updating" %}</h2>
+  <progress class="progress" max="100" value="{{ status.job.percent }}" aria-label="{% translate "Repositories read from GitHub" %}" data-progress>{{ status.job.percent }}%</progress>
+  <p class="muted">{% blocktranslate with done=status.job.done total=status.job.total %}{{ done }} of {{ total }} repositories read from GitHub. The page reloads itself.{% endblocktranslate %}</p>
+  {% elif status.up_to_date %}<h2><span class="badge badge-success">{% translate "Up to date" %}</span></h2>
+  {% elif status.state == 'never' %}<h2><span class="badge badge-warning">{% translate "Not read yet" %}</span></h2>
+  {% elif status.state == 'failed' %}<h2><span class="badge badge-error">{% translate "Some repositories could not be read" %}</span></h2>
+  {% else %}<h2><span class="badge badge-warning">{% translate "Out of date" %}</span></h2>{% endif %}
+  <p data-last-updated>{% translate "Last updated:" %} {% if project.updated %}{% when project.updated %}{% else %}{% translate "never" %}{% endif %}</p>
+  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
+  {% elif not access.can_write and not status.updating %}<p class="muted">{% translate "The writers and owners of the project update it." %}</p>{% endif %}
+</section>
+{% if repositories %}<div class="table-wrap"><table class="table" data-repositories>
+  <thead><tr><th>{% translate "Repository" %}</th><th class="numeric">{% translate "Open issues" %}</th><th class="numeric">{% translate "Open pull requests" %}</th><th>{% translate "Read" %}</th></tr></thead>
+  <tbody>{% for repository in repositories %}<tr data-repository="{{ repository.full_name }}">
+    <td><a href="{{ repository.url }}">{{ repository.full_name }}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
+      {% if repository.description %}<br><small class="muted">{{ repository.description|truncatechars:160 }}</small>{% endif %}
+      {% if repository.error_code %}<br><small class="badge badge-error" title="{{ repository.error_detail }}">{% translate "could not be read" %}</small> <small>{{ repository.error_detail }}</small>{% endif %}</td>
+    <td class="numeric">{% if repository.open_issues is None %}–{% else %}{{ repository.open_issues }}{% endif %}</td>
+    <td class="numeric">{% if repository.open_pull_requests is None %}–{% else %}{{ repository.open_pull_requests }}{% endif %}</td>
+    <td>{% if repository.updated %}{% when repository.updated %}{% else %}{% translate "never" %}{% endif %}</td>
+  </tr>{% endfor %}</tbody>
+</table></div>
+{% else %}<p data-no-repositories>{% translate "The project has no repositories yet." %}{% if access.can_write %} <a href="{% url 'project_repositories' project.slug %}">{% translate "Add repositories" %}</a>{% endif %}</p>{% endif %}
+{% endblock %}

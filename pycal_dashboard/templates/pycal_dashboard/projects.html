@@ -1,0 +1,17 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Projects" %} · {{ site_name }}{% endblock %}
+{% block main %}
+<div class="heading-row">
+  <h1>{% translate "Projects" %} {% translate "Projects" as help %}{% help_link links.projects help %}</h1>
+  <a class="button" href="{% url 'project_new' %}" data-create-project>+ {% translate "Create a project" %}</a>
+</div>
+<p class="muted">{% translate "A project is a set of repositories on GitHub. Open one to see its open issues and pull requests." %}</p>
+{% if projects %}<ul class="project-list" data-projects>{% for project in projects %}
+  <li data-project="{{ project.slug }}"><h2><a href="{% url 'project' project.slug %}">{{ project.name }}</a>{% if not project.public %} <span class="badge muted">{% translate "private" %}</span>{% endif %}</h2>
+    {% if project.description %}<p>{{ project.description|truncatechars:240 }}</p>{% endif %}
+    <p class="muted">{% blocktranslate count counter=project.repositories.all|length %}{{ counter }} repository{% plural %}{{ counter }} repositories{% endblocktranslate %}</p></li>
+{% endfor %}</ul>
+{% else %}<p data-no-projects>{% translate "No projects yet." %}</p>{% endif %}
+{% if not user.is_authenticated %}<p class="muted" data-private-hint>{% translate "Private projects are listed only for their people." %} <a href="{% url 'account_login' %}?next={{ request.path|urlencode }}">{% translate "Sign in" %}</a></p>{% endif %}
+{% endblock %}

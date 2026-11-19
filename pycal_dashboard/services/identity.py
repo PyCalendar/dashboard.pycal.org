@@ -33,6 +33,30 @@ class GitHubIdentity:
         data = account.extra_data or {}
         return cls(str(data.get("login") or user.username), account.uid, data.get("avatar_url", ""))
 
+    @classmethod
+    def keep_profile(cls, user):
+        """Keep the GitHub name and id of a person in their profile, as GitHub says now.
+
+        A person who renamed their account on GitHub gets the new name at the next sign in.
+
+        Args:
+            user: The user who signed in.
+
+        Returns:
+            The profile, None for accounts without GitHub.
+        """
+        identity = cls.of(user)
+        if identity is None:
+            return None
+        with IMPORT_GUARD:  # see import_guard.py
+            from pycal_dashboard.models import Profile
+
+        profile, _created = Profile.objects.get_or_create(user=user)
+        if (profile.github_name, profile.github_id) != (identity.login, identity.github_id):
+            profile.github_name, profile.github_id = identity.login, identity.github_id
+            profile.save(update_fields=["github_name", "github_id"])
+        return profile
+
     @staticmethod
     def is_site_admin(user) -> bool:
         """Whether a user administers the site: ``SITE_ADMINS`` or a superuser.

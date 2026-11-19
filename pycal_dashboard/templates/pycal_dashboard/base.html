@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="{% static 'style.css' %}">
 <style>{{ theme_css }}</style>
 <script src="{% static 'local-time.js' %}" defer></script>
+{% block head %}{% endblock %}
 </head>
 <body>
 <a class="skip" href="#main">{% translate "Skip to the content" %}</a>
@@ -17,6 +18,7 @@
     <a class="brand" href="{% url 'home' %}"><img src="{{ favicon_url }}" alt="" width="28" height="28"> {{ site_name }}</a>
     <nav aria-label="{% translate "Menu" %}">
       <ul class="menu">
+        <li><a href="{% url 'projects' %}"{% if nav == 'projects' or project %} aria-current="page"{% endif %}>{% translate "Projects" %}</a></li>
       {% if user.is_authenticated %}
         <li>{% include "pycal_dashboard/_account_menu.html" %}</li>
       {% else %}

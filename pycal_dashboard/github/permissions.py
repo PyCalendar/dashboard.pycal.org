@@ -5,9 +5,11 @@ The list is in docs/reference/permissions.rst (tests/test_permissions.py checks 
 
 # What the site needs from an installation.
 REQUIRED = {
-    "metadata": "read",  # the repositories of the installation
-    "issues": "read",  # the webhooks of issues and their comments
-    "pull_requests": "read",  # the webhooks of pull requests and their reviews
+    "metadata": "read",  # the repositories of the installation and who may read them
+    "issues": "read",  # the webhooks of issues and their comments, the open issues
+    # the webhooks of pull requests and their reviews; labels on pull requests, and a comment of
+    # the site on a pull request that it creates and updates
+    "pull_requests": "write",
 }
 # The app asks nothing of the people who use it: they sign in with the OAuth app.
 # The events the app receives. "installation" and "installation_repositories" come without

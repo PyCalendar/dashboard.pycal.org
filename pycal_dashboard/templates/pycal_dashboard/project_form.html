@@ -1,0 +1,23 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% if new %}{% translate "Create a project" %}{% else %}{% translate "Settings" %} · {{ project.name }}{% endif %} · {{ site_name }}{% endblock %}
+{% block main %}
+{% if new %}<h1>{% translate "Create a project" %} {% translate "Projects" as help %}{% help_link links.projects help %}</h1>
+<p class="muted">{% translate "Next, you add its repositories and install the GitHub App on them." %}</p>
+{% else %}{% include "pycal_dashboard/_project_tabs.html" %}{% endif %}
+<form method="post" class="stacked card" data-project-form>{% csrf_token %}
+  <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ form.name }}"></p>
+  <p><label for="description">{% translate "Description" %}</label><textarea id="description" name="description" rows="4">{{ form.description }}</textarea></p>
+  <fieldset{% if not new and not access.is_owner %} disabled{% endif %}><legend>{% translate "Who sees it" %}</legend>
+    <label class="check"><input type="radio" name="visibility" value="public"{% if form.public %} checked{% endif %}> {% translate "Public: everybody sees the project and its repositories" %}</label><br>
+    <label class="check"><input type="radio" name="visibility" value="private"{% if not form.public %} checked{% endif %}> {% translate "Private: only its people see it; it may contain private repositories" %}</label>
+    {% if not new and not access.is_owner %}<small>{% translate "Only the owners change it." %}</small>{% endif %}</fieldset>
+  <p><button class="button">{% if new %}{% translate "Create the project" %}{% else %}{% translate "Save" %}{% endif %}</button></p>
+</form>
+{% if not new and access.is_owner %}<form method="post" class="card" data-delete-project>{% csrf_token %}
+  <h2>{% translate "Delete the project" %}</h2>
+  <p>{% translate "Its repositories stay on GitHub and in other projects." %}</p>
+  <p><label class="check"><input type="checkbox" name="confirm" value="yes"> {% translate "Yes, delete this project" %}</label></p>
+  <p><button class="button" name="delete" value="yes">{% translate "Delete the project" %}</button></p>
+</form>{% endif %}
+{% endblock %}

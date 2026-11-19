@@ -7,13 +7,14 @@ contributor community of `PyCalendar <https://github.com/PyCalendar>`_, the
 Python Calendaring Ecosystem. It will answer three questions: where can I
 help, what waits for me, and who makes it happen.
 
-The numbers and the automation are designed next, as separate functionality.
-Until then the site signs people in with GitHub and receives the webhooks of
-its GitHub App, which people install on repositories. It keeps no data of
-GitHub and writes nothing to GitHub, such as labels or comments.
+People create projects, sets of repositories on GitHub, and see how many
+issues and pull requests are open, see :doc:`tutorial/projects`. The site signs
+people in with GitHub and receives the webhooks of its GitHub App, which people
+install on the repositories. The automation, such as labels and comments on
+pull requests, is designed next; until then the site writes nothing to GitHub.
 
-- **Contributors** read :doc:`tutorial/use`, and :doc:`tutorial/account` to
-  sign in.
+- **Contributors** read :doc:`tutorial/use`, :doc:`tutorial/projects`, and
+  :doc:`tutorial/account` to sign in.
 - **People who run the site** start the container, register the GitHub App
   and the OAuth app, and install the app: :doc:`how-to/run-docker`,
   :doc:`how-to/github-app` and :doc:`how-to/install-app`.
