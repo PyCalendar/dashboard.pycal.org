@@ -169,6 +169,7 @@ MODELS = {
         {
             "id",
             "project",
+            "repository",
             "requested_by",
             "status",
             "done",

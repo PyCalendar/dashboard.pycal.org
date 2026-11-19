@@ -535,6 +535,34 @@ def test_the_worker_starts_once(monkeypatch, project):
     assert started == [1]
 
 
+def test_the_fixture_starts_and_stops_the_worker(update_worker, monkeypatch):
+    """The thread stops when asked; a stopped worker starts no other one."""
+    import threading
+
+    started = threading.Event()
+
+    def main():
+        started.set()
+        while not update_worker.stopping():
+            threading.Event().wait(0.01)
+
+    monkeypatch.setattr(update_worker, "main", staticmethod(main))
+    assert update_worker.start() and started.wait(5)
+    update_worker.stop()
+    assert not update_worker.enabled and update_worker._thread is None
+    assert not update_worker.start()
+
+
+def test_a_stopping_worker_leaves_the_queue(monkeypatch, project, repositories):
+    from pycal_dashboard.services.update_worker import UpdateWorker
+
+    project.repositories.add(Repository.objects.create(full_name="collective/icalendar"))
+    UpdateQueue.add(project)
+    monkeypatch.setattr(UpdateWorker, "stopping", classmethod(lambda cls: True))
+    assert UpdateQueue.work() == 0
+    assert UpdateJob.objects.get().status == UpdateJob.QUEUED
+
+
 # the emails about permissions
 
 

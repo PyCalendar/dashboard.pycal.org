@@ -14,7 +14,10 @@ def test_a_webhook_is_a_trigger(client):
     payload = {**pull_payload(), "sender": {"login": "dave"}}
     send_webhook(client, "pull_request", payload, delivery="d-42")
     trigger = LogTrigger.objects.get(kind="webhook")
-    assert trigger.summary == "Pull request #6 opened: Pull request 6: received: no automation yet"
+    assert (
+        trigger.summary
+        == "Pull request #6 opened: Pull request 6: received: no repository of a project"
+    )
     assert (trigger.repository, trigger.actor_login, trigger.delivery) == (
         "PyCalendar/icalendar",
         "dave",

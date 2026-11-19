@@ -231,8 +231,22 @@ community: where to start, what waits for a review, who contributes.
 - [x] A model of GitHub users (GitHubUser): the creators of issues and pull requests, linked to the
       User who signs in with it (and back: user.github_user)
 - [x] Commits each time a small feature can be released safely
-- [ ] Webhooks: activity on GitHub updates the repository it is about, and its data, in the
+- [x] Webhooks: activity on GitHub updates the repository it is about, and its data, in the
       background
+- [x] The tests start no worker in the background: the fixture update_worker starts it and stops it
+      (UpdateWorker.stop); the completions wait until their script is ready (flaky in CI)
+- [ ] Data that no webhook tells of (labels?) is renewed every day; data that may be out of date is
+      updated; after each update a signal, so that the places that show it are updated: the same
+      code path for the button Update, a webhook and the daily update (trigger -> update in the
+      background -> notice of the update)
+- [ ] For all data read from GitHub: the app subscribes to its webhooks with the permissions they
+      need, so that it is updated by webhooks, not by jobs in the background
+- [ ] The overview of a project: the information of the update at the bottom
+- [ ] The roles of collaborators link the documentation of what each may do
+- [ ] Every link to the documentation is an open book icon, not a question mark
+- [ ] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
+      navigate it; tested to be complete
+- [ ] The conditions: each has its own page in the documentation
 - [ ] The submodule conditions: conditions checked on a pull request, each with an id, an input
       spec (fields such as str, int, positive int, range, string-label) that can make a form, a
       data spec (what the background process reads, whether the data is complete to assess it),

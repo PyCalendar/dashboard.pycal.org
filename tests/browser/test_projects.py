@@ -23,7 +23,7 @@ def test_sign_in_with_github(page, site, oauth):
     expect(page.get_by_role("heading", name="Account · @carol")).to_be_visible()
 
 
-def test_create_a_project(signed_in, site, github):
+def test_create_a_project(signed_in, site, github, update_worker):
     """Create a project, add repositories in two ways, see the app step, see them read."""
     page = signed_in
     github.organizations = ["PyCalendar"]
@@ -41,6 +41,7 @@ def test_create_a_project(signed_in, site, github):
 
     # by name, with the proposals of the field
     field = page.get_by_label("Repository", exact=True)
+    expect(field).to_have_attribute("data-complete-connected", "")
     field.fill("ical")
     expect(
         page.locator("#repository-choices option[value='collective/icalendar']")
@@ -103,6 +104,7 @@ def test_share_a_project(signed_in, site, alice):
     page.get_by_label("Private").check()
     page.get_by_role("button", name="Create the project").click()
     page.get_by_role("link", name="Collaborators").click()
+    expect(page.get_by_label("GitHub name")).to_have_attribute("data-complete-connected", "")
     page.get_by_label("GitHub name").press_sequentially("ali")
     proposal = page.get_by_role("option", name="@alice")
     expect(proposal.locator("img.avatar")).to_have_count(1)

@@ -9,7 +9,7 @@ from django.db import OperationalError, transaction
 from django.utils import timezone
 
 from pycal_dashboard.github.data_version import DATA_VERSION
-from pycal_dashboard.models import Project, UpdateJob
+from pycal_dashboard.models import Project, Repository, UpdateJob
 
 from .repository_update import RepositoryUpdate
 from .update_worker import UpdateWorker
@@ -73,6 +73,25 @@ class UpdateQueue:
             UpdateWorker.start()
         return job
 
+    @staticmethod
+    def add_repository(repository: Repository) -> UpdateJob:
+        """Queue an update of one repository, unless one waits, and start the worker.
+
+        Activity on GitHub, which a webhook tells of, updates the repository it is about: only
+        what changed since its last update.
+
+        Args:
+            repository: The repository.
+
+        Returns:
+            The job that waits.
+        """
+        job = UpdateJob.objects.filter(repository=repository, status=UpdateJob.QUEUED).first()
+        if job is None:
+            job = UpdateJob.objects.create(repository=repository, total=1)
+        UpdateWorker.start()
+        return job
+
     @classmethod
     def outdated(cls) -> int:
         """Queue the updates of the projects whose repositories have older data from GitHub.
@@ -113,7 +132,7 @@ class UpdateQueue:
 
     @classmethod
     def run(cls, job: UpdateJob) -> UpdateJob:
-        """Read every repository of the project of a job, and count the progress.
+        """Read every repository of the project of a job, or its repository, and count them.
 
         Args:
             job: The claimed job.
@@ -121,10 +140,15 @@ class UpdateQueue:
         Returns:
             The job, done.
         """
-        repositories = list(job.project.repositories.all())
+        if job.repository_id:
+            repositories = [job.repository]
+        else:
+            repositories = list(job.project.repositories.all())
         job.total = len(repositories)
         retrying(lambda: job.save(update_fields=["total"]))
         for repository in repositories:
+            if UpdateWorker.stopping():  # the job is taken again later
+                return job
             if not retrying(RepositoryUpdate(repository).run):
                 job.errors += 1
             job.done += 1
@@ -144,7 +168,7 @@ class UpdateQueue:
             job.status = status
             job.finished = timezone.now()
             job.save(update_fields=["status", "finished"])
-            if status == UpdateJob.DONE:
+            if status == UpdateJob.DONE and job.project_id:
                 Project.objects.filter(pk=job.project_id).update(updated=job.finished)
 
     @classmethod
@@ -155,7 +179,7 @@ class UpdateQueue:
             How many jobs ran.
         """
         count = 0
-        while (job := retrying(cls.claim)) is not None:
+        while not UpdateWorker.stopping() and (job := retrying(cls.claim)) is not None:
             try:
                 cls.run(job)
             except Exception:  # the job ends as failed; the next ones run

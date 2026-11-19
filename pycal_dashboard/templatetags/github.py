@@ -75,7 +75,8 @@ def avatar_url(person, size: int) -> str:
         >>> avatar_url("octocat", 20)
         'https://avatars.githubusercontent.com/octocat?s=40'
     """
-    url = getattr(person, "avatar_url", "") or f"https://avatars.githubusercontent.com/{person}"
+    login = getattr(person, "login", None) or str(person)
+    url = getattr(person, "avatar_url", "") or f"https://avatars.githubusercontent.com/{login}"
     return f"{url}{'&' if '?' in url else '?'}s={2 * size}"
 
 

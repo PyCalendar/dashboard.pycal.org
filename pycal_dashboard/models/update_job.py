@@ -1,14 +1,15 @@
-"""The update of a project in the background: its repositories read from GitHub."""
+"""An update in the background: the repositories of a project, or one repository, from GitHub."""
 
 from django.conf import settings
 from django.db import models
 
 
 class UpdateJob(models.Model):
-    """One update of the repositories of a project, run by the worker in the background.
+    """One update of the repositories of a project, or of one repository, in the background.
 
     ``done`` of ``total`` repositories are read; the page of the project shows it as a progress
-    bar.
+    bar. A job of one repository (``repository``, without ``project``) follows the activity on
+    GitHub that a webhook tells of.
     """
 
     QUEUED = "queued"
@@ -18,7 +19,12 @@ class UpdateJob(models.Model):
     STATUSES = [(QUEUED, "queued"), (RUNNING, "running"), (DONE, "done"), (FAILED, "failed")]
     ACTIVE = (QUEUED, RUNNING)
 
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="updates")
+    project = models.ForeignKey(
+        "Project", null=True, blank=True, on_delete=models.CASCADE, related_name="updates"
+    )
+    repository = models.ForeignKey(
+        "Repository", null=True, blank=True, on_delete=models.CASCADE, related_name="updates"
+    )
     requested_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
     )
@@ -34,7 +40,9 @@ class UpdateJob(models.Model):
         ordering = ["-created"]
 
     def __str__(self) -> str:
-        return f"update of {self.project}: {self.status} {self.done}/{self.total}"
+        return (
+            f"update of {self.project or self.repository}: {self.status} {self.done}/{self.total}"
+        )
 
     @property
     def active(self) -> bool:

@@ -1,12 +1,15 @@
 """Handle the webhooks of the GitHub App.
 
 The site records its installations with their permissions and tells the people of an
-installation when it lacks some. Other webhooks are logged only: the site keeps no other data of
-GitHub and writes nothing to GitHub. The automation is designed later.
+installation when it lacks some. Activity in a repository of a project updates that repository
+in the background. The site writes nothing to GitHub; the automation is designed later.
 """
+
+from pycal_dashboard.models import Repository
 
 from .installation_store import InstallationStore
 from .permission_notice import PermissionNotice
+from .update_queue import UpdateQueue
 
 # the events whose payload describes the whole installation, with its permissions
 INSTALLATION_EVENTS = {"installation", "installation_repositories"}
@@ -42,7 +45,7 @@ class WebhookHandler:
             >>> WebhookHandler("ping", {"zen": "Keep it logically awesome."}).handle()
             'pong'
             >>> WebhookHandler("pull_request", {"action": "opened"}).handle()
-            'received: no automation yet'
+            'received: no repository of a project'
         """
         if self.event == "ping":
             return "pong"  # GitHub checks the webhook after the app was created
@@ -53,7 +56,25 @@ class WebhookHandler:
             and "id" in installation
         ):
             return self.record(installation)
-        return "received: no automation yet"
+        return self.update()
+
+    def update(self) -> str:
+        """Update the repository of the webhook in the background, if it is in a project.
+
+        Returns:
+            What was done.
+        """
+        data = self.payload.get("repository")
+        if not isinstance(data, dict):
+            return "received: no repository of a project"
+        found = Repository.objects.filter(full_name__iexact=data.get("full_name") or "")
+        if data.get("id"):
+            found = Repository.objects.filter(github_id=data["id"]) | found
+        repository = found.filter(projects__isnull=False).distinct().first()
+        if repository is None:
+            return "received: no repository of a project"
+        UpdateQueue.add_repository(repository)
+        return f"queued an update of {repository.full_name}"
 
     def record(self, data: dict) -> str:
         """Record the installation and tell its people if it lacks permissions.

@@ -129,6 +129,10 @@ An update reads all issues and pull requests, open and closed: their title,
 description, times, and who created them. The first update reads them all;
 the next ones read only those that changed.
 
+With the GitHub App installed, activity on GitHub, such as a new pull request
+or a comment, updates its repository in the background: the webhook of GitHub
+tells the site.
+
 .. _project-pull-requests:
 
 Pull requests

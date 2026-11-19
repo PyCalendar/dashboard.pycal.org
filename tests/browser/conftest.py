@@ -33,12 +33,15 @@ def browser_type_launch_args(browser_type_launch_args):
 
 @pytest.fixture
 def site(live_server, transactional_db, settings, monkeypatch):
-    """The address of the site; nothing leaves the machine. Updates run in the background."""
-    from pycal_dashboard.services.update_worker import UpdateWorker
-
+    """The address of the site; nothing leaves the machine. Updates only wait, see update_worker."""
     settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
-    monkeypatch.setattr(UpdateWorker, "enabled", True)
     return live_server.url
+
+
+@pytest.fixture
+def update_worker(update_worker, site):
+    """The worker of the updates, stopped before the site and its database end."""
+    return update_worker
 
 
 @pytest.fixture

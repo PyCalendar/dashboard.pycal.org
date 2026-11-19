@@ -7,7 +7,7 @@
     var list = document.getElementById(input.getAttribute("list"));
     var timer = null;
     var asked = "";
-    input.addEventListener("input", function () {
+    function propose() {
       clearTimeout(timer);
       var text = input.value.trim();
       if (text.length < 2 || text === asked) { return; }
@@ -25,7 +25,10 @@
           })
           .catch(function () {});
       }, 250);
-    });
+    }
+    input.addEventListener("input", propose);
+    input.dataset.completeConnected = "";  // ready: what was typed before is proposed now
+    if (input.value.trim()) { propose(); }
   }
   document.querySelectorAll("input[data-complete]").forEach(connect);
 }());

@@ -18,10 +18,12 @@ log = logging.getLogger(__name__)
 class UpdateWorker:
     """Runs ``UpdateQueue.work`` in a thread of the process."""
 
-    # False in the tests of the code, which run the queue themselves; the browser tests start it
+    # False in the tests, which run the queue themselves or start the worker with the fixture
+    # update_worker, which stops it at the end
     enabled = True
     _thread: threading.Thread | None = None
     _lock = threading.Lock()
+    _stopping = threading.Event()
 
     @classmethod
     def start(cls) -> bool:
@@ -38,6 +40,29 @@ class UpdateWorker:
             cls._thread = threading.Thread(target=cls.main, name="update-worker", daemon=True)
             cls._thread.start()
             return True
+
+    @classmethod
+    def stopping(cls) -> bool:
+        """Whether the worker should stop after the repository it reads, see :meth:`stop`."""
+        return cls._stopping.is_set()
+
+    @classmethod
+    def stop(cls, timeout: float = 30) -> None:
+        """Stop the thread after the repository it reads, and start no other one.
+
+        A job that it leaves unfinished is taken again later (``UpdateQueue.claim``).
+
+        Args:
+            timeout: The seconds to wait for the thread.
+        """
+        cls.enabled = False
+        cls._stopping.set()
+        try:
+            if cls._thread is not None:
+                cls._thread.join(timeout)
+        finally:
+            cls._thread = None
+            cls._stopping.clear()
 
     @staticmethod
     def main() -> None:

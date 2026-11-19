@@ -72,7 +72,7 @@
         close();
       }
     }
-    input.addEventListener("input", function () {
+    function propose() {
       clearTimeout(timer);
       var text = input.value.trim();
       if (!text) { close(); return; }
@@ -82,7 +82,8 @@
           .then(function (data) { if (input.value.trim() === text) { show(data.people); } })
           .catch(function () {});
       }, 200);
-    });
+    }
+    input.addEventListener("input", propose);
     input.addEventListener("keydown", function (event) {
       if (list.hidden) { return; }
       if (event.key === "ArrowDown") { mark(active + 1); event.preventDefault(); }
@@ -91,6 +92,8 @@
       else if (event.key === "Escape") { close(); }
     });
     input.addEventListener("blur", close);
+    input.dataset.completeConnected = "";  // ready: what was typed before is proposed now
+    if (input.value.trim()) { propose(); }
   }
   document.querySelectorAll("input[data-complete-people]").forEach(connect);
 }());

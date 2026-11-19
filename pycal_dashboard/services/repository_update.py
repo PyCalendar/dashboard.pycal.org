@@ -122,6 +122,8 @@ class RepositoryUpdate:
         if not complete:
             params["since"] = repository.issues_changed.isoformat()
         seen: set[int] = set()
+        # without any issue yet, the next update reads what changed from the start of this one
+        started = timezone.now()
         changed = repository.issues_changed
         for page in range(1, MAX_PAGES + 1):
             items = client.request(
@@ -139,7 +141,7 @@ class RepositoryUpdate:
             if complete:
                 repository.issues.exclude(number__in=seen).delete()
                 repository.data_version = DATA_VERSION
-            repository.issues_changed = changed
+            repository.issues_changed = changed or started
             repository.save(update_fields=["data_version", "issues_changed"])
         return len(seen)
 

@@ -58,15 +58,17 @@ EVENTS = [
 
 
 @pytest.mark.parametrize(("event", "payload"), EVENTS)
-def test_events_are_logged_only(client, github, db, event, payload):
-    """The site keeps no data of GitHub and asks GitHub nothing back."""
+def test_events_of_repositories_outside_projects_are_logged_only(
+    client, github, db, event, payload
+):
+    """A repository in no project: the site asks GitHub nothing."""
     payload = {
         **payload,
         "repository": repository_payload(),
         "installation": {"id": 1, "account": {"login": "PyCalendar"}},
     }
     response = send_webhook(client, event, payload)
-    assert response.json() == {"done": "received: no automation yet"}
+    assert response.json() == {"done": "received: no repository of a project"}
     assert github.requests == []
     delivery = WebhookDelivery.objects.get()
     assert (delivery.event, delivery.action, delivery.repository, delivery.outcome) == (
@@ -82,7 +84,7 @@ def test_events_are_logged_only(client, github, db, event, payload):
 )
 def test_pull_requests_are_not_labeled(client, github, db, action):
     response = send_webhook(client, "pull_request", pull_payload(action=action))
-    assert response.json()["done"] == "received: no automation yet"
+    assert response.json()["done"] == "received: no repository of a project"
     assert github.writes() == [] and github.requests == []
 
 
@@ -91,7 +93,7 @@ def test_other_accounts_may_install_the_app(client, db):
     payload["repository"] = repository_payload("Elsewhere/x")
     assert (
         send_webhook(client, "pull_request", payload).json()["done"]
-        == "received: no automation yet"
+        == "received: no repository of a project"
     )
     delivery = WebhookDelivery.objects.get()
     assert (delivery.repository, delivery.outcome) == ("Elsewhere/x", "done")
@@ -115,3 +117,56 @@ def test_failure_is_logged(client, db, monkeypatch):
     assert response.status_code == 500
     assert response.json()["error"] == "UnexpectedError"
     assert WebhookDelivery.objects.get().outcome == "failed"
+
+
+@pytest.mark.parametrize("event", ["pull_request", "issues", "issue_comment", "repository"])
+def test_activity_updates_the_repository_of_a_project(client, github, bob, event):
+    """Activity on GitHub updates its repository in the background: only what changed."""
+    from pycal_dashboard.models import Issue, Repository, UpdateJob
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+    from pycal_dashboard.services.update_queue import UpdateQueue
+
+    github.add_repository(REPOSITORY, issues=1)
+    repository = Repository.objects.create(full_name=REPOSITORY)
+    ProjectEditor.create(bob, "iCalendar").repositories.add(repository)
+    RepositoryUpdate(repository).run()
+    UpdateJob.objects.all().delete()
+    github.add_issue(REPOSITORY, "Opened just now", updated="2026-11-19T10:00:00Z")
+    payload = {"action": "opened", "repository": repository_payload(REPOSITORY.lower())}
+    assert send_webhook(client, event, payload).json()["done"] == (
+        f"queued an update of {REPOSITORY}"
+    )
+    send_webhook(client, event, payload)  # a second one joins the waiting update
+    job = UpdateJob.objects.get()
+    assert (job.repository, job.project) == (repository, None)
+    assert UpdateQueue.work() == 1
+    assert Issue.objects.filter(title="Opened just now").exists()
+    assert github.issue_requests[-1]["since"]  # only what changed
+    assert github.writes() == []
+
+
+def test_a_renamed_repository_is_found_by_its_id(client, github, bob):
+    from pycal_dashboard.models import Repository, UpdateJob
+    from pycal_dashboard.services.project_editor import ProjectEditor
+
+    repository = Repository.objects.create(full_name="PyCalendar/old-name", github_id=1000)
+    ProjectEditor.create(bob, "iCalendar").repositories.add(repository)
+    send_webhook(client, "repository", {"action": "renamed", "repository": repository_payload()})
+    assert UpdateJob.objects.get().repository == repository
+
+
+def test_a_repository_update_does_not_mark_projects_updated(github, bob):
+    from pycal_dashboard.models import Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.update_queue import UpdateQueue
+
+    github.add_repository(REPOSITORY)
+    repository = Repository.objects.create(full_name=REPOSITORY)
+    project = ProjectEditor.create(bob, "iCalendar")
+    project.repositories.add(repository)
+    UpdateQueue.add_repository(repository)
+    UpdateQueue.work()
+    project.refresh_from_db()
+    repository.refresh_from_db()
+    assert project.updated is None and repository.updated is not None

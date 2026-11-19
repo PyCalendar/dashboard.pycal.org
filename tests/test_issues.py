@@ -233,6 +233,8 @@ def test_a_person_without_a_github_user_is_unknown():
 
     assert github_user(None)["login"] == ""
     assert github_user("octocat")["avatar"] == "https://avatars.githubusercontent.com/octocat?s=40"
+    without_avatar = GitHubUser(login="bob", github_id=1)
+    assert github_user(without_avatar)["avatar"] == "https://avatars.githubusercontent.com/bob?s=40"
 
 
 # the people of GitHub with their avatar, and the completion when sharing
@@ -258,3 +260,13 @@ def test_complete_the_people_to_share_with(client, bob, alice):
     assert people == [{"login": "alice", "name": "Alice Liddell", "avatar": "https://a.x/1?s=40"}]
     assert client.get("/people/complete/?q=liddell").json()["people"][0]["login"] == "alice"
     assert client.get("/people/complete/?q=").json()["people"] == []
+
+
+def test_a_repository_without_issues_is_read_completely_once(github):
+    github.add_repository("empty/one")
+    repository = Repository.objects.create(full_name="empty/one")
+    RepositoryUpdate(repository).run()
+    repository.refresh_from_db()
+    assert repository.issues_changed is not None
+    RepositoryUpdate(repository).run()
+    assert github.issue_requests[-1].get("since")

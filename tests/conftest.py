@@ -67,10 +67,20 @@ def app_settings(settings, private_key, tmp_path):
 
 @pytest.fixture(autouse=True)
 def no_update_thread(monkeypatch):
-    """The tests of the code run the updates themselves (UpdateQueue.work); browser tests not."""
+    """The tests start no worker: they run the updates themselves (UpdateQueue.work)."""
     from pycal_dashboard.services.update_worker import UpdateWorker
 
     monkeypatch.setattr(UpdateWorker, "enabled", False)
+
+
+@pytest.fixture
+def update_worker(monkeypatch):
+    """The worker of the updates in the background, for the test; stopped at its end."""
+    from pycal_dashboard.services.update_worker import UpdateWorker
+
+    monkeypatch.setattr(UpdateWorker, "enabled", True)
+    yield UpdateWorker
+    UpdateWorker.stop()
 
 
 @pytest.fixture(autouse=True)
