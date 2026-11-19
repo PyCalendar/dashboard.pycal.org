@@ -15,7 +15,10 @@ Create a project
 Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
 
 - the **name**, such as *icalendar*,
-- the **description**: what the project is about,
+- the **description**: what the project is about, in Markdown. The bar above
+  the field makes text bold or italic, adds links, lists, quotes and code;
+  **Preview** shows it as the page will. Without JavaScript, you type the
+  Markdown yourself, such as ``**bold**`` and ``[a link](https://pycal.org)``.
 - the **visibility**: *Public*, the default, for everybody, or *Private*, only
   for its collaborators, see :ref:`project-roles`,
 - optionally its **address**, see :ref:`project-address`.

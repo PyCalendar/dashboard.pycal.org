@@ -1,13 +1,14 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n help times %}
+{% load i18n help times static %}
 {% block title %}{% if new %}{% translate "Create a project" %}{% else %}{% translate "Settings" %} · {{ project.name }}{% endif %} · {{ site_name }}{% endblock %}
+{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% if new %}<h1>{% translate "Create a project" %} {% translate "Projects" as help %}{% help_link links.projects help %}</h1>
 <p class="muted">{% translate "Next, you add its repositories and install the GitHub App on them." %}</p>
 {% else %}{% include "pycal_dashboard/_project_tabs.html" %}{% endif %}
 <form method="post" class="stacked card" data-project-form>{% csrf_token %}
   <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ form.name }}"></p>
-  <p><label for="description">{% translate "Description" %}</label><textarea id="description" name="description" rows="4">{{ form.description }}</textarea></p>
+  {% translate "Description" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id="description" name="description" label=description_label value=form.description rows=4 %}
   {% if new %}<p><label for="slug">{% translate "Address (optional)" %}</label><input id="slug" name="slug" maxlength="80" value="{{ form.slug }}" pattern="[A-Za-z0-9~\-]+" placeholder="icalendar">
     <small>{% translate "The project is at /projects/ followed by its address. Without one, it gets a random one, which you change later." %}</small></p>{% endif %}
   <fieldset class="visibility"{% if not new and not access.is_owner %} disabled{% endif %}><legend>{% translate "Visibility" %}</legend>

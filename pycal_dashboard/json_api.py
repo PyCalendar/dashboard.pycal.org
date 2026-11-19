@@ -60,6 +60,7 @@ PRIVATE = [
     "/people/",
     "/repositories/",
     "/projects/new/",
+    "/markdown/",
     "/theme/",
     "/language/",
 ]

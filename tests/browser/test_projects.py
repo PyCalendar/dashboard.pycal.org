@@ -143,3 +143,25 @@ def test_give_a_project_a_short_address(signed_in, site, github):
     page.get_by_role("button", name="Change the address").click()
     expect(page).to_have_url(f"{site}/projects/pycal~ical/settings/")
     expect(page.locator("[data-old-slugs]")).to_contain_text("icalendar")
+
+
+def test_describe_a_project_in_markdown(signed_in, site):
+    """The bar above the description formats it; the preview shows it as the page will."""
+    page = signed_in
+    page.goto(f"{site}/projects/new/")
+    page.get_by_label("Name").fill("iCalendar")
+    field = page.locator("[data-markdown-field]")
+    expect(field).to_have_attribute("data-markdown-connected", "")
+    description = page.get_by_label("Description", exact=True)
+    description.fill("calendars")
+    description.select_text()
+    field.get_by_role("button", name="Bold").click()
+    expect(description).to_have_value("**calendars**")
+    field.get_by_role("button", name="Preview").click()
+    expect(field.locator("[data-markdown-shown] strong")).to_have_text("calendars")
+    expect(description).to_be_hidden()
+    field.get_by_role("button", name="Write").click()
+    expect(description).to_be_visible()
+    page.get_by_role("button", name="Create the project").click()
+    page.get_by_role("link", name="Overview", exact=True).click()
+    expect(page.locator("[data-description] strong")).to_have_text("calendars")

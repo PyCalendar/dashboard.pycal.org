@@ -22,6 +22,7 @@ urlpatterns = [
     path("favicon.ico", pages.favicon, name="favicon"),
     path("robots.txt", pages.robots_txt, name="robots_txt"),
     path("llms.txt", pages.llms_txt, name="llms_txt"),
+    path("markdown/preview/", pages.markdown_preview, name="markdown_preview"),
     path("projects/", projects.projects, name="projects"),
     path("projects/new/", projects.project_new, name="project_new"),
     path("projects/<project_slug:slug>/", projects.project, name="project"),

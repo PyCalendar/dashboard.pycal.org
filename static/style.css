@@ -222,3 +222,16 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 
 /* the update of a project, at the bottom of its overview */
 .update-line { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: 1.5rem; padding-top: .75rem; border-top: 1px solid var(--border); font-size: .9rem; }
+
+/* Markdown that people typed, and the field that edits it */
+.markdown > :first-child { margin-top: 0; }
+.markdown > :last-child { margin-bottom: 0; }
+.markdown pre { overflow-x: auto; padding: .5rem .75rem; background: var(--surface-tint); border-radius: .3rem; }
+.markdown blockquote { margin: .5rem 0; padding-left: .8rem; border-left: .25rem solid var(--border); color: var(--text-muted); }
+.markdown-field { margin: 0 0 1rem; }
+.markdown-field label { display: block; }
+.markdown-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem; margin: .25rem 0; }
+.markdown-bar markdown-toolbar { display: flex; flex-wrap: wrap; gap: .25rem; }
+.markdown-bar button[aria-pressed="true"] { background: var(--surface-tint); }
+.markdown-field textarea { width: 100%; }
+.markdown-preview { min-height: 6rem; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .3rem; }

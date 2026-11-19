@@ -33,3 +33,11 @@ path = "pycal_dashboard/github_mark.py"
 precedence = "override"
 SPDX-FileCopyrightText = "GitHub Inc."
 SPDX-License-Identifier = "MIT"
+
+# The bar of Markdown above the fields of descriptions: @github/markdown-toolbar-element 2.2.3
+# (https://github.com/github/markdown-toolbar-element), as published on npm
+[[annotations]]
+path = "static/vendor/markdown-toolbar-element-2.2.3.js"
+precedence = "override"
+SPDX-FileCopyrightText = "2017-2018 GitHub, Inc."
+SPDX-License-Identifier = "MIT"

@@ -27,7 +27,8 @@ def test_no_inline_javascript_in_templates():
     for template in (PACKAGE / "templates").rglob("*.html"):
         text = template.read_text()
         scripts = re.findall(r"<script[^>]*>", text)
-        assert all(re.fullmatch(r'<script src="[^"]+" defer>', s) for s in scripts), template
+        allowed = r'<script src="[^"]+" defer>|<script type="module" src="[^"]+">'  # modules defer
+        assert all(re.fullmatch(allowed, s) for s in scripts), template
         assert "javascript:" not in text, template
         assert not re.search(r"\son[a-z]+=", text), template
 

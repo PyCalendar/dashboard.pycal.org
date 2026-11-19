@@ -4,6 +4,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
 from django.db import connection
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse
@@ -18,6 +19,7 @@ from pycal_dashboard import build_info, licenses
 from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.json_api import JSON_API, PRIVATE
+from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Preferences
 from pycal_dashboard.privacy import COOKIES, DATA, EXTERNAL_HOSTS, PARTIES
 from pycal_dashboard.public_json import json_address
@@ -84,6 +86,20 @@ def about(request):
             },
         },
     )
+
+
+@login_required
+@require_POST
+def markdown_preview(request):
+    """The preview of a field of Markdown, rendered as the page will show it.
+
+    Args:
+        request: The request, with ``text``.
+
+    Returns:
+        The cleaned HTML.
+    """
+    return HttpResponse(render_markdown(request.POST.get("text", "")))
 
 
 def robots_txt(request):

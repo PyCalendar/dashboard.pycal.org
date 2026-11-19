@@ -1,0 +1,18 @@
+{% load i18n static %}<div class="markdown-field" data-markdown-field>
+  <label for="{{ id }}">{{ label }}</label>
+  <div class="markdown-bar" role="toolbar" aria-label="{% translate "Format" %}" hidden data-markdown-bar>
+    <markdown-toolbar for="{{ id }}">
+      <md-bold><button type="button" class="button button-quiet button-small" title="{% translate "Bold" %}" aria-label="{% translate "Bold" %}"><strong>B</strong></button></md-bold>
+      <md-italic><button type="button" class="button button-quiet button-small" title="{% translate "Italic" %}" aria-label="{% translate "Italic" %}"><em>I</em></button></md-italic>
+      <md-link><button type="button" class="button button-quiet button-small" title="{% translate "Link" %}" aria-label="{% translate "Link" %}">{% translate "Link" %}</button></md-link>
+      <md-unordered-list><button type="button" class="button button-quiet button-small" title="{% translate "List" %}" aria-label="{% translate "List" %}">• {% translate "List" %}</button></md-unordered-list>
+      <md-ordered-list><button type="button" class="button button-quiet button-small" title="{% translate "Numbered list" %}" aria-label="{% translate "Numbered list" %}">1. {% translate "List" %}</button></md-ordered-list>
+      <md-quote><button type="button" class="button button-quiet button-small" title="{% translate "Quote" %}" aria-label="{% translate "Quote" %}">“ ”</button></md-quote>
+      <md-code><button type="button" class="button button-quiet button-small" title="{% translate "Code" %}" aria-label="{% translate "Code" %}"><code>&lt;/&gt;</code></button></md-code>
+    </markdown-toolbar>
+    <span class="markdown-tabs"><button type="button" class="button button-quiet button-small" aria-pressed="true" data-markdown-write>{% translate "Write" %}</button><button type="button" class="button button-quiet button-small" aria-pressed="false" data-markdown-preview="{% url 'markdown_preview' %}">{% translate "Preview" %}</button></span>
+  </div>
+  <textarea id="{{ id }}" name="{{ name }}" rows="{{ rows|default:6 }}">{{ value }}</textarea>
+  <div class="markdown markdown-preview" hidden data-markdown-shown aria-live="polite"></div>
+  <small class="muted">{% translate "Markdown: **bold**, *italic*, [a link](https://…), lists with - or 1." %}</small>
+</div>

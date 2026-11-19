@@ -49,6 +49,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - Nothing is loaded from other sites: no fonts (such as Google Fonts), scripts
   or styles. Only the avatars of GitHub (`EXTERNAL_HOSTS` of the privacy
   policy); `tests/test_privacy.py` checks the files and the pages.
+- Texts that people type to describe something are Markdown: shown with `|markdown`
+  (`markdown_text.py`, cleaned by nh3) and edited with the partial `_markdown_field.html` (a bar
+  of formats and a preview). `tests/test_markdown.py` checks the templates.
 - People of GitHub are shown with `{% github_user %}` (`templatetags/github.py`):
   their avatar from GitHub before their name, linked to GitHub.
 - A page with public JSON goes into `pycal_dashboard/json_api.py`, which makes `/llms.txt` (the
