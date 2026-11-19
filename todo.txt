@@ -284,7 +284,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] GraphQL of GitHub only; the site offers no GraphQL of its own for now
 - [x] No tokens yet: wait until the site grows
 - [x] A delete button: a red area that deletes the account
-- [ ] Translate the texts that wait into German and Spanish
+- [x] Translate the texts that wait into German and Spanish
 
 ## Open: decisions of the person
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 13:04+0000\n"
+"POT-Creation-Date: 2026-11-19 14:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,12 @@ msgstr "Das Konto hat keine GitHub-Identität"
 msgid "Unknown preference"
 msgstr "Unbekannte Einstellung"
 
+msgid "Type your GitHub name to delete the account"
+msgstr "Gib deinen GitHub-Namen ein, um das Konto zu löschen"
+
+msgid "You are the only owner of shared projects"
+msgstr "Du besitzt geteilte Projekte allein"
+
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgegangen"
 
@@ -47,6 +53,36 @@ msgstr "Einen Fehler melden"
 
 msgid "Unexpected error"
 msgstr "Unerwarteter Fehler"
+
+msgid "The condition could not be configured"
+msgstr "Die Bedingung konnte nicht eingestellt werden"
+
+msgid "Conditions"
+msgstr "Bedingungen"
+
+msgid "Unknown condition"
+msgstr "Unbekannte Bedingung"
+
+msgid "An input of the condition is missing"
+msgstr "Eine Eingabe der Bedingung fehlt"
+
+msgid "Unknown input of the condition"
+msgstr "Unbekannte Eingabe der Bedingung"
+
+msgid "The input is not a text"
+msgstr "Die Eingabe ist kein Text"
+
+msgid "The input is not a whole number"
+msgstr "Die Eingabe ist keine ganze Zahl"
+
+msgid "The number is out of range"
+msgstr "Die Zahl liegt außerhalb des Bereichs"
+
+msgid "Invalid range"
+msgstr "Ungültiger Bereich"
+
+msgid "Unknown label"
+msgstr "Unbekanntes Label"
 
 msgid "A setting of the site is wrong"
 msgstr "Eine Einstellung der Seite ist falsch"
@@ -98,6 +134,9 @@ msgstr "GitHub hat den Token nicht akzeptiert"
 
 msgid "Too many requests to GitHub"
 msgstr "Zu viele Anfragen an GitHub"
+
+msgid "GitHub refused the query"
+msgstr "GitHub hat die Abfrage abgelehnt"
 
 msgid "The GitHub App lacks a permission"
 msgstr "Der GitHub App fehlt eine Berechtigung"
@@ -574,6 +613,40 @@ msgstr "unbekannt"
 msgid "Language"
 msgstr "Sprache"
 
+msgid "Format"
+msgstr "Formatieren"
+
+msgid "Bold"
+msgstr "Fett"
+
+msgid "Italic"
+msgstr "Kursiv"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "Numbered list"
+msgstr "Nummerierte Liste"
+
+msgid "Quote"
+msgstr "Zitat"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Write"
+msgstr "Schreiben"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Markdown: **bold**, *italic*, [a link](https://…), lists with - or 1."
+msgstr ""
+"Markdown: **fett**, *kursiv*, [ein Link](https://…), Listen mit - oder 1."
+
 msgid "private"
 msgstr "privat"
 
@@ -665,9 +738,6 @@ msgstr "Gebaut"
 
 msgid "build"
 msgstr "Build"
-
-msgid "Code"
-msgstr "Code"
 
 msgid "All licenses"
 msgstr "Alle Lizenzen"
@@ -794,6 +864,39 @@ msgstr ""
 "Die Seite hat noch keine GitHub App. Die Betreiber der Seite <a "
 "href=\"%(register_url)s\">registrieren sie</a> zuerst."
 
+msgid "Delete the account"
+msgstr "Das Konto löschen"
+
+msgid "Delete your account"
+msgstr "Dein Konto löschen"
+
+msgid ""
+"This deletes your account on this site: your GitHub name and token, your "
+"email addresses, your preferences and your roles in projects. It cannot be "
+"undone. Issues and pull requests stay on GitHub, as before."
+msgstr ""
+"Das löscht dein Konto auf dieser Seite: deinen GitHub-Namen und dein Token, "
+"deine E-Mail-Adressen, deine Einstellungen und deine Rollen in Projekten. "
+"Das lässt sich nicht rückgängig machen. Issues und Pull Requests bleiben wie "
+"bisher auf GitHub."
+
+msgid ""
+"You are the only owner of projects that others share. Give another person "
+"the role own, or delete the project, first:"
+msgstr ""
+"Du besitzt Projekte allein, die andere mit dir teilen. Gib zuerst einer "
+"anderen Person die Rolle besitzen oder lösche das Projekt:"
+
+msgid "These projects have nobody else and are deleted with it:"
+msgstr "Diese Projekte haben niemanden sonst und werden mit gelöscht:"
+
+#, python-format
+msgid "Type your GitHub name, %(login)s, to confirm"
+msgstr "Gib zur Bestätigung deinen GitHub-Namen ein, %(login)s"
+
+msgid "Delete my account"
+msgstr "Mein Konto löschen"
+
 msgid "GitHub App registered"
 msgstr "GitHub App registriert"
 
@@ -873,6 +976,12 @@ msgstr ""
 "Diese Seite hat noch keine GitHub App. Ihre Betreiber <a "
 "href=\"%(register_url)s\">registrieren die GitHub App</a> mit dem "
 "Einrichtungscode aus dem Protokoll."
+
+msgid "From"
+msgstr "Von"
+
+msgid "To"
+msgstr "Bis"
 
 msgid ""
 "The latest 100 webhooks of GitHub and what the site did. Only the "
@@ -1191,12 +1300,15 @@ msgid "Your data"
 msgstr "Deine Daten"
 
 msgid ""
-"Your account shows what the site keeps of you. To have your account and data "
-"deleted, or to ask about them, write to the people who run the site:"
+"Your account shows what the site keeps of you. You delete your account and "
+"data yourself, in the red area at the bottom of the page Account."
 msgstr ""
-"Dein Konto zeigt, was die Seite von dir speichert. Um dein Konto und deine "
-"Daten löschen zu lassen oder danach zu fragen, schreib den Personen, die die "
-"Seite betreiben:"
+"Dein Konto zeigt, was die Seite von dir speichert. Du löschst dein Konto und "
+"deine Daten selbst, im roten Bereich unten auf der Seite Konto."
+
+msgid "To ask about your data, write to the people who run the site:"
+msgstr ""
+"Für Fragen zu deinen Daten schreib den Personen, die die Seite betreiben:"
 
 msgid "the people who run the site"
 msgstr "die Personen, die die Seite betreiben"
@@ -1217,6 +1329,36 @@ msgstr "offene Pull Requests"
 msgid "repositories"
 msgstr "Repositorys"
 
+msgid "Open issues"
+msgstr "Offene Issues"
+
+msgid "Open pull requests"
+msgstr "Offene Pull Requests"
+
+msgid "Updated"
+msgstr "Aktualisiert"
+
+msgid "could not be updated"
+msgstr "konnte nicht aktualisiert werden"
+
+msgid "never"
+msgstr "nie"
+
+msgid "The project has no repositories yet."
+msgstr "Das Projekt hat noch keine Repositorys."
+
+msgid "Add repositories"
+msgstr "Repositorys hinzufügen"
+
+msgid "Up to date"
+msgstr "Aktuell"
+
+msgid "Last updated:"
+msgstr "Zuletzt aktualisiert:"
+
+msgid "Update"
+msgstr "Aktualisieren"
+
 msgid "Updating"
 msgstr "Wird aktualisiert"
 
@@ -1231,9 +1373,6 @@ msgstr ""
 "%(done)s von %(total)s Repositorys von GitHub aktualisiert. Die Seite lädt "
 "sich selbst neu."
 
-msgid "Up to date"
-msgstr "Aktuell"
-
 msgid "Not updated yet"
 msgstr "Noch nicht aktualisiert"
 
@@ -1243,35 +1382,8 @@ msgstr "Einige Repositorys konnten nicht aktualisiert werden"
 msgid "Out of date"
 msgstr "Veraltet"
 
-msgid "Last updated:"
-msgstr "Zuletzt aktualisiert:"
-
-msgid "never"
-msgstr "nie"
-
-msgid "Update"
-msgstr "Aktualisieren"
-
 msgid "The writers and owners of the project update it."
 msgstr "Die Schreibenden und Eigentümer des Projekts aktualisieren es."
-
-msgid "Open issues"
-msgstr "Offene Issues"
-
-msgid "Open pull requests"
-msgstr "Offene Pull Requests"
-
-msgid "Updated"
-msgstr "Aktualisiert"
-
-msgid "could not be updated"
-msgstr "konnte nicht aktualisiert werden"
-
-msgid "The project has no repositories yet."
-msgstr "Das Projekt hat noch keine Repositorys."
-
-msgid "Add repositories"
-msgstr "Repositorys hinzufügen"
 
 msgid "Collaborators of the project"
 msgstr "Mitwirkende des Projekts"
@@ -1282,11 +1394,14 @@ msgstr "Rollen in einem Projekt"
 msgid "Role"
 msgstr "Rolle"
 
+msgid "What each role may do"
+msgstr "Was jede Rolle darf"
+
 msgid ""
 "The only owner: share the project with another owner before changing this."
 msgstr ""
-"Einzige Eigentümerin oder einziger Eigentümer: Teile das Projekt erst mit "
-"einer weiteren Person als Eigentümer, bevor du das änderst."
+"Du besitzt das Projekt allein: Gib zuerst einer anderen Person die Rolle "
+"besitzen, bevor du das änderst."
 
 msgid "Change"
 msgstr "Ändern"
@@ -1754,6 +1869,13 @@ msgstr "am %(date)s"
 
 msgid "Your preferences are saved."
 msgstr "Deine Einstellungen sind gespeichert."
+
+#, python-format
+msgid "Your account is deleted, with the projects %(names)s."
+msgstr "Dein Konto ist gelöscht, mit den Projekten %(names)s."
+
+msgid "Your account is deleted."
+msgstr "Dein Konto ist gelöscht."
 
 msgid "Bad request"
 msgstr "Ungültige Anfrage"

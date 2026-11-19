@@ -31,7 +31,7 @@ def test_the_page_account_has_the_red_area(client, bob):
 
 def test_delete_the_account(client, bob):
     EmailAddress.objects.create(user=bob, email="bob@example.org", verified=True, primary=True)
-    Preferences.objects.create(user=bob, language="de")
+    Preferences.objects.create(user=bob, theme="dark")
     alone = ProjectEditor.create(bob, "Alone")
     client.force_login(bob)
     page = client.get("/account/").content.decode()
