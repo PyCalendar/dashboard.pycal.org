@@ -270,3 +270,16 @@ def test_a_repository_without_issues_is_read_completely_once(github):
     assert repository.issues_changed is not None
     RepositoryUpdate(repository).run()
     assert github.issue_requests[-1].get("since")
+
+
+def test_the_update_is_at_the_bottom_of_the_overview(client, project, bob):
+    """Up to date is the usual case: a line at the bottom, after the repositories."""
+    from pycal_dashboard.services.update_queue import UpdateQueue
+
+    UpdateQueue.add(project)
+    UpdateQueue.work()
+    client.force_login(bob)
+    page = client.get(project.path()).content.decode()
+    assert page.index("data-repositories") < page.index('data-status="current"')
+    assert '<footer class="update-line muted" data-status="current">' in page
+    assert "data-update" in page.split('data-status="current"')[1]

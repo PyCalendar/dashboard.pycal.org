@@ -114,8 +114,9 @@ The overview and the update
 ===========================
 
 The overview of a project shows the number of open issues and open pull
-requests of all its repositories and of each one, and when it was last
-updated, in your time zone.
+requests of all its repositories and of each one. At the bottom, it says
+whether the project is up to date and when it was last updated, in your time
+zone.
 
 When repositories are added, the site updates them from GitHub in the
 background at once. **Update** updates them again. A progress bar shows how many

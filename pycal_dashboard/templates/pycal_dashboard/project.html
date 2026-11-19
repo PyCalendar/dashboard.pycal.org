@@ -10,19 +10,6 @@
   <li data-open-pull-requests><a href="{% url 'project_pull_requests' project.slug %}?state=open"><strong>{% if open_pull_requests is None %}–{% else %}{{ open_pull_requests }}{% endif %}</strong>{% translate "open pull requests" %}</a></li>
   <li><strong>{{ repositories|length }}</strong>{% translate "repositories" %}</li>
 </ul>
-<section class="card" data-status="{{ status.state }}">
-  {% if status.updating %}
-  <h2>{% translate "Updating" %}</h2>
-  <progress class="progress" max="100" value="{{ status.job.percent }}" aria-label="{% translate "Repositories updated from GitHub" %}" data-progress>{{ status.job.percent }}%</progress>
-  <p class="muted">{% blocktranslate with done=status.job.done total=status.job.total %}{{ done }} of {{ total }} repositories updated from GitHub. The page reloads itself.{% endblocktranslate %}</p>
-  {% elif status.up_to_date %}<h2><span class="badge badge-success">{% translate "Up to date" %}</span></h2>
-  {% elif status.state == 'never' %}<h2><span class="badge badge-warning">{% translate "Not updated yet" %}</span></h2>
-  {% elif status.state == 'failed' %}<h2><span class="badge badge-error">{% translate "Some repositories could not be updated" %}</span></h2>
-  {% else %}<h2><span class="badge badge-warning">{% translate "Out of date" %}</span></h2>{% endif %}
-  <p data-last-updated>{% translate "Last updated:" %} {% if project.updated %}{% when project.updated %}{% else %}{% translate "never" %}{% endif %}</p>
-  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
-  {% elif not access.can_write and not status.updating %}<p class="muted">{% translate "The writers and owners of the project update it." %}</p>{% endif %}
-</section>
 {% if repositories %}<div class="table-wrap"><table class="table" data-repositories>
   <thead><tr><th>{% translate "Repository" %}</th><th class="numeric">{% translate "Open issues" %}</th><th class="numeric">{% translate "Open pull requests" %}</th><th>{% translate "Updated" %}</th></tr></thead>
   <tbody>{% for repository in repositories %}<tr data-repository="{{ repository.full_name }}">
@@ -35,4 +22,22 @@
   </tr>{% endfor %}</tbody>
 </table></div>
 {% else %}<p data-no-repositories>{% translate "The project has no repositories yet." %}{% if access.can_write %} <a href="{% url 'project_repositories' project.slug %}">{% translate "Add repositories" %}</a>{% endif %}</p>{% endif %}
+{% if status.up_to_date and not status.updating %}<footer class="update-line muted" data-status="{{ status.state }}">
+  <span class="badge badge-success">{% translate "Up to date" %}</span>
+  <span data-last-updated>{% translate "Last updated:" %} {% when project.updated %}</span>
+  {% if access.can_write %}<form method="post" action="{% url 'project_update' project.slug %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" data-update>{% translate "Update" %}</button></form>{% endif %}
+</footer>
+{% else %}<section class="card" data-status="{{ status.state }}">
+  {% if status.updating %}
+  <h2>{% translate "Updating" %}</h2>
+  <progress class="progress" max="100" value="{{ status.job.percent }}" aria-label="{% translate "Repositories updated from GitHub" %}" data-progress>{{ status.job.percent }}%</progress>
+  <p class="muted">{% blocktranslate with done=status.job.done total=status.job.total %}{{ done }} of {{ total }} repositories updated from GitHub. The page reloads itself.{% endblocktranslate %}</p>
+  {% elif status.up_to_date %}<h2><span class="badge badge-success">{% translate "Up to date" %}</span></h2>
+  {% elif status.state == 'never' %}<h2><span class="badge badge-warning">{% translate "Not updated yet" %}</span></h2>
+  {% elif status.state == 'failed' %}<h2><span class="badge badge-error">{% translate "Some repositories could not be updated" %}</span></h2>
+  {% else %}<h2><span class="badge badge-warning">{% translate "Out of date" %}</span></h2>{% endif %}
+  <p data-last-updated>{% translate "Last updated:" %} {% if project.updated %}{% when project.updated %}{% else %}{% translate "never" %}{% endif %}</p>
+  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
+  {% elif not access.can_write and not status.updating %}<p class="muted">{% translate "The writers and owners of the project update it." %}</p>{% endif %}
+</section>{% endif %}
 {% endblock %}

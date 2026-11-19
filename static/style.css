@@ -219,3 +219,6 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .completion { position: absolute; z-index: 10; left: 0; top: 100%; min-width: 100%; max-height: 18rem; overflow-y: auto; margin: .2rem 0 0; padding: .25rem 0; list-style: none; background: var(--surface); border: 1px solid var(--border); border-radius: .4rem; box-shadow: 0 .3rem 1rem rgba(0, 0, 0, .15); }
 .completion li { display: flex; align-items: center; gap: .4rem; padding: .35rem .7rem; cursor: pointer; white-space: nowrap; }
 .completion li[aria-selected="true"], .completion li:hover { background: var(--surface-tint); }
+
+/* the update of a project, at the bottom of its overview */
+.update-line { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: 1.5rem; padding-top: .75rem; border-top: 1px solid var(--border); font-size: .9rem; }
