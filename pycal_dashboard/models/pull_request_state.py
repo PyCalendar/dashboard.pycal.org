@@ -9,7 +9,8 @@ class PullRequestState(models.Model):
     GitHub computes ``mergeable`` after a change: None until it knows. ``mergeable_state`` is
     ``clean``, ``dirty`` (a conflict), ``behind`` (the branch is out of date), ``blocked``,
     ``unstable``, ``has_hooks`` or ``unknown``. ``checks`` sums up the checks and statuses of its
-    last commit: ``success``, ``failure``, ``pending``, or "" while the site cannot read them.
+    last commit: ``success``, ``failure``, ``pending``, or "" while the site cannot read them;
+    ``checks_complete`` is the last of them that is not ``pending``.
     """
 
     SUCCESS = "success"
@@ -24,6 +25,8 @@ class PullRequestState(models.Model):
     mergeable_state = models.CharField(max_length=20, blank=True)
     auto_merge = models.BooleanField(default=False)
     checks = models.CharField(max_length=10, blank=True)
+    # the last result of the checks that is complete: success or failure, while new ones run
+    checks_complete = models.CharField(max_length=10, blank=True)
     # when the site read the pull request, and its checks, the last time
     updated = models.DateTimeField(null=True, blank=True)
     checks_updated = models.DateTimeField(null=True, blank=True)

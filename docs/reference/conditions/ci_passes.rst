@@ -5,8 +5,8 @@
 The checks of the last commit of a pull request passed.
 
 Holds when every check run and commit status of its last commit succeeded, or
-was skipped or neutral; also when it has none. A pull request whose checks
-still run is neither passing nor failing.
+was skipped or neutral; also when it has none. While checks run, the last
+complete result counts.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.

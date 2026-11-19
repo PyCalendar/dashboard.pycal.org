@@ -29,9 +29,11 @@ Every public page has its information as JSON at the address of the page with
    * - ``/projects/<slug>/pull-requests/``
      - ``/projects/<slug>/pull-requests.json``: the pull requests of a public
        project, the newest first, with ``page`` and ``per_page`` (10, 25, 50 or
-       100, at most 100) as on the page: each with its
-       ``repository``, ``number``, ``title``, ``url``, ``author``, ``status``
-       and times
+       100, at most 100) and the columns of conditions ``col`` as on the page,
+       see :ref:`condition-columns`: each with its
+       ``repository``, ``number``, ``title``, ``url``, ``author``, ``status``,
+       times and ``conditions``, whether each column applies (``null`` while
+       not known)
    * - ``/projects/<slug>/``
      - ``/projects/<slug>.json``: a public
        project with its ``open_issues``,

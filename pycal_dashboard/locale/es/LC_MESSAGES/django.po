@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 14:34+0000\n"
+"POT-Creation-Date: 2026-11-19 18:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Branch"
+msgstr "Rama"
+
+msgid "up to date"
+msgstr "al día"
+
+msgid "outdated"
+msgstr "desactualizada"
+
+msgid "conflict"
+msgstr "conflicto"
+
+msgid "CI"
+msgstr "CI"
+
+msgid "passing"
+msgstr "correcta"
+
+msgid "failing"
+msgstr "con fallos"
+
+msgid "Label"
+msgstr "Etiqueta"
+
+msgid "present"
+msgstr "presente"
+
+msgid "absent"
+msgstr "ausente"
+
+#, python-format
+msgid "Label %(name)s: %(mode)s"
+msgstr "Etiqueta %(name)s: %(mode)s"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "open"
+msgstr "abierto"
+
+msgid "closed"
+msgstr "cerrado"
+
+msgid "merged"
+msgstr "fusionado"
+
+msgid "auto-merging"
+msgstr "fusión automática"
 
 msgid "As the system"
 msgstr "Como el sistema"
@@ -134,6 +183,9 @@ msgstr "GitHub no aceptó el token"
 
 msgid "Too many requests to GitHub"
 msgstr "Demasiadas solicitudes a GitHub"
+
+msgid "GitHub did not answer in time"
+msgstr "GitHub no respondió a tiempo"
 
 msgid "GitHub refused the query"
 msgstr "GitHub rechazó la consulta"
@@ -688,6 +740,29 @@ msgstr ""
 msgid "Colors of the page"
 msgstr "Colores de la página"
 
+msgid "Hide this notice"
+msgstr "Ocultar este aviso"
+
+#, python-format
+msgid "%(counter)s repository could not be updated"
+msgid_plural "%(counter)s repositories could not be updated"
+msgstr[0] "%(counter)s repositorio no se pudo actualizar"
+msgstr[1] "%(counter)s repositorios no se pudieron actualizar"
+
+msgid ""
+"The site keeps showing what it read before and tries again at the next "
+"update."
+msgstr ""
+"El sitio sigue mostrando lo que leyó antes y lo intenta de nuevo en la "
+"próxima actualización."
+
+msgid ""
+"Select the text and copy it into a bug report or a question. It holds no "
+"tokens or data of people."
+msgstr ""
+"Selecciona el texto y cópialo en un informe de error o una pregunta. No "
+"contiene tokens ni datos de personas."
+
 msgid "A dashboard for the contributor community of"
 msgstr "Un panel para la comunidad de colaboradores de"
 
@@ -975,6 +1050,33 @@ msgstr "Desde"
 
 msgid "To"
 msgstr "Hasta"
+
+msgid "Condition"
+msgstr "Condición"
+
+msgid "Name of the label"
+msgstr "Nombre de la etiqueta"
+
+msgid "Choose a label of the repositories or type another one."
+msgstr "Elige una etiqueta de los repositorios o escribe otra."
+
+msgid "Show"
+msgstr "Mostrar"
+
+msgid "all pull requests"
+msgstr "todos los pull requests"
+
+msgid "only those it applies to"
+msgstr "solo aquellos a los que se aplica"
+
+msgid "only those it does not apply to"
+msgstr "solo aquellos a los que no se aplica"
+
+msgid "Change the column"
+msgstr "Cambiar la columna"
+
+msgid "Add the column"
+msgstr "Añadir la columna"
 
 msgid ""
 "The latest 100 webhooks of GitHub and what the site did. Only the "
@@ -1507,33 +1609,51 @@ msgstr "Sus repositorios siguen en GitHub y en otros proyectos."
 msgid "Yes, delete this project"
 msgstr "Sí, eliminar este proyecto"
 
+msgid "switch one on"
+msgstr "activa una"
+
 #, python-format
 msgid "%(counter)s pull request"
 msgid_plural "%(counter)s pull requests"
 msgstr[0] "%(counter)s pull request"
 msgstr[1] "%(counter)s pull requests"
 
-msgid ""
-"The pull requests of all repositories of the project, the newest first, as "
-"of the last update."
-msgstr ""
-"Los pull requests de todos los repositorios del proyecto, los más nuevos "
-"primero, según la última actualización."
+msgid "Per page"
+msgstr "Por página"
 
-msgid "Show"
+msgid "Display"
 msgstr "Mostrar"
 
-msgid "merged"
-msgstr "fusionado"
+msgid "On GitHub"
+msgstr "En GitHub"
 
-msgid "open"
-msgstr "abierto"
+msgid "Move left"
+msgstr "A la izquierda"
 
-msgid "closed"
-msgstr "cerrado"
+msgid "Move right"
+msgstr "A la derecha"
 
-msgid "created"
-msgstr "creado"
+msgid "Remove the column"
+msgstr "Quitar la columna"
+
+msgid "Add a condition"
+msgstr "Añadir una condición"
+
+#, python-format
+msgid "%(name)s#%(number)s on GitHub"
+msgstr "%(name)s#%(number)s en GitHub"
+
+msgid "not known yet"
+msgstr "aún no se sabe"
+
+msgid "applies"
+msgstr "se aplica"
+
+msgid "does not apply"
+msgstr "no se aplica"
+
+msgid "No pull request matches the filters of the columns."
+msgstr "Ningún pull request coincide con los filtros de las columnas."
 
 #, python-format
 msgid "Page %(number)s of %(total)s"
@@ -1917,17 +2037,17 @@ msgstr "Ahora las personas inician sesión con la aplicación OAuth."
 msgid "The project %(name)s is created. Add its repositories."
 msgstr "El proyecto %(name)s está creado. Añade sus repositorios."
 
-msgid "All"
-msgstr "Todos"
+msgid "Title"
+msgstr "Título"
 
-msgid "Open"
-msgstr "Abiertos"
+msgid "Number"
+msgstr "Número"
 
-msgid "Merged"
-msgstr "Fusionados"
+msgid "Creator"
+msgstr "Autoría"
 
-msgid "Closed"
-msgstr "Cerrados"
+msgid "Created"
+msgstr "Creado"
 
 msgid "Tick the box to confirm that the project is deleted."
 msgstr "Marca la casilla para confirmar que el proyecto se elimina."

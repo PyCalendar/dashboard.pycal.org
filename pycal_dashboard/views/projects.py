@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,7 +15,9 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
+from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
 from pycal_dashboard.errors import (
+    ConditionInputUnknown,
     DashboardError,
     GitHubTokenMissing,
     ProjectNotFound,
@@ -22,7 +25,7 @@ from pycal_dashboard.errors import (
     translate,
 )
 from pycal_dashboard.github.person_client import PersonClient
-from pycal_dashboard.models import GitHubUser, Issue, Project, ProjectMember, Repository
+from pycal_dashboard.models import GitHubUser, Issue, Label, Project, ProjectMember, Repository
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -367,35 +370,134 @@ def issue_data(issue: Issue) -> dict:
     }
 
 
+def table_address(columns: list[Column], size: int) -> str:
+    """The query of the table of pull requests with its columns of conditions and its size.
+
+    Parameters:
+        columns: The columns of conditions, in their order.
+        size: The pull requests of a page.
+
+    Returns:
+        Such as ``?col=branch~all~outdated&per_page=25``.
+    """
+    return "?" + urlencode([("col", column.encode()) for column in columns] + [("per_page", size)])
+
+
+def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
+    """The columns after a change that the menus of the table ask for, None without one.
+
+    ``add`` adds the column of the form, ``edit=<i>`` replaces a column with it, ``remove=<i>``
+    removes one and ``move=<i>&to=<j>`` moves one, such as by dragging it.
+
+    Parameters:
+        request: The request, with the fields of the menu.
+        columns: The columns before.
+
+    Returns:
+        The columns after; None if the request changes nothing.
+
+    Raises:
+        ConditionError: The form is wrong: a subclass says how.
+    """
+    found = list(columns)
+
+    def index(name: str) -> int:
+        number = int(request.GET.get(name, "-1") or -1)
+        if not 0 <= number < len(found):
+            raise ConditionInputUnknown(f"{name}: {number}")
+        return number
+
+    try:
+        if "add" in request.GET:
+            return [*found, Column.of_form(request.GET)]
+        if "edit" in request.GET:
+            found[index("edit")] = Column.of_form(request.GET)
+            return found
+        if "remove" in request.GET:
+            del found[index("remove")]
+            return found
+        if "move" in request.GET:
+            column = found.pop(index("move"))
+            found.insert(min(max(int(request.GET.get("to", 0)), 0), len(found)), column)
+            return found
+    except ValueError:
+        raise ConditionInputUnknown(request.GET.urlencode()) from None
+    return None
+
+
+def condition_rows(pulls: QuerySet[Issue], columns: list[Column]) -> list[dict]:
+    """The pull requests with the result of each column, those that the filters show.
+
+    Parameters:
+        pulls: The pull requests, the newest first.
+        columns: The columns of conditions.
+
+    Returns:
+        Each pull request with ``cells``: the column, whether it applies, and the parts of the
+        cell.
+    """
+    if not columns:
+        return [{"pull": pull, "cells": []} for pull in pulls]
+    rows = []
+    for pull in pulls.select_related("pull_state").prefetch_related("labels"):
+        results = [column.applies(pull) for column in columns]
+        if all(column.shows(result) for column, result in zip(columns, results, strict=True)):
+            cells = [
+                {
+                    "column": column,
+                    "result": result,
+                    "parts": column.group.cell(pull, column.choices),
+                }
+                for column, result in zip(columns, results, strict=True)
+            ]
+            rows.append({"pull": pull, "cells": cells})
+    return rows
+
+
 @require_http_methods(["GET", "HEAD"])
 def project_pull_requests(request: HttpRequest, slug: str):
     """The pull requests of all repositories of a project together, public like the project.
 
+    Columns of conditions, kept in the address (``col``), show whether each applies, and
+    filter the pull requests; the menus of the table change them.
+
     Parameters:
         request: The request; ``page`` is the page of the list, ``per_page`` its size: 10, 25,
-            50 or 100.
+            50 or 100; ``col`` are the columns of conditions.
         slug: The project.
 
     Returns:
-        The page or its JSON.
+        The page or its JSON, or a redirect after a change of the columns.
     """
     access, moved = opened(request, slug, "pull-requests/")
     if moved:
         return moved
-    repositories = shown_repositories(access)
     size = per_page(request)
-    pages = Paginator(pull_requests_of(repositories), size)
+    columns = [Column.decode(value) for value in request.GET.getlist("col")]
+    changed = changed_columns(request, columns)
+    if changed is not None:
+        return redirect(access.project.path("pull-requests/") + table_address(changed, size))
+    repositories = shown_repositories(access)
+    rows = condition_rows(pull_requests_of(repositories), columns)
+    pages = Paginator(rows, size)
     shown = pages.get_page(request.GET.get("page"))
+    labels = Label.objects.filter(repository__in=repositories).order_by("name")
     return page(
         request,
         "pycal_dashboard/project_pull_requests.html",
         {
             "project": access.project,
             "access": access,
-            "pull_requests": shown,
+            "rows": shown,
             "per_page": size,
             "per_page_choices": PER_PAGE_CHOICES,
             "columns": PULL_REQUEST_COLUMNS,
+            "condition_columns": columns,
+            "groups": GROUPS,
+            "filters": FILTERS,
+            "label_names": sorted({label.name for label in labels}),
+            "label_colors": {label.name.lower(): label.color for label in labels},
+            "address": table_address(columns, size),
             "repositories": repositories,
             "tab": "pull-requests",
         },
@@ -404,7 +506,11 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "page": shown.number,
             "pages": pages.num_pages,
             "per_page": size,
-            "pull_requests": [issue_data(issue) for issue in shown],
+            "columns": [column.encode() for column in columns],
+            "pull_requests": [
+                {**issue_data(row["pull"]), "conditions": [cell["result"] for cell in row["cells"]]}
+                for row in shown
+            ],
         },
     )
 

@@ -6,6 +6,7 @@ A pull request has a merge conflict with its base branch.
 
 Holds when GitHub says that the pull request cannot be merged into its base
 branch because they changed the same lines (``mergeable_state`` is ``dirty``).
+A merged pull request has no conflict.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.

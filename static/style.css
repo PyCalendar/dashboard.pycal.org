@@ -273,3 +273,61 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 
 /* text only for screen readers, such as the header of a column of icons */
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* hidden means hidden, also for elements whose class sets their display, such as buttons */
+[hidden] { display: none !important; }
+
+/* the columns of conditions of the table of pull requests: their menus, results and states */
+.pull-requests .col-condition { white-space: nowrap; }
+.pull-requests th.col-condition[draggable="true"] { cursor: grab; }
+.pull-requests th.col-condition.dragged-over { outline: 2px dashed var(--primary); }
+.pull-requests .col-add { width: 1%; position: sticky; right: 0; background: var(--surface); }  /* + stays in reach */
+.condition-head { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
+.menu { display: inline-block; position: static; }
+.menu > summary { list-style: none; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu[open] > .menu-panel { position: fixed; z-index: 20; left: 50%; top: 4rem; transform: translateX(-50%); width: min(26rem, calc(100vw - 2rem)); max-height: calc(100vh - 6rem); overflow-y: auto; padding: 1rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: .5rem; box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .25); font-weight: 400; text-align: left; white-space: normal; }
+.condition-form fieldset { margin: 0 0 .75rem; }
+.condition-form .choice-row { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+.condition-form input[name="label"] { width: 100%; }
+.group-fields { display: none; }
+.condition-form:has(.group-select option[value="labels"]:checked) .fields-labels,
+.condition-form:has(.group-select option[value="branch"]:checked) .fields-branch,
+.condition-form:has(.group-select option[value="ci"]:checked) .fields-ci,
+.condition-form:has(.group-select option[value="status"]:checked) .fields-status { display: block; }
+.menu-actions { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .5rem 0 0; padding-top: .5rem; border-top: 1px solid var(--border); }
+/* a checkbox that looks like a switch, on or off */
+label.switch { display: flex; align-items: center; gap: .5rem; margin: .3rem 0; cursor: pointer; }
+label.switch input { appearance: none; position: relative; flex: none; width: 2.2rem; height: 1.2rem; margin: 0; border-radius: 1rem; background: var(--border); cursor: pointer; transition: background .15s; }
+label.switch input::after { content: ""; position: absolute; top: .15rem; left: .15rem; width: .9rem; height: .9rem; border-radius: 50%; background: var(--surface); transition: left .15s; }
+label.switch input:checked { background: var(--success); }
+label.switch input:checked::after { left: 1.15rem; }
+label.switch input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.result { display: inline-block; min-width: 1.2em; font-weight: 700; text-align: center; }
+.result-yes { color: var(--success); }
+.result-no { color: var(--danger); }
+.result-unknown { color: var(--text-muted); }
+.label-chip { display: inline-block; padding: 0 .5rem; border: 1px solid var(--label); border-radius: 1rem; background: color-mix(in srgb, var(--label) 25%, var(--surface)); color: var(--text); font-size: .85rem; }
+.state-open, .state-up_to_date, .state-passing { color: var(--success); }
+.state-closed, .state-conflict, .state-failing { color: var(--danger); }
+.state-merged, .state-auto_merge { color: var(--merged); }
+.state-outdated { color: var(--warning); }
+
+/* the table of pull requests stays a table on phones: it scrolls in its frame, its header with
+   + and the gears stays, and so do the columns that people choose */
+@media (max-width: 40rem) {
+  .table.pull-requests { display: table; }
+  .table.pull-requests thead { display: table-header-group; }
+  .table.pull-requests tbody { display: table-row-group; }
+  .table.pull-requests tr { display: table-row; }
+  .table.pull-requests th, .table.pull-requests td { display: table-cell; }
+  .pull-table:has(#column-status:not(:checked)) .col-status,
+  .pull-table:has(#column-title:not(:checked)) .col-title,
+  .pull-table:has(#column-organization:not(:checked)) .col-organization,
+  .pull-table:has(#column-repository:not(:checked)) .col-repository,
+  .pull-table:has(#column-number:not(:checked)) .col-number,
+  .pull-table:has(#column-creator:not(:checked)) .col-creator,
+  .pull-table:has(#column-created:not(:checked)) .col-created,
+  .pull-table:has(#column-title:checked) .col-link,
+  .pull-table:has(#column-number:checked) .col-link { display: none; }
+}

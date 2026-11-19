@@ -1,13 +1,14 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n github times static %}
+{% load i18n github times static conditions %}
 {% block title %}{% translate "Pull requests" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script src="{% static 'pull-table.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
-<section class="card pull-table" data-pull-requests>
+<section class="card pull-table" data-pull-requests data-choose-one="{% translate "switch one on" %}">
 <div class="table-head">
-  <h2>{% blocktranslate count counter=pull_requests.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
+  <h2>{% blocktranslate count counter=rows.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
   <form method="get" class="per-page" data-per-page>
+    {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
     <label for="per-page">{% translate "Per page" %}</label>
     <select id="per-page" name="per_page">{% for size in per_page_choices %}<option value="{{ size }}"{% if size == per_page %} selected{% endif %}>{{ size }}</option>{% endfor %}</select>
     <button class="button button-quiet button-small" data-per-page-submit>{% translate "Show" %}</button>
@@ -17,9 +18,17 @@
   <summary>{% translate "Display" %}: <span data-columns-shown>{% for key, title, shown in columns %}{% if shown %}{% if key != "title" %}, {% endif %}{{ title }}{% endif %}{% endfor %}</span></summary>
   <p class="columns-checks">{% for key, title, shown in columns %}<label class="check"><input type="checkbox" id="column-{{ key }}" data-column="{{ key }}"{% if shown %} checked{% endif %}> {{ title }}</label>{% endfor %}</p>
 </details>
-{% if pull_requests %}<div class="table-wrap"><table class="table pull-requests">
-  <thead><tr><th class="col-link"><span class="visually-hidden">{% translate "On GitHub" %}</span></th>{% for key, title, shown in columns %}<th class="col-{{ key }}">{{ title }}</th>{% endfor %}</tr></thead>
-  <tbody>{% for pull in pull_requests %}<tr data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}" data-status="{{ pull.status }}">
+<datalist id="label-names">{% for name in label_names %}<option value="{{ name }}">{% endfor %}</datalist>
+{% if rows or condition_columns %}<div class="table-wrap"><table class="table pull-requests">
+  <thead><tr><th class="col-link"><span class="visually-hidden">{% translate "On GitHub" %}</span></th>{% for key, title, shown in columns %}<th class="col-{{ key }}">{{ title }}</th>{% endfor %}
+    {% for column in condition_columns %}<th class="col-condition" draggable="true" data-condition-column="{{ forloop.counter0 }}"><span class="condition-head">{{ column.summary }}{% if column.filter == "applies" %} <small class="muted">({% translate "only those it applies to" %})</small>{% elif column.filter == "not" %} <small class="muted">({% translate "only those it does not apply to" %})</small>{% endif %}
+      <details class="menu"><summary class="button button-quiet button-small" title="{% translate "Change the column" %}" aria-label="{% translate "Change the column" %}"><span aria-hidden="true">⚙</span></summary>
+        <div class="menu-panel">{% include "pycal_dashboard/conditions/_menu.html" with column=column index=forloop.counter0 %}
+        <p class="menu-actions">{% if not forloop.first %}<a href="{{ address }}&amp;move={{ forloop.counter0 }}&amp;to={{ forloop.counter0|add:-1 }}">{% translate "Move left" %}</a> {% endif %}{% if not forloop.last %}<a href="{{ address }}&amp;move={{ forloop.counter0 }}&amp;to={{ forloop.counter }}">{% translate "Move right" %}</a> {% endif %}<a href="{{ address }}&amp;remove={{ forloop.counter0 }}" data-remove-column>{% translate "Remove the column" %}</a></p></div>
+      </details></span></th>{% endfor %}
+    <th class="col-add"><details class="menu" data-add-condition><summary class="button button-small" title="{% translate "Add a condition" %}" aria-label="{% translate "Add a condition" %}"><span aria-hidden="true">+</span></summary>
+      <div class="menu-panel">{% include "pycal_dashboard/conditions/_menu.html" with column=None index="new" %}</div></details></th></tr></thead>
+  <tbody>{% for row in rows %}{% with pull=row.pull %}<tr data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}" data-status="{{ pull.status }}">
     <td class="col-link">{% blocktranslate with name=pull.repository.full_name number=pull.number asvar label %}{{ name }}#{{ number }} on GitHub{% endblocktranslate %}{% github_link pull.url label %}</td>
     <td class="col-status"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span></td>
     <td class="col-title"><a href="{{ pull.url }}">{{ pull.title }}</a></td>
@@ -28,12 +37,15 @@
     <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}</a></td>
     <td class="col-creator">{% github_user pull.author %}</td>
     <td class="col-created">{% when pull.created %}</td>
-  </tr>{% endfor %}</tbody>
+    {% for cell in row.cells %}<td class="col-condition" data-result="{% if cell.result is None %}unknown{% elif cell.result %}yes{% else %}no{% endif %}">{% if cell.result is None %}<span class="result result-unknown" role="img" aria-label="{% translate "not known yet" %}" title="{% translate "not known yet" %}">?</span>{% elif cell.result %}<span class="result result-yes" role="img" aria-label="{% translate "applies" %}" title="{% translate "applies" %}">✓</span>{% else %}<span class="result result-no" role="img" aria-label="{% translate "does not apply" %}" title="{% translate "does not apply" %}">✗</span>{% endif %}
+      {% for part in cell.parts %}{% if part.kind == "label" %}<span class="label-chip" style="--label: #{% label_color label_colors part.text %}">{{ part.text }}</span>{% else %}<span class="state state-{{ part.kind }}">{{ part.text }}</span>{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}</td>{% endfor %}
+    <td class="col-add"></td>
+  </tr>{% endwith %}{% empty %}<tr><td colspan="{{ columns|length|add:2 }}" class="muted" data-no-match>{% translate "No pull request matches the filters of the columns." %}</td></tr>{% endfor %}</tbody>
 </table></div>
-{% if pull_requests.paginator.num_pages > 1 %}<nav class="pagination" aria-label="{% translate "Pages" %}">
-  {% if pull_requests.has_previous %}<a href="?per_page={{ per_page }}&amp;page={{ pull_requests.previous_page_number }}" rel="prev">{% translate "Newer" %}</a>{% endif %}
-  <span>{% blocktranslate with number=pull_requests.number total=pull_requests.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
-  {% if pull_requests.has_next %}<a href="?per_page={{ per_page }}&amp;page={{ pull_requests.next_page_number }}" rel="next">{% translate "Older" %}</a>{% endif %}
+{% if rows.paginator.num_pages > 1 %}<nav class="pagination" aria-label="{% translate "Pages" %}">
+  {% if rows.has_previous %}<a href="{{ address }}&amp;page={{ rows.previous_page_number }}" rel="prev">{% translate "Newer" %}</a>{% endif %}
+  <span>{% blocktranslate with number=rows.number total=rows.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
+  {% if rows.has_next %}<a href="{{ address }}&amp;page={{ rows.next_page_number }}" rel="next">{% translate "Older" %}</a>{% endif %}
 </nav>{% endif %}
 {% elif not repositories %}<p data-no-repositories>{% translate "The project has no repositories yet." %}</p>
 {% else %}<p data-no-pull-requests>{% translate "No pull requests here. The update of the project reads them from GitHub." %}</p>{% endif %}

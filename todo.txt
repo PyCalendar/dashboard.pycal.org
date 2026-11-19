@@ -315,3 +315,15 @@ community: where to start, what waits for a review, who contributes.
       send them (the first one: installations that need more permissions)
 
 - [x] The first CI run on GitHub passed (run 44301486968); the image is on ghcr.io
+
+## todo
+- [x] https://dashboard.pycal.org/projects/icalendar/pull-requests/ - Do not display the user name next to the github handle
+- [x] Pull requests: first only title, number and creator; the number links GitHub; the icon of
+      GitHub only without both
+- [x] Columns of conditions with +: a menu chooses the group (labels present/absent, branch up to
+      date/outdated/conflict, CI passing/failing with the last complete result, status
+      open/closed/merged/auto-merging) and its choices, validated in the browser; labels of the
+      repositories or new ones; a filter (all, applies, does not apply); cells with a check mark
+      or a cross (with text for screen readers) and the texts of the conditions; a gear changes,
+      moves and removes a column; drag and drop; the columns stay right; the address keeps them,
+      the JSON has their results; translated; the page fits a phone in German (tested)

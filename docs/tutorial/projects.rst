@@ -165,6 +165,36 @@ without both, an icon of GitHub links it. Without the status, each row starts
 with the color of its status: green while it is open, purple when it was
 merged, red when it was closed without merging.
 
+.. _condition-columns:
+
+Columns of conditions
+---------------------
+
+The button **+** at the right of the table adds a column of conditions; each
+says for every pull request whether its condition applies, with a green
+check mark, or not, with a red cross, and why:
+
+**Label**
+   A label is present or absent. Choose a label of the repositories or type
+   another one; the cell shows the label in its color.
+**Branch**
+   Up to date, outdated or in conflict with its base branch, as many as you
+   switch on; a merged pull request is up to date. The cell names what applies.
+**CI**
+   Passing or failing: the last complete result of the checks, also while new
+   ones run.
+**Status**
+   Open, closed, merged or auto-merging, with their colors.
+
+Under the condition, *Show* filters the table: all pull requests, only those
+it applies to, or only those it does not apply to. The gear of a column changes
+it, moves it or removes it; drag a column onto another one to move it. The
+columns of conditions stay right of the other columns. The address of the page
+keeps them, so it can be bookmarked and shared; the JSON has the result of each
+column for each pull request (``conditions``), see :doc:`/reference/json`. A
+question mark means that the data of the pull request is not complete yet, such
+as checks that were never read. See :doc:`/reference/conditions/index`.
+
 The tabs of a project are always in this order: the overview, the public tabs,
 then those of the collaborators.
 

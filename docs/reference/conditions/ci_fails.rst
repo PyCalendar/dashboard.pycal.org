@@ -5,8 +5,8 @@
 A check of the last commit of a pull request failed.
 
 Holds when a check run or commit status of its last commit failed, timed out,
-was cancelled or needs an action. A pull request whose checks still run is
-neither passing nor failing.
+was cancelled or needs an action. While checks run, the last complete result
+counts.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.

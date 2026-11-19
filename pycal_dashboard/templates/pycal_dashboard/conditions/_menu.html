@@ -1,0 +1,21 @@
+{% load i18n %}<form method="get" class="condition-form" data-condition-form>
+  {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
+  <input type="hidden" name="per_page" value="{{ per_page }}">
+  {% if column %}<input type="hidden" name="edit" value="{{ index }}">{% else %}<input type="hidden" name="add" value="1">{% endif %}
+  <p><label for="group-{{ index }}">{% translate "Condition" %}</label>
+  <select id="group-{{ index }}" name="group" class="group-select" required>{% for id, group in groups.items %}<option value="{{ id }}"{% if column.group.id == id %} selected{% endif %}>{% translate group.title %}</option>{% endfor %}</select></p>
+  <fieldset class="group-fields fields-labels"><legend>{% translate "Label" %}</legend>
+    <p class="choice-row"><label class="check"><input type="radio" name="mode" value="present"{% if not column or column.choices.0 != "absent" %} checked{% endif %}> {% translate "present" %}</label>
+    <label class="check"><input type="radio" name="mode" value="absent"{% if column.choices.0 == "absent" %} checked{% endif %}> {% translate "absent" %}</label></p>
+    <p><label for="label-{{ index }}">{% translate "Name of the label" %}</label>
+    <input id="label-{{ index }}" name="label" list="label-names" maxlength="100" autocomplete="off" data-required-for="labels" value="{% if column.group.id == 'labels' %}{{ column.choices.1 }}{% endif %}">
+    <small class="muted">{% translate "Choose a label of the repositories or type another one." %}</small></p>
+  </fieldset>
+  {% for id, group in groups.items %}{% if group.switches %}<fieldset class="group-fields fields-{{ id }}" data-switches="{{ id }}"><legend>{% translate group.title %}</legend>
+    {% for name, condition, text in group.switches %}<label class="switch"><input type="checkbox" name="{{ id }}" value="{{ name }}"{% if column.group.id == id and name in column.choices %} checked{% endif %}> <span>{% translate text %}</span></label>{% endfor %}
+  </fieldset>{% endif %}{% endfor %}
+  <fieldset><legend>{% translate "Show" %}</legend>
+    {% for value in filters %}<label class="check"><input type="radio" name="filter" value="{{ value }}"{% if column and column.filter == value or not column and value == "all" %} checked{% endif %}> {% if value == "all" %}{% translate "all pull requests" %}{% elif value == "applies" %}{% translate "only those it applies to" %}{% else %}{% translate "only those it does not apply to" %}{% endif %}</label>{% endfor %}
+  </fieldset>
+  <p><button class="button">{% if column %}{% translate "Change the column" %}{% else %}{% translate "Add the column" %}{% endif %}</button></p>
+</form>

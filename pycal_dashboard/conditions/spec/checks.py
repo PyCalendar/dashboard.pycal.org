@@ -63,10 +63,11 @@ class ChecksData(DataSpec):
             issue: The pull request.
             node: The pull request of GraphQL.
         """
-        PullRequestState.objects.update_or_create(
-            issue=issue,
-            defaults={"checks": self.summary(node), "checks_updated": timezone.now()},
-        )
+        summary = self.summary(node)
+        defaults = {"checks": summary, "checks_updated": timezone.now()}
+        if summary != PullRequestState.PENDING:  # complete: the result while new checks run
+            defaults["checks_complete"] = summary
+        PullRequestState.objects.update_or_create(issue=issue, defaults=defaults)
 
     def complete(self, issue: Issue) -> bool:
         """Read after the last reading of the pull request, for its last commit.
@@ -75,9 +76,9 @@ class ChecksData(DataSpec):
             issue: The pull request.
 
         Returns:
-            True if the checks are known and current.
+            True if the checks are known and current, and one result was complete.
         """
         state = getattr(issue, "pull_state", None)
-        if state is None or not state.checks or state.checks_updated is None:
+        if state is None or not state.checks_complete or state.checks_updated is None:
             return False
         return state.updated is None or state.checks_updated >= state.updated

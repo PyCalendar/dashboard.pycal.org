@@ -144,6 +144,7 @@ MODELS = {
             "mergeable_state",
             "auto_merge",
             "checks",
+            "checks_complete",
             "updated",
             "checks_updated",
         },

@@ -16,13 +16,25 @@ class BranchOutdated(Condition):
 
     Holds when its base branch has commits that the branch of the pull request does not have,
     and the repository requires branches to be up to date before merging (``mergeable_state``
-    is ``behind``).
+    is ``behind``). A merged pull request is not out of date.
     """
 
     id = "branch_outdated"
     title = "Branch out of date"
     description = "The branch of a pull request is behind its base branch."
     data = (PullRequestData(),)
+
+    @classmethod
+    def complete(cls, issue: Issue) -> bool:
+        """A merged pull request needs no state of its branch.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            True if it was merged, or its state is complete.
+        """
+        return issue.merged is not None or super().complete(issue)
 
     @classmethod
     def assess(cls, issue: Issue, values: dict) -> bool:
@@ -35,4 +47,6 @@ class BranchOutdated(Condition):
         Returns:
             True if it is behind.
         """
+        if issue.merged is not None:
+            return False
         return issue.pull_state.mergeable_state == "behind"

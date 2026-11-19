@@ -333,3 +333,9 @@ def test_the_roles_link_what_each_may_do(client, project, bob):
     table, share = page.split("data-share")
     assert link in table.split("<thead>")[1].split("</thead>")[0]  # next to Role
     assert link in share and 'title="Help: What each role may do' in share
+
+
+def test_the_creator_is_shown_by_the_github_name_alone(client, project):
+    GitHubUser.objects.filter(login="alice").update(name="Alice Liddell")
+    page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
+    assert 'data-github-user="alice"' in page and "Alice Liddell" not in page

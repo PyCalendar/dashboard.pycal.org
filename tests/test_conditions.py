@@ -24,6 +24,7 @@ IDS = [
     "ci_fails",
     "merge_conflict",
     "branch_outdated",
+    "branch_up_to_date",
     "auto_merge_enabled",
     "open",
     "merged",
@@ -294,8 +295,8 @@ def test_without_the_app_the_states_are_not_read(github):
         (None, "success", True, False),  # no checks
         ("FAILURE", "failure", False, True),
         ("ERROR", "failure", False, True),
-        ("PENDING", "pending", False, False),
-        ("EXPECTED", "pending", False, False),
+        ("PENDING", "pending", None, None),  # no complete result yet
+        ("EXPECTED", "pending", None, None),
     ],
 )
 def test_ci_from_the_rollup_of_github(github, rollup, summary, passes, fails):
@@ -309,6 +310,20 @@ def test_ci_from_the_rollup_of_github(github, rollup, summary, passes, fails):
     assert change.pull_state.checks == summary
     assert CONDITIONS["ci_passes"].check(change, {}) is passes
     assert CONDITIONS["ci_fails"].check(change, {}) is fails
+
+
+@pytest.mark.django_db
+def test_while_checks_run_the_last_complete_result_counts(github):
+    github.add_repository(REPO, installation=11)
+    github.add_issue(REPO, "Change", pull_request=True)
+    repository = Repository.objects.create(full_name=REPO)
+    github.set_checks(REPO, 1, "FAILURE")
+    RepositoryUpdate(repository).run()
+    github.set_checks(REPO, 1, "PENDING")  # a new commit: its checks run
+    RepositoryUpdate(repository).run()
+    change = pull("Change")
+    assert (change.pull_state.checks, change.pull_state.checks_complete) == ("pending", "failure")
+    assert CONDITIONS["ci_fails"].check(change, {}) is True
 
 
 @pytest.mark.django_db

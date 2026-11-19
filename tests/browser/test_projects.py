@@ -208,3 +208,82 @@ def test_click_away_the_notice_of_failed_updates(page, site, github, bob):
     expect(notice).to_be_hidden()
     page.reload()
     expect(page.locator("[data-update-errors]")).to_be_hidden()
+
+
+def pull_request_project(github, bob):
+    """A project with pull requests of all kinds, read from the fake GitHub."""
+    from pycal_dashboard.models import Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+
+    github.add_repository("collective/icalendar", installation=11)
+    github.add_label("collective/icalendar", "needs review", "", "fbca04")
+    github.add_issue("collective/icalendar", "Ready", pull_request=True, labels=("needs review",))
+    github.add_issue("collective/icalendar", "Conflict", pull_request=True, mergeable_state="dirty")
+    github.add_issue("collective/icalendar", "Behind", pull_request=True, mergeable_state="behind")
+    repository = Repository.objects.create(full_name="collective/icalendar")
+    project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    project.repositories.add(repository)
+    RepositoryUpdate(repository).run()
+    return project
+
+
+def test_columns_of_conditions(page, site, github, bob):
+    """Add a column with +, filter by it, change it with its gear, add another, drag it."""
+    pull_request_project(github, bob)
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    expect(menu.get_by_label("Name of the label")).to_be_visible()  # Label comes first
+    menu.get_by_label("Condition").select_option("branch")
+    expect(menu.get_by_label("Name of the label")).to_be_hidden()
+    menu.get_by_text("outdated", exact=True).click()
+    menu.get_by_text("conflict", exact=True).click()
+    menu.get_by_text("only those it applies to").click()
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=branch~applies~outdated~conflict"))
+    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    expect(page.locator("td.col-condition .result-yes")).to_have_count(2)
+    # its gear: show all, then the crosses of those it does not apply to
+    page.get_by_label("Change the column").click()
+    gear = page.locator("[data-condition-column='0'] [data-condition-form]")
+    gear.get_by_text("all pull requests").click()
+    gear.get_by_role("button", name="Change the column").click()
+    expect(page.locator("[data-pull-request]")).to_have_count(3)
+    expect(page.locator(".result-no")).to_have_count(1)
+    expect(page.locator(".result-no")).to_have_attribute("aria-label", "does not apply")
+    # a second column: a label, chosen from those of the repositories
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    menu.get_by_role("button", name="Add the column").click()  # the browser asks for a label
+    expect(page).not_to_have_url(re.compile(r"col=labels"))
+    menu.get_by_label("Name of the label").fill("needs review")
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page.locator(".label-chip").first).to_have_text("needs review")
+    heads = page.locator("th.col-condition")
+    expect(heads.nth(1)).to_contain_text("Label needs review: present")
+    heads.nth(1).drag_to(heads.nth(0))
+    expect(page).to_have_url(re.compile(r"col=labels~[^&]+&col=branch"))
+
+
+def test_the_table_in_german_on_a_phone(page, site, github, bob):
+    """German takes much space: the page, its table and its menus fit a phone."""
+    pull_request_project(github, bob)
+    page.set_viewport_size({"width": 360, "height": 740})
+    page.goto(f"{site}/language/")  # the language of the menu: German
+    page.context.add_cookies([{"name": "django_language", "value": "de", "url": site}])
+    columns = "col=branch~all~up_to_date~outdated~conflict&col=status~all~open~auto_merge"
+    page.goto(f"{site}/projects/icalendar/pull-requests/?{columns}")
+    expect(page.get_by_role("heading", name="3 Pull Requests")).to_be_visible()
+    expect(page.locator("[data-per-page-submit]")).to_be_hidden()  # the menu changes at once
+    assert page.evaluate("document.documentElement.scrollWidth") <= 360
+    page.get_by_text("Anzeigen:").click()
+    for column in ("Status", "Organisation", "Repository", "Erstellt"):
+        page.locator("[data-columns]").get_by_label(column, exact=True).check()
+    assert page.evaluate("document.documentElement.scrollWidth") <= 360  # the table scrolls
+    page.get_by_label("Eine Bedingung hinzufügen").click()
+    panel = page.locator("[data-add-condition] .menu-panel")
+    expect(panel).to_be_visible()
+    box = panel.bounding_box()
+    assert box["x"] >= 0 and box["x"] + box["width"] <= 360
+    assert page.evaluate("document.documentElement.scrollWidth") <= 360

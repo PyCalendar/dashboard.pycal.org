@@ -14,6 +14,7 @@ its ``base.py``.
 from pycal_dashboard.conditions.condition.auto_merge_enabled import AutoMergeEnabled
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.condition.branch_outdated import BranchOutdated
+from pycal_dashboard.conditions.condition.branch_up_to_date import BranchUpToDate
 from pycal_dashboard.conditions.condition.ci_fails import CiFails
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
 from pycal_dashboard.conditions.condition.closed import Closed
@@ -37,6 +38,7 @@ CONDITIONS: dict[str, type[Condition]] = {
         CiFails,
         MergeConflict,
         BranchOutdated,
+        BranchUpToDate,
         AutoMergeEnabled,
         Open,
         Merged,

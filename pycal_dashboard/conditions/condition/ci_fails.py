@@ -15,8 +15,7 @@ class CiFails(CiPasses):
     """The continuous integration of a pull request fails.
 
     Holds when a check run or commit status of its last commit failed, timed out, was
-    cancelled or needs an action. A pull request whose checks still run is neither passing nor
-    failing.
+    cancelled or needs an action. While checks run, the last complete result counts.
     """
 
     id = "ci_fails"
@@ -34,4 +33,4 @@ class CiFails(CiPasses):
         Returns:
             True if one failed.
         """
-        return issue.pull_state.checks == PullRequestState.FAILURE
+        return issue.pull_state.checks_complete == PullRequestState.FAILURE

@@ -92,3 +92,6 @@ Conditions
 
 .. automodule:: pycal_dashboard.conditions.condition.closed
    :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.branch_up_to_date
+   :no-members:

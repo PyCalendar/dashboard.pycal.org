@@ -24,6 +24,8 @@ pages yet.
      - A pull request has a merge conflict with its base branch.
    * - :doc:`branch_outdated`
      - The branch of a pull request is behind its base branch.
+   * - :doc:`branch_up_to_date`
+     - The branch of a pull request is up to date with its base branch.
    * - :doc:`auto_merge_enabled`
      - Auto-merge is enabled on a pull request.
    * - :doc:`open`
@@ -42,6 +44,7 @@ pages yet.
    ci_fails
    merge_conflict
    branch_outdated
+   branch_up_to_date
    auto_merge_enabled
    open
    merged

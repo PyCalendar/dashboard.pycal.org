@@ -17,8 +17,7 @@ class CiPasses(Condition):
     """The continuous integration of a pull request passes.
 
     Holds when every check run and commit status of its last commit succeeded, or was skipped
-    or neutral; also when it has none. A pull request whose checks still run is neither passing
-    nor failing.
+    or neutral; also when it has none. While checks run, the last complete result counts.
     """
 
     id = "ci_passes"
@@ -37,4 +36,4 @@ class CiPasses(Condition):
         Returns:
             True if they passed.
         """
-        return issue.pull_state.checks == PullRequestState.SUCCESS
+        return issue.pull_state.checks_complete == PullRequestState.SUCCESS
