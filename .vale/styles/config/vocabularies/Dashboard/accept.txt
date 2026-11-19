@@ -11,3 +11,4 @@ tailnet
 Trivy
 uv
 zizmor
+towncrier

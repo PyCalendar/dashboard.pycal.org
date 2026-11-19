@@ -14,7 +14,10 @@ messages; ``make dev`` installs its hooks. ``todo.txt`` lists the requirements
 of the prompts and what is open.
 
 Every change that people notice has a news fragment in ``news/``, such as
-``news/12.feature.rst``, and updates the documentation.
+``news/12.feature`` or ``news/+topic.bugfix``, and updates the documentation.
+Each build of the documentation drafts the fragments with towncrier into the
+section *Unreleased* of :doc:`changelog`; ``towncrier build`` writes them into
+the changelog at a release.
 
 .. _translate:
 

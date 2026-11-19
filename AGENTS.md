@@ -70,7 +70,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 
 ## Changelog and documentation
 
-- Every change people notice has a news fragment in `news/`.
+- Every change people notice has a news fragment in `news/`, named without `.rst`, such as
+  `news/+topic.feature` or `news/12.bugfix`. The documentation shows them in the changelog:
+  `docs/conf.py` drafts them with towncrier at each build.
 - The documentation (`docs/`) is updated with the change.
 
 <!-- ai-prompt-auto-commit: start -->

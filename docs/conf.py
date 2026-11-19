@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -62,6 +63,51 @@ autodoc_member_order = "bysource"
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 exclude_patterns = ["_build"]
 linkcheck_ignore = [r"http://localhost", r"https://dashboard\.pycal\.org.*"]
+
+
+def unreleased_changes(root: Path = ROOT) -> str:
+    """The changes since the last release, drafted by towncrier from the fragments in ``news/``.
+
+    Args:
+        root: The project, with ``pyproject.toml`` and ``news/``.
+
+    Returns:
+        The section of the changelog, "" without fragments.
+
+    Examples:
+        >>> unreleased_changes().startswith("Unreleased")
+        True
+    """
+    if not any(not path.name.startswith(".") for path in (root / "news").iterdir()):
+        return ""
+    draft = subprocess.run(
+        [sys.executable, "-m", "towncrier", "build", "--draft", "--version", "unreleased"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    # the version comes from the git tag of the release: the title says that it is not released
+    body = draft.split("\n", 2)[2]
+    return f"Unreleased\n----------\n{body}"
+
+
+def write_unreleased_changes(path: Path = ROOT / "docs" / "_build" / "unreleased.rst") -> None:
+    """Write the changes since the last release for ``changelog.rst``, which includes them.
+
+    The file is written only when it changes, so that ``make livehtml`` does not build again
+    and again.
+
+    Args:
+        path: The file.
+    """
+    text = unreleased_changes()
+    if not path.is_file() or path.read_text() != text:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+
+
+write_unreleased_changes()
 
 
 def error_facts(app, what, name, obj, options, lines):
