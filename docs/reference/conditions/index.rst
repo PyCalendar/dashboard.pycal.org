@@ -62,13 +62,13 @@ Data
 
 The data of a pull request that conditions need, with the permissions and
 webhooks of the GitHub App that reading it needs. Data whose permissions the
-app does not ask for yet is not read.
+app does not ask for is not read.
 
 ``labels``
    The labels of the repository and of the pull request.
 ``pull_request``
    Whether the pull request can be merged, is behind its base, and merges itself.
 ``checks``
-   The checks and statuses of the last commit of the pull request. Not read yet: the app does not ask for its permissions.
+   The checks and statuses of the last commit of the pull request.
 
 See :doc:`api` for the classes.

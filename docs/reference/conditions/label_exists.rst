@@ -43,8 +43,8 @@ The update of the repository reads in the background:
 
 ``labels``
    The labels of the repository and of the pull request. Permissions of the
-   GitHub App: ``metadata``: read, ``issues``: read; webhooks: ``issues``,
-   ``pull_request``.
+   GitHub App: ``metadata``: read, ``issues``: read; webhooks: ``label``,
+   ``issues``, ``pull_request``.
 
 API reference
 =============

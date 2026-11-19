@@ -1,0 +1,4 @@
+The GitHub App asks for the permissions ``checks``, ``statuses`` and ``contents`` (read) and the
+webhooks ``label``, ``check_run``, ``check_suite``, ``status`` and ``push``, so that the conditions
+of pull requests work: the owners of each installation accept them on GitHub, and the site tells
+them by email.

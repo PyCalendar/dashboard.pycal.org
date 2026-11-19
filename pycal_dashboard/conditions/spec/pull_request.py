@@ -16,8 +16,8 @@ class PullRequestData(DataSpec):
 
     id = "pull_request"
     title = "Whether the pull request can be merged, is behind its base, and merges itself"
-    permissions = {"pull_requests": "read"}
-    events = ("pull_request",)
+    permissions = {"pull_requests": "read", "contents": "read"}
+    events = ("pull_request", "push")
 
     def fetch(self, client, repository) -> int:
         """Read the state of every open pull request.

@@ -262,11 +262,17 @@ community: where to start, what waits for a review, who contributes.
       descriptions and colors as a model. Only models and specs: not in the UI yet
 - [ ] The person: look at the page of the pull requests before the conditions go into the UI
 - [x] The conditions grouped in condition/ (with base.py), input/ and spec/
-- [ ] The person: should the GitHub App ask for checks:read and statuses:read (and the webhooks
+- [x] The person: should the GitHub App ask for checks:read and statuses:read (and the webhooks
       check_run, check_suite, status), so that ci_passes and ci_fails can be assessed? Every
       installation must accept new permissions; until then the conditions of CI are not read
-- [ ] The person: the webhook label (labels created, renamed or deleted without a pull request)
+- [x] The person: the webhook label (labels created, renamed or deleted without a pull request)
       and push (a base branch that moved) are not subscribed; the hourly renewal covers them
+- [x] The app asks for checks, statuses and contents (read) and the webhooks label, check_run,
+      check_suite, status and push: the conditions work (decided by the person: the app must work)
+- [ ] Docstrings: Parameters: instead of Args:, everywhere; every argument typed (ruff)
+- [ ] Rate limits and GraphQL: evaluate GraphQL for minimal updates; tokens of people for
+      projects (tab Tokens of a project, a tabbed profile with a tab of the tokens and the
+      repositories they are used for), as on the insight platform
 - [ ] The person: deleting one's account on the site (the privacy policy says: ask the people who
       run the site)
 

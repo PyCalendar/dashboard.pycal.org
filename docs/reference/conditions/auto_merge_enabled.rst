@@ -22,8 +22,8 @@ The update of the repository reads in the background:
 
 ``pull_request``
    Whether the pull request can be merged, is behind its base, and merges
-   itself. Permissions of the GitHub App: ``pull_requests``: read; webhooks:
-   ``pull_request``.
+   itself. Permissions of the GitHub App: ``pull_requests``: read,
+   ``contents``: read; webhooks: ``pull_request``, ``push``.
 
 API reference
 =============

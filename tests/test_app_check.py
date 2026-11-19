@@ -6,6 +6,7 @@ from django.core.management import CommandError, call_command
 
 from pycal_dashboard.errors import GitHubAppNotConfigured, InvalidPrivateKey
 from pycal_dashboard.github.app_check import AppCheck
+from pycal_dashboard.github.permissions import EVENTS
 from tests.conftest import person
 
 
@@ -20,12 +21,19 @@ def test_the_app_lacks_permissions_and_events(github):
     github.app["permissions"] = {"metadata": "read"}
     github.app["events"] = ["issues"]
     check = AppCheck.read()
-    assert check.missing_permissions == {"issues": "read", "pull_requests": "write"}
+    assert check.missing_permissions == {
+        "issues": "read",
+        "pull_requests": "write",
+        "checks": "read",
+        "statuses": "read",
+        "contents": "read",
+    }
     assert "repository" in check.missing_events and not check.complete
     assert check.describe() == (
-        "The GitHub App lacks the permissions issues: read, pull_requests: write and does not "
-        "receive the events issue_comment, pull_request, pull_request_review, repository: "
-        "change them on https://github.com/organizations/PyCalendar/settings/apps/"
+        "The GitHub App lacks the permissions issues: read, pull_requests: write, checks: read, "
+        "statuses: read, contents: read and does not receive the events issue_comment, "
+        "pull_request, pull_request_review, repository, label, check_run, check_suite, status, "
+        "push: change them on https://github.com/organizations/PyCalendar/settings/apps/"
         "dashboard-test/permissions"
     )
 
@@ -59,12 +67,7 @@ def test_the_setup_page_shows_it_to_administrators(client, github, db):
     client.force_login(person(7, "admin"))
     page = client.get("/setup/github-app/").content.decode()
     assert "data-app-lacks" in page and "<code>repository</code>" in page
-    github.app["events"] = github.app["events"] + [
-        "issue_comment",
-        "pull_request",
-        "pull_request_review",
-        "repository",
-    ]
+    github.app["events"] = list(EVENTS)
     assert b"data-app-complete" in client.get("/setup/github-app/").content
 
 

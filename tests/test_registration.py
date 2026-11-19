@@ -139,4 +139,11 @@ def test_every_account_may_install_the_app():
 def test_the_app_writes_only_to_pull_requests():
     """Labels and the comment of the site on pull requests; everything else is read."""
     permissions = manifest("dashboard", "https://dashboard.example.org")["default_permissions"]
-    assert permissions == {"metadata": "read", "issues": "read", "pull_requests": "write"}
+    assert permissions == {
+        "metadata": "read",
+        "issues": "read",
+        "pull_requests": "write",
+        "checks": "read",
+        "statuses": "read",
+        "contents": "read",
+    }

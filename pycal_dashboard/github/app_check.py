@@ -69,7 +69,7 @@ class AppCheck:
         """The events of :data:`~pycal_dashboard.github.permissions.EVENTS` it does not receive.
 
         Examples:
-            >>> AppCheck({"events": ["issues", "pull_request"]}).missing_events
+            >>> AppCheck({"events": ["issues", "pull_request"]}).missing_events[:3]
             ['issue_comment', 'pull_request_review', 'repository']
         """
         received = self.app.get("events") or []

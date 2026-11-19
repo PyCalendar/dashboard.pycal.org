@@ -10,7 +10,8 @@ class CiPasses(Condition):
     """The continuous integration of a pull request passes.
 
     Holds when every check run and commit status of its last commit succeeded, or was skipped
-    or neutral. A pull request whose checks still run is neither passing nor failing.
+    or neutral; also when it has none. A pull request whose checks still run is neither passing
+    nor failing.
     """
 
     id = "ci_passes"

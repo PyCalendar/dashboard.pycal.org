@@ -10,11 +10,27 @@ REQUIRED = {
     # the webhooks of pull requests and their reviews; labels on pull requests, and a comment of
     # the site on a pull request that it creates and updates
     "pull_requests": "write",
+    # the conditions: the check runs and commit statuses of pull requests (ci_passes, ci_fails),
+    # and the pushes to their base branches (branch_outdated, merge_conflict)
+    "checks": "read",
+    "statuses": "read",
+    "contents": "read",
 }
 # The app asks nothing of the people who use it: they sign in with the OAuth app.
 # The events the app receives. "installation" and "installation_repositories" come without
 # a subscription.
-EVENTS = ["issues", "issue_comment", "pull_request", "pull_request_review", "repository"]
+EVENTS = [
+    "issues",
+    "issue_comment",
+    "pull_request",
+    "pull_request_review",
+    "repository",
+    "label",
+    "check_run",
+    "check_suite",
+    "status",
+    "push",
+]
 LEVELS = {"read": 1, "write": 2, "admin": 3}
 # The permission that each event needs, so that GitHub sends it.
 EVENT_PERMISSIONS = {
@@ -23,6 +39,11 @@ EVENT_PERMISSIONS = {
     "pull_request": "pull_requests",
     "pull_request_review": "pull_requests",
     "repository": "metadata",
+    "label": "metadata",
+    "check_run": "checks",
+    "check_suite": "checks",
+    "status": "statuses",
+    "push": "contents",
 }
 # The data that the site keeps of GitHub, and the events that tell of its changes: a webhook
 # updates the repository it is about, so that the data follows GitHub without waiting for the
@@ -31,8 +52,8 @@ DATA_EVENTS = {
     "Repository": ["repository"],
     "Issue": ["issues", "issue_comment", "pull_request", "pull_request_review"],
     "GitHubUser": ["issues", "pull_request"],
-    "Label": ["issues", "pull_request"],
-    "PullRequestState": ["pull_request"],
+    "Label": ["label", "issues", "pull_request"],
+    "PullRequestState": ["pull_request", "push", "check_run", "check_suite", "status"],
     "Installation": ["installation", "installation_repositories"],
 }
 

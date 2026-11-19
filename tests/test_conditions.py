@@ -191,7 +191,7 @@ def test_configure_a_condition():
         "id": "labels",
         "title": "The labels of the repository and of the pull request",
         "permissions": {"metadata": "read", "issues": "read"},
-        "events": ["issues", "pull_request"],
+        "events": ["label", "issues", "pull_request"],
         "enabled": True,
     }
 
@@ -227,8 +227,8 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
     assert (state.mergeable, state.mergeable_state, state.base_ref) == (False, "dirty", "main")
     assert pull("Ready").pull_state.auto_merge and not pull("Behind").pull_state.auto_merge
     assert not PullRequestState.objects.filter(issue__title="Closed").exists()
-    assert not ChecksData().enabled()  # the app does not ask for checks and statuses yet
-    assert PullRequestState.objects.get(issue__title="Ready").checks == ""
+    assert ChecksData().enabled()  # the app asks for checks and statuses
+    assert PullRequestState.objects.get(issue__title="Ready").checks == "success"  # none ran
 
 
 @pytest.mark.django_db
@@ -241,7 +241,8 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
         ("branch_outdated", {}, {"Behind": True, "Ready": False, "Conflict": False}),
         ("auto_merge_enabled", {}, {"Ready": True, "Behind": False}),
         ("merge_conflict", {}, {"Computing": None}),  # GitHub does not know yet
-        ("ci_passes", {}, {"Ready": None}),  # the checks are not read yet
+        ("ci_passes", {}, {"Ready": True}),  # no checks: nothing failed
+        ("ci_fails", {}, {"Ready": False}),
         ("label_exists", {"label": "bug"}, {"An issue": None}),  # pull requests only
     ],
 )
@@ -286,7 +287,6 @@ def test_ci_once_the_app_may_read_the_checks(
     github, monkeypatch, runs, status, summary, passes, fails
 ):
     """With the permissions checks and statuses, the background reads the checks."""
-    monkeypatch.setattr(ChecksData, "enabled", lambda self: True)
     github.add_repository(REPO, installation=11)
     github.add_issue(REPO, "Change", pull_request=True)
     github.set_checks(REPO, 1, runs, status)

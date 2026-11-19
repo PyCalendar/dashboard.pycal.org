@@ -9,9 +9,7 @@ from pycal_dashboard.models import Issue, PullRequestState
 class ChecksData(DataSpec):
     """The check runs and commit statuses of the last commit of an open pull request.
 
-    Together they are ``success``, ``failure`` or ``pending`` (``PullRequestState.checks``). The
-    GitHub App does not ask for the permissions ``checks`` and ``statuses`` yet: until it does,
-    the site does not read them and the conditions of CI cannot be assessed.
+    Together they are ``success``, ``failure`` or ``pending`` (``PullRequestState.checks``).
     """
 
     id = "checks"

@@ -18,7 +18,7 @@ class LabelsData(DataSpec):
     id = "labels"
     title = "The labels of the repository and of the pull request"
     permissions = {"metadata": "read", "issues": "read"}
-    events = ("issues", "pull_request")
+    events = ("label", "issues", "pull_request")
 
     def fetch(self, client, repository) -> int:
         """Read all labels of the repository; remove those it no longer has.

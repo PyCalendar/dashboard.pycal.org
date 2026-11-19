@@ -19,6 +19,16 @@ Permissions of the repositories
    The webhooks of pull requests and their reviews; the number of open pull
    requests. Write: to add and remove the labels of pull requests, and to
    create and update a comment of the site on a pull request.
+``checks``: read
+   The check runs of the last commit of a pull request, for the conditions
+   :doc:`conditions/ci_passes` and :doc:`conditions/ci_fails`.
+``statuses``: read
+   The commit statuses of the last commit of a pull request, for the same
+   conditions.
+``contents``: read
+   The webhook ``push``: a base branch that moved changes whether its pull
+   requests are behind or have a conflict, see :doc:`conditions/branch_outdated`
+   and :doc:`conditions/merge_conflict`. The site reads no files.
 
 The app asks nothing of the people who use the site: they sign in with the
 OAuth app, which only reads (see :ref:`oauth-app`):
@@ -40,6 +50,12 @@ Events
    A pull request was reviewed: the requested reviewers changed.
 ``repository``
    A repository was renamed, archived, made private or deleted.
+``label``
+   A label of a repository was created, changed or deleted.
+``check_run``, ``check_suite``, ``status``
+   A check of a commit started, ended or changed its status.
+``push``
+   A branch got new commits, such as the base branch of pull requests.
 
 ``installation`` and ``installation_repositories`` come without a subscription:
 the app was installed, suspended, removed, its repositories changed or new
