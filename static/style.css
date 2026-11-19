@@ -235,3 +235,9 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .markdown-bar button[aria-pressed="true"] { background: var(--surface-tint); }
 .markdown-field textarea { width: 100%; }
 .markdown-preview { min-height: 6rem; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .3rem; }
+
+/* the red area that deletes an account */
+.danger-zone { border: 2px solid var(--danger); background: var(--danger-bg); margin-top: 1.5rem; }
+.danger-zone h2 { color: var(--danger); }
+.button-danger { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.button-danger:hover, .button-danger:focus-visible { background: var(--text); border-color: var(--text); color: var(--surface); }

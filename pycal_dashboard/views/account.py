@@ -5,6 +5,7 @@ from __future__ import annotations
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -12,12 +13,13 @@ from django.http import HttpRequest
 from django.shortcuts import redirect, render
 from django.utils import translation
 from django.utils.translation import gettext as _
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.actions import PreferencesSaved, Trigger
 from pycal_dashboard.context import THEMES
 from pycal_dashboard.errors import NoGitHubAccount, UnknownPreference
 from pycal_dashboard.models import Installation, LogTrigger, Preferences, WebhookDelivery
+from pycal_dashboard.services.account_removal import AccountRemoval
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.theme import CHOICES
 
@@ -103,8 +105,40 @@ def account(request: HttpRequest):
             "language_choices": settings.LANGUAGES,
             "theme_choices": THEMES,
             "emails": EmailAddress.objects.filter(user=request.user).order_by("-primary", "email"),
+            "removal": AccountRemoval(request.user, identity.login),
         },
     )
+
+
+@login_required
+@require_POST
+def account_delete(request: HttpRequest):
+    """Delete the account of the person who signed in, after they typed their GitHub name.
+
+    Parameters:
+        request: The request, with ``confirm``, the GitHub name.
+
+    Returns:
+        A redirect to the start page, signed out.
+
+    Raises:
+        NoGitHubAccount: The account was not created with GitHub.
+    """
+    identity = GitHubIdentity.of(request.user)
+    if identity is None:
+        raise NoGitHubAccount(request.user.username)
+    removal = AccountRemoval(request.user, identity.login)
+    projects = removal.delete(request.POST.get("confirm", ""))
+    logout(request)
+    if projects:
+        messages.success(
+            request,
+            _("Your account is deleted, with the projects %(names)s.")
+            % {"names": ", ".join(projects)},
+        )
+    else:
+        messages.success(request, _("Your account is deleted."))
+    return redirect("home")
 
 
 @login_required

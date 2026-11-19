@@ -105,3 +105,20 @@ Sign out
 ========
 
 Choose **Sign out** in the menu of your account.
+
+.. _delete-account:
+
+Delete your account
+===================
+
+The red area at the bottom of the page *Account* deletes your account on this
+site: your GitHub name and token, your email addresses, your preferences and
+your roles in projects. Type your GitHub name to confirm it; it cannot be
+undone, and you are signed out.
+
+The projects that have nobody else are deleted with it; the page lists them.
+A project that others share and of which you are the only owner stops it: give
+another person the role *own* first, or delete the project, see
+:ref:`project-roles`. The issues and pull requests stay on GitHub, and the site
+keeps showing them as GitHub does. You can sign in again later with a new
+account.

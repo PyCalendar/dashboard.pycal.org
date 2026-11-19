@@ -5,7 +5,9 @@ documentation (``DashboardError.docs_url``).
 """
 
 from .account import (
+    AccountDeletionNotConfirmed,
     AccountError,
+    AccountOwnsSharedProjects,
     NoGitHubAccount,
     UnknownPreference,
 )
@@ -90,6 +92,8 @@ from .webhooks import (
 )
 
 __all__ = [
+    "AccountDeletionNotConfirmed",
+    "AccountOwnsSharedProjects",
     "ConditionError",
     "ConditionInputMissing",
     "ConditionInputNotInteger",

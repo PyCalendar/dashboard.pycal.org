@@ -20,7 +20,8 @@
 <p class="muted">{% translate "Only cookies of this site, none of other sites." %}</p>
 </section>
 <section class="card" id="your-data" data-your-data><h2>{% translate "Your data" %}</h2>
-<p>{% translate "Your account shows what the site keeps of you. To have your account and data deleted, or to ask about them, write to the people who run the site:" %}
+<p>{% translate "Your account shows what the site keeps of you. You delete your account and data yourself, in the red area at the bottom of the page Account." %} <a href="{% url 'account' %}#delete">{% translate "Delete your account" %}</a></p>
+<p>{% translate "To ask about your data, write to the people who run the site:" %}
 {% for login in admins %}{% github_user login %}{% if not forloop.last %}, {% endif %}{% empty %}{% translate "the people who run the site" %}{% endfor %}.</p>
 <p class="muted">{% translate "Issues and pull requests are public on GitHub; the site shows them as GitHub does, and deletes them when GitHub no longer has them." %}</p>
 </section>

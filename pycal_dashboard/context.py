@@ -58,6 +58,7 @@ def site(request: HttpRequest) -> dict:
             "install_help": f"{docs}how-to/install-app.html",
             "oauth_app": f"{docs}how-to/github-app.html#oauth-app",
             "log_help": f"{docs}tutorial/account.html#administrators",
+            "delete_account": f"{docs}tutorial/account.html#delete-account",
             "json": f"{docs}reference/json.html",
             "projects": f"{docs}tutorial/projects.html",
             "project_roles": f"{docs}tutorial/projects.html#project-roles",

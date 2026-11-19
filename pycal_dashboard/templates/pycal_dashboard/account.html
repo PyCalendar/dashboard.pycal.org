@@ -40,4 +40,16 @@
   {% else %}{% url 'register_app' as register_url %}<p>{% blocktranslate %}The site has no GitHub App yet. The people who run the site <a href="{{ register_url }}">register it</a> first.{% endblocktranslate %}</p>{% endif %}
 </section>
 </div>
+{% with own=removal.own_projects shared=removal.shared_projects %}<section class="card danger-zone" id="delete" data-delete-account>
+  <h2>{% translate "Delete the account" %} {% translate "Delete your account" as help %}{% help_link links.delete_account help %}</h2>
+  <p>{% translate "This deletes your account on this site: your GitHub name and token, your email addresses, your preferences and your roles in projects. It cannot be undone. Issues and pull requests stay on GitHub, as before." %}</p>
+  {% if shared %}<p class="message message-error" data-shared-projects>{% translate "You are the only owner of projects that others share. Give another person the role own, or delete the project, first:" %}
+    {% for project in shared %}<a href="{% url 'project_collaborators' project.slug %}">{{ project.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  {% else %}{% if own %}<p data-own-projects>{% translate "These projects have nobody else and are deleted with it:" %} {% for project in own %}<a href="{{ project.path }}">{{ project.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+  <form method="post" action="{% url 'account_delete' %}" class="stacked">{% csrf_token %}
+    <p><label for="confirm">{% blocktranslate with login=identity.login %}Type your GitHub name, {{ login }}, to confirm{% endblocktranslate %}</label>
+    <input id="confirm" name="confirm" autocomplete="off" required pattern="@?{{ identity.login }}" title="{{ identity.login }}"></p>
+    <p><button class="button button-danger" data-delete>{% translate "Delete my account" %}</button></p>
+  </form>{% endif %}
+</section>{% endwith %}
 {% endblock %}

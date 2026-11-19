@@ -52,6 +52,7 @@ urlpatterns = [
     path("people/complete/", projects.people_complete, name="people_complete"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
+    path("account/delete/", account.account_delete, name="account_delete"),
     path("logs/", account.logs, name="logs"),
     path("setup/github-app/", registration.register_app, name="register_app"),
     path("setup/github-app/registered/", registration.app_registered, name="app_registered"),

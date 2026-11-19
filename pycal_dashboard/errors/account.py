@@ -37,3 +37,25 @@ class UnknownPreference(AccountError):
     """
 
     title = _("Unknown preference")
+
+
+class AccountDeletionNotConfirmed(AccountError):
+    """The account was not deleted: the GitHub name typed to confirm it does not match.
+
+    Type your GitHub name, as the page *Account* shows it after *@*, into the field of the red
+    area, and press the button again.
+    """
+
+    title = _("Type your GitHub name to delete the account")
+    status = 400
+
+
+class AccountOwnsSharedProjects(AccountError):
+    """The account was not deleted: it is the only owner of projects that others share.
+
+    A project always has an owner. On the tab *Collaborators* of each project the page
+    lists, give another person the role *own*, or delete the project, then delete the account.
+    """
+
+    title = _("You are the only owner of shared projects")
+    status = 409

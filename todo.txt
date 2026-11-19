@@ -273,12 +273,18 @@ community: where to start, what waits for a review, who contributes.
 - [x] Docstrings: Parameters: instead of Args:, everywhere; every argument typed (ruff)
 - [x] GraphQL: the state, checks and auto-merge of all open pull requests of a repository in one
       query (about 1 point per 50) instead of 3 REST requests for each; the cost is logged
-- [ ] The person: tokens of people for projects (only if the rate limits are reached), as on the
-      insight platform: tokens of people for
+- [ ] Later, when the site grows (decided by the person: no tokens yet): tokens of people for
+      projects, as on the insight platform: tokens of people for
       projects (tab Tokens of a project, a tabbed profile with a tab of the tokens and the
       repositories they are used for), as on the insight platform
-- [ ] The person: deleting one's account on the site (the privacy policy says: ask the people who
-      run the site)
+- [x] Deleting one's account: a red area at the bottom of the page Account (decided by the person)
+
+## 2026-11-19: answers of the person
+
+- [x] GraphQL of GitHub only; the site offers no GraphQL of its own for now
+- [x] No tokens yet: wait until the site grows
+- [x] A delete button: a red area that deletes the account
+- [ ] Translate the texts that wait into German and Spanish
 
 ## Open: decisions of the person
 
