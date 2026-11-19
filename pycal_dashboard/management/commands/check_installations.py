@@ -1,5 +1,9 @@
 """Read the installations of the GitHub App and tell their people what permissions they lack."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from django.core.management.base import BaseCommand, CommandError
 
 from pycal_dashboard.actions import Trigger
@@ -16,13 +20,13 @@ class Command(BaseCommand):
 
     help = "Record the installations of the GitHub App and email those that lack permissions."
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any):
         """Read every installation from GitHub, record it and send the notices.
 
         A new version of the site that needs more permissions tells the people of every
         installation once, at its first start.
 
-        Args:
+        Parameters:
             *args: Not used.
             **options: Of Django.
 

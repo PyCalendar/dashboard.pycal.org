@@ -5,10 +5,12 @@ the site (:class:`~pycal_dashboard.errors.DashboardError`) have their own page w
 documentation (``pycal_dashboard/error.html``), in the same design.
 """
 
+from __future__ import annotations
+
 import logging
 
 from django.conf import settings
-from django.http import HttpResponseServerError
+from django.http import HttpRequest, HttpResponseServerError
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.templatetags.static import static
@@ -49,10 +51,12 @@ CSRF = (
 )
 
 
-def status_page(request, status: int, title=None, explanation=None):
+def status_page(
+    request: HttpRequest, status: int, title: str | None = None, explanation: str | None = None
+):
     """The page of an HTTP error in the design of the site.
 
-    Args:
+    Parameters:
         request: The request.
         status: The HTTP status, such as 404.
         title: The title; that of the status by default.
@@ -70,10 +74,10 @@ def status_page(request, status: int, title=None, explanation=None):
     return render(request, "pycal_dashboard/status.html", context, status=status)
 
 
-def bad_request(request, exception=None):
+def bad_request(request: HttpRequest, exception: Exception | None = None):
     """400: the request could not be understood.
 
-    Args:
+    Parameters:
         request: The request.
         exception: What Django raised.
 
@@ -83,10 +87,10 @@ def bad_request(request, exception=None):
     return status_page(request, 400)
 
 
-def permission_denied(request, exception=None):
+def permission_denied(request: HttpRequest, exception: Exception | None = None):
     """403: the visitor may not open the page.
 
-    Args:
+    Parameters:
         request: The request.
         exception: What Django raised.
 
@@ -96,10 +100,10 @@ def permission_denied(request, exception=None):
     return status_page(request, 403)
 
 
-def page_not_found(request, exception=None):
+def page_not_found(request: HttpRequest, exception: Exception | None = None):
     """404: there is no such page.
 
-    Args:
+    Parameters:
         request: The request.
         exception: What Django raised.
 
@@ -109,10 +113,10 @@ def page_not_found(request, exception=None):
     return status_page(request, 404)
 
 
-def csrf_failure(request, reason=""):
+def csrf_failure(request: HttpRequest, reason: str = ""):
     """403 for a form without a valid CSRF token, such as one left open too long.
 
-    Args:
+    Parameters:
         request: The request.
         reason: Why Django refused the form; it is logged, not shown.
 
@@ -123,13 +127,13 @@ def csrf_failure(request, reason=""):
     return status_page(request, 403, *CSRF)
 
 
-def server_error(request):
+def server_error(request: HttpRequest):
     """500: the site failed. Shown even if the database or a template is the cause.
 
     The page of the site needs the database for its menu; if that fails, a page without the
     menu in the same colors is shown, and if even that fails, plain text.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:

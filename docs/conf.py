@@ -12,6 +12,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pycal_dashboard.settings")
 os.environ.setdefault("SECRET_KEY", "documentation")
 os.environ.setdefault("DATA_DIR", str(ROOT / "docs" / "_build" / "data"))
 import django  # noqa: E402
+from sphinx.application import Sphinx  # noqa: E402
 
 django.setup()
 
@@ -70,7 +71,7 @@ linkcheck_ignore = [r"http://localhost", r"https://dashboard\.pycal\.org.*"]
 def unreleased_changes(root: Path = ROOT) -> str:
     """The changes since the last release, drafted by towncrier from the fragments in ``news/``.
 
-    Args:
+    Parameters:
         root: The project, with ``pyproject.toml`` and ``news/``.
 
     Returns:
@@ -100,7 +101,7 @@ def write_unreleased_changes(path: Path = ROOT / "docs" / "_build" / "unreleased
     The file is written only when it changes, so that ``make livehtml`` does not build again
     and again.
 
-    Args:
+    Parameters:
         path: The file.
     """
     text = unreleased_changes()
@@ -112,13 +113,15 @@ def write_unreleased_changes(path: Path = ROOT / "docs" / "_build" / "unreleased
 write_unreleased_changes()
 
 
-def error_facts(app, what, name, obj, options, lines):
+def error_facts(
+    app: Sphinx, what: str, name: str, obj: object, options: dict, lines: list[str]
+) -> None:
     """Show the title and HTTP status of each error, why it appears and how to resolve it.
 
     The first paragraph of the docstring of an error says why it appears, the rest how to
     resolve it.
 
-    Args:
+    Parameters:
         app: Sphinx.
         what: The kind of object, such as ``exception``.
         name: The full name.
@@ -139,10 +142,10 @@ def error_facts(app, what, name, obj, options, lines):
         lines += ["", "**How to resolve it:**", *how]
 
 
-def setup(app):
+def setup(app: Sphinx) -> None:
     """Connect the error facts.
 
-    Args:
+    Parameters:
         app: Sphinx.
     """
     app.connect("autodoc-process-docstring", error_facts)

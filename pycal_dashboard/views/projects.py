@@ -1,10 +1,14 @@
 """The projects: the public list, the overview of a project, and the pages that change it."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponsePermanentRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
@@ -23,6 +27,13 @@ from pycal_dashboard.templatetags.github import avatar_url
 
 from .json_page import page
 
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+
+    from pycal_dashboard.models import Project
+
+
 # the pages that a change of the address goes back to
 BACK_PAGES = {"settings/", "repositories/"}
 # the repositories offered while typing, of those the site knows
@@ -36,7 +47,7 @@ def shown_repositories(access: ProjectAccess) -> list[Repository]:
     A public project may contain a repository that became private after it was added: only the
     collaborators of the project see it.
 
-    Args:
+    Parameters:
         access: The project with the rights of the person.
 
     Returns:
@@ -51,7 +62,7 @@ def shown_repositories(access: ProjectAccess) -> list[Repository]:
 def project_data(access: ProjectAccess, repositories: list[Repository]) -> dict:
     """The public information of a project, for its JSON.
 
-    Args:
+    Parameters:
         access: The project with the rights of the visitor.
         repositories: The repositories the visitor sees.
 
@@ -80,10 +91,10 @@ def project_data(access: ProjectAccess, repositories: list[Repository]) -> dict:
     }
 
 
-def access_url(project) -> str:
+def access_url(project: Project) -> str:
     """The path of the page of a project.
 
-    Args:
+    Parameters:
         project: The project.
 
     Returns:
@@ -92,10 +103,10 @@ def access_url(project) -> str:
     return project.path()
 
 
-def opened(request, slug: str, page: str = ""):
+def opened(request: HttpRequest, slug: str, page: str = ""):
     """The project of an address, and where to go if it has another address now.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The slug in the address: the current one, an old one or one in other case.
         page: The page of the project, such as ``repositories/``.
@@ -118,7 +129,7 @@ def opened(request, slug: str, page: str = ""):
 def total(repositories: list[Repository], field: str) -> int | None:
     """The sum of a number of the repositories that were read.
 
-    Args:
+    Parameters:
         repositories: The repositories.
         field: ``open_issues`` or ``open_pull_requests``.
 
@@ -135,10 +146,10 @@ def total(repositories: list[Repository], field: str) -> int | None:
     return sum(numbers) if numbers else None
 
 
-def projects(request):
+def projects(request: HttpRequest):
     """The projects that the visitor sees: all public ones, and private ones of their own.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -168,10 +179,10 @@ def projects(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_new(request):
+def project_new(request: HttpRequest):
     """Create a project: its name, description and whether it is public.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -199,10 +210,10 @@ PAGES["pull-requests"] = "pull-requests/"
 PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
 
 
-def project_moved(request, slug: str, name: str = "", page: str = ""):
+def project_moved(request: HttpRequest, slug: str, name: str = "", page: str = ""):
     """An address of a project from before: with its name after the slug, or the tab People.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project in the address.
         name: The name of the project, or ``people``.
@@ -222,10 +233,10 @@ def project_moved(request, slug: str, name: str = "", page: str = ""):
     return HttpResponsePermanentRedirect(target)
 
 
-def project(request, slug: str):
+def project(request: HttpRequest, slug: str):
     """The overview of a project: its repositories with their open issues and pull requests.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project in the address.
 
@@ -264,7 +275,7 @@ PER_PAGE = 50
 def pull_requests_of(repositories: list[Repository], state: str):
     """The pull requests of repositories together, the newest first.
 
-    Args:
+    Parameters:
         repositories: The repositories that the person sees.
         state: ``all``, ``open``, ``merged`` or ``closed`` (closed without merging).
 
@@ -288,7 +299,7 @@ def pull_requests_of(repositories: list[Repository], state: str):
 def issue_data(issue: Issue) -> dict:
     """The public information of an issue or pull request, for the JSON.
 
-    Args:
+    Parameters:
         issue: The issue.
 
     Returns:
@@ -308,10 +319,10 @@ def issue_data(issue: Issue) -> dict:
 
 
 @require_http_methods(["GET", "HEAD"])
-def project_pull_requests(request, slug: str):
+def project_pull_requests(request: HttpRequest, slug: str):
     """The pull requests of all repositories of a project together, public like the project.
 
-    Args:
+    Parameters:
         request: The request; ``state`` filters, ``page`` is the page of the list.
         slug: The project.
 
@@ -356,10 +367,10 @@ def project_pull_requests(request, slug: str):
 
 @login_required
 @require_POST
-def project_update(request, slug: str):
+def project_update(request: HttpRequest, slug: str):
     """Update a project from GitHub in the background.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project.
 
@@ -373,10 +384,10 @@ def project_update(request, slug: str):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_edit(request, slug: str):
+def project_edit(request: HttpRequest, slug: str):
     """Change the name, the description and whether the project is public, or delete it.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project.
 
@@ -421,10 +432,10 @@ def project_edit(request, slug: str):
 
 @login_required
 @require_POST
-def project_slug(request, slug: str):
+def project_slug(request: HttpRequest, slug: str):
     """Give a project another address; the old one keeps leading to it.
 
-    Args:
+    Parameters:
         request: The request, with ``slug`` and the page to go back to, ``back``.
         slug: The project.
 
@@ -442,10 +453,10 @@ def project_slug(request, slug: str):
     return redirect(access.project.path(back if back in BACK_PAGES else "settings/"))
 
 
-def person_client(request) -> PersonClient:
+def person_client(request: HttpRequest) -> PersonClient:
     """GitHub with the token of the person who signed in.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -460,10 +471,10 @@ def person_client(request) -> PersonClient:
     return PersonClient.of(request.user, identity.login)
 
 
-def known_repositories(user, text: str = "") -> list[str]:
+def known_repositories(user: AbstractBaseUser | AnonymousUser, text: str = "") -> list[str]:
     """The repositories the site knows that a person may add: public ones and their own.
 
-    Args:
+    Parameters:
         user: The person.
         text: What they typed, "" for all.
 
@@ -478,10 +489,10 @@ def known_repositories(user, text: str = "") -> list[str]:
     return list(names[:KNOWN_CHOICES])
 
 
-def add_repositories(request, editor: ProjectEditor, names: list[str]) -> None:
+def add_repositories(request: HttpRequest, editor: ProjectEditor, names: list[str]) -> None:
     """Add repositories to a project, say what happened to each, and read the new ones.
 
-    Args:
+    Parameters:
         request: The request, for the messages.
         editor: The editor of the project.
         names: The names or links of the repositories.
@@ -504,12 +515,12 @@ def add_repositories(request, editor: ProjectEditor, names: list[str]) -> None:
         UpdateQueue.add(editor.access.project, request.user, changed=True)
 
 
-def choices(request, owner: str, search: str) -> dict:
+def choices(request: HttpRequest, owner: str, search: str) -> dict:
     """What the person chooses repositories from: their accounts, a list and search results.
 
     Errors of GitHub are shown on the page, so that the repositories can still be typed.
 
-    Args:
+    Parameters:
         request: The request.
         owner: The account whose repositories are listed, "" for none.
         search: What the person searched for, "" for nothing.
@@ -533,10 +544,10 @@ def choices(request, owner: str, search: str) -> dict:
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_repositories(request, slug: str):
+def project_repositories(request: HttpRequest, slug: str):
     """Add and remove the repositories of a project, and install the GitHub App on them.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project.
 
@@ -581,12 +592,12 @@ def project_repositories(request, slug: str):
 
 @login_required
 @require_http_methods(["GET"])
-def people_complete(request):
+def people_complete(request: HttpRequest):
     """The people whose GitHub name is like what an owner types, to share a project with them.
 
     Only people who signed in to the site can get a role, so only they are proposed.
 
-    Args:
+    Parameters:
         request: The request, with ``q``.
 
     Returns:
@@ -611,10 +622,10 @@ def people_complete(request):
 
 
 @login_required
-def repository_complete(request):
+def repository_complete(request: HttpRequest):
     """The repositories whose name is like what a person types, for the field to add one.
 
-    Args:
+    Parameters:
         request: The request, with ``q``.
 
     Returns:
@@ -633,10 +644,10 @@ def repository_complete(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_collaborators(request, slug: str):
+def project_collaborators(request: HttpRequest, slug: str):
     """The collaborators of a project and their roles; owners share it and change the roles.
 
-    Args:
+    Parameters:
         request: The request.
         slug: The project.
 
@@ -684,7 +695,7 @@ def project_collaborators(request, slug: str):
 def name_of(member: ProjectMember) -> str:
     """The GitHub name of a member of a project.
 
-    Args:
+    Parameters:
         member: The member.
 
     Returns:
@@ -697,7 +708,7 @@ def name_of(member: ProjectMember) -> str:
 def role_title(role: str) -> str:
     """The role as people read it.
 
-    Args:
+    Parameters:
         role: ``read``, ``write`` or ``owner``.
 
     Returns:

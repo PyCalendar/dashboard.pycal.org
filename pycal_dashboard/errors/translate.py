@@ -27,7 +27,7 @@ def all_errors() -> dict[str, type[DashboardError]]:
 def translate(error: BaseException) -> DashboardError:
     """The error to show for any exception.
 
-    Args:
+    Parameters:
         error: Any exception.
 
     Returns:

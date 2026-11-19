@@ -1,6 +1,13 @@
 """The condition ``label_absent``: a pull request does not have a label."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class LabelAbsent(LabelExists):
@@ -15,10 +22,10 @@ class LabelAbsent(LabelExists):
     description = "A label is absent from a pull request."
 
     @classmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether the pull request does not have the label.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: ``label``.
 

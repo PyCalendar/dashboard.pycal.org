@@ -5,7 +5,7 @@ httpx is imported with the first request, so that the idle site does not keep it
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
 
@@ -34,7 +34,7 @@ class GitHubClient:
     def __init__(self, token: str = "", scheme: str = "Bearer"):
         """A client.
 
-        Args:
+        Parameters:
             token: The token; "" for requests without one.
             scheme: How the token is sent, ``Bearer`` for all tokens of a GitHub App.
         """
@@ -55,10 +55,10 @@ class GitHubClient:
             transport=TRANSPORT,
         )
 
-    def request(self, method: str, path: str, **kwargs) -> httpx.Response:
+    def request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:
         """Send a request and check the answer.
 
-        Args:
+        Parameters:
             method: GET, POST, DELETE ...
             path: The path of the API, such as ``/repos/o/r``.
             **kwargs: For httpx, such as ``json`` or ``headers``.
@@ -101,7 +101,7 @@ class GitHubClient:
     def message(response: httpx.Response) -> str:
         """The message of an answer with an error.
 
-        Args:
+        Parameters:
             response: The answer.
 
         Returns:

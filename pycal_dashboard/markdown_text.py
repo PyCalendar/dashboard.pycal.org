@@ -38,7 +38,7 @@ def parser():
 def render(text: str) -> SafeString:
     """The HTML of a text in Markdown, cleaned.
 
-    Args:
+    Parameters:
         text: The Markdown, such as ``**bold** and [a link](https://pycal.org)``.
 
     Returns:

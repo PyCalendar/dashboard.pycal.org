@@ -1,9 +1,16 @@
 """A slug that a project has or had: old slugs lead to the project, forever."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.utils import timezone
 
 from pycal_dashboard.project_slugs import RESERVED
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Project
 
 
 class ProjectSlug(models.Model):
@@ -33,10 +40,10 @@ class ProjectSlug(models.Model):
         return self.slug
 
     @classmethod
-    def taken(cls, slug: str, project=None) -> bool:
+    def taken(cls, slug: str, project: Project | None = None) -> bool:
         """Whether a slug belongs or belonged to another project.
 
-        Args:
+        Parameters:
             slug: The slug, in lower case.
             project: The project that asks; its own old sluges are free for it.
 

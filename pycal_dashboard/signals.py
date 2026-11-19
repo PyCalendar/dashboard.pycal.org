@@ -3,18 +3,29 @@
 The people of ``SITE_ADMINS`` get the Django admin.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
+from django.http import HttpRequest
 
 from .actions import Trigger
 from .services.identity import GitHubIdentity
 
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+
 
 @receiver(user_logged_in)
-def admin_rights(sender, request, user, **kwargs):
+def admin_rights(
+    sender: type, request: HttpRequest, user: AbstractBaseUser | AnonymousUser, **kwargs: Any
+):
     """Log the sign-in; keep the GitHub name; give or take the rights of the Django admin.
 
-    Args:
+    Parameters:
         sender: The class of the user.
         request: The request of the sign in.
         user: The user who signed in.

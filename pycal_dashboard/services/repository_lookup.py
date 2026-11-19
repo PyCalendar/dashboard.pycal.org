@@ -24,7 +24,7 @@ class RepositoryLookup:
     def __init__(self, person: PersonClient):
         """A lookup for a person.
 
-        Args:
+        Parameters:
             person: GitHub with the token of the person.
         """
         self.person = person
@@ -33,7 +33,7 @@ class RepositoryLookup:
     def full_name(text: str) -> str:
         """The ``owner/name`` of a repository from what a person entered.
 
-        Args:
+        Parameters:
             text: The name or a link to the repository on GitHub.
 
         Returns:
@@ -58,7 +58,7 @@ class RepositoryLookup:
     def find(self, text: str) -> Repository:
         """The repository, read from GitHub and recorded, if the person may see it.
 
-        Args:
+        Parameters:
             text: Its name or a link to it.
 
         Returns:
@@ -78,7 +78,7 @@ class RepositoryLookup:
     def private(self, full_name: str, installation: dict | None) -> dict:
         """A private repository that the GitHub App is installed on, if the person may read it.
 
-        Args:
+        Parameters:
             full_name: The repository.
             installation: The installation on it, None if the app is not installed on it.
 
@@ -106,7 +106,7 @@ class RepositoryLookup:
     def record(data: dict, installation: dict | None = None) -> Repository:
         """Record a repository as GitHub describes it.
 
-        Args:
+        Parameters:
             data: The repository, from ``GET /repos/{owner}/{name}``.
             installation: The installation of the GitHub App on it, None if there is none.
 

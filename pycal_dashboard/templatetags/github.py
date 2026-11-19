@@ -9,6 +9,7 @@ from django import template
 from django.utils.html import format_html
 
 from pycal_dashboard.github_mark import PATH
+from pycal_dashboard.models import GitHubUser
 
 register = template.Library()
 
@@ -30,7 +31,7 @@ def mark() -> str:
 def github_link(url: str, label: str, text: str = "", css: str = "") -> str:
     """A link to GitHub with its mark.
 
-    Args:
+    Parameters:
         url: The address on GitHub.
         label: What the link leads to, such as ``PyCalendar/icalendar on GitHub``.
         text: The visible text after the mark; "" for the mark alone.
@@ -61,10 +62,10 @@ def github_link(url: str, label: str, text: str = "", css: str = "") -> str:
     )
 
 
-def avatar_url(person, size: int) -> str:
+def avatar_url(person: GitHubUser | str, size: int) -> str:
     """The address of the avatar on GitHub, in the size shown, for twice as many pixels.
 
-    Args:
+    Parameters:
         person: A ``GitHubUser``, or a GitHub name.
         size: The width shown, in CSS pixels.
 
@@ -81,10 +82,10 @@ def avatar_url(person, size: int) -> str:
 
 
 @register.inclusion_tag("pycal_dashboard/_github_user.html")
-def github_user(person, size: int = 20, name: str = "") -> dict:
+def github_user(person: GitHubUser | str | None, size: int = 20, name: str = "") -> dict:
     """A person of GitHub: their avatar from GitHub before their name, linked to GitHub.
 
-    Args:
+    Parameters:
         person: A ``GitHubUser``, a GitHub name, or None when GitHub does not say who.
         size: The width of the avatar, in CSS pixels.
         name: Their full name, shown after the GitHub name; "" for none, or the name of the

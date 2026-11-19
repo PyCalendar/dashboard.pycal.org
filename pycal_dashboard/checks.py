@@ -1,6 +1,9 @@
 """The system checks of the settings: ``manage.py check`` and every start."""
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 from django.conf import settings
 from django.core.checks import Error, register
@@ -13,7 +16,7 @@ FAVICON_TYPES = {".png": "image/png", ".ico": "image/x-icon", ".svg": "image/svg
 def is_url(value: str) -> bool:
     """Whether the icon is an address on the web, not a file.
 
-    Args:
+    Parameters:
         value: The value of ``FAVICON``.
 
     Returns:
@@ -27,10 +30,10 @@ def is_url(value: str) -> bool:
 
 
 @register()
-def check_favicon(app_configs=None, **kwargs) -> list:
+def check_favicon(app_configs: list | None | None = None, **kwargs: Any) -> list:
     """``FAVICON`` is an address, or a PNG, ICO or SVG file that exists.
 
-    Args:
+    Parameters:
         app_configs: The apps to check.
         **kwargs: More of Django.
 

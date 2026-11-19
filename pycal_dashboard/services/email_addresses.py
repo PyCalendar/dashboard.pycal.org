@@ -1,12 +1,14 @@
 """The addresses for the emails of the site: one for each person, verified, if they want it."""
 
+from collections.abc import Iterable
+
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 
 from pycal_dashboard.models import Preferences
 
 
-def recipients(github_ids, switch: str) -> list[tuple[str, str]]:
+def recipients(github_ids: Iterable[str], switch: str) -> list[tuple[str, str]]:
     """The addresses of people for a type of email, with the language of each.
 
     A person gets an email at their primary address if it is verified; otherwise at their
@@ -15,7 +17,7 @@ def recipients(github_ids, switch: str) -> list[tuple[str, str]]:
     People who switched the type of email off, and people without a verified address or an
     account on the site, get none.
 
-    Args:
+    Parameters:
         github_ids: The GitHub ids of the people.
         switch: The field of :class:`~pycal_dashboard.models.Preferences` that switches the
             type of email on and off, such as ``email_permissions``.

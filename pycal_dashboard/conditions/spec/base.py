@@ -1,8 +1,15 @@
 """The data that a condition needs: how the background reads it, and whether it is complete."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from pycal_dashboard.github.permissions import EVENTS, LEVELS, REQUIRED
+
+if TYPE_CHECKING:
+    from pycal_dashboard.github.client import GitHubClient
+    from pycal_dashboard.models import Issue, Repository
 
 
 class DataSpec(ABC):
@@ -41,10 +48,10 @@ class DataSpec(ABC):
         return granted and all(event in EVENTS for event in self.events)
 
     @abstractmethod
-    def fetch(self, client, repository) -> int:
+    def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read the data of a repository from GitHub and keep it, in the background.
 
-        Args:
+        Parameters:
             client: The client that reads the repository (``GitHubClient``).
             repository: The repository, after its issues and pull requests were read.
 
@@ -53,10 +60,10 @@ class DataSpec(ABC):
         """
 
     @abstractmethod
-    def complete(self, issue) -> bool:
+    def complete(self, issue: Issue) -> bool:
         """Whether the data of a pull request is complete, so that a condition can be assessed.
 
-        Args:
+        Parameters:
             issue: The pull request (``Issue``).
 
         Returns:

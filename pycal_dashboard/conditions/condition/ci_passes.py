@@ -1,9 +1,16 @@
 """The condition ``ci_passes``: the checks of a pull request passed."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.spec.checks import ChecksData
 from pycal_dashboard.conditions.spec.pull_request import PullRequestData
 from pycal_dashboard.models import PullRequestState
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class CiPasses(Condition):
@@ -20,10 +27,10 @@ class CiPasses(Condition):
     data = (PullRequestData(), ChecksData())
 
     @classmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether the checks passed.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: Nothing: the condition has no inputs.
 

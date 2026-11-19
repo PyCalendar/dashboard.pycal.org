@@ -10,7 +10,7 @@ class InstallationStore:
     def record(data: dict, sender: dict | None = None, removed: bool = False) -> Installation:
         """Record an installation as a webhook or ``GET /app/installations`` describes it.
 
-        Args:
+        Parameters:
             data: The installation, with ``id``, ``account``, ``permissions`` and ``events``.
             sender: The person who installed or changed it, from a webhook; they get the
                 emails about it.

@@ -1,8 +1,15 @@
 """The condition ``label_exists``: a pull request has a label."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.input.label import LabelInput
 from pycal_dashboard.conditions.spec.labels import LabelsData
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class LabelExists(Condition):
@@ -19,10 +26,10 @@ class LabelExists(Condition):
     data = (LabelsData(),)
 
     @classmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether the pull request has the label.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: ``label``.
 

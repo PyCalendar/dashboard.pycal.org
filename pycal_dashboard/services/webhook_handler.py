@@ -21,7 +21,7 @@ class WebhookHandler:
     def __init__(self, event: str, payload: dict):
         """A webhook.
 
-        Args:
+        Parameters:
             event: The header ``X-GitHub-Event``, such as ``pull_request``.
             payload: The JSON of the webhook.
         """
@@ -79,7 +79,7 @@ class WebhookHandler:
     def record(self, data: dict) -> str:
         """Record the installation and tell its people if it lacks permissions.
 
-        Args:
+        Parameters:
             data: The installation of the payload.
 
         Returns:

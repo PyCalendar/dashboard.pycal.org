@@ -6,8 +6,12 @@ is answered as for such a visitor, also if it carries the cookie of a session. E
 allows other sites to read it with JavaScript (CORS).
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable
+
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.urls import Resolver404, resolve
 
 # the pages that have JSON: those that are public
@@ -24,7 +28,7 @@ READING = {"GET", "HEAD"}
 def page_address(json_path: str) -> str:
     """The address of the page of a JSON address.
 
-    Args:
+    Parameters:
         json_path: The path, ending with ``.json``.
 
     Returns:
@@ -42,7 +46,7 @@ def page_address(json_path: str) -> str:
 def json_address(page: str) -> str:
     """The address of the JSON of a page; the reverse of :func:`page_address`.
 
-    Args:
+    Parameters:
         page: The path of the page.
 
     Returns:
@@ -58,18 +62,18 @@ def json_address(page: str) -> str:
 class PublicJsonMiddleware:
     """Answer ``<page>.json`` with the public information of the page, readable by any site."""
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         """The middleware.
 
-        Args:
+        Parameters:
             get_response: The next step of Django.
         """
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         """Answer the request; ``<page>.json`` as JSON with the headers of CORS.
 
-        Args:
+        Parameters:
             request: The request.
 
         Returns:
@@ -101,10 +105,10 @@ class PublicJsonMiddleware:
             return self.cors(response)
         return self.cors(self.as_json(self.get_response(request)))
 
-    def process_view(self, request, view, args, kwargs):
+    def process_view(self, request: HttpRequest, view: Callable, args: tuple, kwargs: dict):
         """Answer ``<page>.json`` as for a visitor who is not signed in.
 
-        Args:
+        Parameters:
             request: The request.
             view: The view.
             args: Its arguments.
@@ -121,7 +125,7 @@ class PublicJsonMiddleware:
     def failure(status: int, code: str, detail: str) -> JsonResponse:
         """A failure as JSON.
 
-        Args:
+        Parameters:
             status: The HTTP status.
             code: The name of the failure.
             detail: What happened.
@@ -131,12 +135,12 @@ class PublicJsonMiddleware:
         """
         return JsonResponse({"error": code, "status": status, "detail": detail}, status=status)
 
-    def as_json(self, response):
+    def as_json(self, response: HttpResponse):
         """Keep JSON; turn the pages of failures and redirects into JSON.
 
         A redirect means that the page needs a sign-in, so it has no public JSON.
 
-        Args:
+        Parameters:
             response: The answer of the view.
 
         Returns:
@@ -151,10 +155,10 @@ class PublicJsonMiddleware:
         )
 
     @staticmethod
-    def cors(response):
+    def cors(response: HttpResponse):
         """Allow every site to read the answer with JavaScript.
 
-        Args:
+        Parameters:
             response: The answer.
 
         Returns:

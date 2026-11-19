@@ -1,5 +1,7 @@
 """The general pages: start, about, licenses, health, the icon, the switch of the colors."""
 
+from __future__ import annotations
+
 from dataclasses import asdict
 from pathlib import Path
 
@@ -7,7 +9,14 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
 from django.db import connection
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -27,10 +36,10 @@ from pycal_dashboard.theme import COOKIE, Theme
 from pycal_dashboard.views.json_page import page
 
 
-def home(request):
+def home(request: HttpRequest):
     """The start page: what the site is and where it stands; ``/index.json``.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -58,10 +67,10 @@ def home(request):
     )
 
 
-def about(request):
+def about(request: HttpRequest):
     """The version that runs and the GitHub App; ``/about.json``.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -90,10 +99,10 @@ def about(request):
 
 @login_required
 @require_POST
-def markdown_preview(request):
+def markdown_preview(request: HttpRequest):
     """The preview of a field of Markdown, rendered as the page will show it.
 
-    Args:
+    Parameters:
         request: The request, with ``text``.
 
     Returns:
@@ -102,10 +111,10 @@ def markdown_preview(request):
     return HttpResponse(render_markdown(request.POST.get("text", "")))
 
 
-def robots_txt(request):
+def robots_txt(request: HttpRequest):
     """``/robots.txt``: robots may read the public pages, and agents read ``/llms.txt``.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -119,10 +128,10 @@ def robots_txt(request):
     )
 
 
-def llms_txt(request):
+def llms_txt(request: HttpRequest):
     """``/llms.txt``: the guideline for agents, the JSON of the pages and how to navigate it.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -136,10 +145,10 @@ def llms_txt(request):
     )
 
 
-def privacy(request):
+def privacy(request: HttpRequest):
     """The privacy policy: which data of people the site keeps, and who gets which.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -159,10 +168,10 @@ def privacy(request):
     )
 
 
-def licenses_page(request):
+def licenses_page(request: HttpRequest):
     """The licenses of the site: of the project, of code from other projects, of packages.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -190,10 +199,10 @@ def licenses_page(request):
     )
 
 
-def license_text(request, name: str):
+def license_text(request: HttpRequest, name: str):
     """The text of a license of ``LICENSES/``, as plain text.
 
-    Args:
+    Parameters:
         request: The request.
         name: The SPDX identifier, such as ``MIT``.
 
@@ -209,10 +218,10 @@ def license_text(request, name: str):
     return HttpResponse(path.read_text(), content_type="text/plain; charset=utf-8")
 
 
-def package_license(request, name: str):
+def package_license(request: HttpRequest, name: str):
     """The text of the license of an installed Python package, as plain text.
 
-    Args:
+    Parameters:
         request: The request.
         name: The name of the package.
 
@@ -228,10 +237,10 @@ def package_license(request, name: str):
     return HttpResponse(text, content_type="text/plain; charset=utf-8")
 
 
-def health(request):
+def health(request: HttpRequest):
     """The health check of the container: the database answers.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -243,10 +252,10 @@ def health(request):
 
 
 @cache_control(max_age=86400, public=True)
-def favicon(request):
+def favicon(request: HttpRequest):
     """The icon of the site: ``FAVICON`` (an address or a file), or the icon of pycal.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -263,10 +272,10 @@ def favicon(request):
 
 
 @require_POST
-def language(request):
+def language(request: HttpRequest):
     """Keep the choice of the language menu in a cookie, and in the account, and go back.
 
-    Args:
+    Parameters:
         request: POST with ``language`` and ``next``, as Django's ``set_language`` reads them.
 
     Returns:
@@ -279,10 +288,10 @@ def language(request):
 
 
 @require_POST
-def theme(request):
+def theme(request: HttpRequest):
     """Keep the choice of the colors in a cookie, and in the account, and return to the page.
 
-    Args:
+    Parameters:
         request: POST with ``theme`` (auto, light or dark) and ``next``.
 
     Returns:

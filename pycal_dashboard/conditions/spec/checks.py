@@ -1,9 +1,17 @@
 """The checks of the last commit of a pull request: its continuous integration."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.utils import timezone
 
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.models import Issue, PullRequestState
+
+if TYPE_CHECKING:
+    from pycal_dashboard.github.client import GitHubClient
+    from pycal_dashboard.models import Issue, Repository
 
 
 class ChecksData(DataSpec):
@@ -17,10 +25,10 @@ class ChecksData(DataSpec):
     permissions = {"checks": "read", "statuses": "read"}
     events = ("check_run", "check_suite", "status")
 
-    def fetch(self, client, repository) -> int:
+    def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read the checks of the last commit of every open pull request.
 
-        Args:
+        Parameters:
             client: The client.
             repository: The repository; without the GitHub App, nothing is read.
 
@@ -45,7 +53,7 @@ class ChecksData(DataSpec):
     def summary(runs: list[dict], status: dict) -> str:
         """One state of the check runs and the combined status of a commit.
 
-        Args:
+        Parameters:
             runs: The check runs, with ``status`` and ``conclusion``.
             status: The combined status, with ``state`` and ``total_count``.
 
@@ -71,10 +79,10 @@ class ChecksData(DataSpec):
             return PullRequestState.PENDING
         return PullRequestState.SUCCESS
 
-    def complete(self, issue) -> bool:
+    def complete(self, issue: Issue) -> bool:
         """Read after the last reading of the pull request, for its last commit.
 
-        Args:
+        Parameters:
             issue: The pull request.
 
         Returns:

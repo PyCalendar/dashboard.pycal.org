@@ -6,6 +6,8 @@ enter its client ID and secret here, with the setup code of the log. They are ke
 administrators of the site (``SITE_ADMINS``) change it.
 """
 
+from __future__ import annotations
+
 import os
 import re
 
@@ -13,6 +15,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
@@ -43,7 +46,7 @@ def from_environment() -> bool:
 def apply(client_id: str, secret: str) -> None:
     """Keep the OAuth app in ``DATA_DIR/.env`` and use it in this process.
 
-    Args:
+    Parameters:
         client_id: The client ID of the OAuth app.
         secret: Its client secret.
     """
@@ -55,10 +58,10 @@ def apply(client_id: str, secret: str) -> None:
 
 
 @require_http_methods(["GET", "POST"])
-def oauth_app(request):
+def oauth_app(request: HttpRequest):
     """Enter the OAuth app that signs people in.
 
-    Args:
+    Parameters:
         request: The request; POST with ``client_id``, ``secret`` and ``setup_code``.
 
     Returns:

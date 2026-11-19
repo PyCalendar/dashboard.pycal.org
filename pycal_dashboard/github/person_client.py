@@ -1,9 +1,18 @@
 """GitHub as a person sees it, with the token of their sign in: organizations and repositories."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from pycal_dashboard.errors import GitHubNotFound, GitHubTokenMissing
 from pycal_dashboard.import_guard import IMPORT_GUARD
 
 from .client import GitHubClient
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+
 
 PER_PAGE = 100
 PAGES = 5  # at most 500 repositories of an account are listed
@@ -20,7 +29,7 @@ class PersonClient:
     def __init__(self, token: str, login: str):
         """A client for a person.
 
-        Args:
+        Parameters:
             token: The OAuth token of the person.
             login: The GitHub name of the person.
         """
@@ -28,10 +37,10 @@ class PersonClient:
         self.login = login
 
     @classmethod
-    def of(cls, user, login: str) -> "PersonClient":
+    def of(cls, user: AbstractBaseUser | AnonymousUser, login: str) -> PersonClient:
         """The client of a person who signed in with GitHub.
 
-        Args:
+        Parameters:
             user: The user.
             login: Their GitHub name.
 
@@ -53,10 +62,10 @@ class PersonClient:
             raise GitHubTokenMissing(f"@{login}")
         return cls(token.token, login)
 
-    def all_pages(self, path: str, **params) -> list[dict]:
+    def all_pages(self, path: str, **params: Any) -> list[dict]:
         """The items of a list of GitHub, page by page.
 
-        Args:
+        Parameters:
             path: The path, such as ``/user/orgs``.
             **params: More parameters of the request.
 
@@ -84,7 +93,7 @@ class PersonClient:
     def repositories(self, owner: str) -> list[dict]:
         """The repositories of the person or of one of their organizations, sorted.
 
-        Args:
+        Parameters:
             owner: The GitHub name of the person or of the organization.
 
         Returns:
@@ -103,7 +112,7 @@ class PersonClient:
     def query(text: str) -> str:
         """The search of GitHub for repositories whose name starts like the text.
 
-        Args:
+        Parameters:
             text: What the person typed, such as ``ical`` or ``collective/ical``.
 
         Returns:
@@ -125,7 +134,7 @@ class PersonClient:
     def search(self, text: str) -> list[str]:
         """Repositories of all of GitHub whose name is like the text.
 
-        Args:
+        Parameters:
             text: What the person typed.
 
         Returns:
@@ -141,7 +150,7 @@ class PersonClient:
     def repository(self, full_name: str) -> dict | None:
         """A repository as the person sees it.
 
-        Args:
+        Parameters:
             full_name: Such as ``collective/icalendar``.
 
         Returns:

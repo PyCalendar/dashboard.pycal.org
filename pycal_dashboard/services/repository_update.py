@@ -1,8 +1,11 @@
 """Update a repository from GitHub: whether it is private, its issues and pull requests."""
 
+from __future__ import annotations
+
 import re
 
 from django.db import transaction
+from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
@@ -35,17 +38,17 @@ class RepositoryUpdate:
     def __init__(self, repository: Repository):
         """An update of a repository.
 
-        Args:
+        Parameters:
             repository: The repository.
         """
         self.repository = repository
         self.people: dict[int, GitHubUser | None] = {}  # the authors recorded, by their id
 
     @staticmethod
-    def count(response) -> int:
+    def count(response: HttpResponse) -> int:
         """The number of items of a list of GitHub read with one item per page.
 
-        Args:
+        Parameters:
             response: The answer to a request with ``per_page=1``.
 
         Returns:
@@ -116,7 +119,7 @@ class RepositoryUpdate:
         After a complete reading, those that GitHub no longer has, such as deleted or
         transferred ones, are removed, and the repository has the data of :data:`DATA_VERSION`.
 
-        Args:
+        Parameters:
             client: The client that reads the repository.
 
         Returns:
@@ -154,7 +157,7 @@ class RepositoryUpdate:
     def keep(self, item: dict) -> Issue:
         """Keep an issue or a pull request as GitHub describes it.
 
-        Args:
+        Parameters:
             item: An issue of the list of GitHub; a pull request has ``pull_request``.
 
         Returns:
@@ -184,7 +187,7 @@ class RepositoryUpdate:
     def author(self, data: dict) -> GitHubUser | None:
         """The GitHub user who created an issue, recorded once in an update.
 
-        Args:
+        Parameters:
             data: The ``user`` of the issue.
 
         Returns:

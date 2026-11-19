@@ -1,13 +1,17 @@
 """A page as HTML, or its public information as JSON at ``<page>.json``."""
 
-from django.http import JsonResponse
+from __future__ import annotations
+
+from collections.abc import Callable
+
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 
 
-def wants_json(request) -> bool:
+def wants_json(request: HttpRequest) -> bool:
     """Whether the request asks for the JSON of a page, see :mod:`pycal_dashboard.public_json`.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -16,10 +20,16 @@ def wants_json(request) -> bool:
     return getattr(request, "public_json", False)
 
 
-def page(request, template: str, context: dict, data, status: int = 200):
+def page(
+    request: HttpRequest,
+    template: str,
+    context: dict,
+    data: Callable[[], dict],
+    status: int = 200,
+):
     """Answer with the page, or with its data for ``<page>.json``.
 
-    Args:
+    Parameters:
         request: The request.
         template: The template of the page.
         context: The context of the template.

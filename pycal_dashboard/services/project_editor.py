@@ -1,5 +1,9 @@
 """Create and change projects: name, description, visibility, repositories and people."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.db import transaction
 
 from pycal_dashboard import project_slugs
@@ -18,6 +22,11 @@ from pycal_dashboard.models.project import random_slug
 
 from .project_access import ProjectAccess
 
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+
+
 NAME_LENGTH = 100
 
 
@@ -27,7 +36,7 @@ class ProjectEditor:
     def __init__(self, access: ProjectAccess):
         """An editor of a project.
 
-        Args:
+        Parameters:
             access: The project with the rights of the person.
         """
         self.access = access
@@ -37,7 +46,7 @@ class ProjectEditor:
     def clean_name(name: str) -> str:
         """The name of a project, checked.
 
-        Args:
+        Parameters:
             name: What the person entered.
 
         Returns:
@@ -55,7 +64,7 @@ class ProjectEditor:
     def clean_slug(slug: str, project: Project | None = None) -> str:
         """A slug that a person chose, checked.
 
-        Args:
+        Parameters:
             slug: What the person entered.
             project: The project that gets it, None for a new one.
 
@@ -78,11 +87,16 @@ class ProjectEditor:
     @classmethod
     @transaction.atomic
     def create(
-        cls, user, name: str, description: str = "", public: bool = True, slug: str = ""
+        cls,
+        user: AbstractBaseUser | AnonymousUser,
+        name: str,
+        description: str = "",
+        public: bool = True,
+        slug: str = "",
     ) -> Project:
         """Create a project that the person owns.
 
-        Args:
+        Parameters:
             user: The person who signed in.
             name: The name.
             description: What the project is about.
@@ -111,7 +125,7 @@ class ProjectEditor:
     def change(self, name: str, description: str, public: bool | None = None) -> None:
         """Change the name and the description, and, for owners, whether it is public.
 
-        Args:
+        Parameters:
             name: The new name.
             description: The new description.
             public: Whether everybody sees it; None to keep it.
@@ -135,7 +149,7 @@ class ProjectEditor:
     def rename(self, slug: str) -> bool:
         """Give the project another address; the old one keeps leading to it.
 
-        Args:
+        Parameters:
             slug: The new slug.
 
         Returns:
@@ -176,7 +190,7 @@ class ProjectEditor:
     def add(self, repository: Repository) -> bool:
         """Add a repository.
 
-        Args:
+        Parameters:
             repository: The repository, found with ``RepositoryLookup``.
 
         Returns:
@@ -197,7 +211,7 @@ class ProjectEditor:
     def remove(self, repository_id: int) -> Repository | None:
         """Remove a repository; it stays recorded for other projects.
 
-        Args:
+        Parameters:
             repository_id: The id of the repository on the site.
 
         Returns:
@@ -215,7 +229,7 @@ class ProjectEditor:
     def share(self, github_name: str, role: str) -> ProjectMember:
         """Give a person a role in the project, or change it.
 
-        Args:
+        Parameters:
             github_name: The GitHub name of the person, who signed in before.
             role: ``read``, ``write`` or ``owner``.
 
@@ -245,7 +259,7 @@ class ProjectEditor:
     def unshare(self, member_id: int) -> ProjectMember | None:
         """Take the role of a person away.
 
-        Args:
+        Parameters:
             member_id: The id of the role.
 
         Returns:
@@ -267,7 +281,7 @@ class ProjectEditor:
     def keep_an_owner(self, member: ProjectMember) -> None:
         """Check that another owner stays when a member stops being one.
 
-        Args:
+        Parameters:
             member: The owner who would stop being one.
 
         Raises:

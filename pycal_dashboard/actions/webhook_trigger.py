@@ -10,7 +10,7 @@ class WebhookTrigger:
     def complete(cls, trigger: LogTrigger, event: str, payload: dict, done: str) -> None:
         """Set the repository, the person and the summary of the trigger of a webhook.
 
-        Args:
+        Parameters:
             trigger: The trigger.
             event: ``X-GitHub-Event``, such as ``pull_request``.
             payload: The webhook.
@@ -27,7 +27,7 @@ class WebhookTrigger:
     def describe(event: str, payload: dict) -> str:
         """A webhook in words.
 
-        Args:
+        Parameters:
             event: ``X-GitHub-Event``.
             payload: The webhook.
 

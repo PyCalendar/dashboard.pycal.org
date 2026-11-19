@@ -1,5 +1,9 @@
 """Show the setup code that allows registering the GitHub App on the site."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from django.core.management.base import BaseCommand
 
 from pycal_dashboard.services.app_registration import AppRegistration
@@ -10,10 +14,10 @@ class Command(BaseCommand):
 
     help = "Show the setup code for registering the GitHub App on the site."
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any):
         """Print the code, or why none is needed.
 
-        Args:
+        Parameters:
             *args: Not used.
             **options: Of Django.
         """

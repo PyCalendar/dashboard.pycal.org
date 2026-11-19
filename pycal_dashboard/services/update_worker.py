@@ -52,7 +52,7 @@ class UpdateWorker:
 
         A job that it leaves unfinished is taken again later (``UpdateQueue.claim``).
 
-        Args:
+        Parameters:
             timeout: The seconds to wait for the thread.
         """
         cls.enabled = False

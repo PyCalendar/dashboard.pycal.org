@@ -21,7 +21,7 @@ class SignIn:
     def from_environment(cls, environ: Mapping[str, str]) -> "SignIn":
         """The OAuth app of the environment.
 
-        Args:
+        Parameters:
             environ: The environment, such as ``os.environ``.
 
         Returns:

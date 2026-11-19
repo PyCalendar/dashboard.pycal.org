@@ -24,7 +24,7 @@ class Profile(models.Model):
     def with_github_name(cls, name: str) -> "Profile | None":
         """The profile with a GitHub name, in any case.
 
-        Args:
+        Parameters:
             name: The GitHub name, with or without ``@``.
 
         Returns:

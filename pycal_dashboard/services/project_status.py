@@ -39,7 +39,7 @@ class ProjectStatus:
     def of(cls, project: Project, repositories: list) -> "ProjectStatus":
         """The status of a project.
 
-        Args:
+        Parameters:
             project: The project.
             repositories: Its repositories that the visitor sees.
 

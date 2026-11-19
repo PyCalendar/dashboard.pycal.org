@@ -1,5 +1,11 @@
 """The rights of the Django admin follow ``SITE_ADMINS`` at every request."""
 
+from __future__ import annotations
+
+from collections.abc import Callable
+
+from django.http import HttpRequest, HttpResponse
+
 from .actions import Trigger
 from .services.identity import GitHubIdentity
 
@@ -11,18 +17,18 @@ class AdminRightsMiddleware:
     signed in before it.
     """
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         """The middleware.
 
-        Args:
+        Parameters:
             get_response: The next step of Django.
         """
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         """Keep the rights of the person, then answer.
 
-        Args:
+        Parameters:
             request: The request.
 
         Returns:

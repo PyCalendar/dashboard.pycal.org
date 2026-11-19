@@ -8,7 +8,7 @@ DEFAULT = "pycal.org=https://pycal.org"
 def parse_footer_links(value: str) -> list[tuple[str, str]]:
     """The links of ``FOOTER_LINKS``: ``Title=URL`` entries, separated by commas.
 
-    Args:
+    Parameters:
         value: The setting, such as ``pycal.org=https://pycal.org,Blog=https://example.org/``.
             Empty: no extra links.
 

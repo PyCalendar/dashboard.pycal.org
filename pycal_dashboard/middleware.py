@@ -1,9 +1,12 @@
 """Show the errors of the site with their title, detail and link to the documentation."""
 
+from __future__ import annotations
+
 import logging
+from collections.abc import Callable
 
 from allauth.socialaccount.models import SocialApp
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from .errors import DashboardError, SignInNotConfigured, UnexpectedError
@@ -11,10 +14,10 @@ from .errors import DashboardError, SignInNotConfigured, UnexpectedError
 log = logging.getLogger(__name__)
 
 
-def is_json(request) -> bool:
+def is_json(request: HttpRequest) -> bool:
     """Whether a request is for the JSON of a page, which answers errors as JSON.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -23,10 +26,10 @@ def is_json(request) -> bool:
     return getattr(request, "public_json", False)
 
 
-def error_page(request, error: DashboardError, status: int | None = None):
+def error_page(request: HttpRequest, error: DashboardError, status: int | None = None):
     """The page of an error, or its JSON for ``<page>.json``.
 
-    Args:
+    Parameters:
         request: The request.
         error: The error.
         status: The HTTP status; that of the error by default.
@@ -44,18 +47,18 @@ def error_page(request, error: DashboardError, status: int | None = None):
 class ErrorPageMiddleware:
     """Render :class:`~pycal_dashboard.errors.DashboardError` as a page that explains it."""
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         """The middleware.
 
-        Args:
+        Parameters:
             get_response: The next step of Django.
         """
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         """Answer the request.
 
-        Args:
+        Parameters:
             request: The request.
 
         Returns:
@@ -63,10 +66,10 @@ class ErrorPageMiddleware:
         """
         return self.get_response(request)
 
-    def process_exception(self, request, exception):
+    def process_exception(self, request: HttpRequest, exception: Exception):
         """Show errors of the site; others are left to Django.
 
-        Args:
+        Parameters:
             request: The request.
             exception: What was raised.
 

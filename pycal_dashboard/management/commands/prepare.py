@@ -1,5 +1,8 @@
 """Prepare the site at every start: the database, the domain and the GitHub App."""
 
+from __future__ import annotations
+
+from typing import Any
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -17,13 +20,13 @@ class Command(BaseCommand):
 
     help = "Migrate the database, set the domain and print the setup code of the GitHub App."
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any):
         """Prepare the site.
 
         Without a GitHub App, the log says where to register it and the setup code that
         allows it; the same for the OAuth app that signs people in.
 
-        Args:
+        Parameters:
             *args: Not used.
             **options: Of Django.
         """

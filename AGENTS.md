@@ -30,8 +30,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - Errors are split up as finely as possible: one class per cause, with a title
   and a docstring that says what happened and how to solve it. They are shown
   with a link to their documentation (`docs/reference/errors.rst`).
-- Every class and function has a docstring in the Google style; `make lint`
-  checks it.
+- Every class and function has a docstring in the Google style, whose section of the
+  arguments is `Parameters:`, never `Args:`; every argument has a type. `make lint` and
+  `tests/quality/test_docstrings.py` check it.
 - The tests never use the network: GitHub is faked (`tests/fakes/github.py`).
 - Never change a migration that may be applied somewhere; add a new one.
 - No inline JavaScript in templates; small static scripts in `static/` may enhance a

@@ -1,9 +1,17 @@
 """An account on GitHub that the site knows: who created issues and pull requests, who signs in."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.db import models
 
 from .profile import Profile
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
 
 
 class GitHubUser(models.Model):
@@ -42,13 +50,15 @@ class GitHubUser(models.Model):
         return f"https://github.com/{self.login}"
 
     @classmethod
-    def record(cls, data: dict, user=None) -> "GitHubUser | None":
+    def record(
+        cls, data: dict, user: AbstractBaseUser | AnonymousUser | None = None
+    ) -> GitHubUser | None:
         """Keep an account as GitHub describes it, such as the ``user`` of an issue.
 
         The account is linked to the user of the site who signed in with it: the given one, or
         the one whose profile has its GitHub id.
 
-        Args:
+        Parameters:
             data: The account from GitHub: ``id``, ``login``, ``avatar_url``, ``type`` and
                 ``name`` if GitHub gives them.
             user: The user of the site who signed in with it, None if not known.

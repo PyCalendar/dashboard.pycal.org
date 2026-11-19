@@ -22,7 +22,7 @@ class LabelInput(TextInput):
     def parse(self, value: Any, context: dict | None = None) -> str:
         """The name of the label, as the repository writes it.
 
-        Args:
+        Parameters:
             value: The name.
             context: ``repository``, whose labels the name must be one of; without it, any
                 name is taken.
@@ -46,7 +46,7 @@ class LabelInput(TextInput):
     def widget(self, context: dict | None = None) -> dict:
         """A choice of the labels of the repository, or a field of text without one.
 
-        Args:
+        Parameters:
             context: ``repository``, whose labels are the choices.
 
         Returns:

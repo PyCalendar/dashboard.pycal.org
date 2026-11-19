@@ -1,7 +1,14 @@
 """The condition ``auto_merge_enabled``: a pull request merges itself when it may."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.spec.pull_request import PullRequestData
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class AutoMergeEnabled(Condition):
@@ -17,10 +24,10 @@ class AutoMergeEnabled(Condition):
     data = (PullRequestData(),)
 
     @classmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether auto-merge is enabled.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: Nothing: the condition has no inputs.
 

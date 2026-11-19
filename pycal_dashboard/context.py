@@ -1,6 +1,9 @@
 """What every page knows: the name of the site, its colors, its links and the visitor."""
 
+from __future__ import annotations
+
 from django.conf import settings
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -26,10 +29,10 @@ def version_text() -> str:
     return f"{build['version']} ({build['commit']})"
 
 
-def site(request) -> dict:
+def site(request: HttpRequest) -> dict:
     """The context of every template.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:

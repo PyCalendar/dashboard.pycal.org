@@ -21,7 +21,7 @@ class TextInput(InputSpec):
     def parse(self, value: Any, context: dict | None = None) -> str:
         """The text, stripped.
 
-        Args:
+        Parameters:
             value: The value.
             context: Not used.
 
@@ -42,7 +42,7 @@ class TextInput(InputSpec):
     def widget(self, context: dict | None = None) -> dict:
         """A field of text.
 
-        Args:
+        Parameters:
             context: Not used.
 
         Returns:

@@ -13,7 +13,7 @@ class EmailSent(Action):
     def __init__(self, subject: str, body: str, recipients: list[str]):
         """The email.
 
-        Args:
+        Parameters:
             subject: The subject.
             body: The text.
             recipients: The addresses.

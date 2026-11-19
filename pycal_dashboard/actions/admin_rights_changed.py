@@ -11,7 +11,7 @@ class AdminRightsChanged(Action):
     def __init__(self, login: str, admin: bool):
         """The change of the rights.
 
-        Args:
+        Parameters:
             login: The GitHub handle of the person.
             admin: Whether the person is an administrator now.
         """

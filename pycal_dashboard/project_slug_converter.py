@@ -12,7 +12,7 @@ class ProjectSlugConverter:
     def to_python(self, value: str) -> str:
         """The slug, as written in the address.
 
-        Args:
+        Parameters:
             value: The part of the address.
 
         Returns:
@@ -23,7 +23,7 @@ class ProjectSlugConverter:
     def to_url(self, value: str) -> str:
         """The part of the address of a slug.
 
-        Args:
+        Parameters:
             value: The slug.
 
         Returns:

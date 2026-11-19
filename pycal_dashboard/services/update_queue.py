@@ -1,9 +1,12 @@
 """The queue of the updates of projects: add one, take the next, run it."""
 
+from __future__ import annotations
+
 import logging
 import time
 from collections.abc import Callable
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from django.db import OperationalError, transaction
 from django.db.models import Q
@@ -15,6 +18,11 @@ from pycal_dashboard.models import Project, Repository, UpdateJob
 from .project_status import FRESH
 from .repository_update import RepositoryUpdate
 from .update_worker import UpdateWorker
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
+
 
 # a job that runs longer was stopped, such as with its process: it is taken again
 STUCK = timedelta(minutes=10)
@@ -30,7 +38,7 @@ log = logging.getLogger(__name__)
 def retrying(write: Callable):
     """Run a write to the database again while the database is busy, such as SQLite.
 
-    Args:
+    Parameters:
         write: The write.
 
     Returns:
@@ -53,10 +61,15 @@ class UpdateQueue:
     """Updates of projects, which the worker runs one after another in the background."""
 
     @staticmethod
-    def add(project: Project, user=None, changed: bool = False, start: bool = True) -> UpdateJob:
+    def add(
+        project: Project,
+        user: AbstractBaseUser | AnonymousUser | None = None,
+        changed: bool = False,
+        start: bool = True,
+    ) -> UpdateJob:
         """Queue an update of a project, unless one waits or runs, and start the worker.
 
-        Args:
+        Parameters:
             project: The project.
             user: Who asked for it, None for the site.
             changed: The repositories of the project changed: an update that runs already read
@@ -84,7 +97,7 @@ class UpdateQueue:
         Activity on GitHub, which a webhook tells of, updates the repository it is about: only
         what changed since its last update.
 
-        Args:
+        Parameters:
             repository: The repository.
             start: Start the worker thread of this process, see :meth:`add`.
 
@@ -106,7 +119,7 @@ class UpdateQueue:
         also what no webhook tells of. One whose update ended in the last hour, such as one
         that failed, waits, so that GitHub is not asked again at every view of its page.
 
-        Args:
+        Parameters:
             project: Only its repositories; None for those of every project.
             start: Start the worker thread of this process, see :meth:`add`.
 
@@ -167,7 +180,7 @@ class UpdateQueue:
     def run(cls, job: UpdateJob) -> UpdateJob:
         """Read every repository of the project of a job, or its repository, and count them.
 
-        Args:
+        Parameters:
             job: The claimed job.
 
         Returns:
@@ -193,7 +206,7 @@ class UpdateQueue:
     def finish(job: UpdateJob, status: str) -> None:
         """End a job; a done one marks its project as updated.
 
-        Args:
+        Parameters:
             job: The job.
             status: ``done`` or ``failed``.
         """

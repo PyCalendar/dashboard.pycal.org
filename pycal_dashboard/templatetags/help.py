@@ -25,7 +25,7 @@ BOOK = mark_safe(  # noqa: S308 - a constant
 def help_link(url: str, label: str) -> str:
     """A link to the documentation as an open book, opening a new tab.
 
-    Args:
+    Parameters:
         url: The page of the documentation.
         label: What the page explains, such as ``Email for new permissions``.
 

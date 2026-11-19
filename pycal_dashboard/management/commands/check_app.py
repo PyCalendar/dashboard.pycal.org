@@ -1,5 +1,9 @@
 """Say which permissions and events the GitHub App lacks."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from django.core.management.base import BaseCommand, CommandError
 
 from pycal_dashboard.errors import DashboardError
@@ -11,10 +15,10 @@ class Command(BaseCommand):
 
     help = "Read the GitHub App from GitHub and name the permissions and events it lacks."
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any):
         """Check the app.
 
-        Args:
+        Parameters:
             *args: Not used.
             **options: Of Django.
 

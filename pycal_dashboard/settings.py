@@ -30,7 +30,7 @@ if not TESTING:
 def kept_secret(name: str) -> str:
     """A secret from the environment, or generated once into the data directory.
 
-    Args:
+    Parameters:
         name: The name of the setting and of its file, such as ``SECRET_KEY``.
 
     Returns:

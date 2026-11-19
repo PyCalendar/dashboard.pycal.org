@@ -5,10 +5,13 @@ site, which answers with a form that sends the manifest to GitHub. GitHub return
 ``/setup/github-app/registered/``, where the site exchanges the code for the credentials.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 
 from django.conf import settings
+from django.http import HttpRequest
 from django.shortcuts import render
 
 from pycal_dashboard.errors import DashboardError, RegistrationError
@@ -20,10 +23,10 @@ from pycal_dashboard.services.identity import GitHubIdentity
 log = logging.getLogger(__name__)
 
 
-def app_check(request) -> AppCheck | None:
+def app_check(request: HttpRequest) -> AppCheck | None:
     """What the GitHub App lacks, for the administrators of the site.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:
@@ -39,10 +42,10 @@ def app_check(request) -> AppCheck | None:
         return None
 
 
-def register_app(request):
+def register_app(request: HttpRequest):
     """The page *Register the GitHub App*: the form, or the app the site has.
 
-    Args:
+    Parameters:
         request: The request; POST with ``name``, ``organization`` and ``setup_code``.
 
     Returns:
@@ -80,10 +83,10 @@ def register_app(request):
     return render(request, "pycal_dashboard/register_app.html", context)
 
 
-def app_registered(request):
+def app_registered(request: HttpRequest):
     """GitHub returns here with ``code`` and ``state`` after it created the app.
 
-    Args:
+    Parameters:
         request: The request.
 
     Returns:

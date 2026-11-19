@@ -19,7 +19,7 @@ HEADER = (
 def read(path: Path) -> dict[str, str]:
     """The settings of a ``.env`` file: ``NAME=value`` lines; ``#`` starts a comment.
 
-    Args:
+    Parameters:
         path: The file; a missing file has no settings.
 
     Returns:
@@ -38,7 +38,7 @@ def read(path: Path) -> dict[str, str]:
 def load(path: Path, environ: MutableMapping[str, str]) -> list[str]:
     """Put the settings of the file into the environment, where they are not set.
 
-    Args:
+    Parameters:
         path: The file, such as ``DATA_DIR/.env``.
         environ: The environment, such as ``os.environ``.
 
@@ -51,7 +51,7 @@ def load(path: Path, environ: MutableMapping[str, str]) -> list[str]:
 def load_values(values: Mapping[str, str], environ: MutableMapping[str, str]) -> list[str]:
     """Put settings into the environment, where they are not set.
 
-    Args:
+    Parameters:
         values: The values by name.
         environ: The environment, such as ``os.environ``.
 
@@ -74,7 +74,7 @@ def load_values(values: Mapping[str, str], environ: MutableMapping[str, str]) ->
 def write(path: Path, values: Mapping[str, str]) -> None:
     """Add settings to the file, readable only by the site.
 
-    Args:
+    Parameters:
         path: The file, such as ``DATA_DIR/.env``; it is created if missing.
         values: The values by name; existing lines are kept.
     """
@@ -89,7 +89,7 @@ def write(path: Path, values: Mapping[str, str]) -> None:
 def write_private(path: Path, text: str) -> None:
     """Write a file that only the owner can read, such as a key.
 
-    Args:
+    Parameters:
         path: The file.
         text: The content.
     """

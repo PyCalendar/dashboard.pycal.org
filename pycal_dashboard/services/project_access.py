@@ -1,11 +1,19 @@
 """Who may do what with a project: read, write, own; the site administrators may do all."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.db.models import Q, QuerySet
 
 from pycal_dashboard.errors import ProjectNotFound, ProjectOwnersOnly, ProjectReadOnly
 from pycal_dashboard.models import Project, ProjectMember, ProjectSlug
 
 from .identity import GitHubIdentity
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
 
 
 class ProjectAccess:
@@ -26,10 +34,10 @@ class ProjectAccess:
     (``SITE_ADMINS``) have the rights of an owner in every project.
     """
 
-    def __init__(self, project: Project, user):
+    def __init__(self, project: Project, user: AbstractBaseUser | AnonymousUser):
         """The rights of a person.
 
-        Args:
+        Parameters:
             project: The project.
             user: The person, maybe a visitor who did not sign in.
         """
@@ -65,7 +73,7 @@ class ProjectAccess:
         """Whether the person shares the project, makes it public or private and deletes it."""
         return self.rank() >= ProjectMember.RANK[ProjectMember.OWNER]
 
-    def require_read(self) -> "ProjectAccess":
+    def require_read(self) -> ProjectAccess:
         """Check that the person sees the project.
 
         Returns:
@@ -78,7 +86,7 @@ class ProjectAccess:
             raise ProjectNotFound(self.project.slug)
         return self
 
-    def require_write(self) -> "ProjectAccess":
+    def require_write(self) -> ProjectAccess:
         """Check that the person changes the project.
 
         Returns:
@@ -92,7 +100,7 @@ class ProjectAccess:
             raise ProjectReadOnly(self.project.name)
         return self
 
-    def require_owner(self) -> "ProjectAccess":
+    def require_owner(self) -> ProjectAccess:
         """Check that the person owns the project.
 
         Returns:
@@ -107,13 +115,13 @@ class ProjectAccess:
         return self
 
     @classmethod
-    def of(cls, slug: str, user) -> "ProjectAccess":
+    def of(cls, slug: str, user: AbstractBaseUser | AnonymousUser) -> ProjectAccess:
         """The project of an address with the rights of a person, if they see it.
 
         An old slug of a project, or one in other case, finds it too: the pages then lead to its
         address (``project.slug``).
 
-        Args:
+        Parameters:
             slug: The project in the address.
             user: The person.
 
@@ -133,10 +141,10 @@ class ProjectAccess:
         return cls(project, user).require_read()
 
     @staticmethod
-    def visible(user) -> QuerySet:
+    def visible(user: AbstractBaseUser | AnonymousUser) -> QuerySet:
         """The projects that a person sees: the public ones and those they have a role in.
 
-        Args:
+        Parameters:
             user: The person, maybe a visitor.
 
         Returns:

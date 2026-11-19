@@ -13,7 +13,7 @@ from pycal_dashboard.errors import (
 def sign(secret: str, body: bytes) -> str:
     """The signature of a body, as GitHub sends it in ``X-Hub-Signature-256``.
 
-    Args:
+    Parameters:
         secret: The webhook secret.
         body: The body of the request.
 
@@ -30,7 +30,7 @@ def sign(secret: str, body: bytes) -> str:
 def verify(secret: str, body: bytes, signature: str | None) -> None:
     """Check that GitHub sent the body.
 
-    Args:
+    Parameters:
         secret: The webhook secret of the site.
         body: The body of the request.
         signature: The header ``X-Hub-Signature-256``.

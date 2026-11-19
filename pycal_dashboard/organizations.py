@@ -10,7 +10,7 @@ LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 def parse_organizations(value: str) -> list[str]:
     """The logins of the setting, checked.
 
-    Args:
+    Parameters:
         value: The logins, separated by commas.
 
     Returns:

@@ -61,7 +61,7 @@ DATA_EVENTS = {
 def missing(granted: dict[str, str], required: dict[str, str] | None = None) -> dict[str, str]:
     """The permissions an installation needs but was not granted.
 
-    Args:
+    Parameters:
         granted: The permissions of the installation, as GitHub lists them.
         required: What is needed; :data:`REQUIRED` by default.
 
@@ -85,7 +85,7 @@ def missing(granted: dict[str, str], required: dict[str, str] | None = None) -> 
 def manifest(name: str, url: str, public: bool = True) -> dict:
     """The manifest of the GitHub App, to create it with these permissions and events.
 
-    Args:
+    Parameters:
         name: The name of the app on GitHub.
         url: The address of the site.
         public: Whether other accounts may install the app; they may by default.
@@ -116,7 +116,7 @@ def manifest(name: str, url: str, public: bool = True) -> dict:
 def describe(permissions: dict[str, str]) -> str:
     """The permissions as text, sorted, such as ``issues:read``.
 
-    Args:
+    Parameters:
         permissions: The permissions with their levels.
 
     Returns:

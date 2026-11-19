@@ -11,7 +11,7 @@ class PreferencesSaved(Action):
     def __init__(self, login: str, language: str, theme: str, email_permissions: bool = True):
         """The saved preferences.
 
-        Args:
+        Parameters:
             login: The GitHub handle of the person.
             language: The language, such as ``de``; "" for the language of the browser.
             theme: The colors: ``auto``, ``light`` or ``dark``; "" for the choice of the menu.

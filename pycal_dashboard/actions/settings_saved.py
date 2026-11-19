@@ -11,7 +11,7 @@ class SettingsSaved(Action):
     def __init__(self, names: list[str], reason: str):
         """The saved settings.
 
-        Args:
+        Parameters:
             names: The names of the settings, such as ``GITHUB_OAUTH_CLIENT_ID``.
             reason: Why, such as ``the OAuth app for signing in was entered``.
         """

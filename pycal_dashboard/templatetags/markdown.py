@@ -14,7 +14,7 @@ register = template.Library()
 def markdown(text: str):
     """The HTML of a text in Markdown, cleaned.
 
-    Args:
+    Parameters:
         text: The Markdown.
 
     Returns:

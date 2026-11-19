@@ -1,15 +1,18 @@
 """GitHub returns here after the app was installed or its installation changed."""
 
+from __future__ import annotations
+
+from django.http import HttpRequest
 from django.shortcuts import render
 
 from pycal_dashboard.errors import InvalidInstallationId
 from pycal_dashboard.middleware import error_page
 
 
-def installed(request):
+def installed(request: HttpRequest):
     """Confirm the installation; the site reads nothing of it from GitHub.
 
-    Args:
+    Parameters:
         request: The request, with ``installation_id`` and ``setup_action`` of GitHub.
 
     Returns:

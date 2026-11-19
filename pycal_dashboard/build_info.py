@@ -44,7 +44,7 @@ def from_git() -> dict[str, str]:
 def parse_time(value: str) -> datetime | None:
     """A time of the build information.
 
-    Args:
+    Parameters:
         value: An ISO 8601 time such as ``2026-11-12T15:10:54+01:00``, or "".
 
     Returns:
@@ -66,7 +66,7 @@ def parse_time(value: str) -> datetime | None:
 def get(source_url: str) -> dict:
     """The build information, read once, with the links to the code.
 
-    Args:
+    Parameters:
         source_url: The address of the repository of the code.
 
     Returns:

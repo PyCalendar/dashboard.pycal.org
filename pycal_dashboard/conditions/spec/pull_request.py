@@ -1,9 +1,17 @@
 """The state of an open pull request: whether it can be merged, its branches, auto-merge."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.utils import timezone
 
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.models import Issue, PullRequestState
+
+if TYPE_CHECKING:
+    from pycal_dashboard.github.client import GitHubClient
+    from pycal_dashboard.models import Issue, Repository
 
 
 class PullRequestData(DataSpec):
@@ -19,10 +27,10 @@ class PullRequestData(DataSpec):
     permissions = {"pull_requests": "read", "contents": "read"}
     events = ("pull_request", "push")
 
-    def fetch(self, client, repository) -> int:
+    def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read the state of every open pull request.
 
-        Args:
+        Parameters:
             client: The client.
             repository: The repository; without the GitHub App, nothing is read, so that the
                 site does not spend the few requests GitHub allows without a token.
@@ -41,10 +49,10 @@ class PullRequestData(DataSpec):
         return len(pulls)
 
     @staticmethod
-    def keep(issue, data: dict) -> PullRequestState:
+    def keep(issue: Issue, data: dict) -> PullRequestState:
         """Keep the state of a pull request as GitHub describes it.
 
-        Args:
+        Parameters:
             issue: The pull request.
             data: The pull request from GitHub.
 
@@ -65,10 +73,10 @@ class PullRequestData(DataSpec):
         )
         return state
 
-    def complete(self, issue) -> bool:
+    def complete(self, issue: Issue) -> bool:
         """Read since the last change of the pull request, and GitHub knows if it merges.
 
-        Args:
+        Parameters:
             issue: The pull request.
 
         Returns:

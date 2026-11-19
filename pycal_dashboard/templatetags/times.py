@@ -21,7 +21,7 @@ RELATIVE_DAYS = 30  # older times show their date, as on GitHub
 def ago(value: datetime, now: datetime) -> str:
     """How long ago a time was, in words.
 
-    Args:
+    Parameters:
         value: The time.
         now: The time of the page.
 
@@ -62,7 +62,7 @@ def ago(value: datetime, now: datetime) -> str:
 def when(value: datetime | None) -> str:
     """A ``<time>`` element: how long ago, the exact time in UTC on hover.
 
-    Args:
+    Parameters:
         value: The time, aware; or None.
 
     Returns:

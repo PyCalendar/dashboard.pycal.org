@@ -1,8 +1,11 @@
 """The trigger of the actions that are running: a webhook, a person, or the site."""
 
+from __future__ import annotations
+
 from collections.abc import Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
+from typing import Any
 
 from pycal_dashboard.models import LogTrigger
 
@@ -14,10 +17,10 @@ class Trigger:
 
     @staticmethod
     @contextmanager
-    def start(kind: str, summary: str, **scope) -> Iterator[LogTrigger]:
+    def start(kind: str, summary: str, **scope: Any) -> Iterator[LogTrigger]:
         """Record a trigger; the actions inside the ``with`` block belong to it.
 
-        Args:
+        Parameters:
             kind: Such as ``webhook``, ``sign-in`` or ``setup``.
             summary: What happened, for people, such as ``@alice signed in``.
             **scope: ``actor_login``, ``repository`` and ``delivery`` of

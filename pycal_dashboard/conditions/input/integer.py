@@ -23,7 +23,7 @@ class IntegerInput(InputSpec):
     def parse(self, value: Any, context: dict | None = None) -> int:
         """The number.
 
-        Args:
+        Parameters:
             value: A number or its text, such as ``3`` or ``"3"`` from a form.
             context: Not used.
 
@@ -55,7 +55,7 @@ class IntegerInput(InputSpec):
     def widget(self, context: dict | None = None) -> dict:
         """A field of a number with its limits.
 
-        Args:
+        Parameters:
             context: Not used.
 
         Returns:

@@ -1,5 +1,9 @@
 """A project: a set of repositories on GitHub that people look at together."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
@@ -60,7 +64,7 @@ class Project(models.Model):
     def path(self, page: str = "") -> str:
         """The address of a page of the project.
 
-        Args:
+        Parameters:
             page: The page after the project, such as ``repositories/``; "" for the overview.
 
         Returns:
@@ -84,8 +88,13 @@ class Project(models.Model):
         if ProjectSlug.taken(self.slug, self if self.pk else None):
             raise ValidationError({"slug": "Another project has or had this slug."})
 
-    def save(self, *args, **kwargs) -> None:
-        """Save the project and record its slug in the history of its slugs."""
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """Save the project and record its slug in the history of its slugs.
+
+        Parameters:
+            *args: Of ``Model.save``.
+            **kwargs: Of ``Model.save``.
+        """
         with transaction.atomic():
             super().save(*args, **kwargs)
             now = timezone.now()

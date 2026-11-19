@@ -71,7 +71,7 @@ class Theme:
     def from_environment(cls, environ: dict[str, str]) -> "Theme":
         """The theme with the colors of ``COLOR_<NAME>`` and ``COLOR_DARK_<NAME>``.
 
-        Args:
+        Parameters:
             environ: The environment, such as ``os.environ``.
 
         Returns:
@@ -107,7 +107,7 @@ class Theme:
     def css(colors: dict[str, str]) -> str:
         """The colors as CSS custom properties.
 
-        Args:
+        Parameters:
             colors: The colors by name.
 
         Returns:
@@ -122,7 +122,7 @@ class Theme:
     def stylesheet(self, choice: str = "auto") -> str:
         """The CSS of the colors for the choice of the visitor.
 
-        Args:
+        Parameters:
             choice: ``auto``: light, and dark when the system asks for it;
                 ``light`` or ``dark``: always these colors. Anything else is ``auto``.
 
@@ -148,7 +148,7 @@ class Theme:
     def choice(value: str | None) -> str:
         """The choice of the switch, from the cookie.
 
-        Args:
+        Parameters:
             value: The value of the cookie ``theme``, or ``None``.
 
         Returns:

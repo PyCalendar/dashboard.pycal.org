@@ -1,19 +1,26 @@
 """What follows an update from GitHub: the receivers of :mod:`pycal_dashboard.update_signals`."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from django.dispatch import receiver
 
 from .models import Project
 from .update_signals import project_updated, repository_updated
 
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Repository
+
 
 @receiver(repository_updated)
-def mark_projects(sender, repository, **kwargs):
+def mark_projects(sender: type, repository: Repository, **kwargs: Any):
     """Keep the time of the last update of the projects of a repository.
 
     A project is as fresh as its oldest repository: ``updated`` is the oldest time a repository
     of it was read, None while one was never read.
 
-    Args:
+    Parameters:
         sender: Who sent the signal.
         repository: The repository that was read.
         **kwargs: More of the signal.

@@ -269,7 +269,8 @@ community: where to start, what waits for a review, who contributes.
       and push (a base branch that moved) are not subscribed; the hourly renewal covers them
 - [x] The app asks for checks, statuses and contents (read) and the webhooks label, check_run,
       check_suite, status and push: the conditions work (decided by the person: the app must work)
-- [ ] Docstrings: Parameters: instead of Args:, everywhere; every argument typed (ruff)
+- [x] Three more conditions: open, merged, closed (without being merged)
+- [x] Docstrings: Parameters: instead of Args:, everywhere; every argument typed (ruff)
 - [ ] Rate limits and GraphQL: evaluate GraphQL for minimal updates; tokens of people for
       projects (tab Tokens of a project, a tabbed profile with a tab of the tokens and the
       repositories they are used for), as on the insight platform

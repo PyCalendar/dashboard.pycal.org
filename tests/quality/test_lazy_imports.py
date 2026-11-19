@@ -19,7 +19,7 @@ PACKAGE = ROOT / "pycal_dashboard"
 def unguarded_imports(source: str) -> list[int]:
     """The lines of the imports inside functions that are not inside ``with IMPORT_GUARD:``.
 
-    Args:
+    Parameters:
         source: The code of a module.
 
     Returns:

@@ -19,7 +19,7 @@ class RangeInput(IntegerInput):
     def parse(self, value: Any, context: dict | None = None) -> tuple[int, int]:
         """The range.
 
-        Args:
+        Parameters:
             value: Two numbers, such as ``[1, 5]`` or, from a form, ``"1-5"``.
             context: Not used.
 
@@ -49,7 +49,7 @@ class RangeInput(IntegerInput):
     def widget(self, context: dict | None = None) -> dict:
         """Two fields of numbers with the limits.
 
-        Args:
+        Parameters:
             context: Not used.
 
         Returns:

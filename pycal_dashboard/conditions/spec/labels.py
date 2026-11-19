@@ -1,8 +1,17 @@
 """The labels of a repository and of its pull requests."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.models import Label
+
+if TYPE_CHECKING:
+    from pycal_dashboard.github.client import GitHubClient
+    from pycal_dashboard.models import Issue, Repository
+
 
 PER_PAGE = 100
 
@@ -20,10 +29,10 @@ class LabelsData(DataSpec):
     permissions = {"metadata": "read", "issues": "read"}
     events = ("label", "issues", "pull_request")
 
-    def fetch(self, client, repository) -> int:
+    def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read all labels of the repository; remove those it no longer has.
 
-        Args:
+        Parameters:
             client: The client.
             repository: The repository.
 
@@ -44,10 +53,10 @@ class LabelsData(DataSpec):
         return len(seen)
 
     @staticmethod
-    def label(repository, item: dict) -> Label:
+    def label(repository: Repository, item: dict) -> Label:
         """Keep a label as GitHub describes it.
 
-        Args:
+        Parameters:
             repository: The repository.
             item: The label: ``id``, ``name``, ``description`` and ``color``.
 
@@ -66,10 +75,10 @@ class LabelsData(DataSpec):
         return label
 
     @classmethod
-    def keep(cls, issue, item: dict) -> None:
+    def keep(cls, issue: Issue, item: dict) -> None:
         """Keep the labels of an issue or pull request from its item of GitHub.
 
-        Args:
+        Parameters:
             issue: The issue, saved.
             item: The issue as GitHub lists it, with ``labels``.
         """
@@ -80,10 +89,10 @@ class LabelsData(DataSpec):
         ]
         issue.labels.set(labels)
 
-    def complete(self, issue) -> bool:
+    def complete(self, issue: Issue) -> bool:
         """The labels are kept with the issues since data version 2.
 
-        Args:
+        Parameters:
             issue: The pull request.
 
         Returns:

@@ -53,7 +53,7 @@ class Package:
 def license_names(root: Path = ROOT) -> list[str]:
     """The licenses whose texts are in ``LICENSES/``, as REUSE expects them.
 
-    Args:
+    Parameters:
         root: The project.
 
     Returns:
@@ -66,7 +66,7 @@ def license_names(root: Path = ROOT) -> list[str]:
 def license_file(name: str, root: Path = ROOT) -> Path | None:
     """The text of a license of ``LICENSES/``.
 
-    Args:
+    Parameters:
         name: The SPDX identifier.
         root: The project.
 
@@ -79,7 +79,7 @@ def license_file(name: str, root: Path = ROOT) -> Path | None:
 def reused(root: Path = ROOT) -> list[Package]:
     """The code taken over from other projects, from ``licenses.json`` or ``REUSE.toml``.
 
-    Args:
+    Parameters:
         root: The project.
 
     Returns:
@@ -95,7 +95,7 @@ def read_reused(root: Path = ROOT) -> list[Package]:
 
     Annotations under the license of the project are left out.
 
-    Args:
+    Parameters:
         root: The project; without ``REUSE.toml`` there are none.
 
     Returns:
@@ -123,7 +123,7 @@ def read_reused(root: Path = ROOT) -> list[Package]:
 def license_of(entry: dict) -> str:
     """The SPDX expression, the license field, or the license classifiers of a package.
 
-    Args:
+    Parameters:
         entry: A package as pip-licenses describes it.
 
     Returns:
@@ -183,7 +183,7 @@ def read_installed() -> dict[str, dict]:
 def write(path: Path = DATA) -> None:
     """Read the licenses into a file, which the site reads instead; the image does it once.
 
-    Args:
+    Parameters:
         path: The file.
     """
     data = {
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 def package_license_text(name: str) -> str | None:
     """The text of the license file of an installed package.
 
-    Args:
+    Parameters:
         name: The name of the package, in any case.
 
     Returns:

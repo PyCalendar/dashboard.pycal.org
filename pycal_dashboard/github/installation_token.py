@@ -24,7 +24,7 @@ class InstallationToken:
     def installation_of(cls, full_name: str) -> dict | None:
         """The installation of the GitHub App on a repository.
 
-        Args:
+        Parameters:
             full_name: The repository, such as ``collective/icalendar``.
 
         Returns:
@@ -44,7 +44,7 @@ class InstallationToken:
     def client(installation_id: int) -> GitHubClient:
         """A client with a token of an installation, valid for an hour.
 
-        Args:
+        Parameters:
             installation_id: The id of the installation on GitHub.
 
         Returns:

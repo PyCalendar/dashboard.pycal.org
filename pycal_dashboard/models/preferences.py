@@ -1,7 +1,15 @@
 """The private preferences of a person who signed in: the language and the colors."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.db import models
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
 
 
 class Preferences(models.Model):
@@ -26,10 +34,10 @@ class Preferences(models.Model):
         return f"preferences of {self.user}"
 
     @classmethod
-    def of(cls, user) -> "Preferences | None":
+    def of(cls, user: AbstractBaseUser | AnonymousUser) -> Preferences | None:
         """The preferences of a person.
 
-        Args:
+        Parameters:
             user: A user of Django, or a visitor.
 
         Returns:

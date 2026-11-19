@@ -1,5 +1,10 @@
 """The language that a person chose in the account applies on every device."""
 
+from __future__ import annotations
+
+from collections.abc import Callable
+
+from django.http import HttpRequest, HttpResponse
 from django.utils import translation
 
 from .models import Preferences
@@ -13,18 +18,18 @@ class PreferencesMiddleware:
     of a person who signed in, so the account and the menus agree.
     """
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         """The middleware.
 
-        Args:
+        Parameters:
             get_response: The next step of Django.
         """
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         """Read the preferences, use their language, then answer.
 
-        Args:
+        Parameters:
             request: The request.
 
         Returns:

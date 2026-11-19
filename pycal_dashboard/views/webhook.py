@@ -1,10 +1,12 @@
 """The webhook of the GitHub App."""
 
+from __future__ import annotations
+
 import json
 import logging
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -23,10 +25,10 @@ from pycal_dashboard.services.webhook_handler import WebhookHandler
 log = logging.getLogger(__name__)
 
 
-def read(request) -> tuple[str, dict]:
+def read(request: HttpRequest) -> tuple[str, dict]:
     """Check the signature and read the webhook.
 
-    Args:
+    Parameters:
         request: The request of GitHub.
 
     Returns:
@@ -50,10 +52,10 @@ def read(request) -> tuple[str, dict]:
 
 @csrf_exempt  # GitHub signs the webhooks instead
 @require_POST
-def webhook(request):
+def webhook(request: HttpRequest):
     """Receive a webhook of GitHub, check its signature and handle it.
 
-    Args:
+    Parameters:
         request: The request of GitHub.
 
     Returns:

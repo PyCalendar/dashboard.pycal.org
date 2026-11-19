@@ -1,5 +1,9 @@
 """The base of all errors."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
@@ -23,10 +27,10 @@ class DashboardError(Exception):
     setup = ""
     setup_title = ""
 
-    def __init__(self, detail: str = "", **context):
+    def __init__(self, detail: str = "", **context: Any):
         """An error people can meet, with what happened.
 
-        Args:
+        Parameters:
             detail: What happened, shown after the title; the title if empty.
             **context: More about it, such as the repository.
         """

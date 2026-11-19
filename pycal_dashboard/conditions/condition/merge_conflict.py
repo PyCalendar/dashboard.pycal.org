@@ -1,7 +1,14 @@
 """The condition ``merge_conflict``: a pull request cannot be merged because of a conflict."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.spec.pull_request import PullRequestData
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class MergeConflict(Condition):
@@ -17,10 +24,10 @@ class MergeConflict(Condition):
     data = (PullRequestData(),)
 
     @classmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether the pull request has a conflict.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: Nothing: the condition has no inputs.
 

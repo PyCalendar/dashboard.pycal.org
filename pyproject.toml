@@ -77,15 +77,17 @@ line-length = 100
 extend-exclude = [".claude", ".codex", "pycal_dashboard/migrations", "docs/_build"]
 
 [tool.ruff.lint]
-# D: every class and function has a docstring, in Google style
-select = ["E", "F", "I", "UP", "D"]
-ignore = ["D100", "D104", "D105", "D106", "D107"]
+# D: every class and function has a docstring, in Google style, whose section of the arguments
+# is "Parameters:" (tests/quality/test_docstrings.py checks it, D417 knows only "Args:");
+# ANN: every argument has a type
+select = ["E", "F", "I", "UP", "D", "ANN001", "ANN002", "ANN003"]
+ignore = ["D100", "D104", "D105", "D106", "D107", "D417"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["D", "E501"]
+"tests/**" = ["D", "E501", "ANN"]
 
 [tool.towncrier]
 directory = "news/"

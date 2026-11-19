@@ -7,6 +7,8 @@ site exchanges the code for the credentials and writes them into its volume
 environment take precedence over those of the volume.
 """
 
+from __future__ import annotations
+
 import hmac
 import ipaddress
 import os
@@ -17,6 +19,8 @@ from pathlib import Path
 from urllib.parse import quote, urlsplit
 
 from django.conf import settings
+from django.contrib.sessions.backends.base import SessionBase
+from django.http import HttpRequest
 
 from pycal_dashboard import registered_settings
 from pycal_dashboard.errors import (
@@ -101,7 +105,7 @@ class AppRegistration:
     def is_local(url: str) -> bool:
         """Whether GitHub cannot reach the address, such as ``http://localhost:5000``.
 
-        Args:
+        Parameters:
             url: The address of the site.
 
         Returns:
@@ -132,7 +136,7 @@ class AppRegistration:
         webhooks to a local address, so the app of a local site has none; add the
         webhook in the settings of the app when the site has a public address.
 
-        Args:
+        Parameters:
             name: The name of the app on GitHub.
 
         Returns:
@@ -148,7 +152,7 @@ class AppRegistration:
     def check_name(name: str) -> str:
         """The name of the app, checked.
 
-        Args:
+        Parameters:
             name: The name entered.
 
         Returns:
@@ -166,7 +170,7 @@ class AppRegistration:
     def check_organization(organization: str) -> str:
         """The organization, checked.
 
-        Args:
+        Parameters:
             organization: The login entered; "" for the own account.
 
         Returns:
@@ -184,7 +188,7 @@ class AppRegistration:
     def github_url(organization: str, state: str) -> str:
         """The page of GitHub that receives the manifest.
 
-        Args:
+        Parameters:
             organization: The login of the organization; "" for the own account.
             state: The secret of this registration.
 
@@ -249,7 +253,7 @@ class AppRegistration:
     def code_matches(cls, setup_code: str) -> bool:
         """Whether a code entered is the setup code of the site; any code in development.
 
-        Args:
+        Parameters:
             setup_code: The code entered.
 
         Returns:
@@ -263,7 +267,7 @@ class AppRegistration:
     def check(cls, setup_code: str) -> None:
         """Check that a registration may start.
 
-        Args:
+        Parameters:
             setup_code: The code entered.
 
         Raises:
@@ -281,10 +285,10 @@ class AppRegistration:
             raise SetupCodeWrong()
 
     @classmethod
-    def start(cls, session, name: str, organization: str, setup_code: str) -> dict:
+    def start(cls, session: SessionBase, name: str, organization: str, setup_code: str) -> dict:
         """Start a registration: the form that sends the manifest to GitHub.
 
-        Args:
+        Parameters:
             session: The session of the browser; it keeps the state.
             name: The name of the app.
             organization: The organization; "" for the own account.
@@ -305,10 +309,10 @@ class AppRegistration:
         }
 
     @classmethod
-    def finish(cls, session, code: str, state: str) -> dict:
+    def finish(cls, session: SessionBase, code: str, state: str) -> dict:
         """Exchange the code of GitHub for the credentials and save them.
 
-        Args:
+        Parameters:
             session: The session of the browser, with the state of the registration.
             code: ``code`` of the return from GitHub.
             state: ``state`` of the return from GitHub.
@@ -352,7 +356,7 @@ class AppRegistration:
     def save(cls, answer: dict) -> None:
         """Write the credentials into the volume and use them at once.
 
-        Args:
+        Parameters:
             answer: The answer of GitHub to the conversion of the code.
 
         Raises:
@@ -388,7 +392,7 @@ class AppRegistration:
     def apply(values: dict[str, str], key: str) -> None:
         """Use the new credentials in this process, where the environment sets none.
 
-        Args:
+        Parameters:
             values: The settings by name.
             key: The private key.
         """
@@ -399,10 +403,10 @@ class AppRegistration:
         settings.GITHUB_APP_PRIVATE_KEY = key
 
     @staticmethod
-    def reload_workers(request) -> bool:
+    def reload_workers(request: HttpRequest) -> bool:
         """Let the other processes of gunicorn read the new settings.
 
-        Args:
+        Parameters:
             request: The request; gunicorn names itself in ``SERVER_SOFTWARE``.
 
         Returns:

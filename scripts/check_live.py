@@ -48,7 +48,7 @@ class LiveCheck:
     def __init__(self, url: str, client: httpx.Client | None = None, wait: float = 600):
         """The check of the site at *url*.
 
-        Args:
+        Parameters:
             url: The address of the site, such as ``https://dashboard.pycal.org``.
             client: The HTTP client; one without redirects by default.
             wait: How long to wait for the site to start, in seconds.
@@ -62,7 +62,7 @@ class LiveCheck:
     def report(self, ok: bool, status: int | str, path: str, note: str = "") -> None:
         """Print one result and keep the failures.
 
-        Args:
+        Parameters:
             ok: Whether the result is as expected.
             status: The HTTP status, or what happened.
             path: The page.
@@ -76,7 +76,7 @@ class LiveCheck:
     def get(self, path: str) -> httpx.Response:
         """GET a page of the site, without following redirects.
 
-        Args:
+        Parameters:
             path: The path, such as ``/about/``.
 
         Returns:
@@ -97,7 +97,7 @@ class LiveCheck:
     def wait_until_up(self, pause: float = 10) -> bool:
         """Wait while the site starts: 5xx answers and refused connections are retried.
 
-        Args:
+        Parameters:
             pause: Seconds between the tries.
 
         Returns:
@@ -121,7 +121,7 @@ class LiveCheck:
     def links(html: str) -> list[str]:
         """The paths of the links of a page to pages of the same site.
 
-        Args:
+        Parameters:
             html: The page.
 
         Returns:
@@ -145,7 +145,7 @@ class LiveCheck:
     def check_page(self, path: str) -> str | None:
         """Open a public page: it must open without signing in.
 
-        Args:
+        Parameters:
             path: The page.
 
         Returns:
@@ -179,7 +179,7 @@ class LiveCheck:
     def check_json(self, path: str) -> None:
         """Read the JSON of a public page: it must be JSON that other sites may read.
 
-        Args:
+        Parameters:
             path: The page, such as ``/projects/``.
         """
         address = "/index.json" if path == "/" else path.rstrip("/") + ".json"
@@ -204,7 +204,7 @@ class LiveCheck:
     def walk(self, start: list[str]) -> None:
         """Follow the links of the public pages, from *start*.
 
-        Args:
+        Parameters:
             start: The first pages.
         """
         queue = deque(start)
@@ -227,7 +227,7 @@ class LiveCheck:
     def expect(self, path: str, statuses: tuple[int, ...], page: bool = True) -> None:
         """Check the answer of a page that is not public or does not exist.
 
-        Args:
+        Parameters:
             path: The page.
             statuses: The statuses that are right.
             page: Whether the answer must be the page of the error of the site.

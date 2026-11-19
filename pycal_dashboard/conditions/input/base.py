@@ -33,7 +33,7 @@ class InputSpec(ABC):
     def parse(self, value: Any, context: dict | None = None) -> Any:
         """Check a value of the input and return it as the condition uses it.
 
-        Args:
+        Parameters:
             value: The value of the configuration, such as from JSON or a form.
             context: What the check may need, such as the ``repository`` for a label.
 
@@ -47,7 +47,7 @@ class InputSpec(ABC):
     def widget(self, context: dict | None = None) -> dict:
         """The field of a form that asks for the input, for ``conditions/_input.html``.
 
-        Args:
+        Parameters:
             context: What the field may need, such as the ``repository`` for its labels.
 
         Returns:

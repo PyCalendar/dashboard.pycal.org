@@ -1,10 +1,17 @@
 """The GitHub account of a person who signed in."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 
 from pycal_dashboard.import_guard import IMPORT_GUARD
+
+if TYPE_CHECKING:
+    from django.contrib.auth.base_user import AbstractBaseUser
+    from django.contrib.auth.models import AnonymousUser
 
 
 @dataclass(frozen=True)
@@ -16,10 +23,10 @@ class GitHubIdentity:
     avatar_url: str = ""
 
     @classmethod
-    def of(cls, user) -> "GitHubIdentity | None":
+    def of(cls, user: AbstractBaseUser | AnonymousUser) -> GitHubIdentity | None:
         """The GitHub account of a user.
 
-        Args:
+        Parameters:
             user: A user of Django, or None.
 
         Returns:
@@ -34,12 +41,12 @@ class GitHubIdentity:
         return cls(str(data.get("login") or user.username), account.uid, data.get("avatar_url", ""))
 
     @classmethod
-    def keep_profile(cls, user):
+    def keep_profile(cls, user: AbstractBaseUser | AnonymousUser):
         """Keep the GitHub name and id of a person in their profile, and their GitHub user.
 
         A person who renamed their account on GitHub gets the new name at the next sign in.
 
-        Args:
+        Parameters:
             user: The user who signed in.
 
         Returns:
@@ -63,10 +70,10 @@ class GitHubIdentity:
         return profile
 
     @staticmethod
-    def is_site_admin(user) -> bool:
+    def is_site_admin(user: AbstractBaseUser | AnonymousUser) -> bool:
         """Whether a user administers the site: ``SITE_ADMINS`` or a superuser.
 
-        Args:
+        Parameters:
             user: A user of Django.
 
         Returns:
@@ -80,10 +87,10 @@ class GitHubIdentity:
         return bool(identity and identity.login.lower() in settings.SITE_ADMINS)
 
     @classmethod
-    def rights_differ(cls, user) -> bool:
+    def rights_differ(cls, user: AbstractBaseUser | AnonymousUser) -> bool:
         """Whether the rights of the Django admin of a person differ from ``SITE_ADMINS``.
 
-        Args:
+        Parameters:
             user: The user.
 
         Returns:
@@ -96,12 +103,12 @@ class GitHubIdentity:
         return user.is_staff != admin or user.is_superuser != admin
 
     @classmethod
-    def keep_rights(cls, user) -> bool:
+    def keep_rights(cls, user: AbstractBaseUser | AnonymousUser) -> bool:
         """Give the people of ``SITE_ADMINS`` the rights of the Django admin, and only them.
 
         Users without a GitHub account, such as one of ``createsuperuser``, keep their rights.
 
-        Args:
+        Parameters:
             user: The user.
 
         Returns:

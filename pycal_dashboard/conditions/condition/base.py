@@ -1,13 +1,18 @@
 """A condition that is checked on a pull request, such as whether it has a label."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 
 from pycal_dashboard.conditions.input.base import InputSpec
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
+
+if TYPE_CHECKING:
+    from pycal_dashboard.models import Issue
 
 
 class Condition(ABC):
@@ -35,7 +40,7 @@ class Condition(ABC):
     def configure(cls, config: dict | None = None, context: dict | None = None) -> dict:
         """Check a configuration of the condition and return its values.
 
-        Args:
+        Parameters:
             config: The inputs by name, such as ``{"label": "bug"}``.
             context: What the inputs may need, such as the ``repository``.
 
@@ -64,10 +69,10 @@ class Condition(ABC):
         return values
 
     @classmethod
-    def complete(cls, issue) -> bool:
+    def complete(cls, issue: Issue) -> bool:
         """Whether the data of a pull request is complete, so that the condition can be assessed.
 
-        Args:
+        Parameters:
             issue: The pull request.
 
         Returns:
@@ -76,10 +81,10 @@ class Condition(ABC):
         return all(spec.complete(issue) for spec in cls.data)
 
     @classmethod
-    def check(cls, issue, values: dict) -> bool | None:
+    def check(cls, issue: Issue, values: dict) -> bool | None:
         """Assess the condition on a pull request, if its data allows it.
 
-        Args:
+        Parameters:
             issue: The pull request (``Issue``); conditions are checked on pull requests only.
             values: The configuration, from :meth:`configure`.
 
@@ -92,10 +97,10 @@ class Condition(ABC):
 
     @classmethod
     @abstractmethod
-    def assess(cls, issue, values: dict) -> bool:
+    def assess(cls, issue: Issue, values: dict) -> bool:
         """Whether the condition holds for a pull request whose data is complete.
 
-        Args:
+        Parameters:
             issue: The pull request.
             values: The configuration.
 

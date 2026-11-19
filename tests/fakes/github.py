@@ -56,7 +56,7 @@ class FakeGitHub:
     ) -> dict:
         """A repository of the fake GitHub.
 
-        Args:
+        Parameters:
             full_name: owner/name.
             private: Whether it is private.
             issues: Its open issues, without the pull requests.
@@ -122,7 +122,7 @@ class FakeGitHub:
     ) -> dict:
         """An issue or a pull request of a repository of the fake GitHub.
 
-        Args:
+        Parameters:
             full_name: The repository.
             title: Its title.
             pull_request: Whether it is a pull request.

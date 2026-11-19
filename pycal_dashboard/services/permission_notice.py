@@ -22,7 +22,7 @@ class PermissionNotice:
     def __init__(self, installation: Installation):
         """The notice for an installation.
 
-        Args:
+        Parameters:
             installation: The installation, with the permissions that GitHub last told.
         """
         self.installation = installation

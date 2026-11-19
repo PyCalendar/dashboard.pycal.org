@@ -21,7 +21,7 @@ NUMBERS = 1000  # how far the suggestions count up
 def valid(slug: str) -> bool:
     """Whether a slug follows the rules.
 
-    Args:
+    Parameters:
         slug: The slug, in lower case.
 
     Returns:
@@ -39,7 +39,7 @@ def valid(slug: str) -> bool:
 def normalize(text: str) -> str:
     """Text as a part of a slug: lower case, other characters become single hyphens.
 
-    Args:
+    Parameters:
         text: Such as the name of a repository.
 
     Returns:
@@ -65,7 +65,7 @@ def random_slug() -> str:
 def suggestions(full_name: str) -> Iterator[str]:
     """The sluges to propose for a project of one repository, best first.
 
-    Args:
+    Parameters:
         full_name: The repository, such as ``collective/icalendar``.
 
     Yields:
