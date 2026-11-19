@@ -355,3 +355,5 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: the GitHub App on GitHub needs the webhook label (and the other events and
       permissions of the conditions): the owners of the app add them in its settings; until then
       a new label on a repository comes with the hourly update (a label on a pull request at once)
+- [x] The page of saving a filter: one table of the conditions with their long names, a switch at
+      each (on: filters as an OR; off: grayed out, a column that does not filter)

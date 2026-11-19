@@ -30,27 +30,55 @@ from .projects import (
 )
 
 
-def summary(columns: list[Column]) -> dict:
-    """The columns of a filter in three groups, as the pages of filters show them.
+def summary(columns: list[Column]) -> list[dict]:
+    """The conditions of a filter as the pages of filters show them, in their order.
 
     Parameters:
-        columns: The columns, in their order.
+        columns: The columns of conditions.
 
     Returns:
-        Each column with its ``index`` and its ``opposite`` if it has one for sure, in
-        ``both``: those that show all pull requests, and do not filter; ``not``: those that
-        show only the pull requests they do not apply to; ``applies``: those that show only
-        those they apply to.
+        Each column with its ``index``, whether it ``filters`` (a column that shows both the
+        pull requests it applies to and those it does not apply to is off), and its
+        ``opposite`` if it has one for sure.
     """
-    items = [
-        {"column": column, "index": index, "opposite": column.opposite()}
+    return [
+        {
+            "column": column,
+            "index": index,
+            "filters": column.filter != "all",
+            "opposite": column.opposite(),
+        }
         for index, column in enumerate(columns)
     ]
-    return {
-        "both": [item for item in items if item["column"].filter == "all"],
-        "not": [item for item in items if item["column"].filter == "not"],
-        "applies": [item for item in items if item["column"].filter == "applies"],
-    }
+
+
+def switched(columns: list[Column], on: set[int]) -> list[Column]:
+    """The columns with the switches of the page of saving: those that are off do not filter.
+
+    A condition that is off becomes a column that shows all pull requests; one that is
+    switched on shows those it applies to unless it showed only those it does not apply to.
+
+    Parameters:
+        columns: The columns of conditions.
+        on: The numbers of the columns whose switch is on.
+
+    Returns:
+        The columns.
+
+    Examples:
+        >>> from pycal_dashboard.conditions.group.status import StatusGroup
+        >>> columns = [Column(StatusGroup, ("open",), "not"), Column(StatusGroup, ("open",))]
+        >>> [c.filter for c in switched(columns, {1})]
+        ['all', 'applies']
+    """
+    found = []
+    for index, column in enumerate(columns):
+        if index not in on:
+            filter = "all"
+        else:
+            filter = column.filter if column.filter != "all" else "applies"
+        found.append(Column(column.group, column.choices, filter))
+    return found
 
 
 def filter_data(saved: PullRequestFilter, count: int, path: str) -> dict:
@@ -160,6 +188,8 @@ def project_filter_save(request: HttpRequest, slug: str):
         name = " ".join(request.POST.get("name", "").split())[:100]
         if not name:
             raise FilterNameMissing("")
+        on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
+        columns = switched(columns, on)
         target = saved if saved and request.POST.get("save") == "this" else None
         try:
             with transaction.atomic():

@@ -211,11 +211,13 @@ Filters
 **Save** next to the number of pull requests saves the columns of conditions
 as a filter: their order and whether each shows the pull requests it applies
 to, those it does not apply to, or both. The page of saving asks for a name,
-unique in the project, and a description in Markdown, and sums up the columns:
-those that show the pull requests they apply to, those that show the ones they
-do not apply to, and those that do not filter. For a column that shows only
-what it does not apply to, it suggests its opposite where it is the same, such
-as *label absent* for not *label present*; **Use it** switches it.
+unique in the project, and a description in Markdown, and lists the conditions
+in one table, with their long names, such as *Label needs review: present*, and
+whether each shows the pull requests it applies to or those it does not. They
+filter as an *or*. A switch at each condition turns it off: it is grayed out and
+stays a column of the table without filtering. For a condition that shows only
+what it does not apply to, the page suggests its opposite where it is the same,
+such as *label absent* for not *label present*; **Use it** switches it.
 
 The tab *Filters*, public like the project, lists the saved filters with their
 description, their columns and how many pull requests each shows; the number

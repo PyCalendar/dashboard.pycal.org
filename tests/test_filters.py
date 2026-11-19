@@ -44,19 +44,32 @@ def test_the_table_has_save(client, project, bob):
     )
 
 
-def test_the_save_page_sums_up_the_columns(client, project, bob):
+def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     client.force_login(bob)
     page = save_page(client, *COLUMNS)
     assert "← Back to the pull requests" in page
     assert 'href="/projects/icalendar/pull-requests/?col=status~applies~open' in page
     assert "The filter shows 3 pull requests now:" in page  # open, or without the label
-    applies = page.split('data-summary="applies"')[1].split("</div>")[0]
-    not_ = page.split('data-summary="not"')[1].split("</div>")[0]
-    both = page.split('data-summary="both"')[1].split("</div>")[0]
-    assert "state-open" in applies and "needs review" in not_ and "state-conflict" in both
-    assert "data-opposite" in not_ and "label-absent" in not_  # the same as label absent
-    assert "&amp;swap=1" in not_
+    table = page.split("data-filter-summary>")[1].split("</table>")[0]
+    rows = table.split("<tr data-condition-row=")[1:]
+    assert len(rows) == 3 and "data-summary" not in page  # one table, not three
+    assert "Status: open" in rows[0] and "Label needs review: present" in rows[1]
+    assert 'name="on" value="0" checked' in rows[0] and 'name="on" value="1" checked' in rows[1]
+    assert 'name="on" value="2">' in rows[2] and 'class="off"' in rows[2]  # shows both: off
+    assert "those it does not apply to" in rows[1] and "data-opposite" in rows[1]
+    assert "Label needs review: absent" in rows[1] and "&amp;swap=1" in rows[1]
     assert page.count('<input type="hidden" name="col"') == 3
+
+
+def test_a_condition_switched_off_does_not_filter(client, project, bob):
+    client.force_login(bob)
+    data = {"col": COLUMNS, "name": "Open", "on": ["0", "2"], "save": "new"}
+    client.post("/projects/icalendar/filters/save/", data)
+    assert PullRequestFilter.objects.get().columns == [
+        "status~applies~open",
+        "labels~all~present~needs review",  # off: a column that shows all
+        "branch~applies~conflict",  # on: those it applies to
+    ]
 
 
 def test_use_the_opposite(client, project, bob):
@@ -74,6 +87,7 @@ def test_save_a_filter_and_open_it(client, project, bob):
         "col": COLUMNS,
         "name": " Ready  to merge ",
         "description": "**Open** ones",
+        "on": ["0", "1"],
         "save": "new",
     }
     answer = client.post("/projects/icalendar/filters/save/", data)
@@ -101,13 +115,25 @@ def test_save_it_again_or_as_a_new_one(client, project, bob):
     assert "Save Open" in page and "Save as a new filter" in page and 'value="Open"' in page
     client.post(
         "/projects/icalendar/filters/save/",
-        {"col": ["status~applies~merged"], "saved": saved.pk, "name": "Merged", "save": "this"},
+        {
+            "col": ["status~applies~merged"],
+            "saved": saved.pk,
+            "name": "Merged",
+            "on": "0",
+            "save": "this",
+        },
     )
     saved.refresh_from_db()
     assert (saved.name, saved.columns) == ("Merged", ["status~applies~merged"])
     client.post(
         "/projects/icalendar/filters/save/",
-        {"col": ["status~applies~open"], "saved": saved.pk, "name": "Open", "save": "new"},
+        {
+            "col": ["status~applies~open"],
+            "saved": saved.pk,
+            "name": "Open",
+            "on": "0",
+            "save": "new",
+        },
     )
     assert sorted(PullRequestFilter.objects.values_list("name", flat=True)) == ["Merged", "Open"]
 

@@ -7,7 +7,7 @@
   <div class="table-head"><h2>{{ item.saved.name }}</h2>
   <a class="button" href="{{ item.path }}" data-filter-pull-requests>{% blocktranslate count counter=item.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</a></div>
   {% if item.saved.description %}<div class="markdown">{{ item.saved.description|markdown }}</div>{% endif %}
-  {% include "pycal_dashboard/conditions/_summary.html" with summary=item.summary suggest=False %}
+  {% include "pycal_dashboard/conditions/_summary.html" with rows=item.summary columns=item.columns editable=False %}
 </li>{% endfor %}</ul>
 {% else %}<p class="card" data-no-filters>{% url 'project_pull_requests' project.slug as pulls %}{% blocktranslate %}No filters yet. Add columns of conditions on the tab <a href="{{ pulls }}">Pull requests</a> and save them there as a filter.{% endblocktranslate %}</p>{% endif %}
 {% endblock %}
