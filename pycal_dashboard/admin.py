@@ -6,6 +6,7 @@ from .models import (
     GitHubUser,
     Installation,
     Issue,
+    Label,
     LogAction,
     LogTrigger,
     Preferences,
@@ -13,6 +14,7 @@ from .models import (
     Project,
     ProjectMember,
     ProjectSlug,
+    PullRequestState,
     Repository,
     UpdateJob,
     WebhookDelivery,
@@ -45,4 +47,9 @@ admin.site.register(
     list_display=["repository", "number", "pull_request", "title", "author", "state", "created"],
     list_filter=["pull_request", "state"],
     search_fields=["title", "repository__full_name", "author__login"],
+)
+admin.site.register(Label, list_display=["name", "repository", "color", "description"])
+admin.site.register(
+    PullRequestState,
+    list_display=["issue", "mergeable_state", "auto_merge", "checks", "updated"],
 )

@@ -26,6 +26,7 @@ class Issue(models.Model):
         "GitHubUser", null=True, blank=True, on_delete=models.SET_NULL, related_name="issues"
     )
     description = models.TextField(blank=True)
+    labels = models.ManyToManyField("Label", blank=True, related_name="issues")
     state = models.CharField(max_length=10, choices=STATES, default=OPEN)
     created = models.DateTimeField()
     # when it was closed, and merged for a pull request; when GitHub last changed it

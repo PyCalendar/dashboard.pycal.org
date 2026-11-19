@@ -8,4 +8,5 @@ prepare`` queues the updates of its projects at the start after the migration, a
 """
 
 # 1: the issues and pull requests, open and closed, with title, author, times and description
-DATA_VERSION = 1
+# 2: the labels of the repositories and of the issues; the state of open pull requests
+DATA_VERSION = 2

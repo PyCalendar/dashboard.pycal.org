@@ -4,35 +4,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pycal_dashboard', '0006_preferences'),
+        ("pycal_dashboard", "0006_preferences"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Installation',
+            name="Installation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('github_id', models.BigIntegerField(unique=True)),
-                ('account_login', models.CharField(max_length=100)),
-                ('account_type', models.CharField(default='User', max_length=20)),
-                ('permissions', models.JSONField(blank=True, default=dict)),
-                ('events', models.JSONField(blank=True, default=list)),
-                ('admin_github_ids', models.JSONField(blank=True, default=list)),
-                ('permissions_notified', models.CharField(blank=True, max_length=500)),
-                ('suspended', models.BooleanField(default=False)),
-                ('removed', models.BooleanField(default=False)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("github_id", models.BigIntegerField(unique=True)),
+                ("account_login", models.CharField(max_length=100)),
+                ("account_type", models.CharField(default="User", max_length=20)),
+                ("permissions", models.JSONField(blank=True, default=dict)),
+                ("events", models.JSONField(blank=True, default=list)),
+                ("admin_github_ids", models.JSONField(blank=True, default=list)),
+                ("permissions_notified", models.CharField(blank=True, max_length=500)),
+                ("suspended", models.BooleanField(default=False)),
+                ("removed", models.BooleanField(default=False)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['account_login'],
+                "ordering": ["account_login"],
             },
         ),
         migrations.AddField(
-            model_name='preferences',
-            name='email_permissions',
+            model_name="preferences",
+            name="email_permissions",
             field=models.BooleanField(default=True),
         ),
     ]

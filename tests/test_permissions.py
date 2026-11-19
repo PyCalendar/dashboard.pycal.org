@@ -10,7 +10,7 @@ def test_every_data_of_github_has_events_with_their_permissions():
     )
     from pycal_dashboard.privacy import MODELS
 
-    of_github = {"Repository", "Issue", "GitHubUser", "Installation"}
+    of_github = {"Repository", "Issue", "GitHubUser", "Installation", "Label", "PullRequestState"}
     assert set(DATA_EVENTS) == of_github
     for model in of_github:
         assert f"pycal_dashboard.{model}" in MODELS and apps.get_model("pycal_dashboard", model)

@@ -5,20 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pycal_dashboard', '0010_issues_and_github_users'),
+        ("pycal_dashboard", "0010_issues_and_github_users"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='updatejob',
-            name='repository',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='updates', to='pycal_dashboard.repository'),
+            model_name="updatejob",
+            name="repository",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="updates",
+                to="pycal_dashboard.repository",
+            ),
         ),
         migrations.AlterField(
-            model_name='updatejob',
-            name='project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='updates', to='pycal_dashboard.project'),
+            model_name="updatejob",
+            name="project",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="updates",
+                to="pycal_dashboard.project",
+            ),
         ),
     ]

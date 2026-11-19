@@ -41,6 +41,7 @@ class FakeGitHub:
         self.organizations: list[str] = []  # GET /user/orgs of the person
         self.person_login = "bob"
         self.issue_requests: list[dict] = []  # the parameters of each GET of the issues
+        self.pull_requests_read: list[int] = []  # the numbers of GET /pulls/<number>
 
     def add_repository(
         self,
@@ -77,6 +78,8 @@ class FakeGitHub:
             "collaborators": collaborators or {},
         }
         repository["issues"] = []  # the issues and pull requests, see add_issue
+        repository["labels"] = []  # the labels: id, name, description, color, see add_label
+        repository["checks"] = {}  # by commit: (check runs, combined status), see set_checks
         self.repositories[full_name.lower()] = repository
         for _ in range(issues):
             self.add_issue(full_name, "An issue")
@@ -113,6 +116,9 @@ class FakeGitHub:
         user: dict | None = None,
         body: str = "",
         updated: str = "2026-11-01T10:00:00Z",
+        labels: tuple[str, ...] = (),
+        mergeable_state: str = "clean",
+        auto_merge: bool = False,
     ) -> dict:
         """An issue or a pull request of a repository of the fake GitHub.
 
@@ -125,6 +131,9 @@ class FakeGitHub:
             user: Who created it, as GitHub describes accounts; octocat by default.
             body: Its description.
             updated: When it changed last, as GitHub writes times.
+            labels: The names of its labels, which the repository gets if it lacks them.
+            mergeable_state: Of a pull request: clean, dirty, behind, unknown ...
+            auto_merge: Whether a pull request has auto-merge enabled.
 
         Returns:
             The issue as GitHub lists it.
@@ -141,11 +150,19 @@ class FakeGitHub:
             "created_at": f"2026-10-{min(number, 28):02d}T09:00:00Z",
             "updated_at": updated,
             "closed_at": "2026-11-01T09:00:00Z" if state == "closed" else None,
+            "labels": [self.add_label(full_name, name) for name in labels],
         }
         if pull_request:
             issue["pull_request"] = {
                 "url": f"https://api.github.com/repos/{full_name}/pulls/{number}",
                 "merged_at": "2026-11-01T09:00:00Z" if merged else None,
+            }
+            issue["pull"] = {  # what GET /pulls/<number> adds
+                "head": {"sha": f"sha{number:037d}", "ref": f"branch-{number}"},
+                "base": {"ref": "main"},
+                "mergeable": None if mergeable_state == "unknown" else mergeable_state != "dirty",
+                "mergeable_state": mergeable_state,
+                "auto_merge": {"merge_method": "squash"} if auto_merge else None,
             }
         repository["issues"].append(issue)
         # GitHub counts the open pull requests among the open issues
@@ -155,18 +172,35 @@ class FakeGitHub:
         )
         return issue
 
+    def add_label(self, full_name: str, name: str, description: str = "", color: str = "ededed"):
+        """A label of a repository, unless it has one of the name; returns it."""
+        labels = self.repositories[full_name.lower()]["labels"]
+        for label in labels:
+            if label["name"] == name:
+                return label
+        label = {"id": 7000 + len(labels), "name": name, "description": description, "color": color}
+        labels.append(label)
+        return label
+
+    def set_checks(self, full_name: str, number: int, runs: list, status: dict | None = None):
+        """The check runs and the combined status of the last commit of a pull request."""
+        repository = self.repositories[full_name.lower()]
+        sha = repository["issues"][number - 1]["pull"]["head"]["sha"]
+        repository["checks"][sha] = (runs, status or {"state": "pending", "total_count": 0})
+
     @staticmethod
     def public(repository: dict) -> dict:
         return {
             k: v
             for k, v in repository.items()
-            if k not in ("pulls", "installation", "collaborators", "issues")
+            if k not in ("pulls", "installation", "collaborators", "issues", "labels", "checks")
         }
 
     def issues_of(self, request: httpx.Request, repository: dict) -> httpx.Response:
         """A page of the issues and pull requests, as GitHub lists them, with ``since``."""
         params = request.url.params
         items = sorted(repository["issues"], key=lambda i: (i["updated_at"], i["number"]))
+        items = [{k: v for k, v in i.items() if k != "pull"} for i in items]
         if params.get("state", "open") != "all":
             items = [i for i in items if i["state"] == params.get("state", "open")]
         if params.get("since"):
@@ -291,6 +325,27 @@ class FakeGitHub:
             )
         if rest == "/issues":
             return self.issues_of(request, repository)
+        if rest == "/labels":
+            page = int(request.url.params.get("page", 1))
+            per_page = int(request.url.params.get("per_page", 30))
+            labels = repository["labels"][(page - 1) * per_page : page * per_page]
+            return httpx.Response(200, json=labels)
+        match = re.fullmatch(r"/pulls/(\d+)", rest)
+        if match:
+            issue = next((i for i in repository["issues"] if i["number"] == int(match[1])), None)
+            if issue is None or "pull" not in issue:
+                return httpx.Response(404, json={"message": "Not Found"})
+            self.pull_requests_read.append(int(match[1]))
+            data = {k: v for k, v in issue.items() if k not in ("pull", "pull_request")}
+            return httpx.Response(200, json={**data, **issue["pull"]})
+        match = re.fullmatch(r"/commits/([0-9a-z]+)/(check-runs|status)", rest)
+        if match:
+            runs, status = repository["checks"].get(
+                match[1], ([], {"state": "pending", "total_count": 0})
+            )
+            if match[2] == "check-runs":
+                return httpx.Response(200, json={"total_count": len(runs), "check_runs": runs})
+            return httpx.Response(200, json=status)
         match = re.fullmatch(r"/collaborators/([^/]+)/permission", rest)
         if match:
             role = repository["collaborators"].get(match[1], "none")

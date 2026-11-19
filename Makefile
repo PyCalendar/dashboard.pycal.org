@@ -106,7 +106,7 @@ changelog:  ## Check that there is a news fragment
 
 .PHONY: prose
 prose:  ## Check the prose of the documentation with Vale (.vale.ini)
-	@uv run --extra docs --with vale==3.26.0.1 vale docs/*.rst docs/*/*.rst README.md
+	@uv run --extra docs --with vale==3.26.0.1 vale docs/*.rst docs/*/*.rst docs/*/*/*.rst README.md
 
 .PHONY: check-live
 check-live: .venv  ## Check a live site as a visitor: LIVE_URL (default https://dashboard.pycal.org), waits while it starts

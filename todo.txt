@@ -246,7 +246,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Every link to the documentation is an open book icon, not a question mark
 - [x] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
       navigate it; tested to be complete
-- [ ] The conditions: each has its own page in the documentation
+- [x] The conditions: each has its own page in the documentation
 - [x] The page About links the page of all licenses, as on sign.pycal.org
 - [x] The documentation: the anchor license led to Lazy imports (and administrators to the
       preferences); a test checks that every link of the site leads to its heading
@@ -254,13 +254,19 @@ community: where to start, what waits for a review, who contributes.
 - [x] Translations only when the person asks (ask first), at the end; make messages guesses none
 - [x] Descriptions that people type are Markdown, rendered as Markdown: one reusable way, always
       tested; editing with a bar above the field (link, bold, lists, ...) and a preview
-- [ ] The submodule conditions: conditions checked on a pull request, each with an id, an input
+- [x] The submodule conditions: conditions checked on a pull request, each with an id, an input
       spec (fields such as str, int, positive int, range, string-label) that can make a form, a
       data spec (what the background process reads, whether the data is complete to assess it),
       a documentation page linking the API reference. label_exists, label_absent, ci_passes,
       ci_fails, merge_conflict, branch_outdated, auto_merge_enabled. The labels with their
       descriptions and colors as a model. Only models and specs: not in the UI yet
 - [ ] The person: look at the page of the pull requests before the conditions go into the UI
+- [x] The conditions grouped in condition/ (with base.py), input/ and spec/
+- [ ] The person: should the GitHub App ask for checks:read and statuses:read (and the webhooks
+      check_run, check_suite, status), so that ci_passes and ci_fails can be assessed? Every
+      installation must accept new permissions; until then the conditions of CI are not read
+- [ ] The person: the webhook label (labels created, renamed or deleted without a pull request)
+      and push (a base branch that moved) are not subscribed; the hourly renewal covers them
 - [ ] The person: deleting one's account on the site (the privacy policy says: ask the people who
       run the site)
 

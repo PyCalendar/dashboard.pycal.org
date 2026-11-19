@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pycal_dashboard', '0001_initial'),
+        ("pycal_dashboard", "0001_initial"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='LabelChange',
+            name="LabelChange",
         ),
     ]

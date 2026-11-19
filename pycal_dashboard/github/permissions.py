@@ -31,6 +31,8 @@ DATA_EVENTS = {
     "Repository": ["repository"],
     "Issue": ["issues", "issue_comment", "pull_request", "pull_request_review"],
     "GitHubUser": ["issues", "pull_request"],
+    "Label": ["issues", "pull_request"],
+    "PullRequestState": ["pull_request"],
     "Installation": ["installation", "installation_repositories"],
 }
 

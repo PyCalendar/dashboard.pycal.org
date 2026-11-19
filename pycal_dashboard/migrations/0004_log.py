@@ -5,38 +5,54 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pycal_dashboard', '0003_no_github_data'),
+        ("pycal_dashboard", "0003_no_github_data"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LogTrigger',
+            name="LogTrigger",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(max_length=50)),
-                ('summary', models.CharField(max_length=300)),
-                ('created', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('actor_login', models.CharField(blank=True, max_length=100)),
-                ('repository', models.CharField(blank=True, max_length=200)),
-                ('delivery', models.CharField(blank=True, max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("kind", models.CharField(max_length=50)),
+                ("summary", models.CharField(max_length=300)),
+                ("created", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("actor_login", models.CharField(blank=True, max_length=100)),
+                ("repository", models.CharField(blank=True, max_length=200)),
+                ("delivery", models.CharField(blank=True, max_length=100)),
             ],
             options={
-                'ordering': ['-created', '-pk'],
+                "ordering": ["-created", "-pk"],
             },
         ),
         migrations.CreateModel(
-            name='LogAction',
+            name="LogAction",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(max_length=50)),
-                ('text', models.CharField(max_length=500)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('trigger', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='actions', to='pycal_dashboard.logtrigger')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("kind", models.CharField(max_length=50)),
+                ("text", models.CharField(max_length=500)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "trigger",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="actions",
+                        to="pycal_dashboard.logtrigger",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['pk'],
+                "ordering": ["pk"],
             },
         ),
     ]

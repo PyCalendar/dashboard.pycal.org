@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
+from pycal_dashboard.conditions import DATA_SPECS, LabelsData
 from pycal_dashboard.errors import DashboardError, translate
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.data_version import DATA_VERSION
@@ -83,6 +84,9 @@ class RepositoryUpdate:
                 )
             )
             self.issues(client)
+            for spec in DATA_SPECS:  # what the conditions need, which the app may read
+                if spec.enabled():
+                    spec.fetch(client, repository)
         except Exception as exception:  # every error is kept and shown on the project
             error: DashboardError = translate(exception)
             repository.error_code, repository.error_detail = error.code, str(error)[:500]
@@ -174,6 +178,7 @@ class RepositoryUpdate:
                 "changed": parse_datetime(item["updated_at"]) if item.get("updated_at") else None,
             },
         )
+        LabelsData.keep(issue, item)
         return issue
 
     def author(self, data: dict) -> GitHubUser | None:

@@ -57,6 +57,12 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - A page with public JSON goes into `pycal_dashboard/json_api.py`, which makes `/llms.txt` (the
   guideline for agents) and `/robots.txt`, and into `docs/reference/json.rst`;
   `tests/test_agents.py` checks that the guideline is complete and every address answers.
+- The conditions of pull requests are in `pycal_dashboard/conditions/`: `condition/` (on
+  `base.py`), `input/` (the kinds of inputs, which also make the fields of forms) and `spec/`
+  (the data the background reads and whether it is complete). Each condition has its id, its
+  own page `docs/reference/conditions/<id>.rst` with the API reference at its bottom, and is in
+  `CONDITIONS`; `tests/test_conditions.py` checks them. Data whose permissions the GitHub App
+  does not ask for is described but not read: asking for a permission is the person's decision.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
 - Of GitHub, the site keeps the installations of the GitHub App with their

@@ -128,6 +128,26 @@ MODELS = {
             "changed",
         },
     ),
+    "pycal_dashboard.Label": (
+        None,
+        {"id", "repository", "github_id", "name", "description", "color"},
+    ),
+    "pycal_dashboard.PullRequestState": (
+        None,
+        {
+            "id",
+            "issue",
+            "head_sha",
+            "head_ref",
+            "base_ref",
+            "mergeable",
+            "mergeable_state",
+            "auto_merge",
+            "checks",
+            "updated",
+            "checks_updated",
+        },
+    ),
     "pycal_dashboard.Repository": (
         None,
         {

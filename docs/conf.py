@@ -23,6 +23,7 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",  # the docstrings in the style of Google, such as of the conditions
     "sphinx_copybutton",
     "sphinx_design",
 ]
@@ -60,6 +61,7 @@ html_static_path = ["_static"]
 html_css_files = ["style.css"]
 
 autodoc_member_order = "bysource"
+autodoc_typehints = "none"  # the signatures name the models, which have no pages here
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 exclude_patterns = ["_build"]
 linkcheck_ignore = [r"http://localhost", r"https://dashboard\.pycal\.org.*"]

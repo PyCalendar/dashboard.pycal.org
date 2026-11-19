@@ -51,6 +51,13 @@ Projects
    :members:
    :show-inheritance:
 
+Conditions
+==========
+
+.. automodule:: pycal_dashboard.errors.conditions
+   :members:
+   :show-inheritance:
+
 Account
 =======
 
