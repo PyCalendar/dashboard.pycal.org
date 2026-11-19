@@ -226,7 +226,10 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
     assert set(labels) == {"unused", "bug", "needs review"}
     assert labels["unused"].description == "No pull request has it"
     assert list(pull("Ready").labels.values_list("name", flat=True)) == ["needs review"]
-    assert sorted(github.pull_requests_read) == [2, 3, 4, 5]  # the open ones
+    assert github.pull_requests_read == []  # no request for each pull request:
+    (query,) = github.graphql_queries  # one query of GraphQL for all open ones
+    assert "mergeStateStatus" in query["query"] and "statusCheckRollup" in query["query"]
+    assert query["variables"] == {"owner": "collective", "name": "icalendar", "after": None}
     state = pull("Conflict").pull_state
     assert (state.mergeable, state.mergeable_state, state.base_ref) == (False, "dirty", "main")
     assert pull("Ready").pull_state.auto_merge and not pull("Behind").pull_state.auto_merge
@@ -280,29 +283,51 @@ def test_without_the_app_the_states_are_not_read(github):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("runs", "status", "summary", "passes", "fails"),
+    ("rollup", "summary", "passes", "fails"),
     [
-        ([{"status": "completed", "conclusion": "success"}], None, "success", True, False),
-        ([{"status": "completed", "conclusion": "skipped"}], None, "success", True, False),
-        ([{"status": "completed", "conclusion": "failure"}], None, "failure", False, True),
-        ([{"status": "in_progress", "conclusion": None}], None, "pending", False, False),
-        ([], {"state": "error", "total_count": 1}, "failure", False, True),
-        ([], {"state": "success", "total_count": 1}, "success", True, False),
+        ("SUCCESS", "success", True, False),
+        (None, "success", True, False),  # no checks
+        ("FAILURE", "failure", False, True),
+        ("ERROR", "failure", False, True),
+        ("PENDING", "pending", False, False),
+        ("EXPECTED", "pending", False, False),
     ],
 )
-def test_ci_once_the_app_may_read_the_checks(
-    github, monkeypatch, runs, status, summary, passes, fails
-):
-    """With the permissions checks and statuses, the background reads the checks."""
+def test_ci_from_the_rollup_of_github(github, rollup, summary, passes, fails):
+    """GitHub sums up the check runs and commit statuses of the last commit."""
     github.add_repository(REPO, installation=11)
     github.add_issue(REPO, "Change", pull_request=True)
-    github.set_checks(REPO, 1, runs, status)
+    github.set_checks(REPO, 1, rollup)
     repository = Repository.objects.create(full_name=REPO)
     assert RepositoryUpdate(repository).run()
     change = pull("Change")
     assert change.pull_state.checks == summary
     assert CONDITIONS["ci_passes"].check(change, {}) is passes
     assert CONDITIONS["ci_fails"].check(change, {}) is fails
+
+
+@pytest.mark.django_db
+def test_many_open_pull_requests_are_read_page_by_page(github):
+    github.add_repository(REPO, installation=11, pulls=60)
+    repository = Repository.objects.create(full_name=REPO)
+    assert RepositoryUpdate(repository).run()
+    assert [q["variables"]["after"] for q in github.graphql_queries] == [None, "50"]
+    assert PullRequestState.objects.count() == 60
+
+
+@pytest.mark.django_db
+def test_a_refused_query_is_kept_as_the_error(github, monkeypatch):
+    from pycal_dashboard.github.client import GitHubClient
+
+    def refused(self, query, **variables):
+        raise errors.GitHubQueryFailed("GraphQL undefinedField: mergeStateStatus")
+
+    monkeypatch.setattr(GitHubClient, "graphql", refused)
+    github.add_repository(REPO, installation=11, pulls=1)
+    repository = Repository.objects.create(full_name=REPO)
+    assert not RepositoryUpdate(repository).run()
+    repository.refresh_from_db()
+    assert repository.error_code == "GitHubQueryFailed" and repository.data_version == 0
 
 
 @pytest.mark.django_db

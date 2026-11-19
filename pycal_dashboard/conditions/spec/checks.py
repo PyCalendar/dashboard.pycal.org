@@ -7,77 +7,66 @@ from typing import TYPE_CHECKING
 from django.utils import timezone
 
 from pycal_dashboard.conditions.spec.base import DataSpec
-from pycal_dashboard.models import Issue, PullRequestState
+from pycal_dashboard.models import PullRequestState
 
 if TYPE_CHECKING:
-    from pycal_dashboard.github.client import GitHubClient
-    from pycal_dashboard.models import Issue, Repository
+    from pycal_dashboard.models import Issue
+
+# the state of the rollup of GraphQL as the site keeps it
+ROLLUP = {
+    "SUCCESS": PullRequestState.SUCCESS,
+    "FAILURE": PullRequestState.FAILURE,
+    "ERROR": PullRequestState.FAILURE,
+    "PENDING": PullRequestState.PENDING,
+    "EXPECTED": PullRequestState.PENDING,
+}
 
 
 class ChecksData(DataSpec):
     """The check runs and commit statuses of the last commit of an open pull request.
 
-    Together they are ``success``, ``failure`` or ``pending`` (``PullRequestState.checks``).
+    GitHub sums them up in the rollup of the last commit: ``success``, ``failure`` or
+    ``pending`` (``PullRequestState.checks``). A commit without checks is ``success``.
     """
 
     id = "checks"
     title = "The checks and statuses of the last commit of the pull request"
     permissions = {"checks": "read", "statuses": "read"}
     events = ("check_run", "check_suite", "status")
-
-    def fetch(self, client: GitHubClient, repository: Repository) -> int:
-        """Read the checks of the last commit of every open pull request.
-
-        Parameters:
-            client: The client.
-            repository: The repository; without the GitHub App, nothing is read.
-
-        Returns:
-            How many pull requests were read.
-        """
-        if not repository.app_installed:
-            return 0
-        states = PullRequestState.objects.filter(
-            issue__repository=repository, issue__state=Issue.OPEN
-        ).exclude(head_sha="")
-        for state in states:
-            base = f"/repos/{repository.full_name}/commits/{state.head_sha}"
-            runs = client.request("GET", f"{base}/check-runs", params={"per_page": 100}).json()
-            status = client.request("GET", f"{base}/status").json()
-            state.checks = self.summary(runs.get("check_runs") or [], status)
-            state.checks_updated = timezone.now()
-            state.save(update_fields=["checks", "checks_updated"])
-        return len(states)
+    graphql = "commits(last: 1) { nodes { commit { statusCheckRollup { state } } } }"
 
     @staticmethod
-    def summary(runs: list[dict], status: dict) -> str:
-        """One state of the check runs and the combined status of a commit.
+    def summary(node: dict) -> str:
+        """The state of the checks of the last commit of a pull request of GraphQL.
 
         Parameters:
-            runs: The check runs, with ``status`` and ``conclusion``.
-            status: The combined status, with ``state`` and ``total_count``.
+            node: The pull request, with ``commits``.
 
         Returns:
-            ``failure`` if one failed, else ``pending`` if one runs, else ``success``.
+            ``success``, ``failure`` or ``pending``; ``success`` without checks.
 
         Examples:
-            >>> ChecksData.summary([{"status": "completed", "conclusion": "success"}], {})
-            'success'
-            >>> ChecksData.summary([], {"state": "failure", "total_count": 1})
+            >>> rollup = {"statusCheckRollup": {"state": "ERROR"}}
+            >>> ChecksData.summary({"commits": {"nodes": [{"commit": rollup}]}})
             'failure'
+            >>> ChecksData.summary({"commits": {"nodes": [{"commit": {}}]}})
+            'success'
         """
-        failed = {"failure", "timed_out", "cancelled", "action_required", "startup_failure"}
-        states = [
-            "pending" if run.get("status") != "completed" else run.get("conclusion") or ""
-            for run in runs
-        ]
-        if status.get("total_count"):
-            states.append(status.get("state") or "pending")
-        if any(state in failed or state == "error" for state in states):
-            return PullRequestState.FAILURE
-        if any(state == "pending" for state in states):
-            return PullRequestState.PENDING
-        return PullRequestState.SUCCESS
+        commits = (node.get("commits") or {}).get("nodes") or [{}]
+        rollup = (commits[-1].get("commit") or {}).get("statusCheckRollup") or {}
+        return ROLLUP.get(str(rollup.get("state")), PullRequestState.SUCCESS)
+
+    def keep_pull_request(self, issue: Issue, node: dict) -> None:
+        """Keep the state of the checks of a pull request.
+
+        Parameters:
+            issue: The pull request.
+            node: The pull request of GraphQL.
+        """
+        PullRequestState.objects.update_or_create(
+            issue=issue,
+            defaults={"checks": self.summary(node), "checks_updated": timezone.now()},
+        )
 
     def complete(self, issue: Issue) -> bool:
         """Read after the last reading of the pull request, for its last commit.

@@ -13,6 +13,7 @@ from pycal_dashboard.errors import (
     GitHubError,
     GitHubLoginExpired,
     GitHubNotFound,
+    GitHubQueryFailed,
     GitHubRateLimited,
     GitHubUnreachable,
     MissingPermissions,
@@ -54,6 +55,8 @@ class GitHubClient:
             timeout=TIMEOUT,
             transport=TRANSPORT,
         )
+        # what the last query of GraphQL cost: cost, remaining and resetAt, as GitHub says
+        self.rate: dict = {}
 
     def request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:
         """Send a request and check the answer.
@@ -96,6 +99,53 @@ class GitHubClient:
         if response.status_code == 403 and "not accessible by integration" in message.lower():
             raise MissingPermissions(detail)
         raise GitHubError(detail)
+
+    @staticmethod
+    def graphql_url() -> str:
+        """The address of GraphQL: next to the REST API, also of GitHub Enterprise Server.
+
+        Returns:
+            Such as ``https://api.github.com/graphql`` or ``https://ghe.example/api/graphql``.
+        """
+        api = settings.GITHUB_API.rstrip("/")
+        return api.removesuffix("/v3") + "/graphql"
+
+    def graphql(self, query: str, **variables: Any) -> dict:
+        """Ask GraphQL of GitHub: much data with one request, which costs few points.
+
+        The query should ask for ``rateLimit { cost remaining resetAt }``, which the client
+        keeps in :attr:`rate`.
+
+        Parameters:
+            query: The query.
+            **variables: Its variables.
+
+        Returns:
+            The data of the answer.
+
+        Raises:
+            GitHubRateLimited: No points left.
+            GitHubNotFound: The repository or pull request does not exist or is not visible.
+            MissingPermissions: The token may not read it.
+            GitHubQueryFailed: Another error of the query.
+        """
+        answer = self.request(
+            "POST", self.graphql_url(), json={"query": query, "variables": variables}
+        ).json()
+        data = answer.get("data") or {}
+        self.rate = data.get("rateLimit") or self.rate
+        errors = answer.get("errors") or []
+        if errors:
+            kind = str(errors[0].get("type", ""))
+            detail = f"GraphQL {kind}: {errors[0].get('message', '')}"
+            if kind == "RATE_LIMITED":
+                raise GitHubRateLimited(detail)
+            if kind == "NOT_FOUND":
+                raise GitHubNotFound(detail)
+            if kind == "FORBIDDEN":
+                raise MissingPermissions(detail)
+            raise GitHubQueryFailed(detail)
+        return data
 
     @staticmethod
     def message(response: httpx.Response) -> str:

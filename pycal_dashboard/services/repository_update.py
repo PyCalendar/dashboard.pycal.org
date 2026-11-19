@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 import re
+from typing import TYPE_CHECKING
 
 from django.db import transaction
-from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
@@ -14,12 +15,17 @@ from pycal_dashboard.errors import DashboardError, translate
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.installation_token import InstallationToken
+from pycal_dashboard.github.queries import PULL_REQUESTS
 from pycal_dashboard.models import GitHubUser, Issue, Repository
 from pycal_dashboard.update_signals import repository_updated
 
 from .installation_store import InstallationStore
 
+if TYPE_CHECKING:
+    import httpx
+
 LAST_PAGE = re.compile(r'[?&]page=(\d+)[^>]*>;\s*rel="last"')
+log = logging.getLogger(__name__)
 PER_PAGE = 100  # the most that GitHub gives on a page
 MAX_PAGES = 500  # 50 000 issues and pull requests of a repository at most
 
@@ -43,9 +49,10 @@ class RepositoryUpdate:
         """
         self.repository = repository
         self.people: dict[int, GitHubUser | None] = {}  # the authors recorded, by their id
+        self.read_completely = False  # whether this update read all issues, see issues()
 
     @staticmethod
-    def count(response: HttpResponse) -> int:
+    def count(response: httpx.Response) -> int:
         """The number of items of a list of GitHub read with one item per page.
 
         Parameters:
@@ -90,11 +97,14 @@ class RepositoryUpdate:
             for spec in DATA_SPECS:  # what the conditions need, which the app may read
                 if spec.enabled():
                     spec.fetch(client, repository)
+            self.pull_requests(client)
         except Exception as exception:  # every error is kept and shown on the project
             error: DashboardError = translate(exception)
             repository.error_code, repository.error_detail = error.code, str(error)[:500]
             repository.save()
             return False
+        if self.read_completely:  # all data of this version, also of the pull requests
+            repository.data_version = DATA_VERSION
         repository.full_name = data.get("full_name") or repository.full_name  # renamed
         repository.github_id = data.get("id") or repository.github_id
         repository.private = bool(data.get("private"))
@@ -117,7 +127,8 @@ class RepositoryUpdate:
         """Read the issues and pull requests, open and closed, and keep them.
 
         After a complete reading, those that GitHub no longer has, such as deleted or
-        transferred ones, are removed, and the repository has the data of :data:`DATA_VERSION`.
+        transferred ones, are removed; when the whole update works, the repository has the data
+        of :data:`DATA_VERSION`.
 
         Parameters:
             client: The client that reads the repository.
@@ -149,9 +160,9 @@ class RepositoryUpdate:
         with transaction.atomic():
             if complete:
                 repository.issues.exclude(number__in=seen).delete()
-                repository.data_version = DATA_VERSION
+                self.read_completely = True  # the version follows when all of the update worked
             repository.issues_changed = changed or started
-            repository.save(update_fields=["data_version", "issues_changed"])
+            repository.save(update_fields=["issues_changed"])
         return len(seen)
 
     def keep(self, item: dict) -> Issue:
@@ -197,3 +208,45 @@ class RepositoryUpdate:
         if github_id not in self.people:
             self.people[github_id] = GitHubUser.record(data)
         return self.people[github_id]
+
+    def pull_requests(self, client: GitHubClient) -> int:
+        """Read the open pull requests with one query of GraphQL for what the conditions need.
+
+        The fields are those of the data specs that the app may read (``DataSpec.graphql``);
+        50 pull requests cost about one point of GitHub. GraphQL needs a token, so only
+        repositories with the GitHub App are read.
+
+        Parameters:
+            client: The client of the installation.
+
+        Returns:
+            How many pull requests were read.
+        """
+        repository = self.repository
+        specs = [spec for spec in DATA_SPECS if spec.enabled() and spec.graphql]
+        if not specs or not repository.app_installed:
+            return 0
+        query = PULL_REQUESTS.replace("FIELDS", " ".join(spec.graphql for spec in specs))
+        owner, name = repository.full_name.split("/", 1)
+        issues = {
+            issue.number: issue
+            for issue in Issue.objects.filter(
+                repository=repository, pull_request=True, state=Issue.OPEN
+            )
+        }
+        read, after = 0, None
+        for _page in range(MAX_PAGES):
+            data = client.graphql(query, owner=owner, name=name, after=after)
+            page = data["repository"]["pullRequests"]
+            for node in page["nodes"]:
+                issue = issues.get(node["number"])
+                if issue is None:  # opened after the issues were read: the next update
+                    continue
+                for spec in specs:
+                    spec.keep_pull_request(issue, node)
+                read += 1
+            if not page["pageInfo"]["hasNextPage"]:
+                break
+            after = page["pageInfo"]["endCursor"]
+        log.info("%s: %s pull requests, rate %s", repository.full_name, read, client.rate)
+        return read

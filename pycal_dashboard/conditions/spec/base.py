@@ -16,7 +16,9 @@ class DataSpec(ABC):
     """Data of a pull request that conditions check, such as its labels or its checks.
 
     The update of a repository in the background (``RepositoryUpdate``) asks every data spec
-    that is :meth:`enabled` to :meth:`fetch` what it needs. A condition is checked only when
+    that is :meth:`enabled` to :meth:`fetch` what it needs of the repository, and reads the open
+    pull requests with one query of GraphQL made of the fields of every spec (``graphql``),
+    which each spec keeps (:meth:`keep_pull_request`). A condition is checked only when
     every one of its data specs says that the data of the pull request is :meth:`complete`;
     else the condition cannot be assessed yet.
 
@@ -25,12 +27,14 @@ class DataSpec(ABC):
         title: What the data is, for the documentation.
         permissions: The permissions of the GitHub App that reading it needs.
         events: The webhooks that tell of its changes, which update the repository.
+        graphql: The fields of a ``PullRequest`` of GraphQL that it needs, "" for none.
     """
 
     id: str = ""
     title: str = ""
     permissions: dict[str, str] = {}
     events: tuple[str, ...] = ()
+    graphql: str = ""
 
     def enabled(self) -> bool:
         """Whether the GitHub App asks for every permission and webhook that the data needs.
@@ -47,7 +51,6 @@ class DataSpec(ABC):
         )
         return granted and all(event in EVENTS for event in self.events)
 
-    @abstractmethod
     def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read the data of a repository from GitHub and keep it, in the background.
 
@@ -56,7 +59,16 @@ class DataSpec(ABC):
             repository: The repository, after its issues and pull requests were read.
 
         Returns:
-            How many things were read, such as labels or pull requests.
+            How many things were read, such as labels; 0 for data of pull requests only.
+        """
+        return 0
+
+    def keep_pull_request(self, issue: Issue, node: dict) -> None:
+        """Keep what the query of GraphQL answered for an open pull request.
+
+        Parameters:
+            issue: The pull request.
+            node: The pull request of GraphQL, with the fields of ``graphql``.
         """
 
     @abstractmethod

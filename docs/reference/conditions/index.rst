@@ -70,7 +70,11 @@ Data
 ====
 
 The data of a pull request that conditions need, with the permissions and
-webhooks of the GitHub App that reading it needs. Data whose permissions the
+webhooks of the GitHub App that reading it needs. The state of the open pull
+requests comes with one query of GraphQL for each repository, made of the
+fields that every kind of data needs: about one point of GitHub for 50 pull
+requests, where the REST API needs requests for each one. GraphQL needs a
+token, so it reads only repositories with the GitHub App. Data whose permissions the
 app does not ask for is not read.
 
 ``issue``

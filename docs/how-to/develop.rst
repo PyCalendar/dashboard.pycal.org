@@ -81,6 +81,12 @@ be out of date, or the start after a migration. Each queues a job
 ``repository_updated`` and ``project_updated``. What has to follow an update
 connects to them in ``pycal_dashboard/receivers.py``, never to a trigger.
 
+Data of pull requests that a condition needs is read with GraphQL: its data
+spec in ``pycal_dashboard/conditions/spec/`` names the fields of a
+``PullRequest`` (``graphql``) and keeps them (``keep_pull_request``); the
+update joins the fields of all specs into one query
+(``pycal_dashboard/github/queries.py``) and logs what it cost.
+
 A new model or field of data of people also goes into the privacy policy,
 ``pycal_dashboard/privacy.py``: ``tests/test_privacy.py`` fails until it is
 there.

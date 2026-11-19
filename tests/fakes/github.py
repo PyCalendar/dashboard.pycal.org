@@ -6,6 +6,7 @@ installation or without one. The fake logs every request, so tests can check tha
 writes nothing to GitHub.
 """
 
+import json
 import re
 
 import httpx
@@ -42,6 +43,7 @@ class FakeGitHub:
         self.person_login = "bob"
         self.issue_requests: list[dict] = []  # the parameters of each GET of the issues
         self.pull_requests_read: list[int] = []  # the numbers of GET /pulls/<number>
+        self.graphql_queries: list[dict] = []  # the queries of GraphQL: query and variables
 
     def add_repository(
         self,
@@ -182,11 +184,70 @@ class FakeGitHub:
         labels.append(label)
         return label
 
-    def set_checks(self, full_name: str, number: int, runs: list, status: dict | None = None):
-        """The check runs and the combined status of the last commit of a pull request."""
+    def set_checks(self, full_name: str, number: int, rollup: str | None):
+        """The state of the checks of the last commit of a pull request, as GraphQL sums them
+        up: SUCCESS, FAILURE, ERROR, PENDING, EXPECTED, or None without checks."""
         repository = self.repositories[full_name.lower()]
         sha = repository["issues"][number - 1]["pull"]["head"]["sha"]
-        repository["checks"][sha] = (runs, status or {"state": "pending", "total_count": 0})
+        repository["checks"][sha] = rollup
+
+    MERGEABLE = {True: "MERGEABLE", False: "CONFLICTING", None: "UNKNOWN"}
+
+    def graphql(self, request: httpx.Request) -> httpx.Response:
+        """The query of the open pull requests of a repository, as GitHub answers it.
+
+        The fake does not parse the query: it answers every field the site may ask for.
+        """
+        if not self.token_of(request):
+            return httpx.Response(
+                401, json={"message": "This endpoint requires you to be authenticated."}
+            )
+        body = json.loads(request.content)
+        self.graphql_queries.append(body)
+        variables = body["variables"]
+        repository = self.repositories.get(f"{variables['owner']}/{variables['name']}".lower())
+        if repository is None or not self.sees(request, repository):
+            error = {"type": "NOT_FOUND", "message": "Could not resolve to a Repository"}
+            return httpx.Response(200, json={"data": {"repository": None}, "errors": [error]})
+        pulls = [i for i in repository["issues"] if "pull" in i and i["state"] == "open"]
+        start = int(variables.get("after") or 0)
+        page = pulls[start : start + 50]
+        nodes = []
+        for issue in page:
+            pull = issue["pull"]
+            rollup = repository["checks"].get(pull["head"]["sha"])
+            nodes.append(
+                {
+                    "number": issue["number"],
+                    "headRefName": pull["head"]["ref"],
+                    "headRefOid": pull["head"]["sha"],
+                    "baseRefName": pull["base"]["ref"],
+                    "mergeable": self.MERGEABLE[pull["mergeable"]],
+                    "mergeStateStatus": pull["mergeable_state"].upper(),
+                    "autoMergeRequest": {"enabledAt": "2026-11-01T09:00:00Z"}
+                    if pull["auto_merge"]
+                    else None,
+                    "commits": {
+                        "nodes": [
+                            {"commit": {"statusCheckRollup": {"state": rollup} if rollup else None}}
+                        ]
+                    },
+                }
+            )
+        more = start + 50 < len(pulls)
+        data = {
+            "rateLimit": {"cost": 1, "remaining": 4999, "resetAt": "2026-11-19T13:00:00Z"},
+            "repository": {
+                "pullRequests": {
+                    "pageInfo": {
+                        "hasNextPage": more,
+                        "endCursor": str(start + 50) if more else None,
+                    },
+                    "nodes": nodes,
+                }
+            },
+        }
+        return httpx.Response(200, json={"data": data})
 
     @staticmethod
     def public(repository: dict) -> dict:
@@ -236,6 +297,7 @@ class FakeGitHub:
             for r in self.requests
             if r.method not in ("GET", "HEAD")
             and not any(re.fullmatch(p, r.url.path) for p in self.NOT_WRITING)
+            and not (r.url.path == "/graphql" and b"mutation" not in r.content)  # a query reads
         ]
 
     def handle(self, request: httpx.Request) -> httpx.Response:
@@ -252,6 +314,8 @@ class FakeGitHub:
                     401, json={"message": "A JSON web token could not be decoded"}
                 )
             return httpx.Response(200, json=self.app)
+        if request.method == "POST" and request.url.path == "/graphql":
+            return self.graphql(request)
         answer = self.handle_repositories(request)
         if answer is not None:
             return answer

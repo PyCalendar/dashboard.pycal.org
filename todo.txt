@@ -271,7 +271,10 @@ community: where to start, what waits for a review, who contributes.
       check_suite, status and push: the conditions work (decided by the person: the app must work)
 - [x] Three more conditions: open, merged, closed (without being merged)
 - [x] Docstrings: Parameters: instead of Args:, everywhere; every argument typed (ruff)
-- [ ] Rate limits and GraphQL: evaluate GraphQL for minimal updates; tokens of people for
+- [x] GraphQL: the state, checks and auto-merge of all open pull requests of a repository in one
+      query (about 1 point per 50) instead of 3 REST requests for each; the cost is logged
+- [ ] The person: tokens of people for projects (only if the rate limits are reached), as on the
+      insight platform: tokens of people for
       projects (tab Tokens of a project, a tabbed profile with a tab of the tokens and the
       repositories they are used for), as on the insight platform
 - [ ] The person: deleting one's account on the site (the privacy policy says: ask the people who

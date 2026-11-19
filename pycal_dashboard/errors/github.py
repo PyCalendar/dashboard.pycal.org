@@ -62,6 +62,16 @@ class GitHubRateLimited(GitHubError):
     status = 503
 
 
+class GitHubQueryFailed(GitHubError):
+    """GitHub answered a query of GraphQL with an error.
+
+    The detail shows the type and message of GitHub, such as a field it does not know. If it
+    happens again, report a bug: the query of the site does not fit the API of GitHub.
+    """
+
+    title = _("GitHub refused the query")
+
+
 class MissingPermissions(GitHubError):
     """The GitHub App may not do what the site needs.
 
