@@ -254,3 +254,13 @@ def test_ci_has_three_switches(client, project):
     add = page.split("data-add-condition>")[1]
     for name in ("passing", "failing", "unknown"):
         assert f'name="ci" value="{name}"' in add
+
+
+def test_the_filters_are_an_or(client, project):
+    """A pull request is shown when any column that filters shows it."""
+    page = page_of(client, project, "status~applies~merged", "branch~applies~conflict")
+    assert sorted(results(page)) == ["Conflict", "Merged"]
+    page = page_of(client, project, "status~applies~merged", "ci~all~passing")
+    assert list(results(page)) == ["Merged"]  # a column that shows both does not filter
+    page = page_of(client, project, "status~all~merged", "ci~all~passing")
+    assert len(results(page)) == 4  # nothing filters

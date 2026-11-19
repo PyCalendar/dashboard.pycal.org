@@ -470,7 +470,11 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
 
 
 def condition_rows(pulls: QuerySet[Issue], columns: list[Column]) -> list[dict]:
-    """The pull requests with the result of each column, those that the filters show.
+    """The pull requests with the result of each column, those that any filter shows.
+
+    The filters are an OR: a pull request is shown when any column that filters (one that
+    shows only the pull requests it applies to, or only those it does not apply to) shows it.
+    Columns that show both do not filter; without columns that filter, all are shown.
 
     Parameters:
         pulls: The pull requests, the newest first.
@@ -483,9 +487,11 @@ def condition_rows(pulls: QuerySet[Issue], columns: list[Column]) -> list[dict]:
     if not columns:
         return [{"pull": pull, "cells": []} for pull in pulls]
     rows = []
+    filtering = [index for index, column in enumerate(columns) if column.filter != "all"]
     for pull in pulls.select_related("pull_state").prefetch_related("labels"):
         results = [column.applies(pull) for column in columns]
-        if all(column.shows(result) for column, result in zip(columns, results, strict=True)):
+        # an OR: a pull request is shown when any column that filters shows it
+        if not filtering or any(columns[i].shows(results[i]) for i in filtering):
             cells = [
                 {
                     "column": column,

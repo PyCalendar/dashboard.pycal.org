@@ -49,7 +49,7 @@ def test_the_save_page_sums_up_the_columns(client, project, bob):
     page = save_page(client, *COLUMNS)
     assert "← Back to the pull requests" in page
     assert 'href="/projects/icalendar/pull-requests/?col=status~applies~open' in page
-    assert "The filter shows 1 pull request now:" in page  # open, without the label
+    assert "The filter shows 3 pull requests now:" in page  # open, or without the label
     applies = page.split('data-summary="applies"')[1].split("</div>")[0]
     not_ = page.split('data-summary="not"')[1].split("</div>")[0]
     both = page.split('data-summary="both"')[1].split("</div>")[0]
@@ -83,13 +83,13 @@ def test_save_a_filter_and_open_it(client, project, bob):
     client.logout()
     page = client.get("/projects/icalendar/filters/").content.decode()  # public
     item = page.split('data-filter="Ready to merge"')[1].split("</li>\n</ul>")[0]
-    assert "<strong>Open</strong> ones" in item and "1 pull request" in item
+    assert "<strong>Open</strong> ones" in item and "3 pull requests" in item
     link = item.split("data-filter-pull-requests")[0].rsplit('href="', 1)[1].split('"')[0]
     assert f"saved={saved.pk}" in link
     table = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
-    assert "Ready to merge: 1 pull request" in table  # the columns of the filter
+    assert "Ready to merge: 3 pull requests" in table  # the columns of the filter
     data = client.get("/projects/icalendar/filters.json").json()["filters"]
-    assert data[0]["name"] == "Ready to merge" and data[0]["count"] == 1
+    assert data[0]["name"] == "Ready to merge" and data[0]["count"] == 3
 
 
 def test_save_it_again_or_as_a_new_one(client, project, bob):

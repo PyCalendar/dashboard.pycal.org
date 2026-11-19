@@ -329,7 +329,7 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
         f"{site}/projects/icalendar/pull-requests/"
         "?col=labels~not~present~needs+review&col=status~applies~open"
     )
-    expect(page.locator("[data-pull-request]")).to_have_count(2)
+    expect(page.locator("[data-pull-request]")).to_have_count(3)  # open, or without the label
     page.get_by_role("link", name="Save", exact=True).click()
     expect(page.get_by_role("link", name="Filters")).to_have_attribute("aria-current", "page")
     page.locator("[data-opposite]").get_by_role("link", name="Use it").click()
@@ -341,9 +341,9 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_text("The filter Waiting is saved.")).to_be_visible()
     item = page.locator("[data-filter='Waiting']")
     expect(item.locator("em")).to_have_text("reviewed")
-    item.get_by_role("link", name="2 pull requests").click()
-    expect(page.get_by_role("heading", name="Waiting: 2 pull requests")).to_be_visible()
+    item.get_by_role("link", name="3 pull requests").click()
+    expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Save", exact=True).click()
     expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()
     page.get_by_role("link", name="← Back to the pull requests").click()
-    expect(page.get_by_role("heading", name="Waiting: 2 pull requests")).to_be_visible()
+    expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()

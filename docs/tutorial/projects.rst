@@ -191,7 +191,9 @@ absent, or the states chosen, such as *conflict*. Below it, the gear changes
 the column, moves it or removes it, and two toggles filter the table at once:
 the check mark shows the pull requests the condition applies to, the cross
 those it does not apply to. One of them is always on: switching off the last
-one switches the other one on. Drag a column onto another one to move it. The
+one switches the other one on. The filters are an *or*: a pull
+request shows when any column that filters shows it; a column with both
+toggles on does not filter. Drag a column onto another one to move it. The
 columns of conditions stay right of the other columns. The address of the page
 keeps them, so it can be bookmarked and shared; the JSON has the result of each
 column for each pull request (``conditions``), see :doc:`/reference/json`. A
