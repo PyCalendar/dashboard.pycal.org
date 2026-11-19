@@ -28,6 +28,7 @@ from pycal_dashboard.models import (
     WebhookDelivery,
 )
 from pycal_dashboard.services.account_removal import AccountRemoval
+from pycal_dashboard.services.app_notice import AppNotice
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.theme import CHOICES
 
@@ -161,6 +162,12 @@ def notifications(request: HttpRequest):
         The page, or a redirect after marking.
     """
     mine = Notification.objects.filter(user=request.user)
+    if request.method == "POST" and "check" in request.POST:
+        AppNotice.refresh_in_background()  # GitHub tells no change of the app itself
+        messages.info(
+            request, _("The site asks GitHub now. Reload this page in a moment to see the result.")
+        )
+        return redirect("notifications")
     if request.method == "POST":
         unread = mine.filter(read=None)
         chosen = request.POST.get("read", "")

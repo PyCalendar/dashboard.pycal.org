@@ -229,3 +229,10 @@ def test_edit_a_filter(client, project, bob):
     assert edit.startswith("/projects/icalendar/filters/save/?col=status~applies~open")
     assert f"saved={saved.pk}" in edit
     assert "Save Open" in client.get(edit.replace("&amp;", "&")).content.decode()
+
+
+def test_the_filters_are_cards_without_bullets():
+    from pathlib import Path
+
+    css = (Path(__file__).parent.parent / "static" / "style.css").read_text()
+    assert ".filters { display: grid; gap: 1rem; list-style: none;" in css

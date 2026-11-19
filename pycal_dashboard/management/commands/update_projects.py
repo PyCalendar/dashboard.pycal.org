@@ -6,6 +6,7 @@ from typing import Any
 
 from django.core.management.base import BaseCommand, CommandParser
 
+from pycal_dashboard.services.app_notice import AppNotice
 from pycal_dashboard.services.update_queue import UpdateQueue
 
 
@@ -39,6 +40,7 @@ class Command(BaseCommand):
             **options: ``stale``.
         """
         if options["stale"]:
+            AppNotice.refresh()  # GitHub tells no change of the permissions of the app itself
             queued = UpdateQueue.stale(start=False)
             self.stdout.write(f"{queued} repositories may be out of date")
         count = UpdateQueue.work()

@@ -382,6 +382,10 @@ community: where to start, what waits for a review, who contributes.
       with a pencil for its summary and description (template); variables inserted from a menu,
       safe for the input of others; a pull request is in the left-most step that applies
 
+- [x] The notification of the app resolves itself: the app is checked every hour, at webhooks of
+      installations, and with Check again
+- [x] The filters of the tab Filters without bullets
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where

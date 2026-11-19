@@ -347,7 +347,7 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 /* the saved filters of a project, and the page that saves one */
 .table-title { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .table-title h2 { margin: 0; }
-.filters { display: grid; gap: 1rem; }
+.filters { display: grid; gap: 1rem; list-style: none; margin: 0; padding: 0; }
 .filter-conditions tr.off td:not(.switch-cell) { opacity: .45; }
 .filter-conditions tr:has(input[name="on"]:not(:checked)) td:not(.switch-cell) { opacity: .45; }
 .filter-conditions tr:has(input[name="on"]:checked) td { opacity: 1; }

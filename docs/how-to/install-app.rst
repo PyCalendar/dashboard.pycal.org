@@ -82,6 +82,9 @@ New permissions take two steps on GitHub:
    event that :doc:`/reference/permissions` lists and save. The administrators
    of the site (``SITE_ADMINS``) get a notification while the app lacks one,
    with the link to this page; the setup page of the app lists them, too.
+   GitHub sends no webhook for this: the site checks the app at its start,
+   every hour, at each webhook of an installation, and when **Check again** on
+   the notification is pressed; then the notification moves to *Done*.
 #. **The owners of each installation accept them.** After step 1, GitHub shows
    a request to review the new permissions in the settings of each installation,
    *Organization → Settings → GitHub Apps → Configure*, and emails its owners.

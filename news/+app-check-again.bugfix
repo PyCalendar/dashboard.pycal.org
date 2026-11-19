@@ -1,0 +1,3 @@
+The notification that the GitHub App lacks permissions or events resolves itself: the site checks
+the app every hour, at each webhook of an installation, and with Check again. The filters of the tab
+Filters have no bullets.

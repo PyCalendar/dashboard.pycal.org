@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import logging
+import threading
 from typing import TYPE_CHECKING
 
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
+from django.db import connections
 
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Notification
 
 from .notifier import Notifier
@@ -16,6 +20,7 @@ if TYPE_CHECKING:
 
 # the app is one: the key of its notification
 KEY = "app"
+log = logging.getLogger(__name__)
 
 
 class AppNotice:
@@ -65,3 +70,39 @@ class AppNotice:
         }
         notifier.notify(self.user_ids(), params, self.check.settings_url)
         return True
+
+    @classmethod
+    def refresh(cls) -> bool | None:
+        """Read the app from GitHub again, and notify or resolve.
+
+        GitHub sends no webhook when the owners change the permissions of the app.
+
+        Returns:
+            True if the app lacks something, False if not, None if GitHub could not be asked.
+        """
+        with IMPORT_GUARD:  # see import_guard.py: only the checks of the app read it
+            from pycal_dashboard.github.app_check import AppCheck
+
+        try:
+            return cls(AppCheck.read()).notify()
+        except Exception:  # such as without an app or while GitHub is down: the next time
+            log.warning("The GitHub App could not be checked", exc_info=True)
+            return None
+
+    @classmethod
+    def refresh_in_background(cls) -> threading.Thread:
+        """Check the app in a thread, so that the page that asks for it does not wait.
+
+        Returns:
+            The thread.
+        """
+
+        def run() -> None:
+            try:
+                cls.refresh()
+            finally:
+                connections.close_all()
+
+        thread = threading.Thread(target=run, name="app-check", daemon=True)
+        thread.start()
+        return thread

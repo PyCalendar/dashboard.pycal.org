@@ -9,7 +9,9 @@
   {% if notification.kind == "permissions" %}<p class="notification-actions"><a class="button" href="{{ notification.url }}">{% translate "Accept the permissions on GitHub" %}</a> {% translate "How to accept new permissions" as how %}{% help_link links.new_permissions how %}</p>
   {% permission_list notification.params.missing %}
   <p class="muted">{% translate "An owner of the account opens the settings of the installation on GitHub and reviews the request for new permissions. If GitHub shows no request, the owners of the GitHub App add the permissions to the app first." %}</p>
-  {% elif notification.kind == "app_permissions" %}<p class="notification-actions"><a class="button" href="{{ notification.url }}">{% translate "Add them to the GitHub App" %}</a> {% translate "How to accept new permissions" as how %}{% help_link links.new_permissions how %}</p>
+  {% elif notification.kind == "app_permissions" %}<p class="notification-actions"><a class="button" href="{{ notification.url }}">{% translate "Add them to the GitHub App" %}</a>
+    <form method="post" class="inline">{% csrf_token %}<button class="button button-quiet" name="check" value="app" data-check-app>{% translate "Check again" %}</button></form>
+    {% translate "How to accept new permissions" as how %}{% help_link links.new_permissions how %}</p>
   {% permission_list notification.params.missing notification.params.events %}
   <p class="muted">{% translate "The owners of the GitHub App add these permissions and events in its settings and save them; then GitHub asks the owners of each installation to accept them." %}</p>{% endif %}
   <p class="notification-meta muted">{% when notification.updated %}{% if not notification.read %} · <form method="post" class="inline">{% csrf_token %}<button class="link-button" name="read" value="{{ notification.pk }}">{% translate "Mark as read" %}</button></form>{% endif %}</p>

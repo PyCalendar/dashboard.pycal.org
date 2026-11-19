@@ -240,3 +240,63 @@ def test_the_app_lists_its_events_in_their_group(client, bob, settings):
     assert '<span class="permission-name">Commit statuses</span>' in groups
     assert '<span class="permission-name">Check run</span> <span class="muted">' in groups
     assert "Git push to a repository." in groups
+
+
+def test_the_app_is_checked_again_and_resolves_itself(client, github, settings, monkeypatch):
+    """The owners added the permissions: Check again resolves the notification of the app."""
+    from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+    from pycal_dashboard.services.app_notice import AppNotice
+    from tests.conftest import person
+
+    settings.SITE_ADMINS = ["admin"]
+    admin = person(7, "admin")
+    github.app["permissions"], github.app["events"] = {"metadata": "read"}, ["issues"]
+    assert AppNotice.refresh() is True
+    notification = Notification.objects.get(user=admin, kind=Notification.APP_PERMISSIONS)
+    github.app["permissions"], github.app["events"] = dict(REQUIRED), list(EVENTS)
+    started = []  # the tests run the check at once: a thread cannot write to their database
+    monkeypatch.setattr(
+        AppNotice, "refresh_in_background", classmethod(lambda cls: started.append(cls.refresh()))
+    )
+    client.force_login(admin)
+    assert "data-check-app" in client.get("/account/notifications/").content.decode()
+    answer = client.post("/account/notifications/", {"check": "app"}, follow=True)
+    assert "The site asks GitHub now" in answer.content.decode() and started == [False]
+    notification.refresh_from_db()
+    assert notification.resolved is not None
+    assert "data-resolved" in answer.content.decode() or "Done" in answer.content.decode()
+
+
+def test_github_down_leaves_the_notification(github, settings, db):
+    from pycal_dashboard.services.app_notice import AppNotice
+
+    github.unreachable = True
+    assert AppNotice.refresh() is None
+
+
+def test_the_hourly_update_checks_the_app(github, settings, db):
+    import io
+
+    from django.core.management import call_command
+
+    from tests.conftest import person
+
+    settings.SITE_ADMINS = ["admin"]
+    admin = person(7, "admin")
+    github.app["events"] = ["issues"]
+    call_command("update_projects", "--stale", stdout=io.StringIO())
+    assert Notification.objects.filter(user=admin, kind=Notification.APP_PERMISSIONS).exists()
+
+
+def test_a_webhook_of_the_installation_checks_the_app(client, github, settings, db):
+    from tests.conftest import person, send_webhook
+
+    settings.SITE_ADMINS = ["admin"]
+    admin = person(7, "admin")
+    github.app["events"] = ["issues"]
+    payload = {
+        "action": "new_permissions_accepted",
+        "installation": {"id": 11, "account": {"login": "PyCalendar", "type": "Organization"}},
+    }
+    send_webhook(client, "installation", payload)
+    assert Notification.objects.filter(user=admin, kind=Notification.APP_PERMISSIONS).exists()

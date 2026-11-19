@@ -7,6 +7,7 @@ in the background. The site writes nothing to GitHub; the automation is designed
 
 from pycal_dashboard.models import Repository
 
+from .app_notice import AppNotice
 from .installation_store import InstallationStore
 from .permission_notice import PermissionNotice
 from .update_queue import UpdateQueue
@@ -89,6 +90,7 @@ class WebhookHandler:
             data, self.payload.get("sender"), removed=self.action == "deleted"
         )
         sent = PermissionNotice(installation).send_if_needed()
+        AppNotice.refresh()  # such as new permissions accepted: the app has them
         lacks = installation.missing_permissions
         done = f"recorded the installation on {installation.account_login}"
         if installation.removed:
