@@ -381,3 +381,23 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .permission-groups .permission-name { font-weight: 600; }
 .notification-meta { margin: 0; font-size: .9rem; }
 .notifications .link-button { color: var(--primary); text-decoration: underline; }
+
+/* the steps of a project: the bar of steps from left to right, and the step below it */
+.step-bar { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: .75rem 0; padding: 0; counter-reset: step; }
+.step-item { display: flex; align-items: center; gap: .3rem; padding: .4rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); }
+.step-item[draggable="true"] { cursor: grab; }
+.step-item.current { border-color: var(--primary); background: var(--surface-tint); }
+.step-item.dragged-over { outline: 2px dashed var(--primary); }
+.step-item + .step-item::before { content: "→"; margin-right: .3rem; color: var(--text-muted); }
+.step-item a { text-decoration: none; display: inline-flex; flex-direction: column; line-height: 1.2; }
+.step-item .step-name { font-weight: 600; }
+.step-moves { display: inline-flex; }
+.step-conditions { list-style: none; padding: 0; margin: 0 0 1rem; }
+.step-conditions > li { padding: .5rem 0; border-bottom: 1px solid var(--border); }
+.condition-edit > summary { font-weight: 400; }
+.condition-edit .pencil { margin-left: .3rem; color: var(--primary); }
+.condition-description { margin: .3rem 0 0 1rem; color: var(--text-muted); }
+.template-preview { margin: .5rem 0 1rem; padding: .5rem .75rem; border-left: .25rem solid var(--border); }
+.insert-variable { display: inline-flex; gap: .3rem; align-items: center; margin: .25rem 0; }
+.insert-variable select { max-width: 22rem; }
+.variables-help { font-size: .9rem; }

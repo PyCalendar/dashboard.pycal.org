@@ -128,6 +128,7 @@ def project_filters(request: HttpRequest, slug: str):
                 "edit": access.project.path("filters/save/") + address,
                 "in_force": sum(column.filter != "all" for column in columns),
                 "rows": [item for item in summary(columns) if item["filters"]],
+                "step": getattr(saved, "step", None) if hasattr(saved, "step") else None,
                 "counts": access.project.path(f"filters/{saved.pk}/"),
             }
         )

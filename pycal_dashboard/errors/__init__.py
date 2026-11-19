@@ -53,6 +53,7 @@ from .github import (
     SignInNotConfigured,
 )
 from .projects import (
+    FilterIsAStep,
     FilterNameMissing,
     FilterNameTaken,
     FilterNotFound,
@@ -70,6 +71,7 @@ from .projects import (
     ProjectSlugTaken,
     RepositoryNameInvalid,
     RepositoryNotFound,
+    StepNotFound,
     UnknownRole,
 )
 from .registration import (
@@ -96,6 +98,8 @@ from .webhooks import (
 )
 
 __all__ = [
+    "FilterIsAStep",
+    "StepNotFound",
     "FilterNameMissing",
     "FilterNameTaken",
     "FilterNotFound",

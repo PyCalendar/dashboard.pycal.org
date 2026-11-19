@@ -375,6 +375,13 @@ community: where to start, what waits for a review, who contributes.
 
 - [x] The tab Filters shows only the conditions in force
 
+- [x] The tab Filters shows the table of the conditions when a filter is opened; the numbers come
+      after
+- [x] The tab Steps: steps made of filters (Make it a step, +), a bar ordered by dragging and
+      arrows (without a new page), a step shown below: name, summary (template), each condition
+      with a pencil for its summary and description (template); variables inserted from a menu,
+      safe for the input of others; a pull request is in the left-most step that applies
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where

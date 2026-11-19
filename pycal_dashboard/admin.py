@@ -17,6 +17,7 @@ from .models import (
     ProjectSlug,
     PullRequestFilter,
     PullRequestState,
+    PullRequestStep,
     Repository,
     UpdateJob,
     WebhookDelivery,
@@ -59,3 +60,4 @@ admin.site.register(PullRequestFilter, list_display=["name", "project", "created
 admin.site.register(
     Notification, list_display=["user", "kind", "key", "created", "read", "resolved"]
 )
+admin.site.register(PullRequestStep, list_display=["name", "project", "filter", "position"])

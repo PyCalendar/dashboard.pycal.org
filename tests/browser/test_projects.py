@@ -358,3 +358,50 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()
     page.get_by_role("link", name="← Back to the pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
+
+
+def test_steps_of_pull_requests(signed_in, site, github, bob):
+    """Filters become steps without a new page, are moved in the bar, and are explained."""
+    from pycal_dashboard.models import PullRequestFilter
+
+    project = pull_request_project(github, bob)
+    for name, column in (
+        ("Conflicts", "branch~applies~conflict"),
+        ("Review", "labels~applies~present~needs review"),
+    ):
+        PullRequestFilter.objects.create(project=project, name=name, columns=[column])
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/filters/")
+    for name in ("Conflicts", "Review"):
+        item = page.locator(f"[data-filter='{name}']")
+        url = page.url
+        item.get_by_role("button", name="Make it a step").click()
+        expect(item.locator("[data-step-link]")).to_have_text(f"Step: {name}")
+        assert page.url == url  # no new page
+    page.get_by_role("link", name="Steps", exact=True).click()
+    bar = page.locator("[data-step-bar]")
+    expect(bar.locator("[data-step]")).to_have_count(2)
+    expect(bar.locator("[data-step]").first).to_contain_text("Conflicts")
+    bar.locator("[data-step]").nth(1).get_by_role("button", name="Move left: earlier").click()
+    expect(bar.locator("[data-step]").first).to_contain_text("Review")
+    expect(bar.locator("[data-step]").first.locator(".step-number")).to_have_text("Step 1")
+    page.reload()
+    expect(page.locator("[data-step-bar] [data-step]").first).to_contain_text("Review")
+    heads = page.locator("[data-step-bar] [data-step]")
+    heads.nth(1).drag_to(heads.nth(0))
+    expect(page.locator("[data-step-bar] [data-step]").first).to_contain_text("Conflicts")
+    # a click on a step shows it below; its condition is explained with the pencil
+    page.locator("[data-step-bar]").get_by_role("link", name="Review").click()
+    detail = page.locator("[data-step-detail]")
+    detail.get_by_label("Name", exact=True).fill("Waiting for a review")
+    detail.locator(".condition-edit > summary").click()
+    detail.get_by_label("Summary", exact=True).last.fill("A person reviews it")
+    detail.get_by_label("Description: how to remove it").fill("Ask @")
+    detail.locator("[data-insert-variable^='description'] select").select_option("{author}")
+    detail.locator("[data-insert-variable^='description']").get_by_role(
+        "button", name="Insert"
+    ).click()
+    expect(detail.get_by_label("Description: how to remove it")).to_have_value("Ask @{author}")
+    detail.get_by_role("button", name="Save the step").click()
+    expect(page.locator("[data-step-bar]")).to_contain_text("Waiting for a review")
+    expect(page.locator(".condition-description")).to_contain_text("Ask @octocat")

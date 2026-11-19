@@ -1,0 +1,45 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n static markdown %}
+{% block title %}{% translate "Steps" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'steps.js' %}" defer></script>{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card steps" data-steps>
+<div class="table-head"><h2>{% translate "Steps of a pull request" %}</h2>
+{% if access.can_write %}<details class="column-menu" data-add-step><summary class="button button-small" title="{% translate "Add a filter as a step" %}" aria-label="{% translate "Add a filter as a step" %}"><span aria-hidden="true">+</span></summary>
+  <div class="menu-panel"><a class="menu-close button button-quiet button-small" href="{% url 'project_steps' project.slug %}" role="button" data-menu-close title="{% translate "Close" %}" aria-label="{% translate "Close" %}"><span aria-hidden="true">×</span></a>
+  <h3>{% translate "Add a filter as a step" %}</h3>
+  {% if free_filters %}<ul class="list">{% for saved in free_filters %}<li><form method="post" action="{% url 'project_step_add' project.slug %}" class="inline">{% csrf_token %}<input type="hidden" name="filter" value="{{ saved.pk }}"><button class="button button-quiet button-small">{{ saved.name }}</button></form></li>{% endfor %}</ul>
+  {% else %}<p class="muted">{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}Every filter is a step. Save more filters on the tab <a href="{{ filters_url }}">Filters</a>.{% endblocktranslate %}</p>{% endif %}</div></details>{% endif %}</div>
+{% if steps %}<ol class="step-bar" data-step-bar>{% for step in steps %}<li class="step-item{% if step == shown %} current{% endif %}" data-step="{{ step.pk }}"{% if access.can_write %} draggable="true" data-move="{% url 'project_step_move' project.slug step.pk %}"{% endif %}>
+  <a href="?step={{ step.pk }}"{% if step == shown %} aria-current="step"{% endif %}><small class="muted step-number">{% blocktranslate with number=forloop.counter %}Step {{ number }}{% endblocktranslate %}</small> <span class="step-name">{{ step.name }}</span></a>
+  {% if access.can_write %}<span class="step-moves"><form method="post" action="{% url 'project_step_move' project.slug step.pk %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="direction" value="left" title="{% translate "Move left: earlier" %}" aria-label="{% translate "Move left: earlier" %}"{% if forloop.first %} disabled{% endif %}>←</button><button class="button button-quiet button-small" name="direction" value="right" title="{% translate "Move right: later" %}" aria-label="{% translate "Move right: later" %}"{% if forloop.last %} disabled{% endif %}>→</button></form></span>{% endif %}
+</li>{% endfor %}</ol>
+<p class="muted">{% translate "A pull request is in the left-most step whose filter shows it: one of its conditions applies. The conditions are what keeps it from being merged." %}</p>
+{% else %}<p data-no-steps>{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}No steps yet. Make a saved filter a step on the tab <a href="{{ filters_url }}">Filters</a>, or add one with the button +.{% endblocktranslate %}</p>{% endif %}
+</section>
+{% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">
+{% if access.can_write %}<form method="post" action="{% url 'project_step_edit' project.slug shown.pk %}" class="stacked" data-edit-step>{% csrf_token %}
+  <p><label for="step-name">{% translate "Name" %}</label><input id="step-name" name="name" maxlength="100" value="{{ shown.name }}" placeholder="{{ shown.filter.name }}"></p>
+  {% translate "Summary" as summary_label %}{% include "pycal_dashboard/_markdown_field.html" with id="summary" name="summary" label=summary_label value=shown.summary rows=4 %}
+  {% include "pycal_dashboard/_variables.html" with target="summary" %}
+  {% if summary_preview %}<div class="template-preview"><small class="muted">{% translate "With an example pull request:" %}</small><div class="markdown">{{ summary_preview|markdown }}</div></div>{% endif %}
+  <h3>{% translate "Conditions" %}</h3>
+  <p class="muted">{% blocktranslate with name=shown.filter.name %}The conditions of the filter {{ name }} that keep a pull request in this step. Guide people to remove each one.{% endblocktranslate %}</p>
+  <ul class="step-conditions">{% for condition in conditions %}<li data-step-condition="{{ condition.index }}">
+    <input type="hidden" name="value-{{ condition.index }}" value="{{ condition.value }}">
+    <details class="condition-edit"><summary><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %} <span class="pencil" title="{% translate "Edit the summary and the description" %}" aria-label="{% translate "Edit the summary and the description" %}">✎</span></summary>
+      <p><label for="summary-{{ condition.index }}">{% translate "Summary" %}</label><input id="summary-{{ condition.index }}" name="summary-{{ condition.index }}" maxlength="200" value="{{ condition.summary }}"></p>
+      <p><label for="description-{{ condition.index }}">{% translate "Description: how to remove it" %}</label><textarea id="description-{{ condition.index }}" name="description-{{ condition.index }}" rows="4">{{ condition.description }}</textarea></p>
+      {% include "pycal_dashboard/_variables.html" with target=condition.target %}
+    </details>
+    {% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}
+  </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: no pull request is in this step." %}</li>{% endfor %}</ul>
+  <p class="save-buttons"><button class="button">{% translate "Save the step" %}</button></p>
+</form>
+<form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-quiet button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
+{% else %}<h2>{{ shown.name }}</h2>
+{% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
+<ul class="step-conditions">{% for condition in conditions %}<li><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}{% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}</li>{% endfor %}</ul>{% endif %}
+</section>{% endif %}
+{% endblock %}

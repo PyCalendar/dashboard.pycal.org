@@ -227,6 +227,7 @@ PAGES = {"": "", "update": "", "settings": "settings/", "address": "settings/"}
 PAGES |= {"repositories": "repositories/", "collaborators": "collaborators/"}
 PAGES["pull-requests"] = "pull-requests/"
 PAGES["filters"] = "filters/"
+PAGES["steps"] = "steps/"
 PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
 
 

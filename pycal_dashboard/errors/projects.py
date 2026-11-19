@@ -191,3 +191,24 @@ class FilterNameTaken(ProjectError):
 
     title = _("The project has a filter of this name")
     status = 409
+
+
+class StepNotFound(ProjectError):
+    """The project has no step of this number.
+
+    It may have been removed. Open the tab *Steps* of the project for those it has.
+    """
+
+    title = _("Step not found")
+    status = 404
+
+
+class FilterIsAStep(ProjectError):
+    """The filter is a step already.
+
+    Each step has its own filter, and a filter is one step at most. Open the tab *Steps* to
+    change the step, or save the filter under a new name for another step.
+    """
+
+    title = _("The filter is a step already")
+    status = 409

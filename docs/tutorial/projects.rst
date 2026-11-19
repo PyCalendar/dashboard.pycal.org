@@ -233,6 +233,34 @@ id: the next update of the repository finds it under its new name and renames
 it in the saved filters, too, so that they keep working. New labels and
 renames come with the webhook ``label``, or with the hourly update.
 
+.. _project-steps:
+
+Steps
+=====
+
+The tab *Steps*, right of *Filters*, shows the steps that a pull request goes
+through, from left to right: *Step 1 → Step 2 → Step 3*. Each step is a saved
+filter, whose conditions are what keeps a pull request in it, such as a
+conflict or a missing review: failures to remove before it can be merged. A
+pull request is in the left-most step whose filter shows it, and in no step
+when none does.
+
+There are no steps until they are made: **Make it a step** next to a filter on
+the tab *Filters*, or the button **+** of the tab *Steps*, adds the filter as
+the last step. Drag a step in the bar to move it, or use its arrows; steps more
+to the left come first.
+
+A click on a step shows it below the bar. Its name is that of its filter until
+you change it, and its summary is a template in Markdown. The pencil next to each
+condition of the filter edits its summary, a line of text, and its description,
+which guides people to remove the condition, such as with a link to the
+documentation. The summary and the descriptions take variables, which the menu
+next to them inserts: ``{author}``, ``{title}``, ``{number}``, ``{url}``,
+``{repository}``, ``{full_name}``, ``{owner}``, ``{project}`` and ``{step}``. Their
+values are text: a title such as ``[click](https://example.org)`` stays text, and
+nothing else of a template is evaluated. The page shows them with an example
+pull request.
+
 .. _project-roles:
 
 Roles in a project
