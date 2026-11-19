@@ -35,11 +35,13 @@ Improve a translation
 #. Run ``make messages``: it updates the texts of all languages and compiles
    them into :file:`django.mo`. It uses gettext, or Docker if gettext is not
    installed.
-#. ``make test`` checks that every text of German and Spanish is translated,
-   that none is marked ``fuzzy`` and that :file:`django.mo` is compiled.
+#. ``make test`` checks that no translation is marked ``fuzzy`` and that
+   :file:`django.mo` is compiled.
 
-A changed English text makes ``make messages`` mark its translation
-``#, fuzzy`` or add an empty ``msgstr``: translate it and remove the mark.
+A new or changed English text gets an empty ``msgstr`` from ``make messages``,
+which guesses no translations: the page shows it in English until it is
+translated. The translations are made together, when the people of the project
+decide.
 
 Add a language
 --------------

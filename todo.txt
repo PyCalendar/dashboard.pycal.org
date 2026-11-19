@@ -251,6 +251,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The documentation: the anchor license led to Lazy imports (and administrators to the
       preferences); a test checks that every link of the site leads to its heading
 - [ ] Look for a package for the Markdown editor that can be embedded
+- [x] Translations only when the person asks (ask first), at the end; make messages guesses none
 - [ ] Descriptions that people type are Markdown, rendered as Markdown: one reusable way, always
       tested; editing with a bar above the field (link, bold, lists, ...) and a preview
 - [ ] The submodule conditions: conditions checked on a pull request, each with an id, an input

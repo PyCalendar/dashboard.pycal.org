@@ -63,18 +63,22 @@ def test_the_json_and_the_details_of_errors_stay_english(client):
 
 
 @pytest.mark.parametrize("language", ["de", "es"])
-def test_every_text_is_translated_and_compiled(language):
+def test_every_translation_is_checked_and_compiled(language):
+    """A text may wait for its translation, in English until then: the people decide when to
+    translate. A guessed (fuzzy) translation is never kept."""
     po = (LOCALE / language / "LC_MESSAGES" / "django.po").read_text()
     entries = po.split("\n\n")[1:]  # without the header
     assert entries and not any("#, fuzzy" in entry for entry in entries)
-    empty = [
-        entry for entry in entries if re.search(r'msgstr(\[\d\])? ""\n?$', entry.strip() + "\n")
-    ]
-    assert empty == []
     mo = LOCALE / language / "LC_MESSAGES" / "django.mo"
     assert (
         mo.stat().st_mtime >= (LOCALE / language / "LC_MESSAGES" / "django.po").stat().st_mtime - 5
     )
+
+
+def test_makemessages_guesses_no_translations():
+    from pycal_dashboard.management.commands.makemessages import Command
+
+    assert "--no-fuzzy-matching" in Command.msgmerge_options
 
 
 def test_every_template_text_is_marked():

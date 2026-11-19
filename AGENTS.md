@@ -87,6 +87,12 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
 - Run `make lint`, `make test`, `make browser-test` and `make docs` and report
   the results as they are.
 
+## Translations
+
+- Texts are marked for translation and extracted (`make messages`), but translated only when the
+  person asks: ask before translating. Until then a text shows in English. `make messages`
+  guesses no translations (no fuzzy matching).
+
 ## Changelog and documentation
 
 - Every change people notice has a news fragment in `news/`, named without `.rst`, such as
