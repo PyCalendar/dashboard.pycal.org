@@ -181,7 +181,7 @@ jobs:
           for attempt in $(seq 10); do
             status=$(curl --silent --output response.json --write-out "%{http_code}" \
               --request POST \
-              --url "https://sencho.pycal.org/api/stacks/${SENCHO_STACK}/update" \
+              --url "https://sencho2.pycal.org/api/stacks/${SENCHO_STACK}/update" \
               --header "Authorization: Bearer $SENCHO_TOKEN")
             cat response.json; echo
             if [ "$status" = 409 ] || [ "$status" -ge 500 ]; then
