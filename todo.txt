@@ -191,12 +191,20 @@ community: where to start, what waits for a review, who contributes.
       until), leads to the project and is never used by another project, also after deletion
 - [x] Tests, browser test of the suggestion and the renaming, docs
 
+## 2026-11-19: clean up: the footer repeats nothing of the page About
+
+- [x] The footer links About and FOOTER_LINKS only, as on sign.pycal.org: documentation, source code
+      and version are on the page About; a test checks that the footer repeats none of its links
+- [x] The page About tells what the site keeps of GitHub (the token, private projects) and what the
+      app may write (labels, a comment on pull requests), in German and Spanish too
+- [x] The deployment to Sencho works (sencho2.pycal.org, commit of the person)
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the app asks for the permissions; the site
       writes nothing to GitHub yet
-- [ ] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
-      secret SENCHO_TOKEN; until then the jobs Deploy to Sencho and Check the live site fail
+- [x] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
+      secret SENCHO_TOKEN (2026-11-19)
 - [x] DNS: docs.dashboard.pycal.org has a CNAME to pycalendar.github.io: it works (2026-11-19)
 
 ## Open: work

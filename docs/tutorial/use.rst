@@ -24,8 +24,8 @@ The start page
 
 Open `dashboard.pycal.org <https://dashboard.pycal.org>`_. The start page says
 whether the GitHub App is registered and whether you can sign in. *About*, at
-the bottom of every page, shows the permissions of the app and the version
-that runs.
+the bottom of every page, shows the permissions of the app, the version that
+runs, and links the documentation and the code: the footer repeats none of it.
 
 The language
 ============

@@ -1,8 +1,11 @@
 """The icon, the links of the footer and the time until people are signed out."""
 
+import re
+
 import pytest
 from django.core.management import call_command
 
+from pycal_dashboard import build_info
 from pycal_dashboard.checks import check_favicon
 from pycal_dashboard.errors import InvalidFooterLink
 from pycal_dashboard.footer_links import parse_footer_links
@@ -16,6 +19,20 @@ def test_footer_links(client, db, settings):
     content = client.get("/").content.decode()
     assert '<a href="https://pycal.org">pycal.org</a>' in content
     assert '<a href="https://b.example/">Blog</a>' in content
+
+
+def test_the_footer_repeats_nothing_of_the_page_about(client, db, settings):
+    """The page About has the documentation, the code and the version; the footer links it."""
+    settings.FOOTER_LINKS = []
+    about = client.get("/about/").content.decode()
+    footer = about.split('<footer class="footer">')[1]
+    main = about.split("<main")[1].split("</main>")[0]
+    links = re.findall(r'href="([^"]+)"', footer)
+    assert links == ["/about/"]
+    for shown in re.findall(r'href="([^"]+)"', main):
+        assert shown not in links
+    version = build_info.get(settings.SOURCE_URL)["version"]
+    assert version in main and version not in footer
 
 
 @pytest.mark.parametrize("value", ["no-address", "=https://a.example", "A=ftp://a.example"])
