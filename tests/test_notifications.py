@@ -56,12 +56,14 @@ def test_the_menu_counts_them_and_the_page_shows_them(client, installation, bob)
     title, button, listed, text = (
         item.index("notification-title"),
         item.index("Accept the permissions on GitHub"),
-        item.index('<ul class="notification-list"><li><code>'),
+        item.index("data-permission-list"),
         item.index("An owner of the account opens"),
     )
     assert title < button < listed < text
     assert "The GitHub App needs more permissions on collective" in item
-    assert "<code>pull_requests: write</code>" in item
+    # as the settings of the app on GitHub name them
+    assert "<strong>Repository permissions</strong>" in item
+    assert '<span class="permission-name">Pull requests</span>: Read and write' in item
     assert installation.settings_url in item and "Mark as read" in page
 
 
@@ -215,3 +217,26 @@ def test_the_app_comes_first_and_read_ones_stay(client, installation, bob, setti
     first = page.index('data-notification="app_permissions"')
     assert first < page.index('data-notification="permissions"')  # the app first
     assert "data-notification-count" not in page  # read: not counted, but still shown
+
+
+def test_the_app_lists_its_events_in_their_group(client, bob, settings):
+    from pycal_dashboard.services.app_notice import AppNotice
+
+    settings.SITE_ADMINS = ["bob"]
+
+    class Lacking:
+        complete = False
+        app = {"slug": "dashboard-test"}
+        missing_permissions = {"checks": "read", "statuses": "read"}
+        missing_events = ["check_run", "push"]
+        settings_url = "https://github.com/organizations/PyCalendar/settings/apps/x/permissions"
+
+    AppNotice(Lacking()).notify()
+    client.force_login(bob)
+    page = client.get("/account/notifications/").content.decode()
+    groups = page.split("data-permission-list>")[1].split("</ul></li></ul>")[0]
+    assert groups.index("Repository permissions") < groups.index("Subscribe to events")
+    assert '<span class="permission-name">Checks</span>: Read-only' in groups
+    assert '<span class="permission-name">Commit statuses</span>' in groups
+    assert '<span class="permission-name">Check run</span> <span class="muted">' in groups
+    assert "Git push to a repository." in groups

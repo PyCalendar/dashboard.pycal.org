@@ -1,5 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n times help %}
+{% load i18n times help github %}
 {% block title %}{% translate "Notifications" %} · {{ site_name }}{% endblock %}
 {% block main %}
 <div class="heading-row"><h1>{% translate "Notifications" %} {% translate "Notifications" as help %}{% help_link links.notifications_help help %}</h1>
@@ -7,10 +7,10 @@
 {% if active %}<ul class="notifications" data-notifications>{% for notification in active %}<li class="card notification{% if not notification.read %} unread{% endif %}" data-notification="{{ notification.kind }}">
   <h2 class="notification-title">{% include "pycal_dashboard/_notification.html" %}</h2>
   {% if notification.kind == "permissions" %}<p class="notification-actions"><a class="button" href="{{ notification.url }}">{% translate "Accept the permissions on GitHub" %}</a> {% translate "How to accept new permissions" as how %}{% help_link links.new_permissions how %}</p>
-  <ul class="notification-list">{% for name, level in notification.params.missing.items %}<li><code>{{ name }}: {{ level }}</code></li>{% endfor %}</ul>
+  {% permission_list notification.params.missing %}
   <p class="muted">{% translate "An owner of the account opens the settings of the installation on GitHub and reviews the request for new permissions. If GitHub shows no request, the owners of the GitHub App add the permissions to the app first." %}</p>
   {% elif notification.kind == "app_permissions" %}<p class="notification-actions"><a class="button" href="{{ notification.url }}">{% translate "Add them to the GitHub App" %}</a> {% translate "How to accept new permissions" as how %}{% help_link links.new_permissions how %}</p>
-  <ul class="notification-list">{% for name, level in notification.params.missing.items %}<li><code>{{ name }}: {{ level }}</code></li>{% endfor %}{% for event in notification.params.events %}<li><code>{{ event }}</code></li>{% endfor %}</ul>
+  {% permission_list notification.params.missing notification.params.events %}
   <p class="muted">{% translate "The owners of the GitHub App add these permissions and events in its settings and save them; then GitHub asks the owners of each installation to accept them." %}</p>{% endif %}
   <p class="notification-meta muted">{% when notification.updated %}{% if not notification.read %} · <form method="post" class="inline">{% csrf_token %}<button class="link-button" name="read" value="{{ notification.pk }}">{% translate "Mark as read" %}</button></form>{% endif %}</p>
 </li>{% endfor %}</ul>

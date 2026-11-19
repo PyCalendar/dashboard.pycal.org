@@ -346,7 +346,9 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_text("The filter Waiting is saved.")).to_be_visible()
     item = page.locator("[data-filter='Waiting']")
     expect(item.locator("em")).to_have_text("reviewed")
-    item.get_by_role("link", name="3 pull requests").click()
+    item.locator("summary").click()  # the numbers come when opened
+    expect(item.locator("[data-filter-counts-loaded]")).to_contain_text("3 pull requests")
+    item.get_by_role("link", name="Pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Save", exact=True).click()
     expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()

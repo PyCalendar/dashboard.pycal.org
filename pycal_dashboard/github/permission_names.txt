@@ -1,0 +1,353 @@
+
+Skip to content
+
+    PyCalendar
+
+Organization navigation
+
+    Overview
+    Repositories31 (31)
+    Discussions
+    Projects2 (2)
+    Packages
+    Teams2 (2)
+
+    PyCalendar settings dashboard.pycal.org
+
+Permissions
+
+These user permissions are granted on an individual user basis as part of the user authorization flow.
+
+Changes to permissions will be applied to all future installations. Current users will be prompted to accept any changes and enable the new permissions on their installation.
+
+    Repository permissions
+    2 selected 1 mandatory
+
+    Repository permissions permit access to repositories and related resources.
+        Actions
+        Workflows, workflow runs and artifacts. Learn more.
+        Administration
+        Repository creation, deletion, settings, teams, and collaborators. Learn more.
+        Agent secrets
+        Manage agent repository secrets. Learn more.
+        Agent tasks
+        View, create, and manage agent tasks in a repository. Learn more.
+        Agent variables
+        Manage agent repository variables. Learn more.
+        Artifact metadata
+        Create and retrieve artifact metadata for a repository. Learn more.
+        Attestations
+        Create and retrieve attestations for a repository. Learn more.
+        Checks
+        Checks on code. Learn more.
+        Code quality
+        Access and manage code quality data for a repository. Learn more.
+        Code scanning alerts
+        View and manage code scanning alerts. Learn more.
+        Codespaces
+        Create, edit, delete and list Codespaces. Learn more.
+        Codespaces lifecycle admin
+        Manage the lifecycle of Codespaces, including starting and stopping. Learn more.
+        Codespaces metadata
+        Access Codespaces metadata including the devcontainers and machine type. Learn more.
+        Codespaces secrets
+        Restrict Codespaces user secrets modifications to specific repositories. Learn more.
+        Commit statuses
+        Commit statuses. Learn more.
+        Contents
+        Repository contents, commits, branches, downloads, releases, and merges. Learn more.
+        Copilot agent settings
+        View and manage Copilot cloud agent settings for a repository. Learn more.
+        Custom properties
+        Read and write repository custom properties values at the repository level, when allowed by the property. Learn more.
+        Dependabot alerts
+        Retrieve Dependabot alerts. Learn more.
+        Dependabot secrets
+        Manage Dependabot repository secrets. Learn more.
+        Deployments
+        Deployments and deployment statuses. Learn more.
+        Discussions
+        Discussions and related comments and labels. Learn more.
+        Environments
+        Manage repository environments. Learn more.
+        GitHub App installation repository access
+        Manage which GitHub Apps can access a repository Learn more.
+        Issues
+        Selected
+        Issues and related comments, assignees, labels, and milestones. Learn more.
+        License compliance alerts
+        Retrieve license compliance alerts. Learn more.
+        Merge queues
+        Manage a repository's merge queues Learn more.
+        Metadata
+        Mandatory
+        Search repositories, list collaborators, and access repository metadata. Learn more.
+        Packages
+        Packages published to the GitHub Package Platform. Learn more.
+        Pages
+        Retrieve Pages statuses, configuration, and builds, as well as create new builds. Learn more.
+        Projects
+        Manage classic projects within a repository. Learn more.
+        Pull requests
+        Selected
+        Pull requests and related comments, assignees, labels, milestones, and merges. Learn more.
+        Repository creation
+        Create repositories. Learn more.
+        Repository license policy
+        View the repository license policy and check package compliance. Learn more.
+        Repository security advisories
+        View and manage repository security advisories. Learn more.
+        Secret scanning alert dismissal requests
+        View and manage secret scanning alert dismissal requests Learn more.
+        Secret scanning alerts
+        View and manage secret scanning alerts. Learn more.
+        Secret scanning push protection bypass requests
+        Review and manage repository secret scanning push protection bypass requests. Learn more.
+        Secrets
+        Manage Actions repository secrets. Learn more.
+        Single file
+        Manage just a single file. Learn more.
+        Variables
+        Manage Actions repository variables. Learn more.
+        Webhooks
+        Manage the post-receive hooks for a repository. Learn more.
+        Workflows
+        Update GitHub Action workflow files. Learn more.
+    Organization permissions
+
+    Organization permissions permit access to organization related resources.
+        API Insights
+        View statistics on how the API is being used for an organization. Learn more.
+        Administration
+        Manage access to an organization. Learn more.
+        Agent secrets
+        Manage agent organization secrets. Learn more.
+        Agent variables
+        Manage agent organization variables. Learn more.
+        Blocking users
+        View and manage users blocked by the organization. Learn more.
+        Campaigns
+        Manage campaigns. Learn more.
+        Copilot Requests
+        Allow this GitHub App to make Copilot requests billed to the organization where it is installed. This permission is in public preview and is subject to change. Learn more.
+        Copilot Spaces
+        View and manage Copilot Spaces for an organization. Learn more.
+        Copilot agent settings
+        Manage Copilot cloud agent settings for an organization. Learn more.
+        Copilot content exclusion
+        Manage Copilot content exclusion rules for the organization. Learn more.
+        Custom organization roles
+        Create, edit, delete and list custom organization roles. View system organization roles. Learn more.
+        Custom properties
+        Read and write repository custom properties values and administer definitions at the organization level. Learn more.
+        Custom properties for organizations
+        Read and write organization custom properties values at the organization level, when allowed by the property. Learn more.
+        Custom repository roles
+        Create, edit, delete and list custom repository roles. Learn more.
+        Events
+        View events triggered by an activity in an organization. Learn more.
+        External custom properties for repositories
+        View and edit external custom properties for repositories, and manage the app installations that provide them, at the organization level. Learn more.
+        GitHub Copilot Business
+        Manage Copilot Business seats and settings Learn more.
+        Hosted runner custom images
+        View and manage hosted runner custom images available to an organization. Learn more.
+        Issue Fields
+        Manage issue fields for an organization. Learn more.
+        Issue Types
+        Manage issue types for an organization. Learn more.
+        Members
+        Organization members and teams. Learn more.
+        Models
+        Manage model access for an organization. Learn more.
+        Network configurations
+        View and manage hosted compute network configurations available to an organization. Learn more.
+        Organization Copilot metrics
+        View organization Copilot metrics. Learn more.
+        Organization IP allow list
+        View and manage an organization IP allow list Learn more.
+        Organization announcement banners
+        View and modify announcement banners for an organization. Learn more.
+        Organization bypass requests for secret scanning
+        Review and manage secret scanning push protection bypass requests. Learn more.
+        Organization codespaces
+        Manage Codespaces for an organization. Learn more.
+        Organization codespaces secrets
+        Manage Codespaces Secrets for an organization. Learn more.
+        Organization codespaces settings
+        Manage Codespaces settings for an organization. Learn more.
+        Organization credentials
+        View and manage organization credentials Learn more.
+        Organization dependabot secrets
+        Manage Dependabot organization secrets. Learn more.
+        Organization dismissal requests for Dependabot
+        Review and manage Dependabot alert dismissal requests. Learn more.
+        Organization dismissal requests for code scanning
+        Review and manage code scanning alert dismissal requests. Learn more.
+        Organization innersource vulnerabilities
+        View and manage innersource vulnerabilities across the organization Learn more.
+        Organization private registries
+        Manage private registries for an organization. Learn more.
+        Organization verifiable domains
+        Manage verifiable domains for an organization Learn more.
+        Personal access token requests
+        Manage personal access token requests from organization members. Learn more.
+        Personal access tokens
+        View and revoke personal access tokens that have been granted access to an organization. Learn more.
+        Plan
+        View an organization's plan. Learn more.
+        Projects
+        Manage projects for an organization. Learn more.
+        Secret scanning alert dismissal requests
+        Review and manage secret scanning alert dismissal requests Learn more.
+        Secrets
+        Manage Actions organization secrets. Learn more.
+        Self-hosted runners
+        View and manage Actions self-hosted runners available to an organization. Learn more.
+        Variables
+        Manage Actions organization variables. Learn more.
+        Webhooks
+        Manage the post-receive hooks for an organization. Learn more.
+    Account permissions
+
+    These permissions are granted on an individual user basis as part of the User authorization flow.
+        Block another user
+        View and manage users blocked by the user. Learn more.
+        Codespaces user secrets
+        Manage Codespaces user secrets. Learn more.
+        Copilot Chat
+        This application will receive your GitHub ID, your GitHub Copilot Chat session messages (not including messages sent to another application), and timestamps of provided GitHub Copilot Chat session messages. This permission must be enabled for Copilot Extensions. Learn more.
+        Copilot Editor Context
+        This application will receive bits of Editor Context (e.g. currently opened file) whenever you send it a message through Copilot Chat. Learn more.
+        Email addresses
+        Manage a user's email addresses. Learn more.
+        Events
+        View events triggered by a user's activity. Learn more.
+        Followers
+        A user's followers Learn more.
+        GPG keys
+        View and manage a user's GPG keys. Learn more.
+        Gists
+        Create and modify a user's gists and comments. Learn more.
+        Git SSH keys
+        Git SSH keys Learn more.
+        Interaction limits
+        Interaction limits on repositories Learn more.
+        Issue Fields
+        Manage issue fields for a user. Learn more.
+        Issue Types
+        Manage issue types for a user. Learn more.
+        Models
+        Allows access to GitHub Models. Learn more.
+        Plan
+        View a user's plan. Learn more.
+        Plugin gateway connections
+        Manage plugin gateway connections, their MCP configuration, and MCP invocation through them. Learn more.
+        Profile
+        Manage a user's profile settings. Learn more.
+        SSH signing keys
+        View and manage a user's SSH signing keys. Learn more.
+        Starring
+        List and manage repositories a user is starring. Learn more.
+        Watching
+        List and change repositories a user is subscribed to. Learn more.
+    Enterprise permissions
+
+    Enterprise permissions permit access to enterprise account resources.
+        Copilot usage records
+        View enterprise Copilot API usage records. Learn more.
+        Custom enterprise roles
+        Manage enterprise custom roles and assignments. Learn more.
+        Custom properties
+        View repository custom properties and administer definitions at the enterprise level. Learn more.
+        Enterprise AI controls
+        Manage enterprise-wide AI controls configuration Learn more.
+        Enterprise Copilot license management
+        View Copilot subscription information and manage enterprise Copilot licenses Learn more.
+        Enterprise Copilot metrics
+        View enterprise Copilot metrics. Learn more.
+        Enterprise IP allow list
+        View and manage an enterprise IP allow list Learn more.
+        Enterprise Organization and Repository Policies
+        Allows GitHub Apps to manage enterprise policies governing repository and organization actions like creation, permissions, deploy keys, etc. Learn more.
+        Enterprise Ruleset
+        View and manage rules for enterprise repositories Learn more.
+        Enterprise SCIM
+        View and manage enterprise SCIM configuration in an Enterprise Managed User enterprise. Learn more.
+        Enterprise access restrictions
+        Manage enterprise access restrictions Learn more.
+        Enterprise billing
+        Access usage, budgets, cost centers, and payment information for the enterprise Learn more.
+        Enterprise bypass requests
+        View delegated bypass requests for enterprise rulesets Learn more.
+        Enterprise credentials
+        View and manage enterprise credentials Learn more.
+        Enterprise custom organization roles
+        Create, edit, delete and list custom organization roles at the enterprise level. View system organization roles. Learn more.
+        Enterprise custom properties for organizations
+        View organization custom properties and administer definitions at the enterprise level. Learn more.
+        Enterprise innersource vulnerabilities
+        View and manage innersource vulnerabilities across the enterprise Learn more.
+        Enterprise license policy
+        View and manage the enterprise license policy Learn more.
+        Enterprise organization installation repositories
+        Manage repository access of GitHub Apps on Enterprise-owned organizations. Requesting this permission will prevent it from being installed on other enterprises. Learn more.
+        Enterprise organization installations
+        Manage installation of GitHub Apps on Enterprise-owned organizations. Requesting this permission will prevent it from being installed on other enterprises. Learn more.
+        Enterprise organizations
+        Create and remove enterprise organizations Learn more.
+        Enterprise people
+        Manage user access to the enterprise Learn more.
+        Enterprise security products
+        View and manage security products for the enterprise Learn more.
+        Enterprise settings
+        View and manage general enterprise settings Learn more.
+        Enterprise single sign-on
+        View and manage enterprise single sign-on configuration Learn more.
+        Enterprise teams
+        Create, edit, remove and view enterprise teams Learn more.
+        Enterprise two-factor authentication
+        View and manage enterprise two-factor authentication configuration Learn more.
+        Enterprise verifiable domains
+        Manage verifiable domains for an enterprise Learn more.
+
+Subscribe to events
+
+Based on the permissions you’ve selected, what events would you like to subscribe to?
+Installation target A GitHub App installation target is renamed.
+Meta When this App is deleted and the associated hook is removed.
+Security advisory Security advisory published, updated, or withdrawn.
+Issue comment Issue comment created, edited, or deleted.
+Issues Issue opened, edited, deleted, transferred, pinned, unpinned, closed, reopened, assigned, unassigned, labeled, unlabeled, milestoned, demilestoned, locked, unlocked, typed, untyped, field_added, or field_removed.
+Label Label created, edited, deleted, archived, or unarchived.
+Milestone Milestone created, closed, opened, edited, or deleted.
+Merge queue entry Merge Queue entry added
+Public Repository changes from private to public.
+Pull request Pull request assigned, auto merge disabled, auto merge enabled, closed, converted to draft, demilestoned, dequeued, edited, enqueued, labeled, locked, milestoned, opened, ready for review, reopened, review request removed, review requested, stacked, synchronized, unassigned, unlabeled, or unlocked.
+Pull request review Pull request review submitted, edited, or dismissed.
+Pull request review comment Pull request diff comment created, edited, or deleted.
+Pull request review thread A pull request review thread was resolved or unresolved.
+Repository Repository created, deleted, archived, unarchived, publicized, privatized, edited, renamed, or transferred.
+Star A star is created or deleted from a repository.
+Watch User stars a repository.
+Issue dependencies Issue dependencies - such as blocked by or blocking - added or removed.
+Issue relates to Related issues - such as relates to - added or removed.
+Sub issues Sub-issues added or removed, and parent issues added or removed.
+Add a note to users
+This note will be displayed on the permissions update approval page.
+Markdown supported
+Write Preview
+Are you sure you want to update permissions?
+
+Current users will be prompted to accept these changes and enable the new permissions on their installation.
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Community
+    Docs
+    Contact

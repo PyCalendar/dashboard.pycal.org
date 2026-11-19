@@ -1,0 +1,2 @@
+{% load i18n %}<ul class="permission-groups" data-permission-list>{% for group in groups %}<li><strong>{{ group.title }}</strong>
+  <ul>{% for item in group.items %}<li><span class="permission-name">{{ item.name }}</span>{% if item.level %}: {{ item.level }}{% endif %}{% if item.description %} <span class="muted">– {{ item.description }}</span>{% endif %}</li>{% endfor %}</ul></li>{% endfor %}</ul>

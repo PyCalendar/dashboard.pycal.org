@@ -32,7 +32,7 @@
   {% if installations %}<h3>{% translate "Your installations" %}</h3><ul class="list" data-installations>{% for installation in installations %}<li data-installation="{{ installation.github_id }}"><strong>{{ installation.account_login }}</strong>
     {% if installation.suspended %}<span class="badge badge-warning">{% translate "suspended" %}</span>{% endif %}
     {% if installation.missing_permissions %}<span class="badge badge-warning">{% translate "needs more permissions" %}</span>
-      <br><small>{% for name, level in installation.missing_permissions.items %}<code>{{ name }}: {{ level }}</code> {% endfor %}</small>
+      {% permission_list installation.missing_permissions %}
       <br><a class="button" href="{{ installation.settings_url }}">{% translate "Accept the permissions on GitHub" %}</a>
     {% else %}<span class="badge badge-success">{% translate "has every permission" %}</span> <a href="{{ installation.settings_url }}">{% translate "Configure it on GitHub" %}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
   {% if install_url %}<p>{% translate "Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub." %}</p>

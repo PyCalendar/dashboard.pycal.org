@@ -9,6 +9,7 @@ from django import template
 from django.utils.html import format_html
 
 from pycal_dashboard.github_mark import PATH
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import GitHubUser
 
 register = template.Library()
@@ -101,3 +102,20 @@ def github_user(person: GitHubUser | str | None, size: int = 20, name: str = "")
         "avatar": avatar_url(person, size) if login else "",
         "size": size,
     }
+
+
+@register.inclusion_tag("pycal_dashboard/_permission_list.html")
+def permission_list(permissions: dict | None, events: list | None = None) -> dict:
+    """Permissions and events as the settings of the GitHub App on GitHub name them.
+
+    Parameters:
+        permissions: Permissions by the names of the API, with their level.
+        events: Events by the names of the API.
+
+    Returns:
+        The context of the partial: the groups.
+    """
+    with IMPORT_GUARD:  # see import_guard.py; only the pages of permissions need the names
+        from pycal_dashboard.github.permission_names import grouped
+
+    return {"groups": grouped(dict(permissions or {}), list(events or []))}

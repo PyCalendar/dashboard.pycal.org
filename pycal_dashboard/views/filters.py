@@ -104,48 +104,88 @@ def filter_data(saved: PullRequestFilter, count: int, path: str) -> dict:
 
 @require_http_methods(["GET", "HEAD"])
 def project_filters(request: HttpRequest, slug: str):
-    """The saved filters of a project, each with how many pull requests it shows.
+    """The saved filters of a project; their numbers come when a filter is opened.
 
     Parameters:
         request: The request.
         slug: The project.
 
     Returns:
-        The page or its JSON.
+        The page or its JSON, which counts the pull requests of each filter.
     """
     access, moved = opened(request, slug, "filters/")
     if moved:
         return moved
-    repositories = shown_repositories(access)
-    pulls = pull_requests_of(repositories)
     filters = []
     for saved in access.project.filters.all():
         columns = [Column.decode(value) for value in saved.columns]
+        address = table_address(columns, PER_PAGE, saved.pk)
         filters.append(
             {
                 "saved": saved,
                 "columns": columns,
-                "summary": summary(columns),
-                "count": len(condition_rows(pulls, columns)),
-                "path": access.project.path("pull-requests/")
-                + table_address(columns, PER_PAGE, saved.pk),
+                "path": access.project.path("pull-requests/") + address,
+                "edit": access.project.path("filters/save/") + address,
+                "counts": access.project.path(f"filters/{saved.pk}/"),
             }
         )
-    labels = Label.objects.filter(repository__in=repositories)
+
+    def data() -> dict:
+        pulls = pull_requests_of(shown_repositories(access))
+        return {
+            "filters": [
+                filter_data(f["saved"], len(condition_rows(pulls, f["columns"])), f["path"])
+                for f in filters
+            ]
+        }
+
     return page(
         request,
         "pycal_dashboard/project_filters.html",
-        {
-            "project": access.project,
-            "access": access,
-            "filters": filters,
-            "label_colors": {label.name.lower(): label.color for label in labels},
-            "tab": "filters",
-        },
-        lambda: {
-            "filters": [filter_data(f["saved"], f["count"], f["path"]) for f in filters],
-        },
+        {"project": access.project, "access": access, "filters": filters, "tab": "filters"},
+        data,
     )
+
+
+@require_http_methods(["GET", "HEAD"])
+def project_filter_counts(request: HttpRequest, slug: str, number: int):
+    """How many pull requests a filter shows, and each of its conditions applies to.
+
+    The tab Filters loads it when a filter is opened (``?fragment=1``: the part alone);
+    without JavaScript, it is a page of its own.
+
+    Parameters:
+        request: The request.
+        slug: The project.
+        number: The number of the filter.
+
+    Returns:
+        The page, or its part.
+    """
+    access, moved = opened(request, slug, f"filters/{number}/")
+    if moved:
+        return moved
+    saved = saved_filter(access.project, str(number))
+    columns = [Column.decode(value) for value in saved.columns]
+    pulls = list(
+        pull_requests_of(shown_repositories(access))
+        .select_related("pull_state")
+        .prefetch_related("labels")
+    )
+    rows = summary(columns)
+    for item in rows:
+        item["count"] = sum(item["column"].applies(pull) is True for pull in pulls)
+    context = {
+        "project": access.project,
+        "access": access,
+        "saved": saved,
+        "rows": rows,
+        "count": len(condition_rows(pull_requests_of(shown_repositories(access)), columns)),
+        "tab": "filters",
+    }
+    if request.GET.get("fragment"):
+        return render(request, "pycal_dashboard/conditions/_counts.html", context)
+    return render(request, "pycal_dashboard/project_filter_counts.html", context)
 
 
 @login_required

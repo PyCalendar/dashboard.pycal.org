@@ -86,7 +86,11 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   directly above it) and its default, in the sections of the file; and in
   `docs/reference/settings.rst`. `tests/test_settings.py` checks both.
 - New permissions or events of the GitHub App go into
-  `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`.
+  `pycal_dashboard/github/permissions.py` and `docs/reference/permissions.rst`, and their
+  names for people into `pycal_dashboard/github/permission_names.py`: as GitHub names and
+  describes them on the page of the permissions of an app, whose text is
+  `pycal_dashboard/github/permission_names.txt` (the reference; `tests/test_permission_names.py`
+  compares them). People see the names of GitHub, never those of the API.
 
 - The idle memory of the service stays as low as possible: one process of nginx and of gunicorn
   by default, and the packages that are only needed now and then (GitHub, JWT, the licenses) are

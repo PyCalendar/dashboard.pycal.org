@@ -1,0 +1,8 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n %}
+{% block title %}{{ saved.name }} · {% translate "Filters" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<p><a href="{% url 'project_filters' project.slug %}">← {% translate "Back to the filters" %}</a></p>
+<section class="card"><h2>{{ saved.name }}</h2>{% include "pycal_dashboard/conditions/_counts.html" %}</section>
+{% endblock %}

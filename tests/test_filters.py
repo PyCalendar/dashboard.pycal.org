@@ -97,7 +97,11 @@ def test_save_a_filter_and_open_it(client, project, bob):
     client.logout()
     page = client.get("/projects/icalendar/filters/").content.decode()  # public
     item = page.split('data-filter="Ready to merge"')[1].split("</li>\n</ul>")[0]
-    assert "<strong>Open</strong> ones" in item and "3 pull requests" in item
+    assert "<strong>Open</strong> ones" in item and "3 conditions" in item
+    counts = client.get(f"/projects/icalendar/filters/{saved.pk}/?fragment=1").content.decode()
+    assert "The filter shows 3 pull requests." in counts  # counted when opened
+    assert "<!doctype" not in counts  # the part alone
+    assert f'data-counts="/projects/icalendar/filters/{saved.pk}/?fragment=1"' in item
     link = item.split("data-filter-pull-requests")[0].rsplit('href="', 1)[1].split('"')[0]
     assert f"saved={saved.pk}" in link
     table = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
@@ -198,3 +202,25 @@ def test_a_renamed_label_keeps_the_filters_working(client, project, github):
     assert saved.columns == ["labels~applies~present~review wanted", "status~all~open"]
     page = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
     assert "Waiting: 1 pull request" in page  # Ready still has it
+
+
+def test_the_numbers_of_each_condition_come_when_opened(client, project):
+    saved = PullRequestFilter.objects.create(project=project, name="Open", columns=COLUMNS)
+    page = client.get("/projects/icalendar/filters/").content.decode()
+    assert "data-condition-count" not in page  # not counted with the list
+    counts = client.get(f"/projects/icalendar/filters/{saved.pk}/").content.decode()
+    rows = counts.split('data-condition-count="')[1:]
+    assert [row.split('numeric">')[1].split("<")[0] for row in rows] == ["2", "1", "1"]
+    assert "← Back to the filters" in counts  # a page of its own without JavaScript
+    assert "font-weight" not in counts
+
+
+def test_edit_a_filter(client, project, bob):
+    saved = PullRequestFilter.objects.create(project=project, name="Open", columns=COLUMNS)
+    assert b"data-edit-filter" not in client.get("/projects/icalendar/filters/").content
+    client.force_login(bob)
+    page = client.get("/projects/icalendar/filters/").content.decode()
+    edit = page.split("data-edit-filter")[0].rsplit('href="', 1)[1].split('"')[0]
+    assert edit.startswith("/projects/icalendar/filters/save/?col=status~applies~open")
+    assert f"saved={saved.pk}" in edit
+    assert "Save Open" in client.get(edit.replace("&amp;", "&")).content.decode()

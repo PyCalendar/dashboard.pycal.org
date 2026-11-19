@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 19:55+0000\n"
+"POT-Creation-Date: 2026-11-19 21:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -344,6 +344,103 @@ msgstr "El contenido del webhook no es válido"
 
 msgid "The webhook names no event"
 msgstr "El webhook no indica ningún evento"
+
+msgid "Repository permissions"
+msgstr "Permisos de repositorio (Repository permissions)"
+
+msgid "Organization permissions"
+msgstr "Permisos de organización (Organization permissions)"
+
+msgid "Account permissions"
+msgstr "Permisos de cuenta (Account permissions)"
+
+msgid "Enterprise permissions"
+msgstr "Permisos de empresa (Enterprise permissions)"
+
+msgid "Subscribe to events"
+msgstr "Suscribirse a eventos (Subscribe to events)"
+
+msgid "Read-only"
+msgstr "Solo lectura (Read-only)"
+
+msgid "Read and write"
+msgstr "Lectura y escritura (Read and write)"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid ""
+"Search repositories, list collaborators, and access repository metadata."
+msgstr ""
+"Buscar repositorios, listar colaboradores y acceder a los metadatos de los "
+"repositorios."
+
+msgid "Issues and related comments, assignees, labels, and milestones."
+msgstr "Issues y sus comentarios, asignaciones, etiquetas e hitos."
+
+msgid ""
+"Pull requests and related comments, assignees, labels, milestones, and "
+"merges."
+msgstr ""
+"Pull requests y sus comentarios, asignaciones, etiquetas, hitos y fusiones."
+
+msgid "Checks on code."
+msgstr "Comprobaciones del código."
+
+msgid "Commit statuses."
+msgstr "Estados de commits."
+
+msgid ""
+"Repository contents, commits, branches, downloads, releases, and merges."
+msgstr ""
+"Contenidos, commits, ramas, descargas, versiones y fusiones de repositorios."
+
+msgid ""
+"Issue opened, edited, deleted, transferred, closed, reopened, assigned, "
+"labeled."
+msgstr ""
+"Issue abierto, editado, borrado, transferido, cerrado, reabierto, asignado, "
+"etiquetado."
+
+msgid "Issue comment created, edited, or deleted."
+msgstr "Comentario de un issue creado, editado o borrado."
+
+msgid ""
+"Pull request opened, edited, closed, labeled, auto merge enabled or disabled."
+msgstr ""
+"Pull request abierto, editado, cerrado, etiquetado, fusión automática "
+"activada o desactivada."
+
+msgid "Pull request review submitted, edited, or dismissed."
+msgstr "Revisión de un pull request enviada, editada o descartada."
+
+msgid ""
+"Repository created, deleted, archived, unarchived, publicized, privatized, "
+"edited, renamed, or transferred."
+msgstr ""
+"Repositorio creado, borrado, archivado, desarchivado, hecho público o "
+"privado, editado, renombrado o transferido."
+
+msgid "Repository changes from private to public."
+msgstr "El repositorio pasa de privado a público."
+
+msgid "Label created, edited, deleted, archived, or unarchived."
+msgstr "Etiqueta creada, editada, borrada, archivada o desarchivada."
+
+msgid "Check run created, requested, rerequested, or completed."
+msgstr ""
+"Ejecución de comprobación creada, solicitada, vuelta a solicitar o "
+"completada."
+
+msgid "Check suite requested, rerequested, or completed."
+msgstr ""
+"Conjunto de comprobaciones solicitado, vuelto a solicitar o completado."
+
+msgid "Commit status updated from the API."
+msgstr "Estado de un commit actualizado desde la API."
+
+msgid "Git push to a repository."
+msgstr "Git push a un repositorio."
 
 msgid ""
 "Your account on GitHub as GitHub describes it when you sign in: your GitHub "
@@ -1111,14 +1208,32 @@ msgstr ""
 "href=\"%(register_url)s\">registran la GitHub App</a> con el código de "
 "configuración del registro."
 
+#, python-format
+msgid "The filter shows %(counter)s pull request."
+msgid_plural "The filter shows %(counter)s pull requests."
+msgstr[0] "El filtro muestra %(counter)s pull request."
+msgstr[1] "El filtro muestra %(counter)s pull requests."
+
+msgid "Condition"
+msgstr "Condición"
+
+msgid "Applies to"
+msgstr "Se aplica a"
+
+msgid "off"
+msgstr "desactivada"
+
+msgid "those it does not apply to"
+msgstr "aquellos a los que no se aplica"
+
+msgid "those it applies to"
+msgstr "aquellos a los que se aplica"
+
 msgid "From"
 msgstr "Desde"
 
 msgid "To"
 msgstr "Hasta"
-
-msgid "Condition"
-msgstr "Condición"
 
 msgid "Name of the label"
 msgstr "Nombre de la etiqueta"
@@ -1132,24 +1247,15 @@ msgstr "Cambiar la columna"
 msgid "Add the column"
 msgstr "Añadir la columna"
 
-msgid "Shows"
-msgstr "Muestra"
-
 #, python-format
 msgid "Filter by %(name)s"
 msgstr "Filtrar por %(name)s"
-
-msgid "those it does not apply to"
-msgstr "aquellos a los que no se aplica"
 
 msgid "the same as"
 msgstr "lo mismo que"
 
 msgid "Use it"
 msgstr "Usarla"
-
-msgid "those it applies to"
-msgstr "aquellos a los que se aplica"
 
 msgid ""
 "A pull request shows when any condition that is on applies to it, as its "
@@ -1347,8 +1453,8 @@ msgstr "Todavía nada."
 msgid "Mark all as read"
 msgstr "Marcar todas como leídas"
 
-msgid "The permissions it asks for and why"
-msgstr "Los permisos que pide y por qué"
+msgid "How to accept new permissions"
+msgstr "Cómo aceptar permisos nuevos"
 
 msgid ""
 "An owner of the account opens the settings of the installation on GitHub and "
@@ -1358,9 +1464,6 @@ msgstr ""
 "Quien posee la cuenta abre los ajustes de la instalación en GitHub y revisa "
 "la solicitud de permisos nuevos. Si GitHub no muestra ninguna solicitud, "
 "quienes poseen la GitHub App añaden primero los permisos a la app."
-
-msgid "How to accept new permissions"
-msgstr "Cómo aceptar permisos nuevos"
 
 msgid "Add them to the GitHub App"
 msgstr "Añadirlos a la GitHub App"
@@ -1647,6 +1750,9 @@ msgstr ""
 msgid "The owners of the project share it."
 msgstr "Los propietarios del proyecto lo comparten."
 
+msgid "Back to the filters"
+msgstr "Volver a los filtros"
+
 msgid "Save the filter"
 msgstr "Guardar el filtro"
 
@@ -1679,11 +1785,17 @@ msgstr "Guardar %(name)s"
 msgid "Save as a new filter"
 msgstr "Guardar como filtro nuevo"
 
+msgid "Edit"
+msgstr "Editar"
+
 #, python-format
-msgid "%(counter)s pull request"
-msgid_plural "%(counter)s pull requests"
-msgstr[0] "%(counter)s pull request"
-msgstr[1] "%(counter)s pull requests"
+msgid "%(counter)s condition"
+msgid_plural "%(counter)s conditions"
+msgstr[0] "%(counter)s condición"
+msgstr[1] "%(counter)s condiciones"
+
+msgid "Count the pull requests of each condition"
+msgstr "Contar los pull requests de cada condición"
 
 #, python-format
 msgid ""
@@ -1775,6 +1887,12 @@ msgstr "Sí, eliminar este proyecto"
 msgid "switch one on"
 msgstr "activa una"
 
+#, python-format
+msgid "%(counter)s pull request"
+msgid_plural "%(counter)s pull requests"
+msgstr[0] "%(counter)s pull request"
+msgstr[1] "%(counter)s pull requests"
+
 msgid "Per page"
 msgstr "Por página"
 
@@ -1856,6 +1974,9 @@ msgstr "añadir y quitar etiquetas de pull requests,"
 
 msgid "create and update a comment of the site on a pull request."
 msgstr "crear y actualizar un comentario del sitio en un pull request."
+
+msgid "The permissions it asks for and why"
+msgstr "Los permisos que pide y por qué"
 
 #, python-format
 msgid "%(counter)s repository has no GitHub App yet."

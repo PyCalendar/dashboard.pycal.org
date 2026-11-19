@@ -34,6 +34,11 @@ urlpatterns = [
     ),
     path("projects/<project_slug:slug>/filters/", filters.project_filters, name="project_filters"),
     path(
+        "projects/<project_slug:slug>/filters/<int:number>/",
+        filters.project_filter_counts,
+        name="project_filter_counts",
+    ),
+    path(
         "projects/<project_slug:slug>/filters/save/",
         filters.project_filter_save,
         name="project_filter_save",

@@ -116,7 +116,10 @@ def test_the_account_page_shows_the_installations(client, alice_with_email):
     webhook(client, "created", installation({"metadata": "read"}))
     client.force_login(alice_with_email)
     page = client.get("/account/").content.decode()
-    assert 'data-installation="5"' in page and "<code>issues: read</code>" in page
+    assert (
+        'data-installation="5"' in page
+        and '<span class="permission-name">Issues</span>: Read-only' in page
+    )
     assert 'href="https://github.com/organizations/PyCalendar/settings/installations/5"' in page
     other = person(43, "bob")
     client.force_login(other)

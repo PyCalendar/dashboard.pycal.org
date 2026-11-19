@@ -362,3 +362,8 @@ community: where to start, what waits for a review, who contributes.
       notification of the app first; read notifications stay until they are done
 - [x] A repository made public or private: the webhook public (new) and repository (privatized,
       publicized) update it at once
+- [x] Permissions and events as GitHub names them, in its groups (reference moved to
+      pycal_dashboard/github/permission_names.txt, tested)
+- [x] The tab Filters: the numbers of each condition when a filter is opened, a button Edit; the
+      names not bold; the save page without the column Shows
+- [ ] The person: the license of permission_names.txt, the text of a page of GitHub
