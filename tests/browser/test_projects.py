@@ -110,7 +110,7 @@ def test_share_a_project(signed_in, site, alice):
     expect(proposal.locator("img.avatar")).to_have_count(1)
     proposal.click()
     expect(page.get_by_label("GitHub name")).to_have_value("alice")
-    page.locator("[data-share]").get_by_label("Role").select_option("write")
+    page.locator("[data-share]").get_by_label("Role", exact=True).select_option("write")
     page.get_by_role("button", name="Share").click()
     expect(page.get_by_text("@alice may change the project.")).to_be_visible()
     expect(page.locator("[data-member='alice']")).to_be_visible()
