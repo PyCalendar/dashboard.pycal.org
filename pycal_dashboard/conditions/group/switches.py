@@ -26,6 +26,10 @@ class SwitchesGroup(ConditionGroup):
     switches: ClassVar[tuple[tuple[str, type[Condition], str], ...]] = ()
     # the switches of which exactly one holds for a pull request whose data is known
     exclusive: ClassVar[tuple[str, ...]] = ()
+    # the sentence of the group, with %(states)s: positive and negative
+    phrase: ClassVar[tuple[str, str]] = ("", "")
+    # the words of switches in the sentence where they differ from their texts
+    words: ClassVar[dict[str, str]] = {}
 
     @classmethod
     def names(cls) -> list[str]:
@@ -127,6 +131,21 @@ class SwitchesGroup(ConditionGroup):
         if not set(choices) <= set(cls.exclusive) or set(choices) == set(cls.exclusive):
             return None
         return tuple(name for name in cls.exclusive if name not in choices)
+
+    @classmethod
+    def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
+        """Such as ``its branch is outdated or in conflict``.
+
+        Parameters:
+            choices: The switches that are on.
+            negative: The pull requests that it does not apply to.
+
+        Returns:
+            The part of the sentence.
+        """
+        texts = {name: cls.words.get(name, text) for name, _condition, text in cls.switches}
+        states = (" " + gettext("or") + " ").join(gettext(texts[name]) for name in choices)
+        return gettext(cls.phrase[1 if negative else 0]) % {"states": states}
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:

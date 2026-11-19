@@ -2,7 +2,7 @@
 {% if rows %}<div class="table-wrap"><table class="table filter-conditions">
   <thead><tr><th>{% translate "Condition" %}</th><th class="numeric">{% translate "Applies to" %}</th></tr></thead>
   <tbody>{% for item in rows %}<tr{% if not item.filters %} class="off"{% endif %} data-condition-count="{{ item.index }}">
-    <td class="condition-name">{% if not item.filters %}<span class="muted">{% translate "off" %}</span> {% elif item.column.filter == "not" %}<span class="result result-no" title="{% translate "those it does not apply to" %}">✗</span> {% else %}<span class="result result-yes" title="{% translate "those it applies to" %}">✓</span> {% endif %}{{ item.column.summary }}</td>
+    <td class="condition-name">{% if not item.filters %}<span class="muted">{% translate "off" %}:</span> {% endif %}{{ item.column.sentence|capfirst }}</td>
     <td class="numeric">{{ item.count }}</td>
   </tr>{% endfor %}</tbody>
 </table></div>{% endif %}</div>

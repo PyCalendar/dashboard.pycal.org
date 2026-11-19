@@ -66,7 +66,8 @@ People
    also for people who signed in before it changed.
 ``SIGN_OUT_MINUTES``
    Minutes after signing in when people are signed out again, also while they
-   use the site. Default: ``60``.
+   use the site; ``0`` signs nobody out until they sign out themselves.
+   Default: ``0``.
 
 Data and secrets
 ================

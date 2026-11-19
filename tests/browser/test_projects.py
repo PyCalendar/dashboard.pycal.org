@@ -333,7 +333,9 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     page.get_by_role("link", name="Save", exact=True).click()
     expect(page.get_by_role("link", name="Filters")).to_have_attribute("aria-current", "page")
     page.locator("[data-opposite]").get_by_role("link", name="Use it").click()
-    expect(page.locator("[data-condition-row='0']")).to_contain_text("Label needs review: absent")
+    expect(page.locator("[data-condition-row='0']")).to_contain_text(
+        "It does not have the label needs review"
+    )
     expect(page.locator("[data-opposite]")).to_have_count(0)
     status = page.locator("[data-condition-row='1']")
     status.locator("label.switch").click()  # off: grayed out

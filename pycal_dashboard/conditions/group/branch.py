@@ -24,6 +24,11 @@ class BranchGroup(SwitchesGroup):
         ("conflict", MergeConflict, gettext_noop("conflict")),
     )
     exclusive = ("up_to_date", "outdated", "conflict")
+    phrase = (
+        gettext_noop("its branch is %(states)s"),
+        gettext_noop("its branch is not %(states)s"),
+    )
+    words = {"conflict": gettext_noop("in conflict")}
 
     @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:

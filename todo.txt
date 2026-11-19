@@ -367,3 +367,17 @@ community: where to start, what waits for a review, who contributes.
 - [x] The tab Filters: the numbers of each condition when a filter is opened, a button Edit; the
       names not bold; the save page without the column Shows
 - [ ] The person: the license of permission_names.txt, the text of a page of GitHub
+- [x] Conditions as sentences; "The filter shows a pull request when one of the conditions above
+      is met"; larger switches with a background and a thick contrasting border when on
+- [x] No automatic sign-out by default (SIGN_OUT_MINUTES=0)
+
+## Later (decided by the person: quick feedback first)
+
+- [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
+      the time goes. Seen so far: the conditions of labels ask the database once for each pull
+      request (the labels are prefetched but filtered with a query); without columns, the table
+      builds a list of all pull requests before the page; the JSON of the filters evaluates every
+      filter. Then a cache of the results of each column with invalidation by the time of the
+      last update of the repositories of the project
+- [ ] A script that measures the speed of every condition on the live site through the JSON of
+      the pull requests, to see the impact of each change and bring the times down

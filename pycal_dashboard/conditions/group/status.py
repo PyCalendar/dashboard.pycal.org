@@ -25,3 +25,4 @@ class StatusGroup(SwitchesGroup):
         ("auto_merge", AutoMergeEnabled, gettext_noop("auto-merging")),
     )
     exclusive = ("open", "closed", "merged")  # auto-merging is open, too
+    phrase = (gettext_noop("it is %(states)s"), gettext_noop("it is not %(states)s"))

@@ -308,11 +308,11 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .menu-actions { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .5rem 0 0; padding-top: .5rem; border-top: 1px solid var(--border); }
 /* a checkbox that looks like a switch, on or off */
 label.switch { display: flex; align-items: center; gap: .5rem; margin: .3rem 0; cursor: pointer; }
-label.switch input { appearance: none; position: relative; flex: none; width: 2.2rem; height: 1.2rem; margin: 0; border-radius: 1rem; background: var(--border); cursor: pointer; transition: background .15s; }
-label.switch input::after { content: ""; position: absolute; top: .15rem; left: .15rem; width: .9rem; height: .9rem; border-radius: 50%; background: var(--surface); transition: left .15s; }
-label.switch input:checked { background: var(--success); }
-label.switch input:checked::after { left: 1.15rem; }
-label.switch input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+label.switch input { appearance: none; position: relative; flex: none; width: 3.2rem; height: 1.8rem; margin: 0; border: 2px solid var(--text-muted); border-radius: 1rem; background: var(--surface-tint); cursor: pointer; transition: background .15s, border-color .15s; }
+label.switch input::after { content: ""; position: absolute; top: .15rem; left: .2rem; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--text-muted); transition: left .15s, background .15s; }
+label.switch input:checked { background: var(--success); border: 3px solid var(--text); }
+label.switch input:checked::after { left: 1.55rem; top: .1rem; background: var(--surface); }
+label.switch input:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .result { display: inline-block; min-width: 1.2em; font-weight: 700; text-align: center; }
 .result-yes { color: var(--success); }
 .result-no { color: var(--danger); }
@@ -350,7 +350,7 @@ label.switch input:focus-visible { outline: 2px solid var(--primary); outline-of
 .filter-conditions tr:has(input[name="on"]:not(:checked)) td:not(.switch-cell) { opacity: .45; }
 .filter-conditions tr:has(input[name="on"]:checked) td { opacity: 1; }
 .filter-conditions .condition-name { font-weight: 400; }
-.filter-conditions .switch-cell { width: 3.2rem; min-width: 3.2rem; position: relative; }
+.filter-conditions .switch-cell { width: 4.2rem; min-width: 4.2rem; position: relative; vertical-align: middle; }
 .filter-actions { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
 .filter-details > summary { margin: .5rem 0; }
 .opposite { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin-left: .4rem; color: var(--text-muted); }

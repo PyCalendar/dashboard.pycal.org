@@ -132,6 +132,11 @@ class Column:
         return self.group.summary(self.choices)
 
     @property
+    def sentence(self) -> str:
+        """The condition as it filters, as a part of a sentence, such as ``it is open``."""
+        return self.group.sentence(self.choices, negative=self.filter == "not")
+
+    @property
     def head(self) -> list[dict]:
         """The shortest header of the column, see ``ConditionGroup.head``."""
         return self.group.head(self.choices)

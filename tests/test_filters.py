@@ -53,11 +53,12 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     table = page.split("data-filter-summary>")[1].split("</table>")[0]
     rows = table.split("<tr data-condition-row=")[1:]
     assert len(rows) == 3 and "data-summary" not in page  # one table, not three
-    assert "Status: open" in rows[0] and "Label needs review: present" in rows[1]
+    # the conditions read as sentences, as they filter
+    assert "It is open" in rows[0] and "It does not have the label needs review" in rows[1]
     assert 'name="on" value="0" checked' in rows[0] and 'name="on" value="1" checked' in rows[1]
     assert 'name="on" value="2">' in rows[2] and 'class="off"' in rows[2]  # shows both: off
-    assert "those it does not apply to" in rows[1] and "data-opposite" in rows[1]
-    assert "Label needs review: absent" in rows[1] and "&amp;swap=1" in rows[1]
+    assert "data-opposite" in rows[1] and "&amp;swap=1" in rows[1]
+    assert "The filter shows a pull request when one of the conditions above is met." in page
     assert page.count('<input type="hidden" name="col"') == 3
 
 

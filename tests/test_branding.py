@@ -73,12 +73,12 @@ def test_wrong_favicon_stops_the_site(settings, tmp_path, name, error):
     assert [found.id for found in check_favicon()] == [error]
 
 
-def test_signed_out_after_an_hour(client, alice):
+def test_no_automatic_sign_out_by_default(client, alice):
     from django.conf import settings
 
-    assert settings.SIGN_OUT_MINUTES == 60 and settings.SESSION_COOKIE_AGE == 3600
+    assert settings.SIGN_OUT_MINUTES == 0 and settings.SESSION_COOKIE_AGE == 365 * 24 * 3600
     client.force_login(alice)
-    assert client.session.get_expiry_age() == 3600
+    assert client.session.get_expiry_age() == 365 * 24 * 3600
 
 
 def test_unknown_site_admins_are_named_at_the_start(db, settings, capsys):

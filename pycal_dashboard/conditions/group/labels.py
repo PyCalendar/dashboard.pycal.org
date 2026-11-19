@@ -102,6 +102,22 @@ class LabelsGroup(ConditionGroup):
         return ("absent" if choices[0] == "present" else "present", choices[1])
 
     @classmethod
+    def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
+        """Such as ``it has the label bug`` or ``it does not have the label bug``.
+
+        Parameters:
+            choices: The mode and the name.
+            negative: The pull requests that it does not apply to.
+
+        Returns:
+            The part of the sentence.
+        """
+        has = (choices[0] == "present") != negative
+        if has:
+            return gettext("it has the label %(name)s") % {"name": choices[1]}
+        return gettext("it does not have the label %(name)s") % {"name": choices[1]}
+
+    @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
         """The label with its border and color; struck through when it must be absent.
 

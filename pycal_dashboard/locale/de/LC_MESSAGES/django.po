@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 21:21+0000\n"
+"POT-Creation-Date: 2026-11-19 23:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,6 +34,17 @@ msgstr "veraltet"
 msgid "conflict"
 msgstr "Konflikt"
 
+#, python-format
+msgid "its branch is %(states)s"
+msgstr "sein Branch ist %(states)s"
+
+#, python-format
+msgid "its branch is not %(states)s"
+msgstr "sein Branch ist nicht %(states)s"
+
+msgid "in conflict"
+msgstr "im Konflikt"
+
 msgid "not known: GitHub tells the branch of open pull requests only"
 msgstr "nicht bekannt: GitHub nennt den Branch nur bei offenen Pull Requests"
 
@@ -52,6 +63,14 @@ msgstr "fehlerhaft"
 msgid "unknown"
 msgstr "unbekannt"
 
+#, python-format
+msgid "its CI is %(states)s"
+msgstr "seine CI ist %(states)s"
+
+#, python-format
+msgid "its CI is not %(states)s"
+msgstr "seine CI ist nicht %(states)s"
+
 msgid "not known: the checks are read for open pull requests only"
 msgstr "nicht bekannt: Die Checks werden nur bei offenen Pull Requests gelesen"
 
@@ -68,6 +87,14 @@ msgstr "noch nicht bekannt: Kein Check des letzten Commits ist fertig"
 
 msgid "Label"
 msgstr "Label"
+
+#, python-format
+msgid "it has the label %(name)s"
+msgstr "er hat das Label %(name)s"
+
+#, python-format
+msgid "it does not have the label %(name)s"
+msgstr "er hat das Label %(name)s nicht"
 
 msgid "present"
 msgstr "vorhanden"
@@ -93,6 +120,17 @@ msgstr "gemergt"
 
 msgid "auto-merging"
 msgstr "automatisches Mergen"
+
+#, python-format
+msgid "it is %(states)s"
+msgstr "er ist %(states)s"
+
+#, python-format
+msgid "it is not %(states)s"
+msgstr "er ist nicht %(states)s"
+
+msgid "or"
+msgstr "oder"
 
 msgid "As the system"
 msgstr "Wie das System"
@@ -1231,12 +1269,6 @@ msgstr "Trifft zu auf"
 msgid "off"
 msgstr "aus"
 
-msgid "those it does not apply to"
-msgstr "die, auf die sie nicht zutrifft"
-
-msgid "those it applies to"
-msgstr "die, auf die sie zutrifft"
-
 msgid "From"
 msgstr "Von"
 
@@ -1266,12 +1298,11 @@ msgid "Use it"
 msgstr "Übernehmen"
 
 msgid ""
-"A pull request shows when any condition that is on applies to it, as its "
-"column shows; a condition that is off stays a column but does not filter."
+"The filter shows a pull request when one of the conditions above is met. A "
+"condition that is off stays a column but does not filter."
 msgstr ""
-"Ein Pull Request erscheint, wenn eine eingeschaltete Bedingung so auf ihn "
-"zutrifft, wie ihre Spalte zeigt; eine ausgeschaltete Bedingung bleibt eine "
-"Spalte, filtert aber nicht."
+"Der Filter zeigt einen Pull Request, wenn eine der Bedingungen oben erfüllt "
+"ist. Eine ausgeschaltete Bedingung bleibt eine Spalte, filtert aber nicht."
 
 msgid "No conditions: all pull requests."
 msgstr "Keine Bedingungen: alle Pull Requests."

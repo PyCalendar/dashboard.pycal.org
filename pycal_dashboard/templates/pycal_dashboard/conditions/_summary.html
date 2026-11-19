@@ -2,9 +2,9 @@
   <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th></tr></thead>
   <tbody>{% for item in rows %}<tr data-condition-row="{{ item.index }}"{% if not item.filters %} class="off"{% endif %}>
     <td class="switch-cell"><label class="switch"><input type="checkbox" name="on" value="{{ item.index }}"{% if item.filters %} checked{% endif %}><span class="visually-hidden">{% blocktranslate with name=item.column.summary %}Filter by {{ name }}{% endblocktranslate %}</span></label></td>
-    <td class="condition-name">{% if item.column.filter == "not" %}<span class="result result-no" title="{% translate "those it does not apply to" %}">✗</span>{% else %}<span class="result result-yes" title="{% translate "those it applies to" %}">✓</span>{% endif %} {{ item.column.summary }}{% if item.opposite %}
-      <span class="opposite" data-opposite>{% translate "the same as" %} <span class="result result-yes" aria-hidden="true">✓</span> {{ item.opposite.summary }} <a class="button button-quiet button-small" href="{{ address }}&amp;swap={{ item.index }}">{% translate "Use it" %}</a></span>{% endif %}</td>
+    <td class="condition-name">{{ item.column.sentence|capfirst }}{% if item.opposite %}
+      <span class="opposite" data-opposite>{% translate "the same as" %}: {{ item.opposite.sentence }} <a class="button button-quiet button-small" href="{{ address }}&amp;swap={{ item.index }}">{% translate "Use it" %}</a></span>{% endif %}</td>
   </tr>{% endfor %}</tbody>
 </table></div>
-<p class="muted">{% translate "A pull request shows when any condition that is on applies to it, as its column shows; a condition that is off stays a column but does not filter." %}</p>
+<p class="muted">{% translate "The filter shows a pull request when one of the conditions above is met. A condition that is off stays a column but does not filter." %}</p>
 {% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}

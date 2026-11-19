@@ -25,6 +25,7 @@ class CiGroup(SwitchesGroup):
         ("unknown", CiUnknown, gettext_noop("unknown")),
     )
     exclusive = ("passing", "failing", "unknown")
+    phrase = (gettext_noop("its CI is %(states)s"), gettext_noop("its CI is not %(states)s"))
 
     @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:

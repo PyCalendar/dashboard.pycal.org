@@ -154,9 +154,12 @@ SIGN_IN = SignIn.from_environment(dict(os.environ))
 SOCIALACCOUNT_PROVIDERS = SIGN_IN.providers()
 # GitHub handles that administer this site: the Django admin and the webhook deliveries
 SITE_ADMINS = [login.lower() for login in env.list("SITE_ADMINS", default=[])]
-# minutes after signing in when people are signed out again, also while they use the site
-SIGN_OUT_MINUTES = env.float("SIGN_OUT_MINUTES", default=60)
-SESSION_COOKIE_AGE = max(60, round(SIGN_OUT_MINUTES * 60))
+# minutes after signing in when people are signed out again, also while they use the site;
+# 0, the default: never, until they sign out (the cookie of the session lasts a year)
+SIGN_OUT_MINUTES = env.float("SIGN_OUT_MINUTES", default=0)
+SESSION_COOKIE_AGE = (
+    max(60, round(SIGN_OUT_MINUTES * 60)) if SIGN_OUT_MINUTES > 0 else 365 * 24 * 3600
+)
 
 # The GitHub App: docs/how-to/github-app.rst
 GITHUB_API = env("GITHUB_API", default="https://api.github.com").rstrip("/")

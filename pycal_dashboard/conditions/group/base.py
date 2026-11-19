@@ -86,6 +86,19 @@ class ConditionGroup(ABC):
         """
 
     @classmethod
+    @abstractmethod
+    def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
+        """The condition as a part of a sentence about a pull request, translated.
+
+        Parameters:
+            choices: The choices.
+            negative: The pull requests that it does not apply to.
+
+        Returns:
+            Such as ``it has the label bug`` or ``its branch is not outdated or in conflict``.
+        """
+
+    @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
         """Why the condition cannot be assessed for a pull request, for its question mark.
 
