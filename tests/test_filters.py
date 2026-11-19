@@ -99,10 +99,12 @@ def test_save_a_filter_and_open_it(client, project, bob):
     page = client.get("/projects/icalendar/filters/").content.decode()  # public
     item = page.split('data-filter="Ready to merge"')[1].split("</li>\n</ul>")[0]
     assert "<strong>Open</strong> ones" in item and "2 conditions" in item  # in force
-    counts = client.get(f"/projects/icalendar/filters/{saved.pk}/?fragment=1").content.decode()
-    assert "The filter shows 3 pull requests." in counts  # counted when opened
-    assert "<!doctype" not in counts  # the part alone
-    assert f'data-counts="/projects/icalendar/filters/{saved.pk}/?fragment=1"' in item
+    # the table of the conditions in force is on the page, the numbers come when opened
+    assert "It is open" in item and "It does not have the label needs review" in item
+    assert "Its branch is in conflict" not in item  # off: no part of the filter
+    assert f'data-numbers="/projects/icalendar/filters/{saved.pk}/?numbers=1"' in item
+    numbers = client.get(f"/projects/icalendar/filters/{saved.pk}/?numbers=1").json()
+    assert numbers == {"count": 3, "conditions": {"0": 2, "1": 1}}
     link = item.split("data-filter-pull-requests")[0].rsplit('href="', 1)[1].split('"')[0]
     assert f"saved={saved.pk}" in link
     table = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
@@ -208,7 +210,7 @@ def test_a_renamed_label_keeps_the_filters_working(client, project, github):
 def test_the_numbers_of_each_condition_come_when_opened(client, project):
     saved = PullRequestFilter.objects.create(project=project, name="Open", columns=COLUMNS)
     page = client.get("/projects/icalendar/filters/").content.decode()
-    assert "data-condition-count" not in page  # not counted with the list
+    assert 'data-count-of="0"><a href=' in page  # the table, not yet counted
     counts = client.get(f"/projects/icalendar/filters/{saved.pk}/").content.decode()
     rows = counts.split('data-condition-count="')[1:]
     # only those in force: the third shows both and is no part of the filter

@@ -9,9 +9,13 @@
   <span class="filter-actions"><a class="button" href="{{ item.path }}" data-filter-pull-requests>{% translate "Pull requests" %}</a>
   {% if access.can_write %}<a class="button button-quiet" href="{{ item.edit }}" data-edit-filter>{% translate "Edit" %}</a>{% endif %}</span></div>
   {% if item.saved.description %}<div class="markdown">{{ item.saved.description|markdown }}</div>{% endif %}
-  <details class="filter-details" data-filter-details data-counts="{{ item.counts }}?fragment=1">
+  <details class="filter-details" data-filter-details data-numbers="{{ item.counts }}?numbers=1" data-total-text="{% blocktranslate with count="%(count)s" %}The filter shows {{ count }} pull requests.{% endblocktranslate %}">
     <summary>{% blocktranslate count counter=item.in_force %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>
-    <div data-filter-counts><a href="{{ item.counts }}">{% translate "Count the pull requests of each condition" %}</a></div>
+    {% if item.rows %}<div class="table-wrap"><table class="table filter-conditions" data-filter-conditions>
+      <thead><tr><th>{% translate "Condition" %}</th><th class="numeric">{% translate "Applies to" %}</th></tr></thead>
+      <tbody>{% for row in item.rows %}<tr data-condition-count="{{ row.index }}"><td class="condition-name">{{ row.column.sentence|capfirst }}</td><td class="numeric" data-count-of="{{ row.index }}"><a href="{{ item.counts }}" class="muted">{% translate "count" %}</a></td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}
+    <p class="muted" data-filter-total></p>
   </details>
 </li>{% endfor %}</ul>
 {% else %}<p class="card" data-no-filters>{% url 'project_pull_requests' project.slug as pulls %}{% blocktranslate %}No filters yet. Add columns of conditions on the tab <a href="{{ pulls }}">Pull requests</a> and save them there as a filter.{% endblocktranslate %}</p>{% endif %}

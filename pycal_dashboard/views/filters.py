@@ -9,7 +9,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
@@ -127,6 +127,7 @@ def project_filters(request: HttpRequest, slug: str):
                 "path": access.project.path("pull-requests/") + address,
                 "edit": access.project.path("filters/save/") + address,
                 "in_force": sum(column.filter != "all" for column in columns),
+                "rows": [item for item in summary(columns) if item["filters"]],
                 "counts": access.project.path(f"filters/{saved.pk}/"),
             }
         )
@@ -185,6 +186,10 @@ def project_filter_counts(request: HttpRequest, slug: str, number: int):
         "count": len(condition_rows(pull_requests_of(shown_repositories(access)), columns)),
         "tab": "filters",
     }
+    if request.GET.get("numbers"):  # for the table of the tab Filters, which fills them in
+        return JsonResponse(
+            {"count": context["count"], "conditions": {r["index"]: r["count"] for r in rows}}
+        )
     if request.GET.get("fragment"):
         return render(request, "pycal_dashboard/conditions/_counts.html", context)
     return render(request, "pycal_dashboard/project_filter_counts.html", context)
