@@ -64,6 +64,7 @@ def test_help_link():
     )
     assert 'class="help-link"' in html and 'target="_blank"' in html
     assert 'aria-label="Help: X (opens in a new tab)"' in html
+    assert '<svg class="icon book"' in html and ">?<" not in html  # an open book
     assert Template('{% load help %}{% help_link "" "X" %}').render(Context()) == ""
 
 

@@ -1,1 +1,1 @@
-Every public page has its JSON at ``<page>.json`` for other sites (CORS), instead of ``/api/v1/``; the page ``/licenses/`` lists the licenses; times show in the local time of the browser; links to the documentation are a question mark and links to GitHub show its mark.
+Every public page has its JSON at ``<page>.json`` for other sites (CORS), instead of ``/api/v1/``; the page ``/licenses/`` lists the licenses; times show in the local time of the browser; links to the documentation are an open book and links to GitHub show its mark.

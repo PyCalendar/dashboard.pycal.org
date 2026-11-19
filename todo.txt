@@ -243,10 +243,12 @@ community: where to start, what waits for a review, who contributes.
       need, so that it is updated by webhooks, not by jobs in the background
 - [ ] The overview of a project: the information of the update at the bottom
 - [ ] The roles of collaborators link the documentation of what each may do
-- [ ] Every link to the documentation is an open book icon, not a question mark
+- [x] Every link to the documentation is an open book icon, not a question mark
 - [ ] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
       navigate it; tested to be complete
 - [ ] The conditions: each has its own page in the documentation
+- [ ] Descriptions that people type are Markdown, rendered as Markdown: one reusable way, always
+      tested; editing with a bar above the field (link, bold, lists, ...) and a preview
 - [ ] The submodule conditions: conditions checked on a pull request, each with an id, an input
       spec (fields such as str, int, positive int, range, string-label) that can make a form, a
       data spec (what the background process reads, whether the data is complete to assess it),
