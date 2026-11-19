@@ -1,0 +1,25 @@
+{% autoescape off %}# {{ site_name }}
+
+> A dashboard of the contributor community of PyCalendar: projects, which are sets of repositories on GitHub, with their issues and pull requests. Every public page has its JSON: read the JSON, not the HTML.
+
+The JSON is at the address of a page with `.json` instead of the last `/`. It holds what a visitor who is not signed in sees, it allows every site (CORS), and it needs no sign-in or token. Errors are JSON too, with `error`, `title`, `detail` and `documentation`.
+
+How to navigate: start at {{ site_url }}/projects.json, take the `slug` of a project, then read {{ site_url }}/projects/<slug>.json and {{ site_url }}/projects/<slug>/pull-requests.json. A project lists its repositories; the pull requests link to GitHub (`url`).
+
+Be kind to the site: it is small. Read a page once, follow the pages of a list (`page`, `pages`) one after the other, and do not open the pages of robots.txt that are not allowed. The data is as fresh as the last update of the project (`updated`).
+
+## The JSON of the pages
+{% for page in api %}
+- [{{ page.json }}]({{ site_url }}{{ page.json }}): {{ page.holds }}. The page: {{ page.page }}{% endfor %}
+
+## Documentation
+
+- [The JSON of the pages]({{ links.json }}): every field
+- [Projects]({{ links.projects }}): projects, their pages and roles
+- [Privacy]({{ site_url }}/about/privacy/): which data of people the site keeps and who gets it
+
+## Optional
+
+- [Source code]({{ links.source }})
+- [robots.txt]({{ site_url }}/robots.txt)
+{% endautoescape %}

@@ -23,6 +23,7 @@ def test_the_start_page(client):
     assert found["documentation"] == "https://docs.example.org/"
     assert found["pages"] == {
         "home": "/index.json",
+        "projects": "/projects.json",
         "about": "/about.json",
         "licenses": "/licenses.json",
     }

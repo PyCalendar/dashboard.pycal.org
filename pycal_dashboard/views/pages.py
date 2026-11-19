@@ -17,6 +17,7 @@ from django.views.i18n import set_language
 from pycal_dashboard import build_info, licenses
 from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+from pycal_dashboard.json_api import JSON_API, PRIVATE
 from pycal_dashboard.models import Preferences
 from pycal_dashboard.privacy import COOKIES, DATA, EXTERNAL_HOSTS, PARTIES
 from pycal_dashboard.public_json import json_address
@@ -46,7 +47,11 @@ def home(request):
             "sign_in": settings.SIGN_IN.configured,
             "organizations": settings.GITHUB_ORGANIZATIONS,
             "documentation": settings.DOCS_URL,
-            "pages": {name: json_address(reverse(name)) for name in ("home", "about", "licenses")},
+            "pages": {
+                name: json_address(reverse(name))
+                for name in ("home", "projects", "about", "licenses")
+            },
+            "agents": reverse("llms_txt"),  # the guideline for agents
         },
     )
 
@@ -78,6 +83,40 @@ def about(request):
                 "organizations": settings.GITHUB_ORGANIZATIONS,
             },
         },
+    )
+
+
+def robots_txt(request):
+    """``/robots.txt``: robots may read the public pages, and agents read ``/llms.txt``.
+
+    Args:
+        request: The request.
+
+    Returns:
+        The text.
+    """
+    return render(
+        request,
+        "pycal_dashboard/robots.txt",
+        {"private": PRIVATE, "site_url": settings.SITE_URL.rstrip("/")},
+        content_type="text/plain; charset=utf-8",
+    )
+
+
+def llms_txt(request):
+    """``/llms.txt``: the guideline for agents, the JSON of the pages and how to navigate it.
+
+    Args:
+        request: The request.
+
+    Returns:
+        The text, in Markdown as https://llmstxt.org/ proposes.
+    """
+    return render(
+        request,
+        "pycal_dashboard/llms.txt",
+        {"api": JSON_API, "site_url": settings.SITE_URL.rstrip("/")},
+        content_type="text/markdown; charset=utf-8",
     )
 
 

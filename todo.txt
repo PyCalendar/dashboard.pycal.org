@@ -244,7 +244,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The overview of a project: the information of the update at the bottom
 - [x] The roles of collaborators link the documentation of what each may do
 - [x] Every link to the documentation is an open book icon, not a question mark
-- [ ] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
+- [x] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
       navigate it; tested to be complete
 - [ ] The conditions: each has its own page in the documentation
 - [x] The page About links the page of all licenses, as on sign.pycal.org

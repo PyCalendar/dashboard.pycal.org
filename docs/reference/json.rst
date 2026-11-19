@@ -13,8 +13,9 @@ Every public page has its information as JSON at the address of the page with
    * - ``/``
      - ``/index.json``: ``site``, ``version`` and ``commit`` of the site,
        ``github_app`` (whether the GitHub App is registered), ``sign_in``
-       (whether people can sign in), ``organizations``, ``documentation``
-       and ``pages``, the JSON of the other pages
+       (whether people can sign in), ``organizations``, ``documentation``,
+       ``pages``, the JSON of the other pages, and ``agents``, the guideline
+       for agents
    * - ``/about/``
      - ``/about.json``: ``build`` (version, commit, time of the build) and
        ``github_app`` (its permissions, events and organizations)
@@ -70,3 +71,19 @@ A failure is JSON with ``error``, ``status`` and ``detail``:
 
 An error of the site in a page is JSON with ``error``, ``title``, ``detail`` and
 ``documentation``, the link to its description in :doc:`errors`.
+
+.. _agents:
+
+Agents and robots
+=================
+
+``/llms.txt`` is the guideline for agents, in Markdown as `llms.txt
+<https://llmstxt.org/>`_ proposes: the JSON of every public page, what it
+holds, and how to navigate from ``/projects.json`` to the projects and their
+pull requests. ``/robots.txt`` lets robots read the public pages and their JSON
+and keeps them out of the pages of people, the setup and the admin; it points
+agents to ``/llms.txt``.
+
+Both are made from ``pycal_dashboard/json_api.py``: a new page with JSON goes
+there, and ``tests/test_agents.py`` checks that every page with JSON is in it,
+that each of its addresses answers, and that this page documents it.

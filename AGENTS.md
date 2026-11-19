@@ -51,6 +51,9 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   policy); `tests/test_privacy.py` checks the files and the pages.
 - People of GitHub are shown with `{% github_user %}` (`templatetags/github.py`):
   their avatar from GitHub before their name, linked to GitHub.
+- A page with public JSON goes into `pycal_dashboard/json_api.py`, which makes `/llms.txt` (the
+  guideline for agents) and `/robots.txt`, and into `docs/reference/json.rst`;
+  `tests/test_agents.py` checks that the guideline is complete and every address answers.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
 - Of GitHub, the site keeps the installations of the GitHub App with their
