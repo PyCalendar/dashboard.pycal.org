@@ -156,9 +156,7 @@ Roles in a project
 On the tab *Collaborators*, the owners share the project with other people by
 their GitHub name, the name of their account on GitHub: the field proposes the
 people who signed in, with their avatar and name. The person must have
-signed in to the site once. A project always has an owner: the only owner can
-neither change their role nor leave until they share the project with another
-owner.
+signed in to the site once. What each role may do:
 
 .. list-table::
    :header-rows: 1
@@ -194,8 +192,8 @@ owner.
      - no
      - yes
 
-A project always has an owner: give another person the role *own* before you
-give up yours. The administrators of the site (``SITE_ADMINS``) have the rights
+A project always has an owner: the only owner can neither change their role
+nor leave until they give another person the role *own*. The administrators of the site (``SITE_ADMINS``) have the rights
 of an owner in every project.
 
 The JSON

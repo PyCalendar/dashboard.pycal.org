@@ -283,3 +283,12 @@ def test_the_update_is_at_the_bottom_of_the_overview(client, project, bob):
     assert page.index("data-repositories") < page.index('data-status="current"')
     assert '<footer class="update-line muted" data-status="current">' in page
     assert "data-update" in page.split('data-status="current"')[1]
+
+
+def test_the_roles_link_what_each_may_do(client, project, bob):
+    client.force_login(bob)
+    page = client.get(project.path("collaborators/")).content.decode()
+    link = 'href="https://docs.example.org/tutorial/projects.html#project-roles"'
+    table, share = page.split("data-share")
+    assert link in table.split("<thead>")[1].split("</thead>")[0]  # next to Role
+    assert link in share and 'title="Help: What each role may do' in share

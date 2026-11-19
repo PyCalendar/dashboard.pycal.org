@@ -242,7 +242,7 @@ community: where to start, what waits for a review, who contributes.
 - [ ] For all data read from GitHub: the app subscribes to its webhooks with the permissions they
       need, so that it is updated by webhooks, not by jobs in the background
 - [x] The overview of a project: the information of the update at the bottom
-- [ ] The roles of collaborators link the documentation of what each may do
+- [x] The roles of collaborators link the documentation of what each may do
 - [x] Every link to the documentation is an open book icon, not a question mark
 - [ ] robots.txt and a guideline for agents (such as llms.txt) that shows the JSON API and how to
       navigate it; tested to be complete
