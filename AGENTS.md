@@ -62,7 +62,11 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   and the accounts that created them (`GitHubUser`, linked to the `User` who
   signs in with it). When what it keeps of GitHub changes, raise `DATA_VERSION`
   (`pycal_dashboard/github/data_version.py`) with the migration: the
-  repositories are read completely again in the background after it. It reads GitHub in the background only
+  repositories are read completely again in the background after it.
+- Every update takes the same path, whoever starts it (the button, a webhook, the hourly
+  routine, a page that may be out of date): `UpdateQueue` -> `RepositoryUpdate` in the
+  background -> the signals of `update_signals.py`. What follows an update is a receiver in
+  `receivers.py`, never code of one trigger. `tests/test_update_paths.py` checks it. It reads GitHub in the background only
   (`UpdateQueue`, run by `UpdateWorker`), never while a page waits, except to
   find what a person adds. It writes nothing to GitHub yet; the app may write
   labels and a comment on pull requests for the automation, designed later.

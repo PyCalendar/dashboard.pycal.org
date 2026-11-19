@@ -47,6 +47,13 @@ class ProjectStatus:
             The status.
         """
         job = project.updates.first()
+        if job is None or not job.active:  # an update of one of its repositories, such as a webhook
+            job = (
+                UpdateJob.objects.filter(
+                    repository__projects=project, status__in=UpdateJob.ACTIVE
+                ).first()
+                or job
+            )
         # read after the job: the worker ends a job and marks the project in one transaction, so
         # a done job comes with the time of its update, also if it ended since the page began
         project.refresh_from_db(fields=["updated"])
@@ -55,10 +62,10 @@ class ProjectStatus:
             return cls("updating", job, failed)
         if job is not None and job.status == UpdateJob.FAILED:
             return cls("failed", job, failed)
-        if project.updated is None:
-            return cls("never", job, failed)
         if failed:
             return cls("failed", job, failed)
+        if project.updated is None:
+            return cls("never", job, failed)
         unread = any(r.updated is None for r in repositories)
         if unread or project.updated < timezone.now() - FRESH:
             return cls("outdated", job, failed)

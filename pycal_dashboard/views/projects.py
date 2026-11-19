@@ -237,6 +237,8 @@ def project(request, slug: str):
         return moved
     repositories = shown_repositories(access)
     status = ProjectStatus.of(access.project, repositories)
+    if status.state in ("outdated", "never") and UpdateQueue.stale(access.project):
+        status = ProjectStatus.of(access.project, repositories)  # what may be out of date
     if status.updating:
         UpdateWorker.start()  # takes up a job that a stopped process left behind
     return page(

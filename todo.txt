@@ -235,7 +235,7 @@ community: where to start, what waits for a review, who contributes.
       background
 - [x] The tests start no worker in the background: the fixture update_worker starts it and stops it
       (UpdateWorker.stop); the completions wait until their script is ready (flaky in CI)
-- [ ] Data that no webhook tells of (labels?) is renewed every day; data that may be out of date is
+- [x] Data that no webhook tells of (labels?) is renewed every day; data that may be out of date is
       updated; after each update a signal, so that the places that show it are updated: the same
       code path for the button Update, a webhook and the daily update (trigger -> update in the
       background -> notice of the update)

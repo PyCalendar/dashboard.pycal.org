@@ -11,6 +11,7 @@ from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.installation_token import InstallationToken
 from pycal_dashboard.models import GitHubUser, Issue, Repository
+from pycal_dashboard.update_signals import repository_updated
 
 from .installation_store import InstallationStore
 
@@ -97,6 +98,7 @@ class RepositoryUpdate:
         repository.error_code = repository.error_detail = ""
         repository.updated = timezone.now()
         repository.save()
+        repository_updated.send(sender=RepositoryUpdate, repository=repository)
         return True
 
     def complete(self) -> bool:

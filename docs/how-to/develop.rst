@@ -72,6 +72,15 @@ of the projects whose repositories were read with an older version, and
 A repository whose update failed keeps its older version and is read
 completely at the next update.
 
+Every update takes the same path, whoever starts it: the button *Update*, a
+webhook, the hourly ``manage.py update_projects --stale``, an overview that may
+be out of date, or the start after a migration. Each queues a job
+(``UpdateQueue``), the worker reads GitHub in the background
+(``RepositoryUpdate``), and the signals of
+``pycal_dashboard/update_signals.py`` tell of the result:
+``repository_updated`` and ``project_updated``. What has to follow an update
+connects to them in ``pycal_dashboard/receivers.py``, never to a trigger.
+
 A new model or field of data of people also goes into the privacy policy,
 ``pycal_dashboard/privacy.py``: ``tests/test_privacy.py`` fails until it is
 there.

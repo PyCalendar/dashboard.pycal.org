@@ -132,7 +132,10 @@ the next ones read only those that changed.
 
 With the GitHub App installed, activity on GitHub, such as a new pull request
 or a comment, updates its repository in the background: the webhook of GitHub
-tells the site.
+tells the site. Every hour, the site also updates the repositories that were
+not read in the last day, which renews what no webhook tells of; and the
+overview of a project that may be out of date starts its update when someone
+opens it. A project is as fresh as its oldest repository.
 
 .. _project-pull-requests:
 

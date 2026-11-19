@@ -156,7 +156,8 @@ def test_a_renamed_repository_is_found_by_its_id(client, github, bob):
     assert UpdateJob.objects.get().repository == repository
 
 
-def test_a_repository_update_does_not_mark_projects_updated(github, bob):
+def test_a_repository_update_marks_its_projects(github, bob):
+    """The same path as the button: the signal keeps the time of the update of the projects."""
     from pycal_dashboard.models import Repository
     from pycal_dashboard.services.project_editor import ProjectEditor
     from pycal_dashboard.services.update_queue import UpdateQueue
@@ -169,4 +170,4 @@ def test_a_repository_update_does_not_mark_projects_updated(github, bob):
     UpdateQueue.work()
     project.refresh_from_db()
     repository.refresh_from_db()
-    assert project.updated is None and repository.updated is not None
+    assert project.updated == repository.updated is not None

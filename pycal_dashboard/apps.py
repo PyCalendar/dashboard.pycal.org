@@ -15,4 +15,4 @@ class DashboardConfig(AppConfig):
     def ready(self):
         """Connect the signals and register the checks of the settings."""
         with IMPORT_GUARD:  # see import_guard.py
-            from . import checks, signals  # noqa: F401
+            from . import checks, receivers, signals  # noqa: F401

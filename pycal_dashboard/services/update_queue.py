@@ -6,16 +6,20 @@ from collections.abc import Callable
 from datetime import timedelta
 
 from django.db import OperationalError, transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.models import Project, Repository, UpdateJob
 
+from .project_status import FRESH
 from .repository_update import RepositoryUpdate
 from .update_worker import UpdateWorker
 
 # a job that runs longer was stopped, such as with its process: it is taken again
 STUCK = timedelta(minutes=10)
+# a repository whose update ended this recently is not updated again because it is stale
+RETRY = timedelta(hours=1)
 # how often a write is tried while another writes to SQLite, with this pause between
 ATTEMPTS = 5
 PAUSE = 0.2
@@ -74,7 +78,7 @@ class UpdateQueue:
         return job
 
     @staticmethod
-    def add_repository(repository: Repository) -> UpdateJob:
+    def add_repository(repository: Repository, start: bool = True) -> UpdateJob:
         """Queue an update of one repository, unless one waits, and start the worker.
 
         Activity on GitHub, which a webhook tells of, updates the repository it is about: only
@@ -82,6 +86,7 @@ class UpdateQueue:
 
         Args:
             repository: The repository.
+            start: Start the worker thread of this process, see :meth:`add`.
 
         Returns:
             The job that waits.
@@ -89,8 +94,36 @@ class UpdateQueue:
         job = UpdateJob.objects.filter(repository=repository, status=UpdateJob.QUEUED).first()
         if job is None:
             job = UpdateJob.objects.create(repository=repository, total=1)
-        UpdateWorker.start()
+        if start:
+            UpdateWorker.start()
         return job
+
+    @classmethod
+    def stale(cls, project: Project | None = None, start: bool = True) -> int:
+        """Queue the updates of the repositories whose data may be out of date.
+
+        A repository of a project that was not read in the last day (``FRESH``) is read again:
+        also what no webhook tells of. One whose update ended in the last hour, such as one
+        that failed, waits, so that GitHub is not asked again at every view of its page.
+
+        Args:
+            project: Only its repositories; None for those of every project.
+            start: Start the worker thread of this process, see :meth:`add`.
+
+        Returns:
+            How many repositories wait for an update.
+        """
+        now = timezone.now()
+        found = Repository.objects.filter(projects__isnull=False)
+        if project is not None:
+            found = found.filter(projects=project)
+        found = found.filter(Q(updated__isnull=True) | Q(updated__lt=now - FRESH)).exclude(
+            updates__finished__gt=now - RETRY
+        )
+        repositories = list(found.distinct())
+        for repository in repositories:
+            cls.add_repository(repository, start=start)
+        return len(repositories)
 
     @classmethod
     def outdated(cls) -> int:
@@ -168,8 +201,7 @@ class UpdateQueue:
             job.status = status
             job.finished = timezone.now()
             job.save(update_fields=["status", "finished"])
-            if status == UpdateJob.DONE and job.project_id:
-                Project.objects.filter(pk=job.project_id).update(updated=job.finished)
+            # the time of the last update of the projects follows the repositories: receivers.py
 
     @classmethod
     def work(cls) -> int:

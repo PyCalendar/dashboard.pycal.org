@@ -9,9 +9,9 @@ python manage.py prepare
 # the installations of the GitHub App: a new version may need more permissions, which the
 # people of each installation are told by email
 (python manage.py check_installations || true) &
-# the updates that wait, such as those that a migration of the data of GitHub queued: a process
-# that ends when none waits
-(python manage.py update_projects || true) &
+# the updates that wait, such as those that a migration of the data of GitHub queued, and every
+# hour those of the repositories not read in the last day: a process that ends each time
+(while true; do python manage.py update_projects --stale || true; sleep 3600; done) &
 # a low footprint when idle: fewer arenas of malloc for the threads, and every worker is replaced
 # after about 1000 requests, which returns the memory that a busy time made it grow by
 export MALLOC_ARENA_MAX=2

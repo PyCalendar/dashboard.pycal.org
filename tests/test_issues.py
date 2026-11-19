@@ -136,7 +136,7 @@ def test_projects_with_older_data_are_updated_after_the_migration(github, reposi
     assert (job.project, job.status) == (project, UpdateJob.QUEUED)
     out = StringIO()
     call_command("update_projects", stdout=out)
-    assert "1 project updates done" in out.getvalue()
+    assert "1 updates done" in out.getvalue()
     repository.refresh_from_db()
     assert repository.data_version == DATA_VERSION and Issue.objects.count() == 5
     assert UpdateQueue.outdated() == 0  # up to date: nothing more to do
