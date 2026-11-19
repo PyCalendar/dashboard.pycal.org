@@ -77,3 +77,23 @@ def when(value: datetime | None) -> str:
         utc.strftime("%Y-%m-%d %H:%M UTC"),
         ago(utc, timezone.now()),
     )
+
+
+@register.filter
+def utc(value: datetime | None) -> str:
+    """A time as text in UTC, for details that people copy, such as of an error.
+
+    Parameters:
+        value: The time, aware; or None.
+
+    Returns:
+        Such as ``2026-11-19T12:00:00Z``; ``never`` for None.
+
+    Examples:
+        >>> from datetime import datetime, UTC
+        >>> utc(datetime(2026, 11, 19, 12, tzinfo=UTC))
+        '2026-11-19T12:00:00Z'
+    """
+    if value is None:
+        return "never"
+    return value.astimezone(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")

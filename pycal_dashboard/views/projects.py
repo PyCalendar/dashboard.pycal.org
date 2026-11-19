@@ -13,9 +13,15 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
-from pycal_dashboard.errors import DashboardError, GitHubTokenMissing, ProjectNotFound, translate
+from pycal_dashboard.errors import (
+    DashboardError,
+    GitHubTokenMissing,
+    ProjectNotFound,
+    all_errors,
+    translate,
+)
 from pycal_dashboard.github.person_client import PersonClient
-from pycal_dashboard.models import GitHubUser, Issue, ProjectMember, Repository
+from pycal_dashboard.models import GitHubUser, Issue, Project, ProjectMember, Repository
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -233,6 +239,27 @@ def project_moved(request: HttpRequest, slug: str, name: str = "", page: str = "
     return HttpResponsePermanentRedirect(target)
 
 
+def update_errors(project: Project, repositories: list[Repository]) -> dict:
+    """The repositories whose last update failed, for the notice at the top of the overview.
+
+    Parameters:
+        project: The project.
+        repositories: The repositories that the person sees: a private one only for its
+            collaborators, so the notice shows nothing that they may not see.
+
+    Returns:
+        ``update_errors``: each repository with its class of error, and ``dismiss_key``, which
+        changes with every new failure, so that a notice clicked away comes back for a new one.
+    """
+    failed = [r for r in repositories if r.error_code]
+    errors = all_errors()
+    times = [r.error_at.isoformat() for r in failed if r.error_at]
+    return {
+        "update_errors": [{"repository": r, "error": errors.get(r.error_code)} for r in failed],
+        "dismiss_key": f"update-errors:{project.slug}:{max(times) if times else ''}",
+    }
+
+
 def project(request: HttpRequest, slug: str):
     """The overview of a project: its repositories with their open issues and pull requests.
 
@@ -263,6 +290,7 @@ def project(request: HttpRequest, slug: str):
             "open_issues": total(repositories, "open_issues"),
             "open_pull_requests": total(repositories, "open_pull_requests"),
             "tab": "overview",
+            **update_errors(access.project, repositories),
         },
         lambda: project_data(access, repositories),
     )

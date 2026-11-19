@@ -24,6 +24,8 @@ class FakeGitHub:
         self.manifest_codes: dict[str, dict] = {}
         self.fail_with: int | None = None
         self.fail_message = "failure of the fake"
+        self.fail_html = ""  # with fail_with: a page of HTML instead of JSON, as of a proxy
+        self.graphql_max_first = 100  # GitHub gives up (502) on pages of more pull requests
         self.unreachable = False
         # the app as GET /app describes it; the tests change its permissions and events
         from pycal_dashboard.github.permissions import EVENTS, REQUIRED
@@ -205,13 +207,18 @@ class FakeGitHub:
         body = json.loads(request.content)
         self.graphql_queries.append(body)
         variables = body["variables"]
+        if variables.get("first", 50) > self.graphql_max_first:
+            return httpx.Response(
+                502, text="<html><head><title>502 Bad Gateway</title></head></html>"
+            )
         repository = self.repositories.get(f"{variables['owner']}/{variables['name']}".lower())
         if repository is None or not self.sees(request, repository):
             error = {"type": "NOT_FOUND", "message": "Could not resolve to a Repository"}
             return httpx.Response(200, json={"data": {"repository": None}, "errors": [error]})
         pulls = [i for i in repository["issues"] if "pull" in i and i["state"] == "open"]
         start = int(variables.get("after") or 0)
-        page = pulls[start : start + 50]
+        size = variables.get("first", 50)
+        page = pulls[start : start + size]
         nodes = []
         for issue in page:
             pull = issue["pull"]
@@ -234,14 +241,14 @@ class FakeGitHub:
                     },
                 }
             )
-        more = start + 50 < len(pulls)
+        more = start + size < len(pulls)
         data = {
             "rateLimit": {"cost": 1, "remaining": 4999, "resetAt": "2026-11-19T13:00:00Z"},
             "repository": {
                 "pullRequests": {
                     "pageInfo": {
                         "hasNextPage": more,
-                        "endCursor": str(start + 50) if more else None,
+                        "endCursor": str(start + size) if more else None,
                     },
                     "nodes": nodes,
                 }
@@ -304,6 +311,12 @@ class FakeGitHub:
         self.requests.append(request)
         if self.unreachable:
             raise httpx.ConnectError("no network", request=request)
+        if self.fail_with and self.fail_html:
+            return httpx.Response(
+                self.fail_with,
+                text=self.fail_html,
+                headers={"content-type": "text/html", "x-github-request-id": "C0DE:1234:5678"},
+            )
         if self.fail_with:
             return httpx.Response(self.fail_with, json={"message": self.fail_message})
         if request.method == "GET" and request.url.path == "/app/installations":

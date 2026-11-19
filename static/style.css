@@ -241,3 +241,9 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .danger-zone h2 { color: var(--danger); }
 .button-danger { background: var(--danger); border-color: var(--danger); color: var(--surface); }
 .button-danger:hover, .button-danger:focus-visible { background: var(--text); border-color: var(--text); color: var(--surface); }
+
+/* a notice at the top of a page that can be clicked away, such as of failed updates */
+.notice { position: relative; padding: .75rem 2.75rem .75rem 1rem; margin: 0 0 1rem; border-radius: .4rem; border: 1px solid var(--border); }
+.notice h2 { font-size: 1.05rem; margin: 0 0 .4rem; }
+.notice-error { border-color: var(--danger); background: var(--danger-bg); }
+.notice-close { position: absolute; top: .4rem; right: .4rem; font-size: 1.2rem; line-height: 1; }

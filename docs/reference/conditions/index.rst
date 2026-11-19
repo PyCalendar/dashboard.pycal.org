@@ -74,7 +74,10 @@ webhooks of the GitHub App that reading it needs. The state of the open pull
 requests comes with one query of GraphQL for each repository, made of the
 fields that every kind of data needs: about one point of GitHub for 50 pull
 requests, where the REST API needs requests for each one. GraphQL needs a
-token, so it reads only repositories with the GitHub App. Data whose permissions the
+token, so it reads only repositories with the GitHub App, and only the fields
+whose permissions the owners of the installation accepted: the checks wait
+until they accept ``checks`` and ``statuses``. When GitHub gives up on a slow
+query (502), the site asks for the same page with half as many pull requests. Data whose permissions the
 app does not ask for is not read.
 
 ``issue``

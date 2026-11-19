@@ -162,6 +162,7 @@ MODELS = {
             "updated",
             "error_code",
             "error_detail",
+            "error_at",
             "data_version",
             "issues_changed",
             "created",

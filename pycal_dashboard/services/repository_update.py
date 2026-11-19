@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from pycal_dashboard.conditions import DATA_SPECS, LabelsData
-from pycal_dashboard.errors import DashboardError, translate
+from pycal_dashboard.errors import DashboardError, GitHubUnavailable, translate
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.installation_token import InstallationToken
@@ -27,6 +27,9 @@ if TYPE_CHECKING:
 LAST_PAGE = re.compile(r'[?&]page=(\d+)[^>]*>;\s*rel="last"')
 log = logging.getLogger(__name__)
 PER_PAGE = 100  # the most that GitHub gives on a page
+# the open pull requests of a page of GraphQL; down to the least when GitHub gives up
+PULL_REQUESTS_PER_PAGE = 20
+MIN_PULL_REQUESTS_PER_PAGE = 5
 MAX_PAGES = 500  # 50 000 issues and pull requests of a repository at most
 
 
@@ -95,12 +98,13 @@ class RepositoryUpdate:
             )
             self.issues(client)
             for spec in DATA_SPECS:  # what the conditions need, which the app may read
-                if spec.enabled():
+                if spec.enabled(self.granted()):
                     spec.fetch(client, repository)
             self.pull_requests(client)
         except Exception as exception:  # every error is kept and shown on the project
             error: DashboardError = translate(exception)
             repository.error_code, repository.error_detail = error.code, str(error)[:500]
+            repository.error_at = timezone.now()
             repository.save()
             return False
         if self.read_completely:  # all data of this version, also of the pull requests
@@ -113,6 +117,7 @@ class RepositoryUpdate:
         repository.open_pull_requests = pulls
         repository.open_issues = max(0, int(data.get("open_issues_count") or 0) - pulls)
         repository.error_code = repository.error_detail = ""
+        repository.error_at = None
         repository.updated = timezone.now()
         repository.save()
         repository_updated.send(sender=RepositoryUpdate, repository=repository)
@@ -209,12 +214,23 @@ class RepositoryUpdate:
             self.people[github_id] = GitHubUser.record(data)
         return self.people[github_id]
 
+    def granted(self) -> dict[str, str] | None:
+        """The permissions that the owners of the installation of the repository accepted.
+
+        Returns:
+            The permissions; None without an installation that the site recorded them of.
+        """
+        installation = self.repository.installation
+        return dict(installation.permissions) if installation and installation.permissions else None
+
     def pull_requests(self, client: GitHubClient) -> int:
         """Read the open pull requests with one query of GraphQL for what the conditions need.
 
-        The fields are those of the data specs that the app may read (``DataSpec.graphql``);
-        50 pull requests cost about one point of GitHub. GraphQL needs a token, so only
-        repositories with the GitHub App are read.
+        The fields are those of the data specs that the installation may read
+        (``DataSpec.graphql``); a page costs about one point of GitHub. GitHub gives up on a
+        query that takes too long, such as whether many pull requests can be merged: then the
+        same page is asked again with half as many. GraphQL needs a token, so only repositories
+        with the GitHub App are read.
 
         Parameters:
             client: The client of the installation.
@@ -223,8 +239,10 @@ class RepositoryUpdate:
             How many pull requests were read.
         """
         repository = self.repository
-        specs = [spec for spec in DATA_SPECS if spec.enabled() and spec.graphql]
-        if not specs or not repository.app_installed:
+        if not repository.app_installed:
+            return 0
+        specs = [spec for spec in DATA_SPECS if spec.enabled(self.granted()) and spec.graphql]
+        if not specs:
             return 0
         query = PULL_REQUESTS.replace("FIELDS", " ".join(spec.graphql for spec in specs))
         owner, name = repository.full_name.split("/", 1)
@@ -234,9 +252,15 @@ class RepositoryUpdate:
                 repository=repository, pull_request=True, state=Issue.OPEN
             )
         }
-        read, after = 0, None
+        read, after, first = 0, None, PULL_REQUESTS_PER_PAGE
         for _page in range(MAX_PAGES):
-            data = client.graphql(query, owner=owner, name=name, after=after)
+            try:
+                data = client.graphql(query, owner=owner, name=name, after=after, first=first)
+            except GitHubUnavailable:  # too slow for GitHub: the same page, smaller
+                if first <= MIN_PULL_REQUESTS_PER_PAGE:
+                    raise
+                first = max(MIN_PULL_REQUESTS_PER_PAGE, first // 2)
+                continue
             page = data["repository"]["pullRequests"]
             for node in page["nodes"]:
                 issue = issues.get(node["number"])

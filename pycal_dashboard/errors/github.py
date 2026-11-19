@@ -62,6 +62,18 @@ class GitHubRateLimited(GitHubError):
     status = 503
 
 
+class GitHubUnavailable(GitHubError):
+    """GitHub did not answer in time, or was busy, after the site asked it again.
+
+    GitHub answers 502, 503 or 504 when it is overloaded, or when a query takes too long. The
+    site asks again a few times, with smaller pages of GraphQL; the next update tries again.
+    If it stays, check https://www.githubstatus.com/.
+    """
+
+    title = _("GitHub did not answer in time")
+    status = 503
+
+
 class GitHubQueryFailed(GitHubError):
     """GitHub answered a query of GraphQL with an error.
 

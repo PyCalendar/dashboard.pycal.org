@@ -127,7 +127,12 @@ When repositories are added, the site updates them from GitHub in the
 background at once. **Update** updates them again. A progress bar shows how many
 are updated; the page reloads itself until the update ends. The project is *up
 to date* when every repository was updated in the last day without an error. A
-repository that could not be updated shows why.
+repository that could not be updated shows why: a notice at the top of the
+overview names each one with its error, linked to the documentation of the
+error. Its *Details to copy* hold what helps to find the cause, such as the
+request, the answer of GitHub and its request id, the time and the version of
+the site, but no tokens or data of people; paste them into a bug report or a
+question. The cross clicks the notice away until a new failure comes.
 
 The site reads a repository with the token of the GitHub App when the app is
 installed on it, else without a token, which works for public repositories.

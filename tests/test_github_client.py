@@ -42,4 +42,4 @@ def test_answer_that_is_no_json(github, monkeypatch):
     monkeypatch.setattr(client, "TRANSPORT", httpx.MockTransport(github.handle))
     with pytest.raises(errors.GitHubError) as raised:
         GitHubClient().request("GET", "/meta")
-    assert "<html>Bad gateway</html>" in str(raised.value)
+    assert str(raised.value) == "GET /meta: 502 Bad gateway"  # the text, not the HTML

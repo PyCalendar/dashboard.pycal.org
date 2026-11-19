@@ -286,6 +286,18 @@ community: where to start, what waits for a review, who contributes.
 - [x] A delete button: a red area that deletes the account
 - [x] Translate the texts that wait into German and Spanish
 
+## 2026-11-19: 502 of GraphQL; failures as a notice
+
+- [x] The 502 of GraphQL: GitHub gave up on a page of 50 pull requests that asked whether they
+      can be merged (not missing permissions): pages of 20, halved again on 502; 502, 503, 504
+      asked again; only the fields that the installation accepted (checks wait for checks and
+      statuses)
+- [x] Answers of HTML (of a proxy) shown as their title; the request id of GitHub in the detail;
+      the time of the failure (Repository.error_at)
+- [x] Failed updates at the top of the overview, in a notice that can be clicked away, with
+      details to copy for a person or an AI, without tokens or data of people
+- [ ] The person: translate the new texts (asked before translating)
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the app asks for the permissions; the site

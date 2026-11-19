@@ -5,6 +5,8 @@ httpx is imported with the first request, so that the idle site does not keep it
 
 from __future__ import annotations
 
+import re
+import time
 from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
@@ -15,6 +17,7 @@ from pycal_dashboard.errors import (
     GitHubNotFound,
     GitHubQueryFailed,
     GitHubRateLimited,
+    GitHubUnavailable,
     GitHubUnreachable,
     MissingPermissions,
 )
@@ -27,6 +30,9 @@ if TYPE_CHECKING:
 TRANSPORT: httpx.BaseTransport | None = None
 TIMEOUT = 20.0
 API_VERSION = "2022-11-28"
+# GitHub is busy or a query took too long: ask again after these seconds (the tests: none)
+BUSY = (502, 503, 504)
+RETRY_DELAYS = (1.0, 3.0)
 
 
 class GitHubClient:
@@ -58,12 +64,14 @@ class GitHubClient:
         # what the last query of GraphQL cost: cost, remaining and resetAt, as GitHub says
         self.rate: dict = {}
 
-    def request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:
-        """Send a request and check the answer.
+    def request(self, method: str, path: str, retry: bool = True, **kwargs: Any) -> httpx.Response:
+        """Send a request and check the answer; ask again while GitHub is busy.
 
         Parameters:
             method: GET, POST, DELETE ...
             path: The path of the API, such as ``/repos/o/r``.
+            retry: Ask again after 502, 503 and 504 (``RETRY_DELAYS``); False when the caller
+                asks differently instead, such as GraphQL with smaller pages.
             **kwargs: For httpx, such as ``json`` or ``headers``.
 
         Returns:
@@ -71,6 +79,7 @@ class GitHubClient:
 
         Raises:
             GitHubUnreachable: GitHub could not be reached.
+            GitHubUnavailable: 502, 503 or 504, also when asked again.
             GitHubNotFound: 404.
             GitHubLoginExpired: 401 for the token of a person.
             GitHubRateLimited: No requests left.
@@ -80,14 +89,23 @@ class GitHubClient:
         with IMPORT_GUARD:  # see import_guard.py
             import httpx  # loaded by __init__ already
 
-        try:
-            response = self.http.request(method, path, **kwargs)
-        except httpx.TransportError as error:
-            raise GitHubUnreachable(f"{method} {path}: {error}") from error
+        for delay in (*(RETRY_DELAYS if retry else ()), None):
+            try:
+                response = self.http.request(method, path, **kwargs)
+            except httpx.TransportError as error:
+                raise GitHubUnreachable(f"{method} {path}: {error}") from error
+            if response.status_code not in BUSY or delay is None:
+                break
+            time.sleep(delay)
         if response.is_success:
             return response
         message = self.message(response)
         detail = f"{method} {path}: {response.status_code} {message}"
+        request_id = response.headers.get("x-github-request-id")
+        if request_id:  # GitHub finds the request by it, such as in a question to its support
+            detail += f" (GitHub request {request_id})"
+        if response.status_code in BUSY:
+            raise GitHubUnavailable(detail)
         if response.status_code == 404:
             raise GitHubNotFound(detail)
         if response.status_code == 401:
@@ -130,7 +148,10 @@ class GitHubClient:
             GitHubQueryFailed: Another error of the query.
         """
         answer = self.request(
-            "POST", self.graphql_url(), json={"query": query, "variables": variables}
+            "POST",
+            self.graphql_url(),
+            retry=False,  # a query too slow for GitHub is asked again with smaller pages
+            json={"query": query, "variables": variables},
         ).json()
         data = answer.get("data") or {}
         self.rate = data.get("rateLimit") or self.rate
@@ -159,6 +180,9 @@ class GitHubClient:
         """
         try:
             data = response.json()
-        except ValueError:
-            return response.text[:200]
+        except ValueError:  # such as a page of HTML of a proxy: its title, else its text
+            text = response.text
+            title = re.search(r"<title>(.*?)</title>", text, re.IGNORECASE | re.DOTALL)
+            text = title[1] if title else re.sub(r"<[^>]+>", " ", text)
+            return " ".join(text.split())[:200]
         return str(data.get("message", "")) if isinstance(data, dict) else ""

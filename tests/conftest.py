@@ -88,6 +88,7 @@ def github(monkeypatch) -> FakeGitHub:
     """The fake GitHub that answers all requests of the site."""
     fake = FakeGitHub()
     monkeypatch.setattr(github_client, "TRANSPORT", fake.transport())
+    monkeypatch.setattr(github_client, "RETRY_DELAYS", (0.0, 0.0))  # ask again at once
     return fake
 
 

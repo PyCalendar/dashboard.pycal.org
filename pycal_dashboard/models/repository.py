@@ -29,6 +29,7 @@ class Repository(models.Model):
     updated = models.DateTimeField(null=True, blank=True)
     error_code = models.CharField(max_length=100, blank=True)
     error_detail = models.CharField(max_length=500, blank=True)
+    error_at = models.DateTimeField(null=True, blank=True)  # when the last update failed
     # the version of what the site keeps of GitHub when it was read completely the last time,
     # 0 for never: below DATA_VERSION (github/data_version.py), it is read completely again
     data_version = models.PositiveSmallIntegerField(default=0)

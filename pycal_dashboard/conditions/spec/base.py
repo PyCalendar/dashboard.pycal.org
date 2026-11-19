@@ -36,20 +36,26 @@ class DataSpec(ABC):
     events: tuple[str, ...] = ()
     graphql: str = ""
 
-    def enabled(self) -> bool:
+    def enabled(self, granted: dict[str, str] | None = None) -> bool:
         """Whether the GitHub App asks for every permission and webhook that the data needs.
 
         Data that needs more is described but not read until the app asks for it
-        (``github/permissions.py``).
+        (``github/permissions.py``), nor while an installation has not accepted its permissions.
+
+        Parameters:
+            granted: The permissions of the installation of the repository, as its owners
+                accepted them; None for those of the app.
 
         Returns:
             True if the background reads it.
         """
-        granted = all(
-            LEVELS.get(REQUIRED.get(name, ""), 0) >= LEVELS[level]
-            for name, level in self.permissions.items()
-        )
-        return granted and all(event in EVENTS for event in self.events)
+        for permissions in (REQUIRED, granted) if granted is not None else (REQUIRED,):
+            if any(
+                LEVELS.get(permissions.get(name, ""), 0) < LEVELS[level]
+                for name, level in self.permissions.items()
+            ):
+                return False
+        return all(event in EVENTS for event in self.events)
 
     def fetch(self, client: GitHubClient, repository: Repository) -> int:
         """Read the data of a repository from GitHub and keep it, in the background.

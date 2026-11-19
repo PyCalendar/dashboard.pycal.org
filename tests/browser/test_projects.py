@@ -165,3 +165,27 @@ def test_describe_a_project_in_markdown(signed_in, site):
     page.get_by_role("button", name="Create the project").click()
     page.get_by_role("link", name="Overview", exact=True).click()
     expect(page.locator("[data-description] strong")).to_have_text("calendars")
+
+
+def test_click_away_the_notice_of_failed_updates(page, site, github, bob):
+    """The notice of failed updates hides when clicked away, also after a reload."""
+    from pycal_dashboard.models import Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+
+    github.add_repository("collective/icalendar", installation=11)
+    repository = Repository.objects.create(full_name="collective/icalendar")
+    project = ProjectEditor.create(bob, "iCalendar")
+    project.repositories.add(repository)
+    github.fail_with = 502
+    github.fail_html = "<html><head><title>502 Bad Gateway</title></head></html>"
+    RepositoryUpdate(repository).run()
+    page.goto(f"{site}{project.path()}")
+    notice = page.locator("[data-update-errors]")
+    expect(notice).to_contain_text("1 repository could not be updated")
+    notice.get_by_text("Details to copy").click()
+    expect(notice.locator("textarea")).to_contain_text("GitHubUnavailable")
+    notice.get_by_role("button", name="Hide this notice").click()
+    expect(notice).to_be_hidden()
+    page.reload()
+    expect(page.locator("[data-update-errors]")).to_be_hidden()

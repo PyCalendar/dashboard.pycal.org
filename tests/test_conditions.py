@@ -229,7 +229,12 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
     assert github.pull_requests_read == []  # no request for each pull request:
     (query,) = github.graphql_queries  # one query of GraphQL for all open ones
     assert "mergeStateStatus" in query["query"] and "statusCheckRollup" in query["query"]
-    assert query["variables"] == {"owner": "collective", "name": "icalendar", "after": None}
+    assert query["variables"] == {
+        "owner": "collective",
+        "name": "icalendar",
+        "after": None,
+        "first": 20,
+    }
     state = pull("Conflict").pull_state
     assert (state.mergeable, state.mergeable_state, state.base_ref) == (False, "dirty", "main")
     assert pull("Ready").pull_state.auto_merge and not pull("Behind").pull_state.auto_merge
@@ -308,11 +313,11 @@ def test_ci_from_the_rollup_of_github(github, rollup, summary, passes, fails):
 
 @pytest.mark.django_db
 def test_many_open_pull_requests_are_read_page_by_page(github):
-    github.add_repository(REPO, installation=11, pulls=60)
+    github.add_repository(REPO, installation=11, pulls=45)
     repository = Repository.objects.create(full_name=REPO)
     assert RepositoryUpdate(repository).run()
-    assert [q["variables"]["after"] for q in github.graphql_queries] == [None, "50"]
-    assert PullRequestState.objects.count() == 60
+    assert [q["variables"]["after"] for q in github.graphql_queries] == [None, "20", "40"]
+    assert PullRequestState.objects.count() == 45
 
 
 @pytest.mark.django_db
