@@ -44,6 +44,10 @@ Inputs
 Data
 ====
 
+.. automodule:: pycal_dashboard.conditions.spec.issue
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.spec.labels
    :members:
    :show-inheritance:
@@ -78,4 +82,13 @@ Conditions
    :no-members:
 
 .. automodule:: pycal_dashboard.conditions.condition.auto_merge_enabled
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.open
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.merged
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.closed
    :no-members:

@@ -16,10 +16,14 @@ from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.condition.branch_outdated import BranchOutdated
 from pycal_dashboard.conditions.condition.ci_fails import CiFails
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
+from pycal_dashboard.conditions.condition.closed import Closed
 from pycal_dashboard.conditions.condition.label_absent import LabelAbsent
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
+from pycal_dashboard.conditions.condition.merged import Merged
+from pycal_dashboard.conditions.condition.open import Open
 from pycal_dashboard.conditions.spec.checks import ChecksData
+from pycal_dashboard.conditions.spec.issue import IssueData
 from pycal_dashboard.conditions.spec.labels import LabelsData
 from pycal_dashboard.conditions.spec.pull_request import PullRequestData
 from pycal_dashboard.errors import UnknownCondition
@@ -34,16 +38,19 @@ CONDITIONS: dict[str, type[Condition]] = {
         MergeConflict,
         BranchOutdated,
         AutoMergeEnabled,
+        Open,
+        Merged,
+        Closed,
     )
 }
 # in the order the background reads them: the checks need the state of the pull request
-DATA_SPECS = (LabelsData(), PullRequestData(), ChecksData())
+DATA_SPECS = (IssueData(), LabelsData(), PullRequestData(), ChecksData())
 
 
 def find(id: str) -> type[Condition]:
     """The condition with an id.
 
-    Args:
+    Parameters:
         id: Such as ``label_exists``.
 
     Returns:

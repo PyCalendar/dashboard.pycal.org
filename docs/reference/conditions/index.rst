@@ -26,6 +26,12 @@ pages yet.
      - The branch of a pull request is behind its base branch.
    * - :doc:`auto_merge_enabled`
      - Auto-merge is enabled on a pull request.
+   * - :doc:`open`
+     - A pull request is open.
+   * - :doc:`merged`
+     - A pull request was merged.
+   * - :doc:`closed`
+     - A pull request was closed without being merged.
 
 .. toctree::
    :hidden:
@@ -37,6 +43,9 @@ pages yet.
    merge_conflict
    branch_outdated
    auto_merge_enabled
+   open
+   merged
+   closed
    api
 
 Inputs
@@ -64,6 +73,8 @@ The data of a pull request that conditions need, with the permissions and
 webhooks of the GitHub App that reading it needs. Data whose permissions the
 app does not ask for is not read.
 
+``issue``
+   Whether the pull request is open, closed or merged.
 ``labels``
    The labels of the repository and of the pull request.
 ``pull_request``

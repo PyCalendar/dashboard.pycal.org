@@ -25,6 +25,9 @@ IDS = [
     "merge_conflict",
     "branch_outdated",
     "auto_merge_enabled",
+    "open",
+    "merged",
+    "closed",
 ]
 REPO = "collective/icalendar"
 
@@ -206,6 +209,7 @@ def repository(github):
     github.add_issue(REPO, "Behind", pull_request=True, mergeable_state="behind")
     github.add_issue(REPO, "Computing", pull_request=True, mergeable_state="unknown")
     github.add_issue(REPO, "Closed", pull_request=True, state="closed", merged=True)
+    github.add_issue(REPO, "Refused", pull_request=True, state="closed")
     repository = Repository.objects.create(full_name=REPO)
     assert RepositoryUpdate(repository).run()
     repository.refresh_from_db()
@@ -244,6 +248,9 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
         ("ci_passes", {}, {"Ready": True}),  # no checks: nothing failed
         ("ci_fails", {}, {"Ready": False}),
         ("label_exists", {"label": "bug"}, {"An issue": None}),  # pull requests only
+        ("open", {}, {"Ready": True, "Closed": False}),
+        ("merged", {}, {"Closed": True, "Ready": False}),
+        ("closed", {}, {"Closed": False, "Ready": False, "Refused": True}),
     ],
 )
 def test_the_conditions_are_assessed(repository, id, config, results):
