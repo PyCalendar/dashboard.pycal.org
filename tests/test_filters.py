@@ -143,3 +143,32 @@ def test_the_tabs_have_filters_after_the_pull_requests(client, project, bob):
     page = client.get("/projects/icalendar/filters/").content.decode()
     tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
     assert tabs.index("Pull requests") < tabs.index("Filters") < tabs.index("Repositories")
+
+
+def test_a_renamed_label_keeps_the_filters_working(client, project, github):
+    """GitHub keeps the id of a renamed label: the site renames it, also in the filters."""
+    from pycal_dashboard.models import Label
+
+    saved = PullRequestFilter.objects.create(
+        project=project,
+        name="Waiting",
+        columns=["labels~applies~present~needs review", "status~all~open"],
+    )
+    label = Label.objects.get(name="needs review")
+    for item in github.repositories[REPO]["labels"]:
+        if item["name"] == "needs review":
+            item["name"] = "review wanted"  # the same id, as GitHub renames
+    for issue in github.repositories[REPO]["issues"]:
+        for item in issue["labels"]:
+            if item["name"] == "needs review":
+                item["name"] = "review wanted"
+    repository = Repository.objects.get()
+    Repository.objects.update(data_version=0)  # read completely again
+    repository.refresh_from_db()
+    assert RepositoryUpdate(repository).run()
+    label.refresh_from_db()
+    assert label.name == "review wanted" and Label.objects.filter(name="needs review").count() == 0
+    saved.refresh_from_db()
+    assert saved.columns == ["labels~applies~present~review wanted", "status~all~open"]
+    page = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
+    assert "Waiting: 1 pull request" in page  # Ready still has it

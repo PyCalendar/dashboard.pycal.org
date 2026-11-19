@@ -349,3 +349,9 @@ community: where to start, what waits for a review, who contributes.
       people, the app that lacks permissions notifies the administrators; both steps explained
 - [x] The account menu does not install the GitHub App: adding repositories does
 - [x] No button of JSON on the pull requests: the reference of the JSON describes it
+- [x] The columns of conditions filter as an OR: any column that filters
+- [x] A label renamed on GitHub (the same id) is renamed in the saved filters; labels of the same
+      name are the same label in a project
+- [ ] The person: the GitHub App on GitHub needs the webhook label (and the other events and
+      permissions of the conditions): the owners of the app add them in its settings; until then
+      a new label on a repository comes with the hourly update (a label on a pull request at once)

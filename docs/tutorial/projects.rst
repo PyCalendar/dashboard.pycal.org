@@ -222,6 +222,12 @@ description, their columns and how many pull requests each shows; the number
 opens the pull requests with the filter. There it can be changed, and saved
 under its name or as a new filter. Writers and owners save filters.
 
+A filter names its labels; a label of that name in any repository of the
+project counts, in any case. When a label is renamed on GitHub, it keeps its
+id: the next update of the repository finds it under its new name and renames
+it in the saved filters, too, so that they keep working. New labels and
+renames come with the webhook ``label``, or with the hourly update.
+
 .. _project-roles:
 
 Roles in a project

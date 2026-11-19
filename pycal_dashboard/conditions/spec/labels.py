@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Label
 
 if TYPE_CHECKING:
@@ -54,7 +55,9 @@ class LabelsData(DataSpec):
 
     @staticmethod
     def label(repository: Repository, item: dict) -> Label:
-        """Keep a label as GitHub describes it.
+        """Keep a label as GitHub describes it; a renamed one, found by its id, is renamed.
+
+        The saved filters that name a renamed label are renamed too (``LabelRename``).
 
         Parameters:
             repository: The repository.
@@ -63,14 +66,28 @@ class LabelsData(DataSpec):
         Returns:
             The label.
         """
+        name = str(item["name"])[:100]
+        details = {
+            "description": str(item.get("description") or "")[:300],
+            "color": str(item.get("color") or "")[:6],
+        }
+        renamed = None
+        if item.get("id"):  # GitHub keeps the id of a renamed label
+            renamed = repository.labels.filter(github_id=item["id"]).exclude(name=name).first()
+        if renamed is not None:
+            old = renamed.name
+            repository.labels.filter(name=name).exclude(pk=renamed.pk).delete()
+            Label.objects.filter(pk=renamed.pk).update(name=name, **details)
+            renamed.refresh_from_db()
+            with IMPORT_GUARD:  # see import_guard.py; the service imports the conditions
+                from pycal_dashboard.services.label_rename import LabelRename
+
+            LabelRename(repository, old, name).apply()
+            return renamed
         label, _created = Label.objects.update_or_create(
             repository=repository,
-            name=str(item["name"])[:100],
-            defaults={
-                "github_id": item.get("id"),
-                "description": str(item.get("description") or "")[:300],
-                "color": str(item.get("color") or "")[:6],
-            },
+            name=name,
+            defaults={"github_id": item.get("id"), **details},
         )
         return label
 
