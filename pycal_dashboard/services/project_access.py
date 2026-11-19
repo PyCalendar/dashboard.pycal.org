@@ -3,7 +3,7 @@
 from django.db.models import Q, QuerySet
 
 from pycal_dashboard.errors import ProjectNotFound, ProjectOwnersOnly, ProjectReadOnly
-from pycal_dashboard.models import Project, ProjectMember
+from pycal_dashboard.models import Project, ProjectMember, ProjectSlug
 
 from .identity import GitHubIdentity
 
@@ -110,6 +110,9 @@ class ProjectAccess:
     def of(cls, slug: str, user) -> "ProjectAccess":
         """The project of an address with the rights of a person, if they see it.
 
+        An old slug of a project, or one in other case, finds it too: the pages then lead to its
+        address (``project.slug``).
+
         Args:
             slug: The project in the address.
             user: The person.
@@ -120,7 +123,11 @@ class ProjectAccess:
         Raises:
             ProjectNotFound: There is no such project that the person sees.
         """
+        slug = slug.lower()
         project = Project.objects.filter(slug=slug).first()
+        if project is None:
+            old = ProjectSlug.objects.filter(slug=slug).select_related("project").first()
+            project = old.project if old else None
         if project is None:
             raise ProjectNotFound(slug)
         return cls(project, user).require_read()

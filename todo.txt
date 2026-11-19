@@ -176,13 +176,28 @@ community: where to start, what waits for a review, who contributes.
 - [x] Found on the way: the browser could leave the machine on a redirect (a request reached
       github.com); a proxy now stops everything but the site
 
+## 2026-11-19: the addresses of projects
+
+- [x] docs.dashboard.pycal.org works
+- [x] Translations: done by the agent itself
+- [x] The slug of a project is short and random by default: 6 hexadecimal digits, also for projects
+      not created through the site (the admin, code)
+- [x] The address is /projects/<slug>/<name>/...; the name does not matter
+- [x] People choose the slug (when creating, and the owners in the settings); it is unique
+- [x] The slug has only the letters of a GitHub handle (a-z, 0-9, single hyphens inside), and at
+      most one ~ for the suggestions; in lower case; "new" is reserved
+- [x] With one repository, the suggestion is its name, else org~repo, else org~repo-2, -3 ...
+- [x] Renaming does not break links: every slug is recorded with its time (ProjectSlug since,
+      until), leads to the project and is never used by another project, also after deletion
+- [x] Tests, browser test of the suggestion and the renaming, docs
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the app asks for the permissions; the site
       writes nothing to GitHub yet
 - [ ] The person: the Sencho stack dashboard-pycal and the environment dashboard.pycal.org with the
       secret SENCHO_TOKEN; until then the jobs Deploy to Sencho and Check the live site fail
-- [ ] DNS: docs.dashboard.pycal.org needs a CNAME to pycalendar.github.io
+- [x] DNS: docs.dashboard.pycal.org has a CNAME to pycalendar.github.io: it works (2026-11-19)
 
 ## Open: work
 

@@ -57,5 +57,10 @@
   </form>{% endif %}
   <p class="muted">{% translate "A private repository is added by its name. It needs a private project, the GitHub App installed on it and your access to it." %} {% translate "Private repositories" as help %}{% help_link links.private_repositories help %}</p>
 </section>
-<p><a class="button" href="{% url 'project' project.slug %}" data-to-overview>{% translate "Go to the overview" %}</a></p>
+{% if suggestion %}<section class="card" data-suggestion><h2>{% translate "Address" %}</h2>
+  <p>{% translate "The project is at" %} <code>{{ project.path }}</code></p>
+  <form method="post" action="{% url 'project_slug' project.slug project.name_part %}">{% csrf_token %}<input type="hidden" name="back" value="repositories/"><input type="hidden" name="slug" value="{{ suggestion }}">
+    <p>{% translate "Suggestion, after the repository of the project:" %} <code>{{ suggestion }}</code> <button class="button button-quiet">{% translate "Use it" %}</button></p></form>
+</section>{% endif %}
+<p><a class="button" href="{% url 'project' project.slug project.name_part %}" data-to-overview>{% translate "Go to the overview" %}</a></p>
 {% endblock %}

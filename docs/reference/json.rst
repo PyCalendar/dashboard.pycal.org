@@ -25,8 +25,9 @@ Every public page has its information as JSON at the address of the page with
    * - ``/projects/``
      - ``/projects.json``: the public ``projects``, each with its ``name``,
        ``slug``, ``description``, ``url`` and public ``repositories``
-   * - ``/projects/<slug>/``
-     - ``/projects/<slug>.json``: a public project with its ``open_issues``,
+   * - ``/projects/<slug>/<name>/``
+     - ``/projects/<slug>.json`` or ``/projects/<slug>/<name>.json``: a public
+       project with its ``open_issues``,
        ``open_pull_requests``, when it was ``updated``, and its
        ``repositories`` with their numbers
 

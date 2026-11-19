@@ -1,5 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n help %}
+{% load i18n help times %}
 {% block title %}{% if new %}{% translate "Create a project" %}{% else %}{% translate "Settings" %} · {{ project.name }}{% endif %} · {{ site_name }}{% endblock %}
 {% block main %}
 {% if new %}<h1>{% translate "Create a project" %} {% translate "Projects" as help %}{% help_link links.projects help %}</h1>
@@ -8,13 +8,25 @@
 <form method="post" class="stacked card" data-project-form>{% csrf_token %}
   <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ form.name }}"></p>
   <p><label for="description">{% translate "Description" %}</label><textarea id="description" name="description" rows="4">{{ form.description }}</textarea></p>
+  {% if new %}<p><label for="slug">{% translate "Address (optional)" %}</label><input id="slug" name="slug" maxlength="80" value="{{ form.slug }}" pattern="[A-Za-z0-9~\-]+" placeholder="icalendar">
+    <small>{% translate "The project is at /projects/ followed by its address. Without one, it gets a random one, which you change later." %}</small></p>{% endif %}
   <fieldset{% if not new and not access.is_owner %} disabled{% endif %}><legend>{% translate "Who sees it" %}</legend>
     <label class="check"><input type="radio" name="visibility" value="public"{% if form.public %} checked{% endif %}> {% translate "Public: everybody sees the project and its repositories" %}</label><br>
     <label class="check"><input type="radio" name="visibility" value="private"{% if not form.public %} checked{% endif %}> {% translate "Private: only its people see it; it may contain private repositories" %}</label>
     {% if not new and not access.is_owner %}<small>{% translate "Only the owners change it." %}</small>{% endif %}</fieldset>
   <p><button class="button">{% if new %}{% translate "Create the project" %}{% else %}{% translate "Save" %}{% endif %}</button></p>
 </form>
-{% if not new and access.is_owner %}<form method="post" class="card" data-delete-project>{% csrf_token %}
+{% if not new and access.is_owner %}<section class="card" id="address" data-address><h2>{% translate "Address" %} {% translate "The address of a project" as help %}{% help_link links.project_address help %}</h2>
+  <p>{% translate "The project is at" %} <code>{{ project.path }}</code></p>
+  <form method="post" action="{% url 'project_slug' project.slug project.name_part %}" class="inline-form" data-rename>{% csrf_token %}<input type="hidden" name="back" value="settings/">
+    <label for="slug">{% translate "Address" %}</label><input id="slug" name="slug" maxlength="80" value="{{ project.slug }}" pattern="[A-Za-z0-9~\-]+" required>
+    <button class="button">{% translate "Change the address" %}</button></form>
+  {% if suggestion %}<form method="post" action="{% url 'project_slug' project.slug project.name_part %}" data-suggestion>{% csrf_token %}<input type="hidden" name="back" value="settings/"><input type="hidden" name="slug" value="{{ suggestion }}">
+    <p>{% translate "Suggestion, after the repository of the project:" %} <code>{{ suggestion }}</code> <button class="button button-quiet button-small">{% translate "Use it" %}</button></p></form>{% endif %}
+  <p class="muted">{% translate "Letters a to z, digits, single hyphens and one ~ between an account and a repository. Old addresses keep leading to the project, and no other project gets them." %}</p>
+  {% if old_slugs %}<h3>{% translate "Old addresses" %}</h3><ul class="list" data-old-slugs>{% for old in old_slugs %}<li><code>{{ old.slug }}</code> <small class="muted">{% when old.since %} – {% when old.until %}</small></li>{% endfor %}</ul>{% endif %}
+</section>
+<form method="post" class="card" data-delete-project>{% csrf_token %}
   <h2>{% translate "Delete the project" %}</h2>
   <p>{% translate "Its repositories stay on GitHub and in other projects." %}</p>
   <p><label class="check"><input type="checkbox" name="confirm" value="yes"> {% translate "Yes, delete this project" %}</label></p>

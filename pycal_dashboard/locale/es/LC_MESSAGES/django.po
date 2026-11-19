@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 08:44+0000\n"
+"POT-Creation-Date: 2026-11-19 09:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -161,6 +161,12 @@ msgstr "El proyecto necesita un propietario"
 
 msgid "Sign in again to list your repositories"
 msgstr "Inicia sesión de nuevo para listar tus repositorios"
+
+msgid "Not an address of a project"
+msgstr "No es una dirección de un proyecto"
+
+msgid "The address is taken"
+msgstr "La dirección ya está ocupada"
 
 msgid "The GitHub App could not be registered"
 msgstr "No se pudo registrar la GitHub App"
@@ -1052,6 +1058,16 @@ msgstr "Nombre"
 msgid "Description"
 msgstr "Descripción"
 
+msgid "Address (optional)"
+msgstr "Dirección (opcional)"
+
+msgid ""
+"The project is at /projects/ followed by its address. Without one, it gets a "
+"random one, which you change later."
+msgstr ""
+"El proyecto está en /projects/ seguido de su dirección. Sin una, recibe una "
+"aleatoria, que puedes cambiar después."
+
 msgid "Who sees it"
 msgstr "Quién lo ve"
 
@@ -1070,6 +1086,36 @@ msgstr "Crear el proyecto"
 
 msgid "Save"
 msgstr "Guardar"
+
+msgid "Address"
+msgstr "Dirección"
+
+msgid "The address of a project"
+msgstr "La dirección de un proyecto"
+
+msgid "The project is at"
+msgstr "El proyecto está en"
+
+msgid "Change the address"
+msgstr "Cambiar la dirección"
+
+msgid "Suggestion, after the repository of the project:"
+msgstr "Sugerencia, según el repositorio del proyecto:"
+
+msgid "Use it"
+msgstr "Usarla"
+
+msgid ""
+"Letters a to z, digits, single hyphens and one ~ between an account and a "
+"repository. Old addresses keep leading to the project, and no other project "
+"gets them."
+msgstr ""
+"Letras de la a a la z, dígitos, guiones sueltos y una ~ entre una cuenta y "
+"un repositorio. Las direcciones antiguas siguen llevando al proyecto, y "
+"ningún otro proyecto las recibe."
+
+msgid "Old addresses"
+msgstr "Direcciones antiguas"
 
 msgid "Delete the project"
 msgstr "Eliminar el proyecto"
@@ -1471,6 +1517,10 @@ msgstr "El proyecto %(name)s está eliminado."
 
 msgid "The project is saved."
 msgstr "El proyecto está guardado."
+
+#, python-format
+msgid "The address of the project is %(path)s now; the old one leads to it."
+msgstr "La dirección del proyecto es ahora %(path)s; la antigua lleva a ella."
 
 #, python-format
 msgid "%(name)s is added."

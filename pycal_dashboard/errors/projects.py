@@ -138,3 +138,25 @@ class GitHubTokenMissing(ProjectError):
 
     title = _("Sign in again to list your repositories")
     status = 401
+
+
+class ProjectSlugInvalid(ProjectError):
+    """The address of a project may only have the letters of a GitHub handle.
+
+    Use a to z, 0 to 9 and single hyphens inside, and at most one ``~`` between
+    an account and a repository, such as ``icalendar`` or
+    ``collective~icalendar``; up to 80 characters. ``new`` is taken by the site.
+    See :ref:`project-address`.
+    """
+
+    title = _("Not an address of a project")
+
+
+class ProjectSlugTaken(ProjectError):
+    """Another project has or had this address.
+
+    Addresses are never used twice, so that old links keep leading to their
+    project. Choose another one, see :ref:`project-address`.
+    """
+
+    title = _("The address is taken")

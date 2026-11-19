@@ -20,7 +20,7 @@
   {% elif status.state == 'failed' %}<h2><span class="badge badge-error">{% translate "Some repositories could not be read" %}</span></h2>
   {% else %}<h2><span class="badge badge-warning">{% translate "Out of date" %}</span></h2>{% endif %}
   <p data-last-updated>{% translate "Last updated:" %} {% if project.updated %}{% when project.updated %}{% else %}{% translate "never" %}{% endif %}</p>
-  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
+  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug project.name_part %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
   {% elif not access.can_write and not status.updating %}<p class="muted">{% translate "The writers and owners of the project update it." %}</p>{% endif %}
 </section>
 {% if repositories %}<div class="table-wrap"><table class="table" data-repositories>
@@ -34,5 +34,5 @@
     <td>{% if repository.updated %}{% when repository.updated %}{% else %}{% translate "never" %}{% endif %}</td>
   </tr>{% endfor %}</tbody>
 </table></div>
-{% else %}<p data-no-repositories>{% translate "The project has no repositories yet." %}{% if access.can_write %} <a href="{% url 'project_repositories' project.slug %}">{% translate "Add repositories" %}</a>{% endif %}</p>{% endif %}
+{% else %}<p data-no-repositories>{% translate "The project has no repositories yet." %}{% if access.can_write %} <a href="{% url 'project_repositories' project.slug project.name_part %}">{% translate "Add repositories" %}</a>{% endif %}</p>{% endif %}
 {% endblock %}

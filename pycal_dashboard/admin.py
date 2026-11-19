@@ -10,6 +10,7 @@ from .models import (
     Profile,
     Project,
     ProjectMember,
+    ProjectSlug,
     Repository,
     UpdateJob,
     WebhookDelivery,
@@ -35,3 +36,4 @@ admin.site.register(
 admin.site.register(
     UpdateJob, list_display=["project", "status", "done", "total", "errors", "created"]
 )
+admin.site.register(ProjectSlug, list_display=["slug", "project", "since", "until"])

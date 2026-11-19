@@ -11,6 +11,7 @@ from .preferences import Preferences
 from .profile import Profile
 from .project import Project
 from .project_member import ProjectMember
+from .project_slug import ProjectSlug
 from .repository import Repository
 from .update_job import UpdateJob
 from .webhook_delivery import WebhookDelivery
@@ -23,6 +24,7 @@ __all__ = [
     "Profile",
     "Project",
     "ProjectMember",
+    "ProjectSlug",
     "Repository",
     "UpdateJob",
     "WebhookDelivery",

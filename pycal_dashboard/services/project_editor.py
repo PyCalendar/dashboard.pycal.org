@@ -1,17 +1,20 @@
 """Create and change projects: name, description, visibility, repositories and people."""
 
 from django.db import transaction
-from django.utils.text import slugify
 
+from pycal_dashboard import project_slugs
 from pycal_dashboard.errors import (
     LastOwner,
     PersonNotFound,
     PrivateRepositoriesInProject,
     PrivateRepositoryInPublicProject,
     ProjectNameMissing,
+    ProjectSlugInvalid,
+    ProjectSlugTaken,
     UnknownRole,
 )
-from pycal_dashboard.models import Profile, Project, ProjectMember, Repository
+from pycal_dashboard.models import Profile, Project, ProjectMember, ProjectSlug, Repository
+from pycal_dashboard.models.project import random_slug
 
 from .project_access import ProjectAccess
 
@@ -49,25 +52,34 @@ class ProjectEditor:
         return name
 
     @staticmethod
-    def free_slug(name: str) -> str:
-        """An address for a new project that no other project has.
+    def clean_slug(slug: str, project: Project | None = None) -> str:
+        """A slug that a person chose, checked.
 
         Args:
-            name: The name of the project.
+            slug: What the person entered.
+            project: The project that gets it, None for a new one.
 
         Returns:
-            The slug, such as ``icalendar`` or ``icalendar-2``.
+            The slug in lower case.
+
+        Raises:
+            ProjectSlugInvalid: It breaks the rules of slugs.
+            ProjectSlugTaken: Another project has or had it.
         """
-        base = slugify(name)[:70] or "project"
-        slug, number = base, 1
-        while Project.objects.filter(slug=slug).exists():
-            number += 1
-            slug = f"{base}-{number}"
+        slug = slug.strip().lower()
+        if not project_slugs.valid(slug):
+            raise ProjectSlugInvalid(slug[:100])
+        if ProjectSlug.taken(slug, project) or (
+            Project.objects.filter(slug=slug).exclude(pk=getattr(project, "pk", None)).exists()
+        ):
+            raise ProjectSlugTaken(slug)
         return slug
 
     @classmethod
     @transaction.atomic
-    def create(cls, user, name: str, description: str = "", public: bool = True) -> Project:
+    def create(
+        cls, user, name: str, description: str = "", public: bool = True, slug: str = ""
+    ) -> Project:
         """Create a project that the person owns.
 
         Args:
@@ -75,16 +87,19 @@ class ProjectEditor:
             name: The name.
             description: What the project is about.
             public: Whether everybody sees it.
+            slug: The address that the person chose, "" for a random one.
 
         Returns:
             The project.
 
         Raises:
             ProjectNameMissing: The name is empty.
+            ProjectSlugInvalid: The slug breaks the rules.
+            ProjectSlugTaken: Another project has or had the slug.
         """
         name = cls.clean_name(name)
         project = Project.objects.create(
-            slug=cls.free_slug(name),
+            slug=cls.clean_slug(slug) if slug.strip() else random_slug(),
             name=name,
             description=description.strip(),
             public=public,
@@ -116,6 +131,47 @@ class ProjectEditor:
                 raise PrivateRepositoriesInProject(self.project.name)
             self.project.public = public
         self.project.save()
+
+    def rename(self, slug: str) -> bool:
+        """Give the project another address; the old one keeps leading to it.
+
+        Args:
+            slug: The new slug.
+
+        Returns:
+            False if it is the slug of the project already.
+
+        Raises:
+            ProjectOwnersOnly: The person does not own the project.
+            ProjectSlugInvalid: The slug breaks the rules.
+            ProjectSlugTaken: Another project has or had the slug.
+        """
+        self.access.require_owner()
+        slug = self.clean_slug(slug, self.project)
+        if slug == self.project.slug:
+            return False
+        self.project.slug = slug
+        self.project.save()
+        return True
+
+    def suggestion(self) -> str | None:
+        """A better slug for a project of one repository.
+
+        It is the name of the repository, else account~name, else that with a number.
+
+        Returns:
+            The first free slug of ``project_slugs.suggestions``, None for projects of more or
+            fewer repositories or that have it already.
+        """
+        repositories = list(self.project.repositories.all()[:2])
+        if len(repositories) != 1:
+            return None
+        for slug in project_slugs.suggestions(repositories[0].full_name):
+            if slug == self.project.slug:
+                return None
+            if not ProjectSlug.taken(slug, self.project):
+                return slug
+        return None
 
     def add(self, repository: Repository) -> bool:
         """Add a repository.

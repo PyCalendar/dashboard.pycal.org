@@ -16,9 +16,35 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
 
 - the **name**, such as *icalendar*,
 - the **description**: what the project is about,
-- **who sees it**: public, for everybody, or private, only for its people.
+- **who sees it**: public, for everybody, or private, only for its people,
+- optionally its **address**, see :ref:`project-address`.
 
 You own the project you create. Next, the site asks for its repositories.
+
+.. _project-address:
+
+The address
+===========
+
+A project is at ``/projects/<address>/<name>/``, such as
+``/projects/icalendar/icalendar/``. The name in it only makes links readable:
+any name leads to the project, and ``/projects/<address>/`` too.
+
+- Without a chosen address, a project gets a random one of six hexadecimal
+  digits, such as ``3f9a0c``; also a project made in the Django admin.
+- An address has the letters of a GitHub handle: ``a`` to ``z``, ``0`` to
+  ``9`` and single hyphens inside, and at most one ``~`` between an account and
+  a repository, such as ``collective~icalendar``. Capital letters become small
+  ones. ``new`` belongs to the site.
+- When the project has one repository, the site suggests an address after it:
+  the name of the repository, such as ``icalendar``; if another project has it,
+  ``collective~icalendar``; then ``collective~icalendar-2``, ``-3`` and so on.
+  Press *Use it* on the tab *Repositories* or *Settings*.
+- The owners change the address on the tab *Settings*. Old links keep working:
+  the old address leads to the new one. Every address a project had is kept
+  with the time it was used, listed under *Old addresses*, and no other project
+  ever gets it, also after the project was deleted. A project may go back to an
+  old address of its own.
 
 .. _add-repositories:
 
@@ -148,3 +174,17 @@ The JSON
 
 Public projects have their JSON, such as ``/projects.json`` and
 ``/projects/icalendar.json``, see :doc:`/reference/json`.
+
+.. list-table:: The pages of a project
+   :header-rows: 1
+
+   * - Page
+     - Address
+   * - Overview
+     - ``/projects/<address>/<name>/``
+   * - Repositories
+     - ``/projects/<address>/<name>/repositories/``
+   * - People
+     - ``/projects/<address>/<name>/people/``
+   * - Settings
+     - ``/projects/<address>/<name>/settings/``

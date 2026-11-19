@@ -2,9 +2,12 @@
 
 from allauth.account import views as account_views
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, register_converter
 
+from .project_slug_converter import ProjectSlugConverter
 from .views import account, oauth_app, pages, projects, registration, setup, webhook
+
+register_converter(ProjectSlugConverter, "project_slug")
 
 urlpatterns = [
     path("", pages.home, name="home"),
@@ -18,15 +21,33 @@ urlpatterns = [
     path("favicon.ico", pages.favicon, name="favicon"),
     path("projects/", projects.projects, name="projects"),
     path("projects/new/", projects.project_new, name="project_new"),
-    path("projects/<slug:slug>/", projects.project, name="project"),
-    path("projects/<slug:slug>/update/", projects.project_update, name="project_update"),
-    path("projects/<slug:slug>/settings/", projects.project_edit, name="project_edit"),
+    path("projects/<project_slug:slug>/", projects.project_short, name="project_short"),
+    path("projects/<project_slug:slug>/<str:name>/", projects.project, name="project"),
     path(
-        "projects/<slug:slug>/repositories/",
+        "projects/<project_slug:slug>/<str:name>/update/",
+        projects.project_update,
+        name="project_update",
+    ),
+    path(
+        "projects/<project_slug:slug>/<str:name>/settings/",
+        projects.project_edit,
+        name="project_edit",
+    ),
+    path(
+        "projects/<project_slug:slug>/<str:name>/address/",
+        projects.project_slug,
+        name="project_slug",
+    ),
+    path(
+        "projects/<project_slug:slug>/<str:name>/repositories/",
         projects.project_repositories,
         name="project_repositories",
     ),
-    path("projects/<slug:slug>/people/", projects.project_people, name="project_people"),
+    path(
+        "projects/<project_slug:slug>/<str:name>/people/",
+        projects.project_people,
+        name="project_people",
+    ),
     path("repositories/complete/", projects.repository_complete, name="repository_complete"),
     path("account/", account.account, name="account"),
     path("account/deliveries/", account.deliveries, name="deliveries"),
