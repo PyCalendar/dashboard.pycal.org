@@ -35,7 +35,8 @@ class Command(BaseCommand):
             CommandError: GitHub could not be asked, such as without a GitHub App.
         """
         try:
-            AppNotice(AppCheck.read()).notify()  # the app first: its owner adds what it lacks
+            app = AppCheck.read()
+            AppNotice(app).notify()  # the app first: its owners add what it lacks
             client = GitHubClient(AppCheck.token())
             found = []
             for number in range(1, 51):
@@ -52,7 +53,9 @@ class Command(BaseCommand):
             for data in found:
                 installation = InstallationStore.record(data)
                 lacking += bool(installation.missing_permissions)
-                sent += PermissionNotice(installation).send_if_needed()
+                # then each installation, of what the app has: GitHub asks only for that
+                notice = PermissionNotice(installation, app.app.get("permissions") or {})
+                sent += notice.send_if_needed()
             seen = [data["id"] for data in found]
             Installation.objects.exclude(github_id__in=seen).update(removed=True)
         self.stdout.write(

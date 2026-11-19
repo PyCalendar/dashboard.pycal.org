@@ -88,7 +88,10 @@ New permissions take two steps on GitHub:
    They review and accept it; the webhook ``new_permissions_accepted`` records
    it, and the notifications of the site move to *Done*.
 
-Without step 1, an installation shows no request to accept. A person gets
+Without step 1, an installation shows no request to accept. So the site tells
+the people of an installation only about the permissions that the app already
+has, and the page *Notifications* shows the notification of the app first. A
+notification marked as read stays on the page until it is done. A person gets
 the emails only with an account on the site and a verified email address, see
 :ref:`email-addresses`.
 

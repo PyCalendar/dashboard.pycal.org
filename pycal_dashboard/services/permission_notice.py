@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.utils import translation
 
 from pycal_dashboard.actions import EmailSent
+from pycal_dashboard.github import permissions
 from pycal_dashboard.github.permissions import describe
 from pycal_dashboard.models import Installation, Notification, ProjectMember
 
@@ -21,13 +22,30 @@ log = logging.getLogger(__name__)
 class PermissionNotice:
     """Compare the permissions of an installation with what the site needs; tell once."""
 
-    def __init__(self, installation: Installation):
+    def __init__(self, installation: Installation, app_permissions: dict | None = None):
         """The notice for an installation.
 
         Parameters:
             installation: The installation, with the permissions that GitHub last told.
+            app_permissions: The permissions of the GitHub App itself, when the site read
+                them; None when not known. GitHub asks an installation to accept only the
+                permissions that the app has, so only those are told: the owners of the app
+                add the others first (``AppNotice``).
         """
         self.installation = installation
+        self.app_permissions = app_permissions
+
+    def missing(self) -> dict[str, str]:
+        """The permissions that the installation lacks and its owners can accept now.
+
+        Returns:
+            Those that it lacks, without those that the app itself does not have yet.
+        """
+        missing = self.installation.missing_permissions
+        if self.app_permissions is None:
+            return missing
+        granted = permissions.missing(self.app_permissions, missing)
+        return {name: level for name, level in missing.items() if name not in granted}
 
     def github_ids(self) -> list[int]:
         """The people who are told about the installation.
@@ -85,7 +103,7 @@ class PermissionNotice:
             How many emails were sent.
         """
         installation = self.installation
-        missing = installation.missing_permissions
+        missing = self.missing()
         described = describe(missing)
         self.notify(missing)
         if not missing or installation.removed:

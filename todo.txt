@@ -357,3 +357,6 @@ community: where to start, what waits for a review, who contributes.
       a new label on a repository comes with the hourly update (a label on a pull request at once)
 - [x] The page of saving a filter: one table of the conditions with their long names, a switch at
       each (on: filters as an OR; off: grayed out, a column that does not filter)
+- [x] Notifications laid out: title, button and documentation, the list of permissions, the text
+- [x] The two steps in order: an installation is told only what the app already has; the
+      notification of the app first; read notifications stay until they are done

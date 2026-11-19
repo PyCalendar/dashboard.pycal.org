@@ -51,10 +51,18 @@ def test_the_menu_counts_them_and_the_page_shows_them(client, installation, bob)
     page = client.get("/projects/").content.decode()
     assert 'data-notification-count title="1 unread notification">1</span>' in page
     page = client.get("/account/notifications/").content.decode()
-    item = page.split('data-notification="permissions"')[1].split("</li>")[0]
+    item = page.split('data-notification="permissions"')[1].split("notification-meta")[0]
+    # the title, the button with the documentation, the list of permissions, the rest
+    title, button, listed, text = (
+        item.index("notification-title"),
+        item.index("Accept the permissions on GitHub"),
+        item.index('<ul class="notification-list"><li><code>'),
+        item.index("An owner of the account opens"),
+    )
+    assert title < button < listed < text
     assert "The GitHub App needs more permissions on collective" in item
     assert "<code>pull_requests: write</code>" in item
-    assert installation.settings_url in item and "Mark as read" in item
+    assert installation.settings_url in item and "Mark as read" in page
 
 
 def test_mark_as_read(client, installation, bob):
@@ -152,3 +160,58 @@ def test_the_menu_does_not_install_the_app(client, bob):
     client.force_login(bob)
     menu = client.get("/projects/").content.decode().split('class="account-menu"')[1]
     assert "Install the GitHub App" not in menu.split("</details>")[0]
+
+
+def test_an_installation_is_told_only_what_the_app_has(github, settings, db):
+    """GitHub asks an installation to accept only what the app has: the app first."""
+    import io
+
+    from django.core.management import call_command
+
+    from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+    from tests.conftest import person
+
+    settings.SITE_ADMINS = ["admin"]
+    admin = person(7, "admin")
+    alice = person(42, "alice")
+    lacking = {k: v for k, v in REQUIRED.items() if k not in ("checks", "statuses")}
+    github.app["permissions"] = dict(lacking)  # the app lacks checks and statuses
+    github.add_repository("collective/icalendar", installation=11)
+    github.installations[0]["permissions"] = {"metadata": "read", "issues": "read"}
+    Installation.objects.create(
+        github_id=11,
+        account_login="collective",
+        account_type="Organization",
+        admin_github_ids=["42"],
+    )
+    call_command("check_installations", stdout=io.StringIO())
+    told = Notification.objects.get(user=alice, kind=Notification.PERMISSIONS)
+    assert set(told.params["missing"]) == {"pull_requests", "contents"}  # not checks yet
+    assert Notification.objects.filter(user=admin, kind=Notification.APP_PERMISSIONS).exists()
+    github.app["permissions"], github.app["events"] = dict(REQUIRED), list(EVENTS)
+    call_command("check_installations", stdout=io.StringIO())
+    told.refresh_from_db()
+    assert {"checks", "statuses"} <= set(told.params["missing"])  # now they can be accepted
+    assert Notification.objects.get(user=admin, kind=Notification.APP_PERMISSIONS).resolved
+
+
+def test_the_app_comes_first_and_read_ones_stay(client, installation, bob, settings):
+    from pycal_dashboard.services.app_notice import AppNotice
+
+    settings.SITE_ADMINS = ["bob"]
+    PermissionNotice(installation).send_if_needed()
+
+    class Lacking:
+        complete = False
+        app = {"slug": "dashboard-test"}
+        missing_permissions = {"checks": "read"}
+        missing_events = ["label"]
+        settings_url = "https://github.com/organizations/PyCalendar/settings/apps/x/permissions"
+
+    AppNotice(Lacking()).notify()
+    client.force_login(bob)
+    client.post("/account/notifications/", {"read": "all"})
+    page = client.get("/account/notifications/").content.decode()
+    first = page.index('data-notification="app_permissions"')
+    assert first < page.index('data-notification="permissions"')  # the app first
+    assert "data-notification-count" not in page  # read: not counted, but still shown

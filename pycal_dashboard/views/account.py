@@ -173,7 +173,11 @@ def notifications(request: HttpRequest):
         request,
         "pycal_dashboard/notifications.html",
         {
-            "active": mine.filter(resolved=None),
+            # the app first: the owners of the installations can accept only after it
+            "active": sorted(
+                mine.filter(resolved=None),
+                key=lambda n: n.kind != Notification.APP_PERMISSIONS,
+            ),
             "resolved": mine.filter(resolved__gte=recent),
         },
     )
