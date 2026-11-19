@@ -44,6 +44,22 @@
     form.addEventListener("change", require);
     require();
   });
+  // the cross of a menu closes it without a change; so does Escape
+  table.querySelectorAll("[data-menu-close]").forEach(function (close) {
+    close.addEventListener("click", function (event) {
+      event.preventDefault();
+      var menu = close.closest("details");
+      menu.open = false;
+      menu.querySelector("summary").focus();
+    });
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") { return; }
+    table.querySelectorAll(".column-menu[open]").forEach(function (menu) {
+      menu.open = false;
+      menu.querySelector("summary").focus();
+    });
+  });
   // drag a column of conditions onto another one to move it there
   var dragged = null;
   table.querySelectorAll("[data-condition-column]").forEach(function (head) {

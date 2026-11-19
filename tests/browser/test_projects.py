@@ -235,6 +235,12 @@ def test_columns_of_conditions(page, site, github, bob):
     page.get_by_label("Add a condition").click()
     menu = page.locator("[data-add-condition] [data-condition-form]")
     expect(menu.get_by_label("Name of the label")).to_be_visible()  # Label comes first
+    page.locator("[data-add-condition]").get_by_role("button", name="Close").click()  # the cross
+    expect(menu).to_be_hidden()
+    page.get_by_label("Add a condition").click()
+    page.keyboard.press("Escape")  # so does Escape
+    expect(menu).to_be_hidden()
+    page.get_by_label("Add a condition").click()
     menu.get_by_label("Condition").select_option("branch")
     expect(menu.get_by_label("Name of the label")).to_be_hidden()
     menu.get_by_text("outdated", exact=True).click()
@@ -298,3 +304,18 @@ def test_the_table_in_german_on_a_phone(page, site, github, bob):
     box = panel.bounding_box()
     assert box["x"] >= 0 and box["x"] + box["width"] <= 360
     assert page.evaluate("document.documentElement.scrollWidth") <= 360
+
+
+def test_the_bar_at_the_top_is_one_row_on_a_phone(page, site, signed_in):
+    """The projects, the account, the language and the colors side by side, also on a phone."""
+    page.set_viewport_size({"width": 360, "height": 740})
+    page.goto(f"{site}/projects/")
+    tops = [
+        round(page.locator(selector).first.bounding_box()["y"])
+        for selector in (
+            ".nav nav a[href='/projects/']",
+            ".account-menu summary",
+            ".theme-menu summary",
+        )
+    ]
+    assert max(tops) - min(tops) < 20, tops

@@ -292,10 +292,10 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .toggle-yes[aria-pressed="true"] { color: var(--success); border-color: var(--success); background: var(--success-bg); }
 .toggle-no[aria-pressed="true"] { color: var(--danger); border-color: var(--danger); background: var(--danger-bg); }
 .label-chip.label-absent { text-decoration: line-through; }
-.menu { display: inline-block; position: static; }
-.menu > summary { list-style: none; }
-.menu > summary::-webkit-details-marker { display: none; }
-.menu[open] > .menu-panel { position: fixed; z-index: 20; left: 50%; top: 4rem; transform: translateX(-50%); width: min(26rem, calc(100vw - 2rem)); max-height: calc(100vh - 6rem); overflow-y: auto; padding: 1rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: .5rem; box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .25); font-weight: 400; text-align: left; white-space: normal; }
+.column-menu { display: inline-block; position: static; margin: 0; }
+.column-menu > summary { list-style: none; }
+.column-menu > summary::-webkit-details-marker { display: none; }
+.column-menu[open] > .menu-panel { position: fixed; z-index: 20; left: 50%; top: 4rem; transform: translateX(-50%); width: min(26rem, calc(100vw - 2rem)); max-height: calc(100vh - 6rem); overflow-y: auto; padding: 1rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: .5rem; box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .25); font-weight: 400; text-align: left; white-space: normal; }
 .condition-form fieldset { margin: 0 0 .75rem; }
 .condition-form .choice-row { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
 .condition-form input[name="label"] { width: 100%; }
@@ -304,6 +304,7 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .condition-form:has(.group-select option[value="branch"]:checked) .fields-branch,
 .condition-form:has(.group-select option[value="ci"]:checked) .fields-ci,
 .condition-form:has(.group-select option[value="status"]:checked) .fields-status { display: block; }
+.menu-close { float: right; margin: -.4rem -.4rem .4rem .5rem; font-size: 1.2rem; line-height: 1; }
 .menu-actions { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .5rem 0 0; padding-top: .5rem; border-top: 1px solid var(--border); }
 /* a checkbox that looks like a switch, on or off */
 label.switch { display: flex; align-items: center; gap: .5rem; margin: .3rem 0; cursor: pointer; }

@@ -330,3 +330,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The times of the script in the language of the page: the server gives it the translation of
       "on %(date)s" (one source of the language); tested in German
 - [x] branch_up_to_date holds for a merged pull request: documented as its special case
+- [x] Columns of conditions: the shortest header (the label, struck through when absent; the
+      states chosen), a gear and toggles of check marks and crosses, one always on
+- [x] The bar at the top was misaligned on phones (the menus of the columns took its class)
+- [x] The menus of + and of the gear have a cross that closes them without a change (and Escape)
