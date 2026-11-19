@@ -190,10 +190,15 @@ def test_the_header_is_short(client, project):
     """Only what was chosen: an absent label struck through, no group, no filter in words."""
     page = page_of(client, project, "labels~applies~absent~needs%20review", "branch~not~conflict")
     head = page.split("<thead>")[1].split("</thead>")[0]
-    shown = head.split('<span aria-hidden="true">')
-    assert 'label-chip label-absent" style="--label: #fbca04">needs review</span>' in shown[1]
-    assert shown[2].startswith('<span class="state state-conflict">conflict</span></span>')
-    assert "only those" not in head and "(" not in shown[2].split("</span></span>")[0]
+    heads = [
+        part.split('<span aria-hidden="true">')[1].split("</span></span>")[0]
+        for part in head.split('class="condition-head">')[1:]
+    ]
+    assert heads[0] == (
+        '<span class="label-chip label-absent" style="--label: #fbca04">needs review'
+    )
+    assert heads[1] == '<span class="state state-conflict">conflict'
+    assert "only those" not in head and "Branch:" not in heads[1]
     assert 'class="icon gear"' in head
 
 
