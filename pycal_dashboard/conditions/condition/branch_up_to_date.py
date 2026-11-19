@@ -18,8 +18,12 @@ NOT_UP_TO_DATE = {"behind", "dirty"}
 class BranchUpToDate(Condition):
     """The branch of a pull request is up to date with its base branch.
 
-    Holds when the pull request is neither behind its base branch nor has a conflict with it;
-    a merged pull request is up to date, too.
+    Holds when the pull request is neither behind its base branch nor has a conflict with it.
+
+    Special case: a merged pull request is always up to date. Its branch is in the base branch,
+    so it cannot be behind it or in conflict with it, and GitHub no longer tells the state of
+    its branch; the condition holds without that data. ``branch_outdated`` and
+    ``merge_conflict`` do not hold for it, accordingly.
     """
 
     id = "branch_up_to_date"

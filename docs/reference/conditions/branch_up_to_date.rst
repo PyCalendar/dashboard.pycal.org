@@ -4,8 +4,18 @@
 
 The branch of a pull request is up to date with its base branch.
 
-Holds when the pull request is neither behind its base branch nor has a
-conflict with it; a merged pull request is up to date, too.
+Holds when the pull request is neither behind its base branch nor has a conflict
+with it.
+
+Special case: merged pull requests
+==================================
+
+A merged pull request is always up to date: its branch is in the base branch,
+so it cannot be behind it or in conflict with it. GitHub no longer tells the
+state of its branch, so the condition holds for it without that data.
+Accordingly, :doc:`branch_outdated` and :doc:`merge_conflict` do not hold for a
+merged pull request, and the column *Branch* of the table of pull requests says
+*up to date* for it.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.

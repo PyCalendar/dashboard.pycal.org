@@ -81,3 +81,10 @@ def test_pages_link_their_documentation_with_a_question_mark(client, alice):
     account = client.get("/account/").content.decode()
     assert 'class="help-link" href="https://docs.example.org/tutorial/account.html"' in account
     assert 'href="https://github.com/alice"' in account and "github-mark" in account
+
+
+@pytest.mark.parametrize(("language", "text"), [("en", "on %(date)s"), ("de", "am %(date)s")])
+def test_the_page_gives_the_script_its_texts(client, db, language, text):
+    """One source of the language: the server translates what the script writes."""
+    page = client.get("/", HTTP_ACCEPT_LANGUAGE=language).content.decode()
+    assert f'<html lang="{language}"' in page and f'data-on-date="{text}"' in page

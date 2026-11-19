@@ -8,7 +8,9 @@
 
 (function () {
   const RELATIVE_DAYS = 30;
+  // the language of the page, and its texts, come from the server: one source of the language
   const language = document.documentElement.lang || undefined;
+  const onDate = document.documentElement.dataset.onDate || "%(date)s";
   // dateStyle and timeStyle cannot be combined with timeZoneName
   const exact = new Intl.DateTimeFormat(language, {
     year: "numeric",
@@ -29,7 +31,7 @@
     if (hours < 24) return relative.format(-hours, "hour");
     const days = Math.round(seconds / 86400);
     if (days < RELATIVE_DAYS) return relative.format(-days, "day");
-    return "on " + day.format(time);
+    return onDate.replace("%(date)s", day.format(time));
   }
 
   function update() {

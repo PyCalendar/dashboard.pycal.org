@@ -6,7 +6,8 @@ The branch of a pull request is behind its base branch.
 
 Holds when its base branch has commits that the branch of the pull request does
 not have, and the repository requires branches to be up to date before merging
-(``mergeable_state`` is ``behind``). A merged pull request is not out of date.
+(``mergeable_state`` is ``behind``). A merged pull request is not out of date, see
+:doc:`branch_up_to_date`.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.

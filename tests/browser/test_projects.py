@@ -281,6 +281,9 @@ def test_the_table_in_german_on_a_phone(page, site, github, bob):
     for column in ("Status", "Organisation", "Repository", "Erstellt"):
         page.locator("[data-columns]").get_by_label(column, exact=True).check()
     assert page.evaluate("document.documentElement.scrollWidth") <= 360  # the table scrolls
+    # the script writes the times in the language of the page, as the server translated it
+    expect(page.locator("td.col-created time").first).to_contain_text("am ")
+    expect(page.locator("td.col-created time").first).not_to_contain_text("on ")
     page.get_by_label("Eine Bedingung hinzufügen").click()
     panel = page.locator("[data-add-condition] .menu-panel")
     expect(panel).to_be_visible()
