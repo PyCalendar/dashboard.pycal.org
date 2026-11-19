@@ -344,3 +344,8 @@ community: where to start, what waits for a review, who contributes.
       or not read yet. Live: the installation of PyCalendar has not accepted checks and statuses
       (the branch is read, the checks are not), and closed pull requests have no checks
 - [ ] The person: accept the permissions checks and statuses for the installation on PyCalendar
+- [x] Notifications as on the sign platform: the count at the account menu, the page
+      Notifications (mark as read, done); an installation that needs permissions notifies its
+      people, the app that lacks permissions notifies the administrators; both steps explained
+- [x] The account menu does not install the GitHub App: adding repositories does
+- [x] No button of JSON on the pull requests: the reference of the JSON describes it

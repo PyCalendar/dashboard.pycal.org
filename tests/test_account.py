@@ -90,7 +90,7 @@ def test_install_the_app_when_signed_in(client, alice):
     client.force_login(alice)
     account = client.get("/account/").content.decode()
     assert install in account and "https://docs.example.org/how-to/install-app.html" in account
-    assert install in client.get("/").content.decode()
+    assert install not in client.get("/").content.decode()  # not in the menu: when adding
 
 
 def test_no_install_button_without_an_app(client, alice, settings):

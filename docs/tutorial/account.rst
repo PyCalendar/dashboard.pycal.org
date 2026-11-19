@@ -106,6 +106,22 @@ Sign out
 
 Choose **Sign out** in the menu of your account.
 
+.. _notifications:
+
+Notifications
+=============
+
+The site tells you what waits for you in *Notifications*, in the menu of your
+account: a number next to your GitHub name counts those you have not read.
+For now, a notification says that the GitHub App needs more permissions on an
+account, with the permissions and a link to accept them on GitHub. You get it
+if you installed or changed the installation, or write or own a project with a
+repository of it, also if you switched the emails off.
+
+**Mark as read** removes it from the number; it stays on the page until it is
+done. When the owners accepted the permissions, it moves to *Done* by itself.
+If GitHub asks for other permissions later, it comes back unread.
+
 .. _delete-account:
 
 Delete your account

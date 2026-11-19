@@ -351,3 +351,13 @@ label.switch input:focus-visible { outline: 2px solid var(--primary); outline-of
 .filter-summary .list li { margin: .2rem 0; }
 .opposite { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin-left: .4rem; color: var(--text-muted); }
 .save-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* notifications: the count in the menu, and the list */
+.count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 1.3em; height: 1.3em; padding: 0 .3em; border-radius: 1em; background: var(--accent); color: var(--accent-text); font-size: .8em; font-weight: 700; }
+.notification.unread { border-left: .3rem solid var(--accent); padding-left: .6rem; }
+.link-button { border: 0; padding: 0; background: none; color: var(--primary); font: inherit; text-decoration: underline; cursor: pointer; }
+
+/* notifications: the count in the menu, and the list */
+.count-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 1.3em; height: 1.3em; padding: 0 .3em; border-radius: 1em; background: var(--accent); color: var(--accent-text); font-size: .8em; font-weight: 700; }
+.notification.unread { border-left: .3rem solid var(--accent); padding-left: .6rem; }
+.notifications .link-button { color: var(--primary); text-decoration: underline; }

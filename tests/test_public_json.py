@@ -49,7 +49,7 @@ def test_the_about_and_licenses(client):
 
 def test_the_json_is_public_also_with_a_session(client, alice):
     client.force_login(alice)
-    assert "Install the GitHub App" in client.get("/").content.decode()
+    assert 'class="account-menu"' in client.get("/").content.decode()  # signed in
     assert read(client, "/index.json")["sign_in"] is True
 
 

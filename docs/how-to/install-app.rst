@@ -74,8 +74,21 @@ needs a permission that an installation lacks:
 - their page *Account* lists the installation as *needs more permissions*, with
   the missing permissions and the button *Accept the permissions on GitHub*.
 
-An owner of the account accepts them in the settings of the installation on
-GitHub; the webhook ``new_permissions_accepted`` records them. A person gets
+New permissions take two steps on GitHub:
+
+#. **The owners of the GitHub App add them to the app.** In the settings of the
+   app on GitHub, such as *Organization → Settings → Developer settings →
+   GitHub Apps → the app → Permissions & events*, they set each permission and
+   event that :doc:`/reference/permissions` lists and save. The administrators
+   of the site (``SITE_ADMINS``) get a notification while the app lacks one,
+   with the link to this page; the setup page of the app lists them, too.
+#. **The owners of each installation accept them.** After step 1, GitHub shows
+   a request to review the new permissions in the settings of each installation,
+   *Organization → Settings → GitHub Apps → Configure*, and emails its owners.
+   They review and accept it; the webhook ``new_permissions_accepted`` records
+   it, and the notifications of the site move to *Done*.
+
+Without step 1, an installation shows no request to accept. A person gets
 the emails only with an account on the site and a verified email address, see
 :ref:`email-addresses`.
 

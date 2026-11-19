@@ -32,13 +32,10 @@ def save_page(client, *columns: str, saved: int | None = None) -> str:
     return client.get(f"/projects/icalendar/filters/save/?{query}").content.decode()
 
 
-def test_the_table_has_save_and_json(client, project, bob):
+def test_the_table_has_save(client, project, bob):
     page = client.get("/projects/icalendar/pull-requests/?col=status~applies~open").content
     assert b"data-save" not in page  # visitors do not save
-    assert (
-        b'href="/projects/icalendar/pull-requests.json?col=status~applies~open&amp;per_page=25"'
-        in page
-    )
+    assert b"data-json" not in page  # the JSON is in the reference, not a button
     client.force_login(bob)
     page = client.get("/projects/icalendar/pull-requests/?col=status~applies~open").content.decode()
     assert (

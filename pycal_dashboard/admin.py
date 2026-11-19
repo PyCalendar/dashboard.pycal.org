@@ -9,6 +9,7 @@ from .models import (
     Label,
     LogAction,
     LogTrigger,
+    Notification,
     Preferences,
     Profile,
     Project,
@@ -55,3 +56,6 @@ admin.site.register(
     list_display=["issue", "mergeable_state", "auto_merge", "checks", "updated"],
 )
 admin.site.register(PullRequestFilter, list_display=["name", "project", "created_by", "updated"])
+admin.site.register(
+    Notification, list_display=["user", "kind", "key", "created", "read", "resolved"]
+)

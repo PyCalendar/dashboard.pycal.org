@@ -71,6 +71,15 @@ DATA = {
         "seen_by": _("The people who run the site"),
         "why": _("To email them when the app needs more permissions."),
     },
+    "notifications": {
+        "what": _(
+            "Your notifications, such as an installation of the GitHub App that needs more "
+            "permissions, and when you read them."
+        ),
+        "whose": _("People who sign in"),
+        "seen_by": _("You and the people who run the site"),
+        "why": _("To tell you what to do, until it is done."),
+    },
     "log": {
         "what": _(
             "The log of the site and the webhooks GitHub sent: what happened, when, and the "
@@ -224,6 +233,10 @@ MODELS = {
             "error",
             "detail",
         },
+    ),
+    "pycal_dashboard.Notification": (
+        "notifications",
+        {"id", "user", "kind", "key", "params", "url", "created", "updated", "read", "resolved"},
     ),
     "auth.User": (
         "account",

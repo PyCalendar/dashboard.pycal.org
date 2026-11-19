@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.contrib import messages
@@ -11,14 +13,20 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.actions import PreferencesSaved, Trigger
 from pycal_dashboard.context import THEMES
 from pycal_dashboard.errors import NoGitHubAccount, UnknownPreference
-from pycal_dashboard.models import Installation, LogTrigger, Preferences, WebhookDelivery
+from pycal_dashboard.models import (
+    Installation,
+    LogTrigger,
+    Notification,
+    Preferences,
+    WebhookDelivery,
+)
 from pycal_dashboard.services.account_removal import AccountRemoval
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.theme import CHOICES
@@ -139,6 +147,36 @@ def account_delete(request: HttpRequest):
     else:
         messages.success(request, _("Your account is deleted."))
     return redirect("home")
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def notifications(request: HttpRequest):
+    """The notifications of the person who signed in; POST marks them as read.
+
+    Parameters:
+        request: The request; POST with ``read``, the number of a notification, or ``all``.
+
+    Returns:
+        The page, or a redirect after marking.
+    """
+    mine = Notification.objects.filter(user=request.user)
+    if request.method == "POST":
+        unread = mine.filter(read=None)
+        chosen = request.POST.get("read", "")
+        if chosen != "all":
+            unread = unread.filter(pk=int(chosen) if chosen.isdigit() else 0)
+        unread.update(read=timezone.now())
+        return redirect("notifications")
+    recent = timezone.now() - timedelta(days=30)
+    return render(
+        request,
+        "pycal_dashboard/notifications.html",
+        {
+            "active": mine.filter(resolved=None),
+            "resolved": mine.filter(resolved__gte=recent),
+        },
+    )
 
 
 @login_required

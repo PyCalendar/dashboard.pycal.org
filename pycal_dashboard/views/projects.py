@@ -548,9 +548,6 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "label_names": sorted({label.name for label in labels}),
             "label_colors": {label.name.lower(): label.color for label in labels},
             "address": table_address(columns, size, saved.pk if saved else None),
-            "json_address": access.project.path("pull-requests").rstrip("/")
-            + ".json"
-            + table_address(columns, size, saved.pk if saved else None),
             "saved": saved,
             "repositories": repositories,
             "tab": "pull-requests",

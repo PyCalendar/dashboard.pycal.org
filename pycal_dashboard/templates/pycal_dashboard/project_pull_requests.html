@@ -7,8 +7,7 @@
 <section class="card pull-table" data-pull-requests data-choose-one="{% translate "switch one on" %}">
 <div class="table-head">
   <div class="table-title"><h2>{% if saved %}{{ saved.name }}: {% endif %}{% blocktranslate count counter=rows.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
-    {% if access.can_write %}<a class="button button-small" href="{% url 'project_filter_save' project.slug %}{{ address }}" data-save>{% translate "Save" %}</a>{% endif %}
-    <a class="button button-quiet button-small" href="{{ json_address }}" data-json title="{% translate "The pull requests of this table as JSON" %}">{% translate "JSON" %}</a></div>
+    {% if access.can_write %}<a class="button button-small" href="{% url 'project_filter_save' project.slug %}{{ address }}" data-save>{% translate "Save" %}</a>{% endif %}</div>
   <form method="get" class="per-page" data-per-page>
     {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
     <label for="per-page">{% translate "Per page" %}</label>

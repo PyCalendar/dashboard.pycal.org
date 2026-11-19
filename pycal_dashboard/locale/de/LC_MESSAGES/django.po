@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 19:17+0000\n"
+"POT-Creation-Date: 2026-11-19 19:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -449,6 +449,16 @@ msgid "To email them when the app needs more permissions."
 msgstr "Um ihnen zu schreiben, wenn die App mehr Berechtigungen braucht."
 
 msgid ""
+"Your notifications, such as an installation of the GitHub App that needs "
+"more permissions, and when you read them."
+msgstr ""
+"Deine Benachrichtigungen, etwa über eine Installation der GitHub App, die "
+"mehr Berechtigungen braucht, und wann du sie gelesen hast."
+
+msgid "To tell you what to do, until it is done."
+msgstr "Um dir zu sagen, was zu tun ist, bis es erledigt ist."
+
+msgid ""
 "The log of the site and the webhooks GitHub sent: what happened, when, and "
 "the GitHub name of who caused it."
 msgstr ""
@@ -674,11 +684,17 @@ msgstr "Datenschutz"
 msgid "Licenses"
 msgstr "Lizenzen"
 
+#, python-format
+msgid "%(counter)s unread notification"
+msgid_plural "%(counter)s unread notifications"
+msgstr[0] "%(counter)s ungelesene Benachrichtigung"
+msgstr[1] "%(counter)s ungelesene Benachrichtigungen"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
 msgid "Account and preferences"
 msgstr "Konto und Einstellungen"
-
-msgid "Install the GitHub App"
-msgstr "Die GitHub App installieren"
 
 msgid "Administration"
 msgstr "Verwaltung"
@@ -731,6 +747,14 @@ msgstr "Vorschau"
 msgid "Markdown: **bold**, *italic*, [a link](https://…), lists with - or 1."
 msgstr ""
 "Markdown: **fett**, *kursiv*, [ein Link](https://…), Listen mit - oder 1."
+
+#, python-format
+msgid "The GitHub App needs more permissions on %(account)s"
+msgstr "Die GitHub App braucht mehr Berechtigungen auf %(account)s"
+
+#, python-format
+msgid "The GitHub App %(app)s lacks permissions or events"
+msgstr "Der GitHub App %(app)s fehlen Berechtigungen oder Ereignisse"
 
 msgid "private"
 msgstr "privat"
@@ -963,6 +987,9 @@ msgstr ""
 "Installiere die App auf den Repositorys einer Organisation: auf allen oder "
 "auf denen, die du wählst. Besitzer der Organisation installieren sie; andere "
 "Mitglieder fragen einen Besitzer auf GitHub."
+
+msgid "Install the GitHub App"
+msgstr "Die GitHub App installieren"
 
 msgid "Ways to install the GitHub App"
 msgstr "Wege, die GitHub App zu installieren"
@@ -1312,6 +1339,48 @@ msgstr "Älter"
 
 msgid "Nothing yet."
 msgstr "Noch nichts."
+
+msgid "Mark all as read"
+msgstr "Alle als gelesen markieren"
+
+msgid "The permissions it asks for and why"
+msgstr "Die Berechtigungen, die sie verlangt, und warum"
+
+msgid ""
+"An owner of the account opens the settings of the installation on GitHub and "
+"reviews the request for new permissions. If GitHub shows no request, the "
+"owners of the GitHub App add the permissions to the app first."
+msgstr ""
+"Wem das Konto gehört, öffnet die Einstellungen der Installation auf GitHub "
+"und prüft die Anfrage nach neuen Berechtigungen. Zeigt GitHub keine Anfrage, "
+"fügen die Eigentümer der GitHub App die Berechtigungen zuerst der App hinzu."
+
+msgid "How to accept new permissions"
+msgstr "Wie man neue Berechtigungen akzeptiert"
+
+msgid "Add them to the GitHub App"
+msgstr "Sie der GitHub App hinzufügen"
+
+msgid ""
+"The owners of the GitHub App add these permissions and events in its "
+"settings and save them; then GitHub asks the owners of each installation to "
+"accept them."
+msgstr ""
+"Die Eigentümer der GitHub App fügen diese Berechtigungen und Ereignisse in "
+"ihren Einstellungen hinzu und speichern sie; dann bittet GitHub die "
+"Eigentümer jeder Installation, sie zu akzeptieren."
+
+msgid "Mark as read"
+msgstr "Als gelesen markieren"
+
+msgid "No notifications: nothing waits for you."
+msgstr "Keine Benachrichtigungen: Nichts wartet auf dich."
+
+msgid "Done"
+msgstr "Erledigt"
+
+msgid "done"
+msgstr "erledigt"
 
 msgid ""
 "People sign in with an OAuth app. GitHub tells the site only who they are "
@@ -1702,12 +1771,6 @@ msgstr "Ja, dieses Projekt löschen"
 msgid "switch one on"
 msgstr "schalte eine ein"
 
-msgid "The pull requests of this table as JSON"
-msgstr "Die Pull Requests dieser Tabelle als JSON"
-
-msgid "JSON"
-msgstr "JSON"
-
 msgid "Per page"
 msgstr "Pro Seite"
 
@@ -1791,9 +1854,6 @@ msgstr "Labels von Pull Requests hinzufügen und entfernen,"
 msgid "create and update a comment of the site on a pull request."
 msgstr ""
 "einen Kommentar der Seite auf einem Pull Request erstellen und aktualisieren."
-
-msgid "The permissions it asks for and why"
-msgstr "Die Berechtigungen, die sie verlangt, und warum"
 
 #, python-format
 msgid "%(counter)s repository has no GitHub App yet."

@@ -11,6 +11,7 @@ from pycal_dashboard.errors import DashboardError
 from pycal_dashboard.github.app_check import AppCheck
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.models import Installation
+from pycal_dashboard.services.app_notice import AppNotice
 from pycal_dashboard.services.installation_store import InstallationStore
 from pycal_dashboard.services.permission_notice import PermissionNotice
 
@@ -34,6 +35,7 @@ class Command(BaseCommand):
             CommandError: GitHub could not be asked, such as without a GitHub App.
         """
         try:
+            AppNotice(AppCheck.read()).notify()  # the app first: its owner adds what it lacks
             client = GitHubClient(AppCheck.token())
             found = []
             for number in range(1, 51):

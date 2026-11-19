@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from . import build_info
 from .checks import is_url
+from .import_guard import IMPORT_GUARD
 from .services.app_registration import AppRegistration
 from .services.identity import GitHubIdentity
 from .theme import COOKIE, Theme
@@ -27,6 +28,24 @@ def version_text() -> str:
     if not build["commit"] or build["commit"] in build["version"]:
         return build["version"]
     return f"{build['version']} ({build['commit']})"
+
+
+def unread_notifications(request: HttpRequest) -> int:
+    """How many notifications of the person who signed in are unread and still ask something.
+
+    Parameters:
+        request: The request.
+
+    Returns:
+        The number; 0 for visitors.
+    """
+    user = getattr(request, "user", None)
+    if not getattr(user, "is_authenticated", False):
+        return 0
+    with IMPORT_GUARD:  # see import_guard.py: the models are ready when pages are made
+        from pycal_dashboard.models import Notification
+
+    return Notification.objects.filter(user=user, read=None, resolved=None).count()
 
 
 def site(request: HttpRequest) -> dict:
@@ -58,6 +77,8 @@ def site(request: HttpRequest) -> dict:
             "install_help": f"{docs}how-to/install-app.html",
             "oauth_app": f"{docs}how-to/github-app.html#oauth-app",
             "log_help": f"{docs}tutorial/account.html#administrators",
+            "notifications_help": f"{docs}tutorial/account.html#notifications",
+            "new_permissions": f"{docs}how-to/install-app.html#new-permissions",
             "delete_account": f"{docs}tutorial/account.html#delete-account",
             "json": f"{docs}reference/json.html",
             "projects": f"{docs}tutorial/projects.html",
@@ -89,4 +110,5 @@ def site(request: HttpRequest) -> dict:
         "github": GitHubIdentity.of(getattr(request, "user", None)),
         "site_admin": GitHubIdentity.is_site_admin(getattr(request, "user", None)),
         "nav": getattr(request.resolver_match, "url_name", "") if request.resolver_match else "",
+        "notification_count": unread_notifications(request),
     }

@@ -3,15 +3,17 @@
 import logging
 from itertools import groupby
 
+from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import translation
 
 from pycal_dashboard.actions import EmailSent
 from pycal_dashboard.github.permissions import describe
-from pycal_dashboard.models import Installation, ProjectMember
+from pycal_dashboard.models import Installation, Notification, ProjectMember
 
 from .email_addresses import recipients
+from .notifier import Notifier
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +46,35 @@ class PermissionNotice:
         found |= {int(i) for i in members if i}
         return sorted(found)
 
+    def user_ids(self) -> list[int]:
+        """The people of the site who are told about the installation, see :meth:`github_ids`.
+
+        Returns:
+            The ids of their users.
+        """
+        ids = [str(i) for i in self.github_ids()]
+        return list(
+            SocialAccount.objects.filter(provider="github", uid__in=ids).values_list(
+                "user_id", flat=True
+            )
+        )
+
+    def notify(self, missing: dict[str, str]) -> None:
+        """Notify the people on the site while the installation lacks permissions, else resolve.
+
+        Everybody who is told gets the notification, also those who switched the emails off.
+
+        Parameters:
+            missing: The permissions it lacks, by name.
+        """
+        installation = self.installation
+        notifier = Notifier(Notification.PERMISSIONS, installation.github_id)
+        if not missing or installation.removed:
+            notifier.resolve()
+            return
+        params = {"account": installation.account_login, "missing": dict(sorted(missing.items()))}
+        notifier.notify(self.user_ids(), params, installation.settings_url)
+
     def send_if_needed(self) -> int:
         """Email the people of the installation if it lacks permissions nobody was told about.
 
@@ -56,6 +87,7 @@ class PermissionNotice:
         installation = self.installation
         missing = installation.missing_permissions
         described = describe(missing)
+        self.notify(missing)
         if not missing or installation.removed:
             if installation.permissions_notified:
                 installation.permissions_notified = ""

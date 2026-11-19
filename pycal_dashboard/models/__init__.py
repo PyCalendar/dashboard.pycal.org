@@ -10,6 +10,7 @@ from .issue import Issue
 from .label import Label
 from .log_action import LogAction
 from .log_trigger import LogTrigger
+from .notification import Notification
 from .preferences import Preferences
 from .profile import Profile
 from .project import Project
@@ -28,6 +29,7 @@ __all__ = [
     "Label",
     "LogAction",
     "LogTrigger",
+    "Notification",
     "Preferences",
     "Profile",
     "Project",
