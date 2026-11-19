@@ -218,7 +218,7 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .columns-choice summary { cursor: pointer; }
 .columns-checks { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: .5rem 0 0; }
 .columns-checks label.check { display: inline-flex; gap: .3rem; align-items: center; }
-.pull-requests .col-link { width: 1%; white-space: nowrap; border-left: .3rem solid transparent; }
+.pull-requests .col-link { width: 1%; white-space: nowrap; }
 .pull-requests .col-number, .pull-requests .col-created { white-space: nowrap; }
 .pull-table:has(#column-status:not(:checked)) .col-status,
 .pull-table:has(#column-title:not(:checked)) .col-title,
@@ -227,9 +227,14 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .pull-table:has(#column-number:not(:checked)) .col-number,
 .pull-table:has(#column-creator:not(:checked)) .col-creator,
 .pull-table:has(#column-created:not(:checked)) .col-created { display: none; }
-.pull-table:has(#column-status:not(:checked)) tr[data-status="open"] .col-link { border-left-color: var(--success); }
-.pull-table:has(#column-status:not(:checked)) tr[data-status="merged"] .col-link { border-left-color: var(--merged); }
-.pull-table:has(#column-status:not(:checked)) tr[data-status="closed"] .col-link { border-left-color: var(--danger); }
+/* the icon that links GitHub only while no title or number links the pull request */
+.pull-table:has(#column-title:checked) .col-link,
+.pull-table:has(#column-number:checked) .col-link { display: none; }
+/* without the column of the status, the row starts with its color */
+.pull-table:has(#column-status:not(:checked)) tr[data-status] { border-left: .3rem solid transparent; }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="open"] { border-left-color: var(--success); }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="merged"] { border-left-color: var(--merged); }
+.pull-table:has(#column-status:not(:checked)) tr[data-status="closed"] { border-left-color: var(--danger); }
 .pagination { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
 
 /* the proposals of a field, such as the people to share a project with */

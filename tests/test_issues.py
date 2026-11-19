@@ -186,12 +186,12 @@ def test_the_pull_requests_are_a_table_with_columns_to_choose(client, project):
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
     assert "?state=" not in page and "the newest first, as of the last update" not in page
     choice = page.split("data-columns>")[1].split("</details>")[0]
-    assert (
-        "Display: <span data-columns-shown>Status, Title, Organization, Repository, Number, Creator, Created</span>"
-        in choice
-    )
+    assert "Display: <span data-columns-shown>Title, Number, Creator</span>" in choice
+    for column in ("title", "number", "creator"):  # shown first
+        assert f'id="column-{column}" data-column="{column}" checked>' in choice
+    for column in ("status", "organization", "repository", "created"):  # hidden first
+        assert f'id="column-{column}" data-column="{column}">' in choice
     for column in ("status", "title", "organization", "repository", "number", "creator", "created"):
-        assert f'id="column-{column}" data-column="{column}" checked' in choice
         assert f'<th class="col-{column}">' in page and f'<td class="col-{column}">' in page
     row = page.split('data-pull-request="collective/icalendar#2" data-status="open">')[1]
     row = row.split("</tr>")[0]
@@ -200,7 +200,8 @@ def test_the_pull_requests_are_a_table_with_columns_to_choose(client, project):
     )
     assert '<td class="col-organization">collective</td>' in row
     assert '<td class="col-repository">icalendar</td>' in row
-    assert '<td class="col-number">#2</td>' in row
+    number = '<a href="https://github.com/collective/icalendar/pull/2">#2</a>'
+    assert f'<td class="col-number">{number}</td>' in row
     assert 'data-status="merged"' in page and 'data-status="closed"' in page
     assert "pull-table.js" in page
 
@@ -214,9 +215,12 @@ def test_the_columns_are_hidden_by_css():
         assert f".pull-table:has(#column-{column}:not(:checked)) .col-{column}" in css
     for status, color in (("open", "success"), ("merged", "merged"), ("closed", "danger")):
         assert (
-            f'.pull-table:has(#column-status:not(:checked)) tr[data-status="{status}"] .col-link '
+            f'.pull-table:has(#column-status:not(:checked)) tr[data-status="{status}"] '
             f"{{ border-left-color: var(--{color}); }}"
         ) in css
+    # the icon of GitHub only while neither the title nor the number links the pull request
+    assert ".pull-table:has(#column-title:checked) .col-link" in css
+    assert ".pull-table:has(#column-number:checked) .col-link" in css
 
 
 @pytest.mark.parametrize(("asked", "size"), [("10", 10), ("100", 100), ("1000", 25), ("x", 25)])

@@ -300,15 +300,16 @@ def project(request: HttpRequest, slug: str):
 # the pull requests of a page, which the visitor chooses: at most 100, also in the JSON
 PER_PAGE_CHOICES = (10, 25, 50, 100)
 PER_PAGE = 25
-# the columns of the table of pull requests that the visitor shows or hides
+# the columns of the table of pull requests that the visitor shows or hides, and whether each
+# is shown before the visitor chooses
 PULL_REQUEST_COLUMNS = (
-    ("status", gettext_lazy("Status")),
-    ("title", gettext_lazy("Title")),
-    ("organization", gettext_lazy("Organization")),
-    ("repository", gettext_lazy("Repository")),
-    ("number", gettext_lazy("Number")),
-    ("creator", gettext_lazy("Creator")),
-    ("created", gettext_lazy("Created")),
+    ("status", gettext_lazy("Status"), False),
+    ("title", gettext_lazy("Title"), True),
+    ("organization", gettext_lazy("Organization"), False),
+    ("repository", gettext_lazy("Repository"), False),
+    ("number", gettext_lazy("Number"), True),
+    ("creator", gettext_lazy("Creator"), True),
+    ("created", gettext_lazy("Created"), False),
 )
 
 

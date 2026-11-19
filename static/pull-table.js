@@ -21,9 +21,9 @@
       .map(function (box) { return box.parentNode.textContent.trim(); });
     shown.textContent = names.length ? names.join(", ") : "–";
   }
-  var hidden = read() || [];
+  var hidden = read();  // null: the columns that the page shows first
   boxes.forEach(function (box) {
-    box.checked = hidden.indexOf(box.dataset.column) < 0;
+    if (hidden) { box.checked = hidden.indexOf(box.dataset.column) < 0; }
     box.addEventListener("change", function () { save(); name(); });
   });
   name();

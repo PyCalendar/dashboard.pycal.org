@@ -159,10 +159,11 @@ requests on the overview leads there.
 
 *Display* chooses the columns: the status, the title, the organization, the
 repository, the number, the creator with their avatar, and when it was
-created. The browser keeps the choice. Without the status, the first cell of
-each row, which links the pull request on GitHub, has the color of its status:
-green while it is open, purple when it was merged, red when it was closed
-without merging. Without any column, only these links remain.
+created. First it shows the title, the number and the creator; the browser
+keeps the choice. The title and the number link the pull request on GitHub;
+without both, an icon of GitHub links it. Without the status, each row starts
+with the color of its status: green while it is open, purple when it was
+merged, red when it was closed without merging.
 
 The tabs of a project are always in this order: the overview, the public tabs,
 then those of the collaborators.

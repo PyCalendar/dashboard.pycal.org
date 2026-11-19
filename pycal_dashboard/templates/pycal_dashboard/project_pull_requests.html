@@ -14,18 +14,18 @@
   </form>
 </div>
 <details class="columns-choice" data-columns>
-  <summary>{% translate "Display" %}: <span data-columns-shown>{% for key, title in columns %}{{ title }}{% if not forloop.last %}, {% endif %}{% endfor %}</span></summary>
-  <p class="columns-checks">{% for key, title in columns %}<label class="check"><input type="checkbox" id="column-{{ key }}" data-column="{{ key }}" checked> {{ title }}</label>{% endfor %}</p>
+  <summary>{% translate "Display" %}: <span data-columns-shown>{% for key, title, shown in columns %}{% if shown %}{% if key != "title" %}, {% endif %}{{ title }}{% endif %}{% endfor %}</span></summary>
+  <p class="columns-checks">{% for key, title, shown in columns %}<label class="check"><input type="checkbox" id="column-{{ key }}" data-column="{{ key }}"{% if shown %} checked{% endif %}> {{ title }}</label>{% endfor %}</p>
 </details>
 {% if pull_requests %}<div class="table-wrap"><table class="table pull-requests">
-  <thead><tr><th class="col-link"><span class="visually-hidden">{% translate "On GitHub" %}</span></th>{% for key, title in columns %}<th class="col-{{ key }}">{{ title }}</th>{% endfor %}</tr></thead>
+  <thead><tr><th class="col-link"><span class="visually-hidden">{% translate "On GitHub" %}</span></th>{% for key, title, shown in columns %}<th class="col-{{ key }}">{{ title }}</th>{% endfor %}</tr></thead>
   <tbody>{% for pull in pull_requests %}<tr data-pull-request="{{ pull.repository.full_name }}#{{ pull.number }}" data-status="{{ pull.status }}">
     <td class="col-link">{% blocktranslate with name=pull.repository.full_name number=pull.number asvar label %}{{ name }}#{{ number }} on GitHub{% endblocktranslate %}{% github_link pull.url label %}</td>
     <td class="col-status"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span></td>
     <td class="col-title"><a href="{{ pull.url }}">{{ pull.title }}</a></td>
     <td class="col-organization">{{ pull.repository.owner }}</td>
     <td class="col-repository">{{ pull.repository.name }}</td>
-    <td class="col-number">#{{ pull.number }}</td>
+    <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}</a></td>
     <td class="col-creator">{% github_user pull.author %}</td>
     <td class="col-created">{% when pull.created %}</td>
   </tr>{% endfor %}</tbody>
