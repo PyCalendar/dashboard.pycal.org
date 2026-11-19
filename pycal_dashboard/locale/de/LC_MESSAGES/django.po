@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 11:55+0000\n"
+"POT-Creation-Date: 2026-11-19 12:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -390,8 +390,8 @@ msgstr "Übersicht"
 msgid "Repositories"
 msgstr "Repositorys"
 
-msgid "People"
-msgstr "Personen"
+msgid "Collaborators"
+msgstr "Mitwirkende"
 
 msgid "What this error means and how to solve it"
 msgstr "Was dieser Fehler bedeutet und wie man ihn löst"
@@ -438,16 +438,17 @@ msgstr "Datenschutz"
 
 msgid ""
 "Every page is public, except your account, preferences, email addresses and "
-"private projects: those only you and the people of the project see. Signing "
-"in with GitHub tells the site who you are, your email addresses and your "
-"organizations; it keeps the token of GitHub to list the repositories you may "
-"add to a project."
+"private projects: those only you and the collaborators of the project see. "
+"Signing in with GitHub tells the site who you are, your email addresses and "
+"your organizations; it keeps the token of GitHub to list the repositories "
+"you may add to a project."
 msgstr ""
 "Jede Seite ist öffentlich, außer deinem Konto, deinen Einstellungen, deinen "
-"E-Mail-Adressen und privaten Projekten: Diese siehst nur du und die Personen "
-"des Projekts. Die Anmeldung mit GitHub sagt der Seite, wer du bist, deine E-"
-"Mail-Adressen und deine Organisationen; sie behält das Token von GitHub, um "
-"die Repositorys aufzulisten, die du einem Projekt hinzufügen darfst."
+"E-Mail-Adressen und privaten Projekten: Diese siehst nur du und die "
+"Mitwirkenden des Projekts. Die Anmeldung mit GitHub sagt der Seite, wer du "
+"bist, deine E-Mail-Adressen und deine Organisationen; sie behält das Token "
+"von GitHub, um die Repositorys aufzulisten, die du einem Projekt hinzufügen "
+"darfst."
 
 msgid "The GitHub App"
 msgstr "Die GitHub App"
@@ -749,55 +750,17 @@ msgid "This dashboard will guide the contributor community of"
 msgstr "Dieses Dashboard wird die Gemeinschaft der Mitwirkenden leiten von"
 
 msgid ""
-"The numbers and the automation are designed next; until then the site signs "
-"people in and receives the webhooks of its GitHub App."
+"Projects show the open issues and pull requests of their repositories; the "
+"automation is designed next."
 msgstr ""
-"Die Zahlen und die Automatisierung werden als Nächstes entworfen; bis dahin "
-"meldet die Seite Menschen an und empfängt die Webhooks ihrer GitHub App."
+"Projekte zeigen die offenen Issues und Pull Requests ihrer Repositorys; die "
+"Automatisierung wird als Nächstes entworfen."
 
 msgid "Read the documentation"
 msgstr "Die Dokumentation lesen"
 
 msgid "About the site"
 msgstr "Über die Seite"
-
-msgid "GitHub App"
-msgstr "GitHub App"
-
-msgid "registered"
-msgstr "registriert"
-
-msgid ""
-"The app receives the webhooks of the organization. It only reads and writes "
-"nothing to GitHub."
-msgstr ""
-"Die App empfängt die Webhooks der Organisation. Sie liest nur und schreibt "
-"nichts auf GitHub."
-
-msgid "not registered"
-msgstr "nicht registriert"
-
-#, python-format
-msgid ""
-"The people who run the site <a href=\"%(register_url)s\">register it</a>."
-msgstr ""
-"Die Betreiber der Seite <a href=\"%(register_url)s\">registrieren sie</a>."
-
-msgid "You are signed in."
-msgstr "Du bist angemeldet."
-
-msgid "Your account and preferences"
-msgstr "Dein Konto und deine Einstellungen"
-
-msgid ""
-"Sign in with GitHub to install the GitHub App and to see your email "
-"addresses."
-msgstr ""
-"Melde dich mit GitHub an, um die GitHub App zu installieren und deine E-Mail-"
-"Adressen zu sehen."
-
-msgid "not set up"
-msgstr "nicht eingerichtet"
 
 msgid "Nobody can sign in yet: the site has no OAuth app."
 msgstr "Noch kann sich niemand anmelden: Die Seite hat keine OAuth-App."
@@ -998,24 +961,25 @@ msgstr "Repositorys"
 msgid "Updating"
 msgstr "Wird aktualisiert"
 
-msgid "Repositories read from GitHub"
-msgstr "Von GitHub gelesene Repositorys"
+msgid "Repositories updated from GitHub"
+msgstr "Von GitHub aktualisierte Repositorys"
 
 #, python-format
 msgid ""
-"%(done)s of %(total)s repositories read from GitHub. The page reloads itself."
+"%(done)s of %(total)s repositories updated from GitHub. The page reloads "
+"itself."
 msgstr ""
-"%(done)s von %(total)s Repositorys von GitHub gelesen. Die Seite lädt sich "
-"selbst neu."
+"%(done)s von %(total)s Repositorys von GitHub aktualisiert. Die Seite lädt "
+"sich selbst neu."
 
 msgid "Up to date"
 msgstr "Aktuell"
 
-msgid "Not read yet"
-msgstr "Noch nicht gelesen"
+msgid "Not updated yet"
+msgstr "Noch nicht aktualisiert"
 
-msgid "Some repositories could not be read"
-msgstr "Einige Repositorys konnten nicht gelesen werden"
+msgid "Some repositories could not be updated"
+msgstr "Einige Repositorys konnten nicht aktualisiert werden"
 
 msgid "Out of date"
 msgstr "Veraltet"
@@ -1038,17 +1002,53 @@ msgstr "Offene Issues"
 msgid "Open pull requests"
 msgstr "Offene Pull Requests"
 
-msgid "Read"
-msgstr "Gelesen"
+msgid "Updated"
+msgstr "Aktualisiert"
 
-msgid "could not be read"
-msgstr "konnte nicht gelesen werden"
+msgid "could not be updated"
+msgstr "konnte nicht aktualisiert werden"
 
 msgid "The project has no repositories yet."
 msgstr "Das Projekt hat noch keine Repositorys."
 
 msgid "Add repositories"
 msgstr "Repositorys hinzufügen"
+
+msgid "Collaborators of the project"
+msgstr "Mitwirkende des Projekts"
+
+msgid "Roles in a project"
+msgstr "Rollen in einem Projekt"
+
+msgid "Role"
+msgstr "Rolle"
+
+msgid ""
+"The only owner: share the project with another owner before changing this."
+msgstr ""
+"Einzige Eigentümerin oder einziger Eigentümer: Teile das Projekt erst mit "
+"einer weiteren Person als Eigentümer, bevor du das änderst."
+
+msgid "Change"
+msgstr "Ändern"
+
+msgid "Share the project"
+msgstr "Das Projekt teilen"
+
+msgid "Share"
+msgstr "Teilen"
+
+msgid ""
+"The person signs in to the site with GitHub once before. Read: sees the "
+"project, also a private one. Change: also changes and updates it. Own: also "
+"shares it, makes it public or private and deletes it."
+msgstr ""
+"Die Person meldet sich vorher einmal mit GitHub auf der Seite an. Lesen: "
+"sieht das Projekt, auch ein privates. Ändern: ändert und aktualisiert es "
+"auch. Besitzen: teilt es auch, macht es öffentlich oder privat und löscht es."
+
+msgid "The owners of the project share it."
+msgstr "Die Eigentümer des Projekts teilen es."
 
 msgid "Create a project"
 msgstr "Ein Projekt erstellen"
@@ -1074,15 +1074,23 @@ msgstr ""
 "Das Projekt liegt unter /projects/ gefolgt von seiner Adresse. Ohne eine "
 "bekommt es eine zufällige, die du später ändern kannst."
 
-msgid "Who sees it"
-msgstr "Wer es sieht"
+msgid "Visibility"
+msgstr "Sichtbarkeit"
 
-msgid "Public: everybody sees the project and its repositories"
-msgstr "Öffentlich: alle sehen das Projekt und seine Repositorys"
+msgid "Public"
+msgstr "Öffentlich"
 
-msgid "Private: only its people see it; it may contain private repositories"
-msgstr ""
-"Privat: nur seine Personen sehen es; es kann private Repositorys enthalten"
+msgid "(default)"
+msgstr "(Standard)"
+
+msgid "Everyone can view this project."
+msgstr "Alle können dieses Projekt sehen."
+
+msgid "Private"
+msgstr "Privat"
+
+msgid "Only its collaborators can view this project."
+msgstr "Nur seine Mitwirkenden können dieses Projekt sehen."
 
 msgid "Only the owners change it."
 msgstr "Nur die Eigentümer ändern das."
@@ -1132,36 +1140,6 @@ msgstr "Seine Repositorys bleiben auf GitHub und in anderen Projekten."
 msgid "Yes, delete this project"
 msgstr "Ja, dieses Projekt löschen"
 
-msgid "People of the project"
-msgstr "Personen des Projekts"
-
-msgid "Roles in a project"
-msgstr "Rollen in einem Projekt"
-
-msgid "Role"
-msgstr "Rolle"
-
-msgid "Change"
-msgstr "Ändern"
-
-msgid "Share the project"
-msgstr "Das Projekt teilen"
-
-msgid "Share"
-msgstr "Teilen"
-
-msgid ""
-"The person signs in to the site with GitHub once before. Read: sees the "
-"project, also a private one. Change: also changes and updates it. Own: also "
-"shares it, makes it public or private and deletes it."
-msgstr ""
-"Die Person meldet sich vorher einmal mit GitHub auf der Seite an. Lesen: "
-"sieht das Projekt, auch ein privates. Ändern: ändert und aktualisiert es "
-"auch. Besitzen: teilt es auch, macht es öffentlich oder privat und löscht es."
-
-msgid "The owners of the project share it."
-msgstr "Die Eigentümer des Projekts teilen es."
-
 msgid "Repositories of the project"
 msgstr "Repositorys des Projekts"
 
@@ -1202,12 +1180,28 @@ msgstr[1] "%(counter)s Repositorys haben noch keine GitHub App."
 msgid "An owner of their account installs it."
 msgstr "Ein Eigentümer ihres Kontos installiert sie."
 
+#, python-format
+msgid ""
+"%(counter)s repository has the app without the permissions it needs now."
+msgid_plural ""
+"%(counter)s repositories have the app without the permissions it needs now."
+msgstr[0] ""
+"%(counter)s Repository hat die App ohne die Berechtigungen, die sie jetzt "
+"braucht."
+msgstr[1] ""
+"%(counter)s Repositorys haben die App ohne die Berechtigungen, die sie jetzt "
+"braucht."
+
+msgid ""
+"An owner of their account accepts them on GitHub, next to each repository "
+"above."
+msgstr ""
+"Eine Person, der ihr Konto gehört, akzeptiert sie auf GitHub, neben jedem "
+"Repository oben."
+
 msgid "After installing, update the project to see the change."
 msgstr ""
 "Aktualisiere nach dem Installieren das Projekt, um die Änderung zu sehen."
-
-msgid "The app is installed on every repository of the project."
-msgstr "Die App ist auf jedem Repository des Projekts installiert."
 
 msgid "By name"
 msgstr "Nach Name"
@@ -1228,8 +1222,8 @@ msgstr "Aus einem Konto"
 msgid "Organization or account"
 msgstr "Organisation oder Konto"
 
-msgid "Show its repositories"
-msgstr "Seine Repositorys zeigen"
+msgid "Show repositories"
+msgstr "Repositorys zeigen"
 
 msgid "Add the chosen repositories"
 msgstr "Die gewählten Repositorys hinzufügen"
@@ -1273,8 +1267,8 @@ msgstr[1] "%(counter)s Repositorys"
 msgid "No projects yet."
 msgstr "Noch keine Projekte."
 
-msgid "Private projects are listed only for their people."
-msgstr "Private Projekte werden nur ihren Personen gezeigt."
+msgid "Private projects are listed only for their collaborators."
+msgstr "Private Projekte werden nur ihren Mitwirkenden gezeigt."
 
 msgid ""
 "The dashboard receives the webhooks of the repositories with its own GitHub "

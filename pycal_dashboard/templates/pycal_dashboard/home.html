@@ -5,16 +5,8 @@
   <h1>{% translate "Welcome to the community of PyCalendar" %}</h1>
   <p class="lead">{% translate "This dashboard will guide the contributor community of" %}
   {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
-  {% translate "The numbers and the automation are designed next; until then the site signs people in and receives the webhooks of its GitHub App." %}</p>
+  {% translate "Projects show the open issues and pull requests of their repositories; the automation is designed next." %}</p>
   <p><a class="button" href="{{ links.documentation }}">{% translate "Read the documentation" %}</a> <a class="button button-quiet" href="{% url 'about' %}">{% translate "About the site" %}</a></p>
 </section>
-<div class="columns">
-  <section class="card" data-github-app><h2>{% translate "GitHub App" %}</h2>
-    {% if github_app_configured %}<p><span class="badge badge-success">{% translate "registered" %}</span> {% translate "The app receives the webhooks of the organization. It only reads and writes nothing to GitHub." %}</p>
-    {% else %}{% url 'register_app' as register_url %}<p><span class="badge badge-warning">{% translate "not registered" %}</span> {% blocktranslate %}The people who run the site <a href="{{ register_url }}">register it</a>.{% endblocktranslate %}</p>{% endif %}</section>
-  <section class="card" data-sign-in><h2>{% translate "Your account" %}</h2>
-    {% if user.is_authenticated %}<p>{% translate "You are signed in." %} <a href="{% url 'account' %}">{% translate "Your account and preferences" %}</a></p>{% if install_url %}<p><a class="button" href="{{ install_url }}">{% translate "Install the GitHub App" %}</a></p>{% endif %}
-    {% elif sign_in_configured %}<p>{% translate "Sign in with GitHub to install the GitHub App and to see your email addresses." %}</p><p><a class="button" href="{% url 'account_login' %}">{% translate "Sign in" %}</a></p>
-    {% else %}<p><span class="badge badge-warning">{% translate "not set up" %}</span> {% translate "Nobody can sign in yet: the site has no OAuth app." %}</p>{% endif %}</section>
-</div>
+{% if not sign_in_configured %}<p class="message message-warning" data-no-sign-in>{% translate "Nobody can sign in yet: the site has no OAuth app." %}</p>{% endif %}
 {% endblock %}

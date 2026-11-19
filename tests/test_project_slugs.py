@@ -26,7 +26,7 @@ def test_a_project_made_outside_the_site_gets_a_random_slug(db):
     project = Project.objects.create(name="From the admin")
     assert re.fullmatch("[0-9a-f]{6}", project.slug)
     assert list(project.slugs.values_list("slug", flat=True)) == [project.slug]
-    assert project.path() == f"/projects/{project.slug}/from-the-admin/"
+    assert project.path() == f"/projects/{project.slug}/"
 
 
 def test_choose_the_slug_when_creating(client, bob):
@@ -63,28 +63,37 @@ def test_a_slug_is_unique(client, bob, project):
     assert "The address is taken" in page.content.decode()
 
 
-def test_the_name_in_the_address_does_not_matter(client, project):
-    assert client.get(f"/projects/{project.slug}/anything/").status_code == 200
-    answer = client.get(f"/projects/{project.slug}/")
-    assert answer.status_code == 301 and answer["Location"] == project.path()
+def test_the_address_is_the_slug_only(client, project):
+    """The name after the slug, in the addresses before, leads to the same page without it."""
+    assert project.path() == f"/projects/{project.slug}/"
+    assert client.get(f"/projects/{project.slug}/").status_code == 200
+    for old, new in [
+        ("anything/", ""),
+        ("anything/settings/?a=1", "settings/?a=1"),
+        ("anything/repositories/", "repositories/"),
+        ("anything/people/", "collaborators/"),
+    ]:
+        answer = client.get(f"/projects/{project.slug}/{old}")
+        assert answer.status_code == 301, old
+        assert answer["Location"] == project.path(new), old
+    assert client.get(f"/projects/{project.slug}/anything/nothing/").status_code == 404
     assert client.get(f"/projects/{project.slug}.json").json()["name"] == "iCalendar"
-    assert client.get(f"/projects/{project.slug}/whatever.json").json()["slug"] == project.slug
 
 
 def test_rename_and_the_old_links_keep_working(client, bob, project):
     old = project.slug
     client.force_login(bob)
     page = client.post(
-        f"/projects/{old}/x/address/", {"slug": "ical", "back": "settings/"}, follow=True
+        f"/projects/{old}/address/", {"slug": "ical", "back": "settings/"}, follow=True
     ).content.decode()
-    assert "The address of the project is /projects/ical/icalendar/ now" in page
+    assert "The address of the project is /projects/ical/ now" in page
     project.refresh_from_db()
     assert project.slug == "ical"
     for path, target in [
-        (f"/projects/{old}/x/", "/projects/ical/icalendar/"),
-        (f"/projects/{old}/x/people/?a=1", "/projects/ical/icalendar/people/?a=1"),
-        (f"/projects/{old.upper()}/x/settings/", "/projects/ical/icalendar/settings/"),
-        (f"/projects/{old}/", "/projects/ical/icalendar/"),
+        (f"/projects/{old}/", "/projects/ical/"),
+        (f"/projects/{old}/collaborators/?a=1", "/projects/ical/collaborators/?a=1"),
+        (f"/projects/{old.upper()}/settings/", "/projects/ical/settings/"),
+        (f"/projects/{old}/", "/projects/ical/"),
     ]:
         answer = client.get(path)
         assert (answer.status_code, answer["Location"]) == (301, target), path
@@ -117,7 +126,7 @@ def test_a_project_may_go_back_to_its_old_slug(project):
 def test_only_owners_change_the_address(client, project, alice):
     editor(project).share("alice", "write")
     client.force_login(alice)
-    answer = client.post(f"/projects/{project.slug}/x/address/", {"slug": "mine"})
+    answer = client.post(f"/projects/{project.slug}/address/", {"slug": "mine"})
     assert answer.status_code == 403 and "Only the owners" in answer.content.decode()
     assert 'id="address"' not in client.get(project.path("settings/")).content.decode()
 
@@ -126,7 +135,7 @@ def test_an_old_slug_of_a_private_project_reveals_nothing(client, bob):
     project = ProjectEditor.create(bob, "Secret", public=False)
     old = project.slug
     editor(project).rename("secret")
-    assert client.get(f"/projects/{old}/x/").status_code == 404
+    assert client.get(f"/projects/{old}/").status_code == 404
 
 
 def test_the_suggestion_after_the_one_repository(client, bob, project):
@@ -149,11 +158,11 @@ def test_use_the_suggestion_from_the_repositories(client, bob, project):
     page = client.get(project.path("repositories/")).content.decode()
     assert "data-suggestion" in page and "<code>icalendar</code>" in page
     answer = client.post(
-        f"/projects/{project.slug}/x/address/", {"slug": "icalendar", "back": "repositories/"}
+        f"/projects/{project.slug}/address/", {"slug": "icalendar", "back": "repositories/"}
     )
-    assert answer["Location"] == "/projects/icalendar/icalendar/repositories/"
-    answer = client.post("/projects/icalendar/x/address/", {"slug": "a", "back": "/elsewhere"})
-    assert answer["Location"] == "/projects/a/icalendar/settings/"
+    assert answer["Location"] == "/projects/icalendar/repositories/"
+    answer = client.post("/projects/icalendar/address/", {"slug": "a", "back": "/elsewhere"})
+    assert answer["Location"] == "/projects/a/settings/"
 
 
 def test_the_admin_checks_the_slug(project):

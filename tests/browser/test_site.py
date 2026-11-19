@@ -8,7 +8,8 @@ def test_start_page(page, site):
     expect(
         page.get_by_role("heading", name="Welcome to the community of PyCalendar")
     ).to_be_visible()
-    expect(page.locator("[data-github-app]")).to_contain_text("registered")
+    expect(page.locator("[data-github-app]")).to_have_count(0)
+    expect(page.locator("[data-no-app]")).to_have_count(0)
     page.get_by_role("link", name="About the site").click()
     expect(page).to_have_url(f"{site}/about/")
     expect(page.get_by_text("writes nothing to GitHub")).to_be_visible()

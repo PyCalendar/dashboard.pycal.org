@@ -6,7 +6,7 @@
 <p class="lead">{% translate "A dashboard for the contributor community of" %} {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}: {% translate "where to start, what waits for a review, and who contributes." %} <a href="{{ links.documentation }}">{% translate "Documentation" %}</a>.</p>
 <div class="columns">
 <section class="card"><h2>{% translate "Privacy" %}</h2>
-<p>{% translate "Every page is public, except your account, preferences, email addresses and private projects: those only you and the people of the project see. Signing in with GitHub tells the site who you are, your email addresses and your organizations; it keeps the token of GitHub to list the repositories you may add to a project." %}</p></section>
+<p>{% translate "Every page is public, except your account, preferences, email addresses and private projects: those only you and the collaborators of the project see. Signing in with GitHub tells the site who you are, your email addresses and your organizations; it keeps the token of GitHub to list the repositories you may add to a project." %}</p></section>
 <section class="card"><h2>{% translate "The GitHub App" %}</h2>
 <dl class="facts-list">{% for name, level in permissions.items %}<dt>{{ name }}</dt><dd>{{ level }}</dd>{% endfor %}</dl>
 <p>{% translate "Events" %}: {{ events|join:", " }}</p>

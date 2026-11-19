@@ -48,7 +48,7 @@ def repositories(github):
 
 def add(client, project, *names):
     return client.post(
-        f"/projects/{project.slug}/x/repositories/", {"repository": list(names)}, follow=True
+        f"/projects/{project.slug}/repositories/", {"repository": list(names)}, follow=True
     )
 
 
@@ -85,14 +85,14 @@ def test_the_projects_page_is_in_the_menu(client, project):
     assert "Create a project" in page and "data-private-hint" in page
 
 
-def test_private_projects_are_listed_only_for_their_people(client, private_project, alice):
+def test_private_projects_are_listed_only_for_their_collaborators(client, private_project, alice):
     assert "Secret" not in client.get("/projects/").content.decode()
-    assert client.get(f"/projects/{private_project.slug}/x/").status_code == 404
+    assert client.get(f"/projects/{private_project.slug}/").status_code == 404
     client.force_login(alice)
     assert "Secret" not in client.get("/projects/").content.decode()
     client.force_login(private_project.created_by)
     assert "Secret" in client.get("/projects/").content.decode()
-    assert client.get(f"/projects/{private_project.slug}/x/").status_code == 200
+    assert client.get(f"/projects/{private_project.slug}/").status_code == 200
 
 
 def test_site_admins_see_every_project(client, private_project, admin):
@@ -102,8 +102,8 @@ def test_site_admins_see_every_project(client, private_project, admin):
 
 
 def test_the_overview_of_a_project_not_updated_yet(client, project):
-    page = client.get(f"/projects/{project.slug}/x/").content.decode()
-    assert "Not read yet" in page and "never" in page
+    page = client.get(f"/projects/{project.slug}/").content.decode()
+    assert "Not updated yet" in page and "never" in page
     assert "data-update" not in page  # visitors do not update
     assert "The project has no repositories yet." in page
 
@@ -145,7 +145,7 @@ def test_create_a_project(client, bob):
     project = Project.objects.get()
     assert (project.name, project.public) == ("My project", False)
     assert re.fullmatch("[0-9a-f]{6}", project.slug)  # random by default
-    assert answer["Location"] == f"/projects/{project.slug}/my-project/repositories/"
+    assert answer["Location"] == f"/projects/{project.slug}/repositories/"
     assert ProjectMember.objects.get(project=project).role == ProjectMember.OWNER
 
 
@@ -158,41 +158,41 @@ def test_a_project_needs_a_name(client, bob):
 def test_change_and_delete_a_project(client, project, bob):
     client.force_login(bob)
     assert (
-        "Delete the project" in client.get(f"/projects/{project.slug}/x/settings/").content.decode()
+        "Delete the project" in client.get(f"/projects/{project.slug}/settings/").content.decode()
     )
     client.post(
-        f"/projects/{project.slug}/x/settings/",
+        f"/projects/{project.slug}/settings/",
         {"name": "New", "description": "Other", "visibility": "private"},
     )
     project.refresh_from_db()
     assert (project.name, project.description, project.public) == ("New", "Other", False)
-    page = client.post(f"/projects/{project.slug}/x/settings/", {"delete": "yes"}, follow=True)
+    page = client.post(f"/projects/{project.slug}/settings/", {"delete": "yes"}, follow=True)
     assert "Tick the box" in page.content.decode() and Project.objects.exists()
-    client.post(f"/projects/{project.slug}/x/settings/", {"delete": "yes", "confirm": "yes"})
+    client.post(f"/projects/{project.slug}/settings/", {"delete": "yes", "confirm": "yes"})
     assert not Project.objects.exists()
 
 
 def test_readers_may_not_change_writers_may_not_share(client, project, alice):
     ProjectEditor(ProjectAccess(project, project.created_by)).share("alice", "read")
     client.force_login(alice)
-    page = client.get(f"/projects/{project.slug}/x/settings/")
+    page = client.get(f"/projects/{project.slug}/settings/")
     assert page.status_code == 403 and "You may not change this project" in page.content.decode()
-    assert client.post(f"/projects/{project.slug}/x/update/").status_code == 403
-    assert client.get(f"/projects/{project.slug}/x/repositories/").status_code == 403
+    assert client.post(f"/projects/{project.slug}/update/").status_code == 403
+    assert client.get(f"/projects/{project.slug}/repositories/").status_code == 403
     ProjectEditor(ProjectAccess(project, project.created_by)).share("alice", "write")
     client.post(
-        f"/projects/{project.slug}/x/settings/",
+        f"/projects/{project.slug}/settings/",
         {"name": "Changed", "description": "", "visibility": "private"},
     )
     project.refresh_from_db()
     assert project.name == "Changed" and project.public  # writers do not change who sees it
     answer = client.post(
-        f"/projects/{project.slug}/x/people/", {"github_name": "x", "role": "read"}
+        f"/projects/{project.slug}/collaborators/", {"github_name": "x", "role": "read"}
     )
     assert answer.status_code == 403 and "Only the owners" in answer.content.decode()
-    answer = client.post(f"/projects/{project.slug}/x/settings/", {"delete": "yes"})
+    answer = client.post(f"/projects/{project.slug}/settings/", {"delete": "yes"})
     assert answer.status_code == 403 and Project.objects.exists()
-    page = client.get(f"/projects/{project.slug}/x/settings/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/").content.decode()
     assert "Delete the project" not in page and "Only the owners change it." in page
 
 
@@ -202,14 +202,14 @@ def test_readers_may_not_change_writers_may_not_share(client, project, alice):
 def test_share_the_project(client, project, bob, alice):
     client.force_login(bob)
     page = client.post(
-        f"/projects/{project.slug}/x/people/",
+        f"/projects/{project.slug}/collaborators/",
         {"github_name": "@Alice", "role": "write"},
         follow=True,
     ).content.decode()
     assert "@alice may change the project." in page
     assert ProjectMember.objects.get(user=alice).role == "write"
     member = ProjectMember.objects.get(user=alice)
-    client.post(f"/projects/{project.slug}/x/people/", {"remove": member.pk})
+    client.post(f"/projects/{project.slug}/collaborators/", {"remove": member.pk})
     assert not ProjectMember.objects.filter(user=alice).exists()
 
 
@@ -219,28 +219,58 @@ def test_share_the_project(client, project, bob, alice):
 )
 def test_share_errors(client, project, bob, alice, name, role, error):
     client.force_login(bob)
-    page = client.post(f"/projects/{project.slug}/x/people/", {"github_name": name, "role": role})
+    page = client.post(
+        f"/projects/{project.slug}/collaborators/", {"github_name": name, "role": role}
+    )
     assert page.status_code in (400, 404) and error in page.content.decode()
+
+
+def test_the_people_are_the_collaborators_now(client, project, bob):
+    """The tab People is called Collaborators; its old address leads there."""
+    client.force_login(bob)
+    page = client.get(f"/projects/{project.slug}/collaborators/").content.decode()
+    assert "Collaborators of the project" in page and ">People<" not in page
+    answer = client.get(f"/projects/{project.slug}/people/?a=1")
+    assert answer.status_code == 301
+    assert answer["Location"] == f"/projects/{project.slug}/collaborators/?a=1"
+
+
+def test_the_only_owner_cannot_change_their_role_on_the_page(client, project, bob, alice):
+    """The page offers no change and no removal for the only owner; with two, it does."""
+    client.force_login(bob)
+    url = f"/projects/{project.slug}/collaborators/"
+    client.post(url, {"github_name": "alice", "role": "read"})
+    page = client.get(url).content.decode()
+    bob_row = page.split('data-member="bob"')[1].split("</tr>")[0]
+    alice_row = page.split('data-member="alice"')[1].split("</tr>")[0]
+    assert "data-only-owner" in bob_row and "<select" not in bob_row and "remove" not in bob_row
+    assert "<select" in alice_row and 'name="remove"' in alice_row
+    client.post(url, {"github_name": "alice", "role": "owner"})
+    page = client.get(url).content.decode()
+    assert "data-only-owner" not in page
+    assert page.split('data-member="bob"')[1].split("</tr>")[0].count("<select") == 1
 
 
 def test_a_project_keeps_an_owner(client, project, bob, alice):
     client.force_login(bob)
     owner = ProjectMember.objects.get(user=bob)
-    page = client.post(f"/projects/{project.slug}/x/people/", {"remove": owner.pk})
+    page = client.post(f"/projects/{project.slug}/collaborators/", {"remove": owner.pk})
     assert "The project needs an owner" in page.content.decode()
     page = client.post(
-        f"/projects/{project.slug}/x/people/", {"github_name": "bob", "role": "read"}
+        f"/projects/{project.slug}/collaborators/", {"github_name": "bob", "role": "read"}
     )
     assert "The project needs an owner" in page.content.decode()
-    client.post(f"/projects/{project.slug}/x/people/", {"github_name": "alice", "role": "owner"})
-    client.post(f"/projects/{project.slug}/x/people/", {"github_name": "bob", "role": "read"})
+    client.post(
+        f"/projects/{project.slug}/collaborators/", {"github_name": "alice", "role": "owner"}
+    )
+    client.post(f"/projects/{project.slug}/collaborators/", {"github_name": "bob", "role": "read"})
     assert ProjectMember.objects.get(user=bob).role == "read"
 
 
-def test_readers_see_the_people_but_do_not_share(client, private_project, alice):
+def test_readers_see_the_collaborators_but_do_not_share(client, private_project, alice):
     ProjectEditor(ProjectAccess(private_project, private_project.created_by)).share("alice", "read")
     client.force_login(alice)
-    page = client.get(f"/projects/{private_project.slug}/x/people/").content.decode()
+    page = client.get(f"/projects/{private_project.slug}/collaborators/").content.decode()
     assert "@bob" in page and "The owners of the project share it." in page
     assert "data-share" not in page
 
@@ -277,6 +307,32 @@ def test_the_install_step_names_the_repositories_without_the_app(
     assert "create and update a comment of the site on a pull request" in page
 
 
+def test_the_install_step_is_shown_only_when_the_app_is_missing_or_out_of_date(
+    client, project, bob
+):
+    """With the app and its permissions on every repository, there is nothing to install."""
+    from pycal_dashboard.github.permissions import REQUIRED
+
+    installation = Installation.objects.create(
+        github_id=11,
+        account_login="collective",
+        account_type="Organization",
+        permissions=dict(REQUIRED),
+    )
+    project.repositories.add(
+        Repository.objects.create(full_name="collective/icalendar", installation=installation)
+    )
+    client.force_login(bob)
+    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
+    assert "data-install-step" not in page and "app installed" in page
+    installation.permissions = {"metadata": "read"}
+    installation.save()
+    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
+    assert "data-install-step" in page and "data-install-link" not in page
+    assert "1 repository has the app without the permissions it needs now." in page
+    assert installation.settings_url in page
+
+
 def test_a_private_repository_needs_a_private_project(client, project, bob, repositories):
     client.force_login(bob)
     page = add(client, project, "bob/secret").content.decode()
@@ -289,7 +345,7 @@ def test_add_a_private_repository(client, private_project, bob, alice, repositor
     assert "bob/secret is added." in page
     assert Repository.objects.get(full_name="bob/secret").private
     page = client.post(
-        f"/projects/{private_project.slug}/x/settings/",
+        f"/projects/{private_project.slug}/settings/",
         {"name": "Secret", "visibility": "public"},
     )
     assert "The project has private repositories" in page.content.decode()
@@ -308,7 +364,7 @@ def test_a_private_repository_needs_access(client, alice, repositories):
 def test_choose_from_an_organization_and_search(client, project, bob, repositories):
     repositories.organizations = ["PyCalendar"]
     client.force_login(bob)
-    url = f"/projects/{project.slug}/x/repositories/"
+    url = f"/projects/{project.slug}/repositories/"
     page = client.get(url, {"owner": "PyCalendar"}).content.decode()
     assert '<option value="PyCalendar" selected>' in page and '<option value="bob"' in page
     assert 'value="PyCalendar/plann"' in page
@@ -325,7 +381,7 @@ def test_without_a_token_the_page_says_to_sign_in_again(client, project, bob, re
 
     SocialToken.objects.all().delete()
     client.force_login(bob)
-    page = client.get(f"/projects/{project.slug}/x/repositories/").content.decode()
+    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
     assert "Sign in again to list your repositories" in page and "data-github-error" in page
     assert "Sign in again" in add(client, project, "collective/icalendar").content.decode()
 
@@ -345,7 +401,7 @@ def test_remove_a_repository(client, project, bob, repositories):
     add(client, project, "PyCalendar/plann")
     repository = Repository.objects.get()
     page = client.post(
-        f"/projects/{project.slug}/x/repositories/", {"remove": repository.pk}, follow=True
+        f"/projects/{project.slug}/repositories/", {"remove": repository.pk}, follow=True
     ).content.decode()
     assert "PyCalendar/plann is removed." in page
     assert Repository.objects.exists() and not project.repositories.exists()
@@ -353,9 +409,9 @@ def test_remove_a_repository(client, project, bob, repositories):
 
 def test_a_repository_that_became_private_is_hidden_from_visitors(client, project, bob):
     project.repositories.add(Repository.objects.create(full_name="o/closed", private=True))
-    assert "o/closed" not in client.get(f"/projects/{project.slug}/x/").content.decode()
+    assert "o/closed" not in client.get(f"/projects/{project.slug}/").content.decode()
     client.force_login(bob)
-    assert "o/closed" in client.get(f"/projects/{project.slug}/x/").content.decode()
+    assert "o/closed" in client.get(f"/projects/{project.slug}/").content.decode()
 
 
 # the update
@@ -364,24 +420,57 @@ def test_a_repository_that_became_private_is_hidden_from_visitors(client, projec
 def test_update_a_project(client, project, bob, repositories):
     client.force_login(bob)
     add(client, project, "collective/icalendar", "PyCalendar/plann")
-    client.post(f"/projects/{project.slug}/x/update/")
+    client.post(f"/projects/{project.slug}/update/")
     job = UpdateJob.objects.get()
     assert (job.status, job.percent) == ("queued", 0)
-    page = client.get(f"/projects/{project.slug}/x/").content.decode()
+    page = client.get(f"/projects/{project.slug}/").content.decode()
     assert 'http-equiv="refresh"' in page and "data-progress" in page
-    assert "0 of 2 repositories read from GitHub" in page
-    client.post(f"/projects/{project.slug}/x/update/")  # one at a time
+    assert "0 of 2 repositories updated from GitHub" in page
+    client.post(f"/projects/{project.slug}/update/")  # one at a time
     assert UpdateJob.objects.count() == 1
     assert UpdateQueue.work() == 1
     job.refresh_from_db()
     assert (job.status, job.done, job.total, job.errors, job.percent) == ("done", 2, 2, 0, 100)
-    page = client.get(f"/projects/{project.slug}/x/").content.decode()
+    page = client.get(f"/projects/{project.slug}/").content.decode()
     assert "Up to date" in page and 'http-equiv="refresh"' not in page
     assert "<li data-open-issues><strong>4</strong>" in page
     assert "<li data-open-pull-requests><strong>2</strong>" in page
     icalendar = Repository.objects.get(full_name="collective/icalendar")
     assert (icalendar.open_issues, icalendar.open_pull_requests) == (3, 2)
     assert repositories.writes() == []
+
+
+def test_an_added_repository_is_read_at_once(client, project, bob, repositories):
+    """Adding a repository queues an update; the worker reads it without pressing Update."""
+    client.force_login(bob)
+    add(client, project, "collective/icalendar")
+    job = UpdateJob.objects.get()
+    assert (job.status, job.requested_by) == (UpdateJob.QUEUED, bob)
+    add(client, project, "PyCalendar/plann")  # the job waits: it reads both
+    assert UpdateJob.objects.count() == 1
+    assert UpdateQueue.work() == 1
+    job.refresh_from_db()
+    assert (job.status, job.done, job.total) == (UpdateJob.DONE, 2, 2)
+    assert Repository.objects.get(full_name="PyCalendar/plann").open_issues == 1
+
+
+def test_a_repository_added_while_an_update_runs_is_read_after_it(
+    client, project, bob, repositories
+):
+    """An update that runs read the repositories before; another one reads the new one."""
+    client.force_login(bob)
+    running = UpdateJob.objects.create(project=project, status=UpdateJob.RUNNING)
+    add(client, project, "collective/icalendar")
+    queued = UpdateJob.objects.exclude(pk=running.pk).get()
+    assert queued.status == UpdateJob.QUEUED
+    client.post(f"/projects/{project.slug}/update/")  # Update joins the waiting one
+    assert UpdateJob.objects.count() == 2
+
+
+def test_nothing_added_reads_nothing(client, project, bob, repositories):
+    client.force_login(bob)
+    add(client, project, "nobody/nothing")
+    assert not UpdateJob.objects.exists()
 
 
 def test_the_update_reads_without_a_token_when_the_app_is_missing(project, repositories):
@@ -397,8 +486,8 @@ def test_a_repository_that_cannot_be_read(client, project, repositories):
     UpdateQueue.add(project)
     UpdateQueue.work()
     assert UpdateJob.objects.get().errors == 1
-    page = client.get(f"/projects/{project.slug}/x/").content.decode()
-    assert "Some repositories could not be read" in page and "could not be read" in page
+    page = client.get(f"/projects/{project.slug}/").content.decode()
+    assert "Some repositories could not be updated" in page and "could not be updated" in page
     assert Repository.objects.get().error_code == "GitHubNotFound"
 
 
@@ -499,7 +588,7 @@ def test_a_job_that_fails_ends_as_failed(client, monkeypatch, project):
     UpdateQueue.add(project)
     assert UpdateQueue.work() == 1
     assert UpdateJob.objects.get().status == UpdateJob.FAILED
-    page = client.get(f"/projects/{project.slug}/x/").content.decode()
+    page = client.get(f"/projects/{project.slug}/").content.decode()
     assert 'data-status="failed"' in page and 'http-equiv="refresh"' not in page
 
 

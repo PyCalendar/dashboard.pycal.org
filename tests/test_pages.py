@@ -2,6 +2,8 @@
 
 import pytest
 
+from tests.conftest import person
+
 PUBLIC = [
     "/",
     "/about/",
@@ -36,8 +38,17 @@ def test_no_pages_of_github_data(client, db, path):
 def test_start_page(client, db):
     content = client.get("/").content.decode()
     assert "Welcome to the community of PyCalendar" in content
-    assert "registered" in content and "writes nothing to GitHub" in content
-    assert "/accounts/login/" in content
+    assert "/accounts/login/" in content  # in the menu
+    # the app and the account are in the menu: the start page has no cards of them
+    assert "data-github-app" not in content and "data-sign-in" not in content
+    assert "Install the GitHub App</a></p>" not in content
+    assert "data-no-sign-in" not in content
+
+
+def test_start_page_signed_in(client, db):
+    client.force_login(person(77, "carol"))
+    content = client.get("/").content.decode()
+    assert "data-sign-in" not in content and "You are signed in" not in content
 
 
 def test_start_page_without_sign_in(client, db, settings):

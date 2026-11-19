@@ -1,4 +1,4 @@
-"""Errors of projects: who may do what, the repositories and the people of a project."""
+"""Errors of projects: who may do what, the repositories and the collaborators of a project."""
 
 from django.utils.translation import gettext_lazy as _
 
@@ -17,7 +17,7 @@ class ProjectError(DashboardError):
 
 
 class ProjectNotFound(ProjectError):
-    """There is no project at this address, or it is private and you are not one of its people.
+    """No project is at this address, or it is private and you are not a collaborator of it.
 
     Check the address on the page *Projects*. To see a private project, sign in
     with the GitHub account that its owners shared it with.

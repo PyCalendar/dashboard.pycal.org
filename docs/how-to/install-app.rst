@@ -34,7 +34,7 @@ GitHub asks for the account and where to install the app:
 **Only select repositories**
    The repositories you choose. Add or remove repositories later, see below.
 
-A private repository is shown only in private projects, to their people, see
+A private repository is shown only in private projects, to their collaborators, see
 :ref:`private-repositories`.
 
 The ways to install it

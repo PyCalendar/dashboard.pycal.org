@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
-from pycal_dashboard.errors import DashboardError, GitHubTokenMissing, translate
+from pycal_dashboard.errors import DashboardError, GitHubTokenMissing, ProjectNotFound, translate
 from pycal_dashboard.github.person_client import PersonClient
 from pycal_dashboard.models import ProjectMember, Repository
 from pycal_dashboard.services.identity import GitHubIdentity
@@ -19,7 +19,7 @@ from pycal_dashboard.services.repository_lookup import RepositoryLookup
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.services.update_worker import UpdateWorker
 
-from .json_page import page, wants_json
+from .json_page import page
 
 # the pages that a change of the address goes back to
 BACK_PAGES = {"settings/", "repositories/"}
@@ -32,7 +32,7 @@ def shown_repositories(access: ProjectAccess) -> list[Repository]:
     """The repositories of a project that a person sees.
 
     A public project may contain a repository that became private after it was added: only the
-    people of the project see it.
+    collaborators of the project see it.
 
     Args:
         access: The project with the rights of the person.
@@ -191,29 +191,40 @@ def project_new(request):
     return render(request, "pycal_dashboard/project_form.html", {"form": form, "new": True})
 
 
-def project_short(request, slug: str):
-    """A project by its slug only: it leads to its address with its name, or answers its JSON.
+PAGES = {"": "", "update": "", "settings": "settings/", "address": "settings/"}
+PAGES |= {"repositories": "repositories/", "collaborators": "collaborators/"}
+PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
+
+
+def project_moved(request, slug: str, name: str = "", page: str = ""):
+    """An address of a project from before: with its name after the slug, or the tab People.
 
     Args:
         request: The request.
         slug: The project in the address.
+        name: The name of the project, or ``people``.
+        page: The page after the name, "" for the overview.
 
     Returns:
-        A permanent redirect, or the JSON of the project.
+        A permanent redirect to the page at the address of the project now.
+
+    Raises:
+        ProjectNotFound: The person sees no such project, or the page does not exist.
     """
     access = ProjectAccess.of(slug, request.user)
-    if wants_json(request):
-        return project(request, access.project.slug, access.project.name_part)
-    return HttpResponsePermanentRedirect(access.project.path())
+    if page not in PAGES:
+        raise ProjectNotFound(slug)
+    query = request.META.get("QUERY_STRING", "")
+    target = access.project.path(PAGES[page]) + (f"?{query}" if query else "")
+    return HttpResponsePermanentRedirect(target)
 
 
-def project(request, slug: str, name: str = ""):
+def project(request, slug: str):
     """The overview of a project: its repositories with their open issues and pull requests.
 
     Args:
         request: The request.
         slug: The project in the address.
-        name: The name in the address, which does not matter.
 
     Returns:
         The page or its JSON.
@@ -243,13 +254,12 @@ def project(request, slug: str, name: str = ""):
 
 @login_required
 @require_POST
-def project_update(request, slug: str, name: str = ""):
+def project_update(request, slug: str):
     """Update a project from GitHub in the background.
 
     Args:
         request: The request.
         slug: The project.
-        name: The name in the address, which does not matter.
 
     Returns:
         The page of the project, which shows the progress.
@@ -261,13 +271,12 @@ def project_update(request, slug: str, name: str = ""):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_edit(request, slug: str, name: str = ""):
+def project_edit(request, slug: str):
     """Change the name, the description and whether the project is public, or delete it.
 
     Args:
         request: The request.
         slug: The project.
-        name: The name in the address, which does not matter.
 
     Returns:
         The form, or the project after the change.
@@ -310,13 +319,12 @@ def project_edit(request, slug: str, name: str = ""):
 
 @login_required
 @require_POST
-def project_slug(request, slug: str, name: str = ""):
+def project_slug(request, slug: str):
     """Give a project another address; the old one keeps leading to it.
 
     Args:
         request: The request, with ``slug`` and the page to go back to, ``back``.
         slug: The project.
-        name: The name in the address, which does not matter.
 
     Returns:
         The page it came from, at the new address.
@@ -369,7 +377,7 @@ def known_repositories(user, text: str = "") -> list[str]:
 
 
 def add_repositories(request, editor: ProjectEditor, names: list[str]) -> None:
-    """Add repositories to a project, and say what happened to each.
+    """Add repositories to a project, say what happened to each, and read the new ones.
 
     Args:
         request: The request, for the messages.
@@ -377,6 +385,7 @@ def add_repositories(request, editor: ProjectEditor, names: list[str]) -> None:
         names: The names or links of the repositories.
     """
     lookup = RepositoryLookup(person_client(request))
+    added_any = False
     for name in names:
         try:
             repository = lookup.find(name)
@@ -385,9 +394,12 @@ def add_repositories(request, editor: ProjectEditor, names: list[str]) -> None:
             messages.error(request, f"{error.title}: {error}")
             continue
         if added:
+            added_any = True
             messages.success(request, _("%(name)s is added.") % {"name": repository})
         else:
             messages.info(request, _("%(name)s is in the project already.") % {"name": repository})
+    if added_any:  # the data of the new repositories is read in the background
+        UpdateQueue.add(editor.access.project, request.user, changed=True)
 
 
 def choices(request, owner: str, search: str) -> dict:
@@ -419,13 +431,12 @@ def choices(request, owner: str, search: str) -> dict:
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_repositories(request, slug: str, name: str = ""):
+def project_repositories(request, slug: str):
     """Add and remove the repositories of a project, and install the GitHub App on them.
 
     Args:
         request: The request.
         slug: The project.
-        name: The name in the address, which does not matter.
 
     Returns:
         The page.
@@ -455,6 +466,9 @@ def project_repositories(request, slug: str, name: str = ""):
             "access": access,
             "repositories": repositories,
             "without_app": [r for r in repositories if not r.app_installed],
+            "outdated": [
+                r for r in repositories if r.app_installed and r.installation.missing_permissions
+            ],
             "known": known_repositories(request.user),
             "tab": "repositories",
             "suggestion": ProjectEditor(access).suggestion() if access.is_owner else None,
@@ -486,18 +500,17 @@ def repository_complete(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def project_people(request, slug: str, name: str = ""):
-    """The people of a project and their roles; owners share it and change the roles.
+def project_collaborators(request, slug: str):
+    """The collaborators of a project and their roles; owners share it and change the roles.
 
     Args:
         request: The request.
         slug: The project.
-        name: The name in the address, which does not matter.
 
     Returns:
         The page.
     """
-    access, moved = opened(request, slug, "people/")
+    access, moved = opened(request, slug, "collaborators/")
     if moved:
         return moved
     if request.method == "POST":
@@ -515,17 +528,22 @@ def project_people(request, slug: str, name: str = ""):
                 _("@%(name)s may %(role)s the project.")
                 % {"name": name_of(member), "role": role_title(member.role)},
             )
-        return redirect(access.project.path("people/"))
-    members = access.project.members.select_related("user__profile").order_by("user__username")
+        return redirect(access.project.path("collaborators/"))
+    members = list(
+        access.project.members.select_related("user__profile").order_by("user__username")
+    )
+    owners = [member for member in members if member.role == ProjectMember.OWNER]
     return render(
         request,
-        "pycal_dashboard/project_people.html",
+        "pycal_dashboard/project_collaborators.html",
         {
             "project": access.project,
             "access": access,
             "members": members,
+            # a project always has an owner: the only one keeps the role and stays
+            "only_owner": owners[0].pk if len(owners) == 1 else None,
             "roles": [(value, role_title(value)) for value, _title in ProjectMember.ROLES],
-            "tab": "people",
+            "tab": "collaborators",
         },
     )
 

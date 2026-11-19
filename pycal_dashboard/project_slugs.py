@@ -85,19 +85,3 @@ def suggestions(full_name: str) -> Iterator[str]:
     for number in range(2, NUMBERS):
         if valid(f"{both}-{number}"):
             yield f"{both}-{number}"
-
-
-def name_part(name: str) -> str:
-    """The name of a project in its slug, which only makes links readable.
-
-    Args:
-        name: The name of the project.
-
-    Returns:
-        The part, such as ``icalendar``.
-
-    Examples:
-        >>> name_part("The iCalendar library!"), name_part("…")
-        ('the-icalendar-library', 'project')
-    """
-    return normalize(name)[:60].strip("-") or "project"

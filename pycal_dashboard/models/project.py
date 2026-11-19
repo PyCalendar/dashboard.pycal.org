@@ -57,11 +57,6 @@ class Project(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    @property
-    def name_part(self) -> str:
-        """The name in the address, which only makes links readable."""
-        return project_slugs.name_part(self.name)
-
     def path(self, page: str = "") -> str:
         """The address of a page of the project.
 
@@ -69,9 +64,9 @@ class Project(models.Model):
             page: The page after the project, such as ``repositories/``; "" for the overview.
 
         Returns:
-            The path, such as ``/projects/3f9a0c/icalendar/repositories/``.
+            The path, such as ``/projects/icalendar/repositories/``.
         """
-        return reverse("project", args=[self.slug, self.name_part]) + page
+        return reverse("project", args=[self.slug]) + page
 
     def get_absolute_url(self) -> str:
         """The overview of the project, also for the Django admin."""

@@ -24,7 +24,7 @@ def test_sign_in_with_github(page, site, oauth):
 
 
 def test_create_a_project(signed_in, site, github):
-    """Create a project, add repositories in two ways, see the app step, update it."""
+    """Create a project, add repositories in two ways, see the app step, see them read."""
     page = signed_in
     github.organizations = ["PyCalendar"]
     github.add_repository("collective/icalendar", issues=3, pulls=2, installation=11)
@@ -54,7 +54,7 @@ def test_create_a_project(signed_in, site, github):
 
     # from an organization
     page.get_by_label("Organization or account").select_option("PyCalendar")
-    page.get_by_role("button", name="Show its repositories").click()
+    page.get_by_role("button", name="Show repositories").click()
     page.get_by_label("plann").check()
     page.locator("[data-owner-repositories]").get_by_role(
         "button", name="Add the chosen repositories"
@@ -71,10 +71,11 @@ def test_create_a_project(signed_in, site, github):
         install.get_by_role("link", name="The permissions it asks for and why")
     ).to_have_attribute("href", "https://docs.example.org/reference/permissions.html")
 
-    # the overview, updated in the background
+    # the overview: the added repositories are read in the background at once
     page.get_by_role("link", name="Go to the overview").click()
-    expect(page.locator("[data-status='never']")).to_be_visible()
-    page.get_by_role("button", name="Update").click()
+    expect(page.locator("[data-status='never']")).to_have_count(0)
+    expect(page.locator("[data-status='current']")).to_contain_text("Up to date", timeout=15000)
+    page.get_by_role("button", name="Update").click()  # and again, when asked
     expect(page.locator("[data-status='current']")).to_contain_text("Up to date", timeout=15000)
     expect(page.locator("[data-open-issues] strong")).to_have_text("4")
     expect(page.locator("[data-open-pull-requests] strong")).to_have_text("2")
@@ -89,15 +90,16 @@ def test_share_a_project(signed_in, site, alice):
     page = signed_in
     page.goto(f"{site}/projects/new/")
     page.get_by_label("Name").fill("Shared")
-    page.get_by_label("Private: only its people see it").check()
+    expect(page.get_by_label("Public")).to_be_checked()  # the default
+    page.get_by_label("Private").check()
     page.get_by_role("button", name="Create the project").click()
-    page.get_by_role("link", name="People").click()
+    page.get_by_role("link", name="Collaborators").click()
     page.get_by_label("GitHub name").fill("alice")
     page.locator("[data-share]").get_by_label("Role").select_option("write")
     page.get_by_role("button", name="Share").click()
     expect(page.get_by_text("@alice may change the project.")).to_be_visible()
     expect(page.locator("[data-member='alice']")).to_be_visible()
-    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/shared/people/$"))
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/collaborators/$"))
 
 
 def test_give_a_project_a_short_address(signed_in, site, github):
@@ -107,22 +109,22 @@ def test_give_a_project_a_short_address(signed_in, site, github):
     page.goto(f"{site}/projects/new/")
     page.get_by_label("Name").fill("iCalendar")
     page.get_by_role("button", name="Create the project").click()
-    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/icalendar/repositories/$"))
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/repositories/$"))
     old = page.url
     page.get_by_label("Repository", exact=True).fill("collective/icalendar")
     page.locator("[data-add-by-name]").get_by_role("button", name="Add").click()
     suggestion = page.locator("[data-suggestion]")
     expect(suggestion).to_contain_text("icalendar")
     suggestion.get_by_role("button", name="Use it").click()
-    expect(page).to_have_url(f"{site}/projects/icalendar/icalendar/repositories/")
+    expect(page).to_have_url(f"{site}/projects/icalendar/repositories/")
     expect(
-        page.get_by_text("The address of the project is /projects/icalendar/icalendar/ now")
+        page.get_by_text("The address of the project is /projects/icalendar/ now")
     ).to_be_visible()
     page.goto(old)
-    expect(page).to_have_url(f"{site}/projects/icalendar/icalendar/repositories/")
+    expect(page).to_have_url(f"{site}/projects/icalendar/repositories/")
 
     page.get_by_role("link", name="Settings").click()
     page.locator("[data-rename]").get_by_label("Address").fill("pycal~ical")
     page.get_by_role("button", name="Change the address").click()
-    expect(page).to_have_url(f"{site}/projects/pycal~ical/icalendar/settings/")
+    expect(page).to_have_url(f"{site}/projects/pycal~ical/settings/")
     expect(page.locator("[data-old-slugs]")).to_contain_text("icalendar")

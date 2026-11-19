@@ -16,7 +16,8 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
 
 - the **name**, such as *icalendar*,
 - the **description**: what the project is about,
-- **who sees it**: public, for everybody, or private, only for its people,
+- the **visibility**: *Public*, the default, for everybody, or *Private*, only
+  for its collaborators, see :ref:`project-roles`,
 - optionally its **address**, see :ref:`project-address`.
 
 You own the project you create. Next, the site asks for its repositories.
@@ -26,9 +27,9 @@ You own the project you create. Next, the site asks for its repositories.
 The address
 ===========
 
-A project is at ``/projects/<address>/<name>/``, such as
-``/projects/icalendar/icalendar/``. The name in it only makes links readable:
-any name leads to the project, and ``/projects/<address>/`` too.
+A project is at ``/projects/<address>/``, such as ``/projects/icalendar/``,
+and its pages below it, such as ``/projects/icalendar/settings/``. Links of
+before, with the name of the project after the address, lead there.
 
 - Without a chosen address, a project gets a random one of six hexadecimal
   digits, such as ``3f9a0c``; also a project made in the Django admin.
@@ -84,7 +85,7 @@ A private repository can be added only
 
 The site finds it through its GitHub App: type its name. It never asks your
 GitHub account for access to private repositories. A project with private
-repositories cannot be made public. Only the people of the project see them;
+repositories cannot be made public. Only the collaborators of the project see them;
 if a repository of a public project becomes private, the visitors no longer
 see it.
 
@@ -92,7 +93,9 @@ Install the GitHub App
 ======================
 
 After adding repositories, the tab *Repositories* says on which of them the
-GitHub App is installed. Installed, the app lets the site
+GitHub App is installed. The section *Install the GitHub App* shows up only
+while a repository lacks the app or the permissions it needs now. Installed,
+the app lets the site
 
 - receive the webhooks of the changes in the repositories,
 - add and remove labels of pull requests,
@@ -114,10 +117,11 @@ The overview of a project shows the number of open issues and open pull
 requests of all its repositories and of each one, and when it was last
 updated, in your time zone.
 
-**Update** reads the repositories from GitHub in the background. A progress bar
-shows how many are read; the page reloads itself until the update ends. The
-project is *up to date* when every repository was read in the last day without
-an error. A repository that could not be read shows why.
+When repositories are added, the site updates them from GitHub in the
+background at once. **Update** updates them again. A progress bar shows how many
+are updated; the page reloads itself until the update ends. The project is *up
+to date* when every repository was updated in the last day without an error. A
+repository that could not be updated shows why.
 
 The site reads a repository with the token of the GitHub App when the app is
 installed on it, else without a token, which works for public repositories.
@@ -127,9 +131,11 @@ installed on it, else without a token, which works for public repositories.
 Roles in a project
 ==================
 
-On the tab *People*, the owners share the project with other people by their
-GitHub name, the name of their account on GitHub. The person must have signed
-in to the site once.
+On the tab *Collaborators*, the owners share the project with other people by
+their GitHub name, the name of their account on GitHub. The person must have
+signed in to the site once. A project always has an owner: the only owner can
+neither change their role nor leave until they share the project with another
+owner.
 
 .. list-table::
    :header-rows: 1
@@ -181,10 +187,10 @@ Public projects have their JSON, such as ``/projects.json`` and
    * - Page
      - Address
    * - Overview
-     - ``/projects/<address>/<name>/``
+     - ``/projects/<address>/``
    * - Repositories
-     - ``/projects/<address>/<name>/repositories/``
-   * - People
-     - ``/projects/<address>/<name>/people/``
+     - ``/projects/<address>/repositories/``
+   * - Collaborators
+     - ``/projects/<address>/collaborators/``
    * - Settings
-     - ``/projects/<address>/<name>/settings/``
+     - ``/projects/<address>/settings/``

@@ -11,7 +11,7 @@
   <form method="post" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="remove" value="{{ repository.pk }}">{% translate "Remove" %}</button></form></li>{% endfor %}</ul>
 {% else %}<p data-no-repositories>{% translate "No repositories yet: add them below." %}</p>{% endif %}
 </section>
-{% if repositories %}<section class="card" id="install" data-install-step><h2>{% translate "Install the GitHub App" %} {% translate "Permissions of the GitHub App" as help %}{% help_link links.permissions help %}</h2>
+{% if without_app or outdated %}<section class="card" id="install" data-install-step><h2>{% translate "Install the GitHub App" %} {% translate "Permissions of the GitHub App" as help %}{% help_link links.permissions help %}</h2>
   <p>{% translate "The GitHub App, installed on the repositories, lets the site:" %}</p>
   <ul class="list">
     <li>{% translate "receive the webhooks of the changes in the repositories," %}</li>
@@ -20,9 +20,9 @@
   </ul>
   <p><a href="{{ links.permissions }}">{% translate "The permissions it asks for and why" %}</a></p>
   {% if without_app %}<p>{% blocktranslate count counter=without_app|length %}{{ counter }} repository has no GitHub App yet.{% plural %}{{ counter }} repositories have no GitHub App yet.{% endblocktranslate %} {% translate "An owner of their account installs it." %}</p>
-  {% if install_url %}<p><a class="button" href="{{ install_url }}" data-install-link>{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>{% endif %}
+  {% if install_url %}<p><a class="button" href="{{ install_url }}" data-install-link>{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>{% endif %}{% endif %}
+  {% if outdated %}<p data-outdated>{% blocktranslate count counter=outdated|length %}{{ counter }} repository has the app without the permissions it needs now.{% plural %}{{ counter }} repositories have the app without the permissions it needs now.{% endblocktranslate %} {% translate "An owner of their account accepts them on GitHub, next to each repository above." %}</p>{% endif %}
   <p class="muted">{% translate "After installing, update the project to see the change." %}</p>
-  {% else %}<p data-all-installed>{% translate "The app is installed on every repository of the project." %}</p>{% endif %}
 </section>{% endif %}
 <section class="card" id="add"><h2>{% translate "Add repositories" %} {% translate "Add repositories" as help %}{% help_link links.add_repositories help %}</h2>
   {% if github_error %}<p class="message message-error" data-github-error>{{ github_error.title }}: {{ github_error }} {% help_link github_error.docs_url github_error.title %}</p>{% endif %}
@@ -38,7 +38,7 @@
   <form method="get" action="#add" class="inline-form" data-choose-owner>
     <label for="owner">{% translate "Organization or account" %}</label>
     <select id="owner" name="owner">{% for name in owners %}<option value="{{ name }}"{% if name == owner %} selected{% endif %}>{{ name }}</option>{% endfor %}</select>
-    <button class="button button-quiet">{% translate "Show its repositories" %}</button>
+    <button class="button button-quiet">{% translate "Show repositories" %}</button>
   </form>
   {% if owner %}<form method="post" data-owner-repositories>{% csrf_token %}
     {% if listed %}<ul class="choices">{% for repository in listed %}<li><label class="check"><input type="checkbox" name="repository" value="{{ repository.full_name }}"> {{ repository.name }}</label>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}</li>{% endfor %}</ul>
@@ -59,8 +59,8 @@
 </section>
 {% if suggestion %}<section class="card" data-suggestion><h2>{% translate "Address" %}</h2>
   <p>{% translate "The project is at" %} <code>{{ project.path }}</code></p>
-  <form method="post" action="{% url 'project_slug' project.slug project.name_part %}">{% csrf_token %}<input type="hidden" name="back" value="repositories/"><input type="hidden" name="slug" value="{{ suggestion }}">
+  <form method="post" action="{% url 'project_slug' project.slug %}">{% csrf_token %}<input type="hidden" name="back" value="repositories/"><input type="hidden" name="slug" value="{{ suggestion }}">
     <p>{% translate "Suggestion, after the repository of the project:" %} <code>{{ suggestion }}</code> <button class="button button-quiet">{% translate "Use it" %}</button></p></form>
 </section>{% endif %}
-<p><a class="button" href="{% url 'project' project.slug project.name_part %}" data-to-overview>{% translate "Go to the overview" %}</a></p>
+<p><a class="button" href="{% url 'project' project.slug %}" data-to-overview>{% translate "Go to the overview" %}</a></p>
 {% endblock %}

@@ -48,17 +48,20 @@ class UpdateQueue:
     """Updates of projects, which the worker runs one after another in the background."""
 
     @staticmethod
-    def add(project: Project, user=None) -> UpdateJob:
+    def add(project: Project, user=None, changed: bool = False) -> UpdateJob:
         """Queue an update of a project, unless one waits or runs, and start the worker.
 
         Args:
             project: The project.
             user: Who asked for it, None for the site.
+            changed: The repositories of the project changed: an update that runs already read
+                them before, so only a waiting one reads the new ones too.
 
         Returns:
             The job that waits or runs.
         """
-        job = UpdateJob.objects.filter(project=project, status__in=UpdateJob.ACTIVE).first()
+        waiting = (UpdateJob.QUEUED,) if changed else UpdateJob.ACTIVE
+        job = UpdateJob.objects.filter(project=project, status__in=waiting).first()
         if job is None:
             job = UpdateJob.objects.create(
                 project=project, requested_by=user, total=project.repositories.count()

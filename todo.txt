@@ -199,6 +199,33 @@ community: where to start, what waits for a review, who contributes.
       app may write (labels, a comment on pull requests), in German and Spanish too
 - [x] The deployment to Sencho works (sencho2.pycal.org, commit of the person)
 
+## 2026-11-19: the start page, projects and their pages, cleaned up
+
+- [x] Visibility when creating a project: Public (default) left, Private right, each with what it
+      means
+- [x] Start page: no card of the GitHub App (the warning on every page tells when it is missing)
+      and no card of the account (the menu has it); the app is installed when repositories are added
+- [x] Repositories added to a project are updated in the background at once; one added while an
+      update runs is updated after it
+- [x] The section Install the GitHub App only while a repository lacks the app or its permissions;
+      Show its repositories -> Show repositories
+- [x] The people of a project are its collaborators: tab, page, texts, docs; /people/ leads there
+- [x] The only owner cannot change their role or leave on the page (the site refused it before)
+- [x] Addresses without the name: /projects/<slug>/..., the addresses with the name lead there
+- [x] "Updated", not "Read", for the update of repositories, everywhere
+- [ ] The issues and pull requests of the repositories, all of them, open and closed: title, who
+      created them, when, the description; a version of the data from GitHub, so that after a
+      migration that changes it, the repositories are updated in the background
+- [ ] The tab Pull requests (public): all pull requests of the repositories of the project
+      together; the tile with the number on the overview leads there. Tabs: Overview, the public
+      ones, then the private ones
+- [ ] Share the project: completion of the GitHub name with avatar and name
+- [ ] People of GitHub everywhere with their avatar in front of their name: one partial/tag; the
+      avatar is loaded from GitHub and links to GitHub
+- [ ] The page About gets tabs, one of them the privacy policy: which data of people goes to which
+      parties; kept up to date
+- [ ] Nothing loaded from other sites, such as Google Fonts (the avatars of GitHub excepted)
+
 ## Open: decisions of the person
 
 - [ ] Design of the automation (labels, comments ...): the app asks for the permissions; the site

@@ -22,8 +22,9 @@ people see.
 The start page
 ==============
 
-Open `dashboard.pycal.org <https://dashboard.pycal.org>`_. The start page says
-whether the GitHub App is registered and whether you can sign in. *About*, at
+Open `dashboard.pycal.org <https://dashboard.pycal.org>`_. The start page
+welcomes you; the menu at the top leads to the projects, to signing in and to
+your account, where you install the GitHub App. *About*, at
 the bottom of every page, shows the permissions of the app, the version that
 runs, and links the documentation and the code: the footer repeats none of it.
 
