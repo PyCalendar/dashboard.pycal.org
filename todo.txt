@@ -360,3 +360,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] Notifications laid out: title, button and documentation, the list of permissions, the text
 - [x] The two steps in order: an installation is told only what the app already has; the
       notification of the app first; read notifications stay until they are done
+- [x] A repository made public or private: the webhook public (new) and repository (privatized,
+      publicized) update it at once

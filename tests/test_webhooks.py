@@ -178,3 +178,32 @@ def test_a_repository_update_marks_its_projects(github, bob):
     project.refresh_from_db()
     repository.refresh_from_db()
     assert project.updated == repository.updated is not None
+
+
+@pytest.mark.parametrize(
+    ("event", "action", "private"),
+    [
+        ("repository", "privatized", True),
+        ("repository", "publicized", False),
+        ("public", "", False),
+    ],
+)
+def test_a_repository_made_private_or_public_is_updated(
+    client, github, bob, event, action, private
+):
+    """The update reads the new visibility: visitors no longer see a repository made private."""
+    from pycal_dashboard.models import Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.update_queue import UpdateQueue
+
+    github.add_repository(REPOSITORY, private=private, installation=11)
+    repository = Repository.objects.create(full_name=REPOSITORY, private=not private)
+    project = ProjectEditor.create(bob, "iCalendar", public=not private)
+    project.repositories.add(repository)
+    payload = {"repository": repository_payload(private=private)}
+    if action:
+        payload["action"] = action
+    send_webhook(client, event, payload)
+    UpdateQueue.work()
+    repository.refresh_from_db()
+    assert repository.private is private

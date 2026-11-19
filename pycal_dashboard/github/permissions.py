@@ -25,6 +25,7 @@ EVENTS = [
     "pull_request",
     "pull_request_review",
     "repository",
+    "public",
     "label",
     "check_run",
     "check_suite",
@@ -39,6 +40,7 @@ EVENT_PERMISSIONS = {
     "pull_request": "pull_requests",
     "pull_request_review": "pull_requests",
     "repository": "metadata",
+    "public": "metadata",  # a private repository made public
     "label": "metadata",
     "check_run": "checks",
     "check_suite": "checks",
@@ -49,7 +51,7 @@ EVENT_PERMISSIONS = {
 # updates the repository it is about, so that the data follows GitHub without waiting for the
 # daily renewal. "installation" events keep the installations.
 DATA_EVENTS = {
-    "Repository": ["repository"],
+    "Repository": ["repository", "public"],  # also made private (privatized) or public
     "Issue": ["issues", "issue_comment", "pull_request", "pull_request_review"],
     "GitHubUser": ["issues", "pull_request"],
     "Label": ["label", "issues", "pull_request"],

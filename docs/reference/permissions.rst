@@ -49,7 +49,9 @@ Events
 ``pull_request_review``
    A pull request was reviewed: the requested reviewers changed.
 ``repository``
-   A repository was renamed, archived, made private or deleted.
+   A repository was renamed, archived, made private or public, or deleted.
+``public``
+   A private repository was made public.
 ``label``
    A label of a repository was created, changed or deleted.
 ``check_run``, ``check_suite``, ``status``

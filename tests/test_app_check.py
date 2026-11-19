@@ -32,7 +32,7 @@ def test_the_app_lacks_permissions_and_events(github):
     assert check.describe() == (
         "The GitHub App lacks the permissions issues: read, pull_requests: write, checks: read, "
         "statuses: read, contents: read and does not receive the events issue_comment, "
-        "pull_request, pull_request_review, repository, label, check_run, check_suite, status, "
+        "pull_request, pull_request_review, repository, public, label, check_run, check_suite, status, "
         "push: change them on https://github.com/organizations/PyCalendar/settings/apps/"
         "dashboard-test/permissions"
     )
