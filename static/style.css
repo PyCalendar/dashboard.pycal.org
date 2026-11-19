@@ -307,11 +307,13 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .menu-close { float: right; margin: -.4rem -.4rem .4rem .5rem; font-size: 1.2rem; line-height: 1; }
 .menu-actions { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .5rem 0 0; padding-top: .5rem; border-top: 1px solid var(--border); }
 /* a checkbox that looks like a switch, on or off */
-label.switch { display: flex; align-items: center; gap: .5rem; margin: .3rem 0; cursor: pointer; }
-label.switch input { appearance: none; position: relative; flex: none; width: 3.2rem; height: 1.8rem; margin: 0; border: 2px solid var(--text-muted); border-radius: 1rem; background: var(--surface-tint); cursor: pointer; transition: background .15s, border-color .15s; }
-label.switch input::after { content: ""; position: absolute; top: .15rem; left: .2rem; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--text-muted); transition: left .15s, background .15s; }
-label.switch input:checked { background: var(--success); border: 3px solid var(--text); }
-label.switch input:checked::after { left: 1.55rem; top: .1rem; background: var(--surface); }
+/* the switch of the site, one partial (_switch.html) everywhere: on and off, with a thick border
+   that only changes its color, so that the knob stays in place */
+label.switch { display: flex; align-items: center; gap: .6rem; margin: .45rem 0; cursor: pointer; }
+label.switch input { appearance: none; box-sizing: border-box; position: relative; flex: none; width: 3.2rem; height: 1.8rem; margin: 0; border: 3px solid var(--text-muted); border-radius: 1rem; background: var(--surface-tint); cursor: pointer; transition: background .15s, border-color .15s; }
+label.switch input::after { content: ""; position: absolute; top: calc(50% - .6rem); left: .15rem; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--text-muted); transition: left .15s, background .15s; }
+label.switch input:checked { background: var(--success); border-color: var(--text); }
+label.switch input:checked::after { left: calc(100% - 1.35rem); background: var(--surface); }
 label.switch input:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 .result { display: inline-block; min-width: 1.2em; font-weight: 700; text-align: center; }
 .result-yes { color: var(--success); }
@@ -349,7 +351,7 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .filter-conditions tr.off td:not(.switch-cell) { opacity: .45; }
 .filter-conditions tr:has(input[name="on"]:not(:checked)) td:not(.switch-cell) { opacity: .45; }
 .filter-conditions tr:has(input[name="on"]:checked) td { opacity: 1; }
-.filter-conditions .condition-name { font-weight: 400; }
+.filter-conditions .condition-name { font-weight: 400; vertical-align: middle; }
 .filter-conditions .switch-cell { width: 4.2rem; min-width: 4.2rem; position: relative; vertical-align: middle; }
 .filter-actions { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
 .filter-details > summary { margin: .5rem 0; }

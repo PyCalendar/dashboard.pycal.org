@@ -48,3 +48,11 @@ def test_permissions_are_documented():
 def test_todo_is_committed_with_checkboxes():
     text = (ROOT / "todo.txt").read_text()
     assert "- [x]" in text and "- [ ]" in text
+
+
+def test_every_switch_is_the_partial():
+    """Switches look and work the same everywhere: they all come from _switch.html."""
+    for template in (PACKAGE / "templates").rglob("*.html"):
+        if template.name == "_switch.html":
+            continue
+        assert 'class="switch"' not in template.read_text(), template

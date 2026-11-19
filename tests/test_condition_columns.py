@@ -162,7 +162,7 @@ def test_the_menus_work_without_javascript(client, project):
     gear = page.split('data-condition-column="0"')[1].split("</th>")[0]
     assert '<input type="hidden" name="edit" value="0">' in gear
     assert '<option value="branch" selected>' in gear
-    assert '<input type="checkbox" name="branch" value="outdated" checked>' in gear
+    assert '<input type="checkbox" role="switch" name="branch" value="outdated" checked>' in gear
     assert "remove=0" in gear and "pull-table.js" in page
 
 

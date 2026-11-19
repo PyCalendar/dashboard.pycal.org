@@ -1,7 +1,7 @@
 {% load i18n %}{% if columns %}<div class="table-wrap"><table class="table filter-conditions" data-filter-summary>
   <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th></tr></thead>
   <tbody>{% for item in rows %}<tr data-condition-row="{{ item.index }}"{% if not item.filters %} class="off"{% endif %}>
-    <td class="switch-cell"><label class="switch"><input type="checkbox" name="on" value="{{ item.index }}"{% if item.filters %} checked{% endif %}><span class="visually-hidden">{% blocktranslate with name=item.column.summary %}Filter by {{ name }}{% endblocktranslate %}</span></label></td>
+    <td class="switch-cell">{% blocktranslate with name=item.column.summary asvar filter_by %}Filter by {{ name }}{% endblocktranslate %}{% include "pycal_dashboard/_switch.html" with name="on" value=item.index checked=item.filters text="" hidden_text=filter_by %}</td>
     <td class="condition-name">{{ item.column.sentence|capfirst }}{% if item.opposite %}
       <span class="opposite" data-opposite>{% translate "the same as" %}: {{ item.opposite.sentence }} <a class="button button-quiet button-small" href="{{ address }}&amp;swap={{ item.index }}">{% translate "Use it" %}</a></span>{% endif %}</td>
   </tr>{% endfor %}</tbody>

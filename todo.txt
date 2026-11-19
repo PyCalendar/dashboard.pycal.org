@@ -371,6 +371,8 @@ community: where to start, what waits for a review, who contributes.
       is met"; larger switches with a background and a thick contrasting border when on
 - [x] No automatic sign-out by default (SIGN_OUT_MINUTES=0)
 
+- [x] The switches look and work the same everywhere: one partial (_switch.html), tested
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
