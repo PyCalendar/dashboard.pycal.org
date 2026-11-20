@@ -9,7 +9,7 @@ from django.core.cache import cache
 from django.utils.translation import get_language, gettext
 
 from pycal_dashboard import badges
-from pycal_dashboard.conditions.state.scope import Scope
+from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 
 if TYPE_CHECKING:
@@ -71,7 +71,8 @@ class PullRequestBadge:
             ``("Steps", "outside", ...)`` when no task of any step is to do, outside of the
             usual steps; ``("Steps", "none", ...)`` without steps.
         """
-        progress = PullRequestProgress(self.issue, self.project, Scope(self.repositories))
+        results = ColumnResults(self.repositories)
+        progress = PullRequestProgress(self.issue, self.project, results.scope, results)
         if progress.current:
             current = progress.current
             return current.step.name, f"{current.done}/{len(current.tasks)}", TODO

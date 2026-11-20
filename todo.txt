@@ -424,7 +424,7 @@ community: where to start, what waits for a review, who contributes.
       tasks done; the first sight only records the place
 - [x] Running the actions writes to GitHub: the app asks for Pull requests: Read and write
       already, which adds labels to pull requests
-- [ ] The person: AGENTS.md still says that the site writes nothing to GitHub yet
+- [x] AGENTS.md says that the site writes the labels and the message to GitHub
 
 - [x] The badge of a pull request (badge.svg, badge.png at the address of its page), such as
       Triage 3/4, with anybadge as community-insights; cached until something changes; the
@@ -493,7 +493,9 @@ community: where to start, what waits for a review, who contributes.
       (it does: inf with reviews and no pull requests, 0 without; the JSON has no ratios, only
       whether conditions apply, and the cell shows ∞)
 - [x] future steps should not show the X/Y and also the boxes should neither be green nor red but gray. Future steps should not show the status. That is confusing.
-- [ ] try to speed up page loading in case there are many PRs
+- [x] try to speed up page loading in case there are many PRs
+      (with 1500 pull requests: the page of a pull request 29 ms and 25 queries -> 12 ms and 5,
+      a badge 33 ms and 20 queries -> 20 ms and 5; the table loads only its page)
 - [x] The menu of the account (top right) has an entry My projects
 - [x] A new tab PR Message, right of Steps: a message about the state of a pull request, added
       as a comment to the pull requests and updated by the site; off by default, enabled for

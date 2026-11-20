@@ -14,8 +14,8 @@ from urllib.parse import urlencode
 from django.http import HttpRequest, HttpResponse, HttpResponseNotModified
 from django.views.decorators.http import require_http_methods
 
-from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import PullRequestNotFound, PullRequestNumberAmbiguous
+from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
 from pycal_dashboard.step_template import expand, values_of
@@ -86,7 +86,8 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             lambda: {"pull_requests": [issue_data(issue) for issue, _query in choices]},
         )
     issue = found[0]
-    progress = PullRequestProgress(issue, access.project, Scope(repositories))
+    results = ColumnResults(repositories)
+    progress = PullRequestProgress(issue, access.project, results.scope, results)
     shown = progress.chosen(request.GET.get("step"))
     keep = {"repository": name} if name else {}
     return page(

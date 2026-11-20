@@ -101,14 +101,39 @@ class ColumnResults:
         Returns:
             The result by the id of the pull request: True, False, or None while not known.
         """
-        name = hashlib.sha256(column.encode().encode()).hexdigest()[:20]  # no spaces in keys
-        key = f"column:{self.version}:{name}"
+        key = self.key(column)
         found = cache.get(key)
         if found is None:
             pulls = self.pulls(reviews=column.group.id == "reviews")
             found = {pull.pk: column.applies(pull, self.scope) for pull in pulls}
             cache.set(key, found, CACHED_SECONDS)
         return found
+
+    def cached(self, column: Column) -> dict[int, bool | None] | None:
+        """The results of a column if the cache has them, without evaluating it.
+
+        A page of one pull request uses them where they are, and evaluates the column for
+        that pull request alone where they are not, which is faster than for all.
+
+        Parameters:
+            column: The column.
+
+        Returns:
+            The results by the id of the pull request; None when they are not in the cache.
+        """
+        return cache.get(self.key(column))
+
+    def key(self, column: Column) -> str:
+        """The key of the results of a column in the cache, for the version of now.
+
+        Parameters:
+            column: The column.
+
+        Returns:
+            The key, without spaces.
+        """
+        name = hashlib.sha256(column.encode().encode()).hexdigest()[:20]
+        return f"column:{self.version}:{name}"
 
     def matching(self, columns: list[Column]) -> list[int]:
         """The pull requests that the columns show, the newest first.

@@ -15,6 +15,7 @@ from .task import Task
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.services.column_results import ColumnResults
 
 
 class PullRequestProgress:
@@ -26,7 +27,13 @@ class PullRequestProgress:
     is in the left-most step with a task to do. A step without a task to do is complete.
     """
 
-    def __init__(self, issue: Issue, project: Project, scope: Scope | None = None):
+    def __init__(
+        self,
+        issue: Issue,
+        project: Project,
+        scope: Scope | None = None,
+        results: ColumnResults | None = None,
+    ):
         """Find the tasks of every step of the project for a pull request.
 
         Parameters:
@@ -34,18 +41,29 @@ class PullRequestProgress:
             project: The project whose steps it goes through.
             scope: The repositories of the project that the person sees, in which the states
                 of the author are counted; all of the project when None.
+            results: The results of the columns of the repositories, used where the cache
+                has them; else each condition is evaluated for the pull request.
         """
         scope = scope or Scope.of(project)
         self.issue = issue
         self.steps: list[StepProgress] = []
+        base = values_of(issue, project)  # the same for every step, with its own after it
         for number, step in enumerate(project.steps.select_related("filter"), 1):
-            values = values_of(issue, project, step)
+            values = base | {
+                "step_name": step.name,
+                "step_number": str(number),
+                "step_id": str(step.pk),
+            }
             progress = StepProgress(step, number)
             for value in step.filter.columns:
                 column = Column.decode(value)
                 if column.filter == "all":  # off: no part of the filter
                     continue
-                result = column.applies(issue, scope)
+                cached = results.cached(column) if results else None
+                if cached is not None and issue.pk in cached:
+                    result = cached[issue.pk]
+                else:
+                    result = column.applies(issue, scope)
                 notes = (step.conditions or {}).get(value, {})
                 progress.tasks.append(
                     Task(

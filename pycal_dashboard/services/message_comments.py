@@ -12,9 +12,9 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext
 
 from pycal_dashboard.actions import MessageWritten
-from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Issue, PullRequestComment, PullRequestMessage
+from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.step_template import expand, values_of
 
@@ -50,7 +50,8 @@ class MessageComments:
         self.repositories = (
             list(repositories) if repositories is not None else list(project.repositories.all())
         )
-        self.scope = Scope(self.repositories)
+        self.results = ColumnResults(self.repositories)
+        self.scope = self.results.scope
 
     def marker(self) -> str:
         """The hidden line that ends every comment of the message: what wrote it."""
@@ -135,7 +136,7 @@ class MessageComments:
         Returns:
             The values by the names of the variables.
         """
-        progress = PullRequestProgress(issue, self.project, self.scope)
+        progress = PullRequestProgress(issue, self.project, self.scope, self.results)
         current = progress.current
         values = {"step_name": "", "step_number": "", "step_id": ""} | values_of(
             issue, self.project, current.step if current else None
