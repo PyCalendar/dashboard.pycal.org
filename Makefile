@@ -112,6 +112,10 @@ prose:  ## Check the prose of the documentation with Vale (.vale.ini)
 check-live: .venv  ## Check a live site as a visitor: LIVE_URL (default https://dashboard.pycal.org), waits while it starts
 	@uv run python scripts/check_live.py
 
+.PHONY: measure-speed
+measure-speed: .venv  ## Measure the speed of every condition on a live site: LIVE_URL, PROJECT, LABEL
+	@uv run python scripts/measure_speed.py --url "$${LIVE_URL:-https://dashboard.pycal.org}" --project "$${PROJECT:-icalendar}" --label "$${LABEL:-needs review}"
+
 .PHONY: workflows
 workflows:  ## Check the GitHub workflows for security problems with zizmor
 	@uvx zizmor==1.32.0 --offline .github/workflows
