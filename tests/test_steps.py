@@ -1,5 +1,7 @@
 """The steps of pull requests: made of filters, ordered, explained, and where a pull request is."""
 
+import re
+
 import pytest
 
 from pycal_dashboard.models import Issue, PullRequestFilter, PullRequestStep, Repository
@@ -230,3 +232,39 @@ def test_the_address_of_the_steps_of_a_pull_request(project, filters, settings):
     assert values_of(pull, project)["pr_steps_url"].endswith(
         "/pull/1/?repository=collective%2Ficalendar"
     )
+
+
+def test_a_step_hidden_in_the_page_of_a_pull_request(client, project, filters, bob):
+    conflict, _review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    step = PullRequestStep.objects.get()
+    page = client.get("/projects/icalendar/steps/").content.decode()
+    assert 'name="hidden" value="on"' in page and "data-hidden-mark" not in page
+    client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "C", "hidden": "on"}, **JSON)
+    step.refresh_from_db()
+    assert step.hidden
+    assert "data-hidden-mark" in client.get("/projects/icalendar/steps/").content.decode()
+    client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "C"}, **JSON)
+    step.refresh_from_db()
+    assert not step.hidden
+
+
+def test_check_lists_the_pull_requests_outside_of_the_steps(client, project, filters):
+    conflict, _review = filters
+    page = client.get("/projects/icalendar/steps/").content.decode()
+    assert "data-check-steps" not in page  # no steps: nothing to check
+    PullRequestStep.objects.create(project=project, filter=conflict, name="Conflicts")
+    page = client.get("/projects/icalendar/steps/").content.decode()
+    assert 'href="/projects/icalendar/steps/check/" data-check-steps' in page
+    check = client.get("/projects/icalendar/steps/check/").content.decode()  # public
+    outside = re.findall(r'data-outside-pull="([^"]+)"', check)
+    assert outside == [f"{REPO}#1"]  # Ready: open and without a conflict; not the merged one
+    assert "1 pull request is outside of the steps." in check
+    every = client.get("/projects/icalendar/steps/check/?all=1").content.decode()
+    assert sorted(re.findall(r'data-outside-pull="([^"]+)"', every)) == [f"{REPO}#1", f"{REPO}#3"]
+    assert '/projects/icalendar/pull/1/badge.svg"' in check
+
+
+def test_check_without_steps(client, project):
+    assert "data-no-steps" in client.get("/projects/icalendar/steps/check/").content.decode()

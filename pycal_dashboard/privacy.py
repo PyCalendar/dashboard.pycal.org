@@ -131,6 +131,7 @@ MODELS = {
             "summary",
             "conditions",
             "position",
+            "hidden",
             "created",
             "updated",
         },

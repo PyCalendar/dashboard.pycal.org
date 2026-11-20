@@ -393,6 +393,7 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .step-item { display: flex; align-items: center; gap: .3rem; padding: .4rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); }
 .step-item[draggable="true"] { cursor: grab; }
 .step-item.current { border-color: var(--primary); background: var(--surface-tint); }
+.steps-tools { display: inline-flex; align-items: center; gap: .4rem; margin-left: auto; }
 .step-item.dragged-over { outline: 2px dashed var(--primary); }
 .step-item + .step-item::before { content: "→"; margin-right: .3rem; color: var(--text-muted); }
 .step-item a { text-decoration: none; display: inline-flex; flex-direction: column; line-height: 1.2; }
@@ -449,6 +450,9 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .square-done { background: var(--success); }
 .square-unknown { background: var(--border); }
 .progress-here { color: var(--primary); font-weight: 600; }
+/* outside of the usual steps: all of them gray */
+.progress-bar[data-outside] .progress-step > a { border-color: var(--border); color: var(--text-muted); }
+.progress-bar[data-outside] .square { background: var(--border); }
 
 /* the tasks of the step shown: to do first and open, done closed */
 .tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }

@@ -85,9 +85,28 @@ def test_tasks_to_do_come_first(project, filters):  # noqa: F811
     assert progress.steps[0].squares == ["done", "todo"]  # green left, red right
 
 
-def test_all_steps_complete(client, project, steps):  # noqa: F811
+def test_outside_of_the_usual_steps(client, project, steps):  # noqa: F811
+    """No task of any step applies: all steps are gray, with a note."""
     page = client.get(f"/projects/icalendar/pull/{number_of('Merged')}/").content.decode()
-    assert "data-all-done" in page and "data-current" not in page
+    assert "data-outside-note" in page and "data-progress data-outside>" in page
+    assert "data-current" not in page and "progress-check" not in page
+    data = client.get(f"/projects/icalendar/pull/{number_of('Merged')}.json").json()
+    assert data["outside"] is True and data["step"] is None
+
+
+def test_hidden_steps_show_only_with_the_pull_request(client, project, steps):  # noqa: F811
+    first, second = steps
+    first.hidden = second.hidden = True
+    first.save()
+    second.save()
+    page = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/").content.decode()
+    assert f'data-step="{first.pk}"' not in page  # hidden
+    assert f'data-step="{second.pk}" data-complete="false" data-current data-hidden' in page
+    shown = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/?step={first.pk}")
+    assert f'data-shown-step="{first.pk}"' in shown.content.decode()  # by its address
+    progress = PullRequestProgress(Issue.objects.get(title="Ready"), project)
+    assert [step.step for step in progress.visible] == [second]
+    assert progress.data()["steps"][0]["hidden"] is True
 
 
 def test_without_steps(client, project):  # noqa: F811

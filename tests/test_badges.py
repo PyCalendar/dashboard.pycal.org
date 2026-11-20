@@ -28,8 +28,8 @@ def test_the_badge_shows_the_step_and_its_tasks(client, project, steps):  # noqa
     svg = answer.content.decode()
     assert "<title>Review: 0/1</title>" in svg and 'role="img"' in svg
     assert answer["Cache-Control"] == "public, max-age=300" and answer["ETag"]
-    complete = badge(client, "Merged").content.decode()
-    assert "<title>Steps: complete</title>" in complete
+    outside = badge(client, "Merged").content.decode()
+    assert "<title>Steps: outside</title>" in outside
 
 
 def test_without_steps(client, project):  # noqa: F811

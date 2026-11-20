@@ -494,3 +494,26 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     # octocat opened 3 and reviewed once: 0.33
     expect(ready.locator(".col-condition").nth(1)).to_contain_text("0.33")
     expect(ready.locator(".col-condition").nth(1)).to_have_attribute("data-result", "yes")
+
+
+def test_hide_a_step_and_check_the_pull_requests_outside(signed_in, site, github, bob):
+    """The switch hides a step at once; Check lists the pull requests outside of the steps."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Conflicts", columns=["branch~applies~conflict"]
+    )
+    step = PullRequestStep.objects.create(project=project, filter=saved, name="Conflicts")
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/steps/")
+    page.locator("[data-step-hidden] label.switch").click()
+    expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
+    step.refresh_from_db()
+    assert step.hidden
+    page.get_by_role("link", name="Check").click()
+    expect(page.get_by_role("heading", name="Outside of the steps")).to_be_visible()
+    expect(page.locator("[data-outside-pull]")).to_have_count(2)  # Ready and Behind
+    page.locator("[data-outside-pull='collective/icalendar#1'] a").first.click()
+    expect(page.locator("[data-outside-note]")).to_be_visible()
+    expect(page.locator("[data-progress] [data-step]")).to_have_count(0)  # hidden

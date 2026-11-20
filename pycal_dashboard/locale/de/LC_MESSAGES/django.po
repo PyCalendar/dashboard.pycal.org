@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 00:48+0000\n"
+"POT-Creation-Date: 2026-11-20 00:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -796,7 +796,7 @@ msgstr "Die Farben, die du gewählt hast."
 msgid "Steps"
 msgstr ""
 
-msgid "complete"
+msgid "outside"
 msgstr ""
 
 msgid "none"
@@ -2185,7 +2185,9 @@ msgstr ""
 msgid "The pull request is here"
 msgstr ""
 
-msgid "Every step is complete: no task keeps this pull request."
+msgid ""
+"This pull request is outside of the usual steps it should take: no task of "
+"any step applies to it."
 msgstr ""
 
 #, python-format
@@ -2389,6 +2391,13 @@ msgstr "Zur Übersicht"
 msgid "Steps of a pull request"
 msgstr ""
 
+msgid ""
+"The pull requests outside of the steps: no task of any step applies to them"
+msgstr ""
+
+msgid "Check"
+msgstr ""
+
 msgid "Add a filter as a step"
 msgstr ""
 
@@ -2396,6 +2405,9 @@ msgstr ""
 msgid ""
 "Every filter is a step. Save more filters on the tab <a "
 "href=\"%(filters_url)s\">Filters</a>."
+msgstr ""
+
+msgid "hidden"
 msgstr ""
 
 msgid "Move left: earlier"
@@ -2413,6 +2425,9 @@ msgstr ""
 msgid ""
 "No steps yet. Make a saved filter a step on the tab <a "
 "href=\"%(filters_url)s\">Filters</a>, or add one with the button +."
+msgstr ""
+
+msgid "Hidden in the page of a pull request, unless the pull request is in it"
 msgstr ""
 
 msgid "Summary"
@@ -2457,6 +2472,45 @@ msgid "Remove the step"
 msgstr ""
 
 msgid "The filter stays."
+msgstr ""
+
+msgid "Outside of the steps"
+msgstr ""
+
+msgid "← Back to the steps"
+msgstr ""
+
+msgid ""
+"No task of any step applies to these pull requests: they are outside of the "
+"usual steps they should take. A filter of a step may lack a condition for "
+"them."
+msgstr ""
+
+msgid "All, also closed and merged"
+msgstr ""
+
+msgid "The project has no steps yet."
+msgstr ""
+
+#, python-format
+msgid "%(counter)s pull request is outside of the steps."
+msgid_plural "%(counter)s pull requests are outside of the steps."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Creator"
+msgstr "Erstellt von"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "← Earlier"
+msgstr ""
+
+msgid "Later →"
+msgstr ""
+
+msgid "Every pull request is in a step."
 msgstr ""
 
 msgid ""
@@ -2737,12 +2791,6 @@ msgstr "Titel"
 
 msgid "Number"
 msgstr "Nummer"
-
-msgid "Creator"
-msgstr "Erstellt von"
-
-msgid "Created"
-msgstr "Erstellt"
 
 msgid "Tick the box to confirm that the project is deleted."
 msgstr ""

@@ -23,6 +23,8 @@ class PullRequestStep(models.Model):
     summary = models.TextField(blank=True)  # a template in Markdown
     conditions = models.JSONField(default=dict, blank=True)
     position = models.PositiveIntegerField(default=0)
+    # not shown in the bar of the page of a pull request, unless the pull request is in it
+    hidden = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

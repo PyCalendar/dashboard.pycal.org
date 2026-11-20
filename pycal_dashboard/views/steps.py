@@ -8,6 +8,7 @@ Moving and adding steps work as forms, and with JavaScript without loading the p
 from __future__ import annotations
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -15,11 +16,13 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
-from pycal_dashboard.models import Project, PullRequestFilter, PullRequestStep
+from pycal_dashboard.models import Issue, Project, PullRequestFilter, PullRequestStep
+from pycal_dashboard.services.step_assignment import StepAssignment
 from pycal_dashboard.step_template import GROUPS, example, expand
 
-from .projects import opened, saved_filter
+from .projects import opened, pull_requests_of, saved_filter, shown_repositories
 
 
 def wants_json(request: HttpRequest) -> bool:
@@ -210,8 +213,9 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     """Save the name and summary of a step, and the summary and description of its conditions.
 
     Parameters:
-        request: The request, with ``name``, ``summary`` and for each condition ``value-<i>``,
-            ``summary-<i>`` and ``description-<i>``.
+        request: The request, with ``name``, ``summary``, ``hidden`` (``on`` to hide it in
+            the page of a pull request) and for each condition ``value-<i>``, ``summary-<i>``
+            and ``description-<i>``.
         slug: The project.
         number: The step.
 
@@ -223,6 +227,7 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     step = step_of(access.project, number)
     step.name = " ".join(request.POST.get("name", "").split())[:100] or step.filter.name
     step.summary = request.POST.get("summary", "")
+    step.hidden = request.POST.get("hidden") == "on"
     notes = dict(step.conditions or {})
     for value in step.filter.columns:
         index = step.filter.columns.index(value)
@@ -256,3 +261,55 @@ def project_step_remove(request: HttpRequest, slug: str, number: int):
     access.require_write()
     step_of(access.project, number).delete()
     return redirect(access.project.path("steps/"))
+
+
+OUTSIDE_PER_PAGE = 50
+
+
+@require_http_methods(["GET", "HEAD"])
+def project_steps_check(request: HttpRequest, slug: str):
+    """The pull requests outside of the usual steps: no task of any step applies to them.
+
+    Open pull requests by default; ``all`` also lists the closed and merged ones, which are
+    mostly outside, as they are done.
+
+    Parameters:
+        request: The request; ``all`` for every pull request, ``page`` the page.
+        slug: The project.
+
+    Returns:
+        The page.
+    """
+    access, moved = opened(request, slug, "steps/check/")
+    if moved:
+        return moved
+    repositories = shown_repositories(access)
+    every = request.GET.get("all") == "1"
+    pulls = pull_requests_of(repositories).select_related("pull_state")
+    if not every:
+        pulls = pulls.filter(state=Issue.OPEN)
+    steps = list(access.project.steps.all())
+    assignment = StepAssignment(access.project, Scope(repositories))
+    outside = (
+        [
+            pull
+            for pull in pulls.prefetch_related("labels", "reviews")
+            if not assignment.step_of(pull)
+        ]
+        if steps
+        else []
+    )
+    shown = Paginator(outside, OUTSIDE_PER_PAGE).get_page(request.GET.get("page"))
+    return render(
+        request,
+        "pycal_dashboard/project_steps_check.html",
+        {
+            "project": access.project,
+            "access": access,
+            "steps": steps,
+            "pulls": shown,
+            "every": every,
+            "repositories": repositories,
+            "tab": "steps",
+        },
+    )

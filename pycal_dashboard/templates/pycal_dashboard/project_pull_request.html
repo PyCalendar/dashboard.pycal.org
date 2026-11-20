@@ -16,15 +16,15 @@
   <details><summary>{% translate "Show the badge elsewhere" %}</summary>
   <p><label for="badge-markdown">{% translate "Markdown, such as for a comment on GitHub" %}</label><input id="badge-markdown" readonly value="{{ addresses.pr_badge }}"></p>
   <p><label for="badge-png">{% translate "The badge as PNG" %}</label><input id="badge-png" readonly value="{{ badge_png }}"></p></details></div>
-{% if progress.steps %}<ol class="progress-bar" data-progress>{% for step in progress.steps %}
-<li class="progress-step" data-step="{{ step.step.pk }}" data-complete="{{ step.complete|yesno:'true,false' }}"{% if step.current %} data-current{% endif %}>
+{% if progress.steps %}<ol class="progress-bar" data-progress{% if progress.outside %} data-outside{% endif %}>{% for step in progress.visible %}
+<li class="progress-step" data-step="{{ step.step.pk }}" data-complete="{{ step.complete|yesno:'true,false' }}"{% if step.current %} data-current{% endif %}{% if step.step.hidden %} data-hidden{% endif %}>
   <a href="{{ step_query }}{{ step.step.pk }}"{% if step == shown %} aria-current="step"{% endif %}>
-    <span class="progress-title">{% if step.complete %}<span class="progress-check" aria-hidden="true">✓</span> {% endif %}<small class="muted">{% blocktranslate with number=step.number %}Step {{ number }}{% endblocktranslate %}</small> {{ step.step.name }}</span>
+    <span class="progress-title">{% if step.complete and not progress.outside %}<span class="progress-check" aria-hidden="true">✓</span> {% endif %}<small class="muted">{% blocktranslate with number=step.number %}Step {{ number }}{% endblocktranslate %}</small> {{ step.step.name }}</span>
     <span class="progress-tasks"><span class="progress-count" title="{% blocktranslate with done=step.done total=step.tasks|length %}{{ done }} of {{ total }} tasks done{% endblocktranslate %}">{{ step.done }}/{{ step.tasks|length }}</span>
       <span class="squares" aria-hidden="true">{% for state in step.squares %}<span class="square square-{{ state }}"></span>{% endfor %}</span></span>
     {% if step.current %}<small class="progress-here">{% translate "The pull request is here" %}</small>{% endif %}
   </a></li>{% endfor %}</ol>
-{% if not progress.current %}<p class="message message-success" data-all-done>{% translate "Every step is complete: no task keeps this pull request." %}</p>{% endif %}
+{% if progress.outside %}<p class="message" data-outside-note>{% translate "This pull request is outside of the usual steps it should take: no task of any step applies to it." %}</p>{% endif %}
 {% else %}<p class="muted" data-no-steps>{% url 'project_steps' project.slug as steps_url %}{% blocktranslate %}The project has no steps yet: see the tab <a href="{{ steps_url }}">Steps</a>.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card" data-shown-step="{{ shown.step.pk }}">

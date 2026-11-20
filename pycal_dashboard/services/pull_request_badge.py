@@ -15,9 +15,8 @@ from pycal_dashboard.services.progress import PullRequestProgress
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project, Repository
 
-# the colors of the badge: tasks to do, every step complete, no steps
+# the colors of the badge: tasks to do; outside of the steps, or no steps
 TODO = "#fe7d37"
-COMPLETE = "#44cc11"
 NONE = "#9f9f9f"
 CACHED_SECONDS = 7 * 24 * 3600  # the key changes with the data, so it may stay long
 KINDS = {"svg": ("image/svg+xml", badges.svg), "png": ("image/png", badges.png)}
@@ -68,15 +67,16 @@ class PullRequestBadge:
         """The label, the value and the color of the badge.
 
         Returns:
-            Such as ``("Triage", "3/4", "#fe7d37")``; ``("Steps", "complete", ...)`` when no
-            task is to do, ``("Steps", "none", ...)`` without steps.
+            Such as ``("Triage", "3/4", "#fe7d37")``: the step, its tasks done and all of them;
+            ``("Steps", "outside", ...)`` when no task of any step is to do, outside of the
+            usual steps; ``("Steps", "none", ...)`` without steps.
         """
         progress = PullRequestProgress(self.issue, self.project, Scope(self.repositories))
         if progress.current:
             current = progress.current
             return current.step.name, f"{current.done}/{len(current.tasks)}", TODO
-        if progress.steps:
-            return gettext("Steps"), gettext("complete"), COMPLETE
+        if progress.steps:  # no task of any step is to do
+            return gettext("Steps"), gettext("outside"), NONE
         return gettext("Steps"), gettext("none"), NONE
 
     def render(self, kind: str) -> tuple[bytes, str, str]:

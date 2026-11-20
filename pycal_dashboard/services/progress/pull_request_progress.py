@@ -63,6 +63,19 @@ class PullRequestProgress:
         if self.current:
             self.current.current = True
 
+    @property
+    def visible(self) -> list[StepProgress]:
+        """The steps of the bar: those not hidden, and the one the pull request is in."""
+        return [step for step in self.steps if not step.step.hidden or step.current]
+
+    @property
+    def outside(self) -> bool:
+        """Whether the pull request is outside of the usual steps: no task of any step is to do.
+
+        Such as a merged pull request, or one that none of the filters of the steps shows.
+        """
+        return bool(self.steps) and self.current is None
+
     def chosen(self, number: int | str | None) -> StepProgress | None:
         """The step to show below the bar.
 
@@ -70,30 +83,33 @@ class PullRequestProgress:
             number: The id of a step that was clicked, or None.
 
         Returns:
-            That step; else the step the pull request is in; else the last one; None without
-            steps.
+            That step, also a hidden one; else the step the pull request is in; else the last
+            step of the bar; None without steps.
         """
         for step in self.steps:
             if str(step.step.pk) == str(number):
                 return step
-        return self.current or (self.steps[-1] if self.steps else None)
+        visible = self.visible
+        return self.current or (visible[-1] if visible else None)
 
     def data(self) -> dict:
         """The progress for the JSON of the page.
 
         Returns:
-            ``step``, the id of the step the pull request is in (None when it is in none), and
-            ``steps``, each with its ``id``, ``name``, ``number``, ``complete``, ``done``,
-            ``total`` and ``tasks``: their ``condition``, ``sentence``, ``state`` and
-            ``summary``.
+            ``step``, the id of the step the pull request is in (None when it is in none),
+            ``outside``, whether it is outside of the usual steps, and ``steps``, each with its
+            ``id``, ``name``, ``number``, ``hidden``, ``complete``, ``done``, ``total`` and
+            ``tasks``: their ``condition``, ``sentence``, ``state`` and ``summary``.
         """
         return {
             "step": self.current.step.pk if self.current else None,
+            "outside": self.outside,
             "steps": [
                 {
                     "id": step.step.pk,
                     "name": step.step.name,
                     "number": step.number,
+                    "hidden": step.step.hidden,
                     "complete": step.complete,
                     "done": step.done,
                     "total": len(step.tasks),

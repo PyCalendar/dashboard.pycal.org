@@ -1,0 +1,1 @@
+A pull request that no task of any step applies to is outside of the usual steps: its page shows all steps gray with a note, and its badge says outside. Check on the tab Steps lists these pull requests.

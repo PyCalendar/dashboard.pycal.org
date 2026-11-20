@@ -429,6 +429,13 @@ community: where to start, what waits for a review, who contributes.
       column Step of the table (on by default), always linked to the page of the pull request
 - [x] Variables pr_badge_url and pr_badge ([![]({pr_badge_url})]({pr_steps_url})), static links
 
+- [x] The badge X/Y: the tasks done (conditions no longer applying) of all tasks of the step
+- [x] A step can be hidden in the page of a pull request (a switch in the editor of the step);
+      it shows there when the pull request is in it
+- [x] No task of any step applies: all steps gray, a note that the pull request is outside of
+      the usual steps; the badge says outside
+- [x] Check next to + on the tab Steps: the pull requests outside of the steps (open, or all)
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where

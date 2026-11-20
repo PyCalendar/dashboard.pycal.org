@@ -271,7 +271,15 @@ task edits its summary, a line of text, and its description, which guides
 people to do it, such as with a link to the documentation. Both are written in the editor of Markdown, the description too.
 They take variables: the menu **Variables** in the bar of the editor inserts the
 one you click where the cursor is, see :ref:`step-variables`. The page shows them
-with an example pull request. A step saves itself while you edit it.
+with an example pull request. A step saves itself while you edit it. The
+switch *Hidden in the page of a pull request* leaves the step out of the bar
+of that page, unless the pull request is in it; the bar of the tab *Steps*
+marks it *hidden*.
+
+**Check** next to the button **+** lists the pull requests outside of the
+steps: no task of any step applies to them, so a filter of a step may lack a
+condition for them. It lists the open pull requests, or all of them, also the
+closed and merged ones, which are mostly outside as they are done.
 
 .. _pull-request-page:
 
@@ -284,9 +292,12 @@ repositories of the project have a pull request of the number, it asks which.
 At the top, a bar shows every step of the project in its order. Each step shows
 its name, how many of its tasks are done, such as *1/3*, and a square for each
 task: green for a task done, on the left, and red for a task to do, on the
-right; gray while its data is not known yet. A complete step, with no task to
+right; gray while its data is not known yet. Hidden steps are left out, unless
+the pull request is in one. A complete step, with no task to
 do, has a green border and a check mark. The step the pull request is in, the
-left-most one with a task to do, says so and is chosen.
+left-most one with a task to do, says so and is chosen. When no task of any
+step applies to the pull request, all steps are gray and a note says that it is
+outside of the usual steps it should take, such as a merged pull request.
 
 A click on a step shows its summary and its tasks below the bar. The tasks to do
 come first, marked *TODO* and open, with their description; the tasks done have
@@ -299,7 +310,8 @@ The badge of a pull request
 ---------------------------
 
 Each pull request has a badge with the step it is in and how many of its tasks
-are done, such as *Triage 3/4*; *Steps: complete* when no task is to do, and
+are done of all of them, such as *Triage 3/4*; *Steps: outside* when no task
+of any step applies, and
 *Steps: none* without steps. It is at the address of its page with
 ``badge.svg``, or ``badge.png`` for places that show no SVG, such as
 ``/projects/icalendar/pull/42/badge.svg``; when several repositories of the

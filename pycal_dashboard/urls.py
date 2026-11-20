@@ -66,6 +66,11 @@ urlpatterns = [
         "projects/<project_slug:slug>/steps/add/", steps.project_step_add, name="project_step_add"
     ),
     path(
+        "projects/<project_slug:slug>/steps/check/",
+        steps.project_steps_check,
+        name="project_steps_check",
+    ),
+    path(
         "projects/<project_slug:slug>/steps/<int:number>/move/",
         steps.project_step_move,
         name="project_step_move",
