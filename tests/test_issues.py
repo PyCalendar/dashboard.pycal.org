@@ -347,3 +347,23 @@ def test_the_creator_is_shown_by_the_github_name_alone(client, project):
     GitHubUser.objects.filter(login="alice").update(name="Alice Liddell")
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
     assert 'data-github-user="alice"' in page and "Alice Liddell" not in page
+
+
+def test_people_who_signed_in_before_their_github_account_was_kept(client, bob):
+    """A profile without a kept account of GitHub is proposed by its handle."""
+    from django.contrib.auth import get_user_model
+
+    from pycal_dashboard.models import Profile
+
+    carol = get_user_model().objects.create_user("carol")
+    Profile.objects.update_or_create(user=carol, defaults={"github_name": "carolyn"})
+    assert not GitHubUser.objects.filter(login="carolyn").exists()
+    client.force_login(bob)
+    people = client.get("/people/complete/?q=car").json()["people"]
+    assert people == [
+        {
+            "login": "carolyn",
+            "name": "",
+            "avatar": "https://avatars.githubusercontent.com/carolyn?s=40",
+        }
+    ]

@@ -24,7 +24,7 @@ def test_the_page_account_has_the_red_area(client, bob):
     page = client.get("/account/").content.decode()
     area = page.split("data-delete-account")[1]
     assert 'class="card danger-zone"' in page and 'action="/account/delete/"' in area
-    assert "Type your GitHub name, bob, to confirm" in area
+    assert "Type your GitHub handle, bob, to confirm" in area
     assert 'class="button button-danger"' in area
     assert "tutorial/account.html#delete-account" in area
 
@@ -52,7 +52,7 @@ def test_the_name_must_be_typed(client, bob):
     client.force_login(bob)
     answer = client.post("/account/delete/", {"confirm": "alice"})
     assert answer.status_code == 400
-    assert "Type your GitHub name to delete the account" in answer.content.decode()
+    assert "Type your GitHub handle to delete the account" in answer.content.decode()
     assert get_user_model().objects.filter(username="bob").exists()
 
 

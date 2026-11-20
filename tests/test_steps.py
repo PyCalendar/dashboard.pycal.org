@@ -239,12 +239,15 @@ def test_the_address_of_the_steps_of_a_pull_request(project, filters, settings):
     settings.SITE_URL = "https://dashboard.example.org"
     pull = Issue.objects.select_related("author", "repository").get(title="Ready")
     url = values_of(pull, project)["pr_steps_url"]
-    assert url == "https://dashboard.example.org/projects/icalendar/pull/1/"
-    assert example(project)["pr_steps_url"].endswith("/projects/icalendar/pull/42/")
-    project.repositories.add(Repository.objects.create(full_name="collective/other"))
-    assert values_of(pull, project)["pr_steps_url"].endswith(
-        "/pull/1/?repository=collective%2Ficalendar"
+    assert url == (
+        "https://dashboard.example.org/projects/icalendar/pull/1/"
+        "?repository=collective%2Ficalendar"  # always, also with one repository
     )
+    assert example(project)["pr_steps_url"].endswith(
+        "/projects/icalendar/pull/42/?repository=collective%2Ficalendar"
+    )
+    project.repositories.add(Repository.objects.create(full_name="collective/other"))
+    assert values_of(pull, project)["pr_steps_url"] == url  # the same with another one
 
 
 def test_a_step_hidden_in_the_page_of_a_pull_request(client, project, filters, bob):

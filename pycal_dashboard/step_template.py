@@ -31,18 +31,23 @@ GROUPS = {
                 _("the address of the pull request on GitHub"),
                 "https://github.com/collective/icalendar/pull/42",
             ),
-            "pr_steps_url": (
-                _("the address of the page of the pull request with its steps on this site"),
-                "https://dashboard.pycal.org/projects/icalendar/pull/42/",
+        },
+    ),
+    "badge": (
+        _("Badge"),
+        {
+            "pr_badge": (
+                _("the badge of the pull request, linked to its page with its steps"),
+                "[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)]"
+                "(https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)",
             ),
             "pr_badge_url": (
                 _("the address of the badge of the pull request: its step and tasks done"),
-                "https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg",
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar",
             ),
-            "pr_badge": (
-                _("the badge of the pull request, linked to its page with its steps"),
-                "[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg)]"
-                "(https://dashboard.pycal.org/projects/icalendar/pull/42/)",
+            "pr_steps_url": (
+                _("the address of the page of the pull request with its steps on this site"),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar",
             ),
         },
     ),
@@ -51,10 +56,10 @@ GROUPS = {
         {
             "author_mention": (_("who opened the pull request, mentioned"), "@niccokunzmann"),
             "author_name": (
-                _("the name of who opened it, else the GitHub name"),
+                _("the GitHub name of who opened it, else their GitHub handle"),
                 "Nicco Kunzmann",
             ),
-            "author_handle": (_("the GitHub name of who opened it"), "niccokunzmann"),
+            "author_handle": (_("the GitHub handle of who opened it"), "niccokunzmann"),
         },
     ),
     "repository": (
@@ -188,7 +193,9 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
         name: about[1] for _title, members in GROUPS.values() for name, about in members.items()
     }
     return (
-        values | {"project_name": project.name, **pull_addresses(project, 42)} | step_values(step)
+        values
+        | {"project_name": project.name, **pull_addresses(project, 42, "collective/icalendar")}
+        | step_values(step)
     )
 
 
@@ -198,15 +205,16 @@ def steps_url(project: Project, number: int, repository: str = "", page: str = "
     Parameters:
         project: The project.
         number: The number of the pull request.
-        repository: Its repository, such as ``collective/icalendar``: named in the address
-            when the project has several, which may have pull requests of the same number.
+        repository: Its repository, such as ``collective/icalendar``: always named in the
+            address, so that it stays the same when the project gets another repository with
+            a pull request of the same number.
         page: ``badge.svg`` for the badge; "" for the page.
 
     Returns:
         Such as ``https://dashboard.pycal.org/projects/icalendar/pull/42/``.
     """
     address = f"{settings.SITE_URL}{project.path(f'pull/{number}/{page}')}"
-    if repository and project.repositories.count() > 1:
+    if repository:
         address += "?" + urlencode({"repository": repository})
     return address
 

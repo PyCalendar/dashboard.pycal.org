@@ -14,7 +14,7 @@ Sign in
 3. You return to the site.
 
 There are no passwords on the dashboard. The site signs people in with an
-OAuth app. It keeps your **GitHub name**, your handle on GitHub, which the page
+OAuth app. It keeps your **GitHub handle**, such as *niccokunzmann*, which the page
 *Account* shows and by which owners share projects with you; it is updated at
 every sign in. It keeps the token that GitHub gives it, which only reads: it
 lists your organizations and their repositories when you add repositories to
@@ -112,7 +112,7 @@ Notifications
 =============
 
 The site tells you what waits for you in *Notifications*, in the menu of your
-account: a number next to your GitHub name counts those you have not read.
+account: a number next to your GitHub handle counts those you have not read.
 For now, a notification says that the GitHub App needs more permissions on an
 account, with the permissions and a link to accept them on GitHub. You get it
 if you installed or changed the installation, or write or own a project with a
@@ -128,8 +128,8 @@ Delete your account
 ===================
 
 The red area at the bottom of the page *Account* deletes your account on this
-site: your GitHub name and token, your email addresses, your preferences and
-your roles in projects. Type your GitHub name to confirm it; it cannot be
+site: your GitHub handle and token, your email addresses, your preferences and
+your roles in projects. Type your GitHub handle to confirm it; it cannot be
 undone, and you are signed out.
 
 The projects that have nobody else are deleted with it; the page lists them.

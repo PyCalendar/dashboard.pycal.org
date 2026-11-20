@@ -97,8 +97,9 @@ def test_the_variables_of_the_badge(project, settings):  # noqa: F811
     pull = Issue.objects.select_related("author", "repository").get(title="Ready")
     values = values_of(pull, project)
     page = "https://dashboard.example.org/projects/icalendar/pull/1/"
-    assert values["pr_badge_url"] == page + "badge.svg"
-    assert expand("{pr_badge}", values) == f"[![]({page}badge.svg)]({page})"  # not escaped
+    query = "?repository=collective%2Ficalendar"  # always: the address stays the same
+    assert values["pr_badge_url"] == page + "badge.svg" + query
+    assert expand("{pr_badge}", values) == f"[![]({page}badge.svg{query})]({page}{query})"
     assert expand("{pr_badge_url}", values) != values["pr_badge_url"]  # escaped as text
 
 
@@ -124,8 +125,9 @@ def test_a_step_description_shows_the_badge(client, project, steps, settings):  
     number = number_of("Ready")
     page = client.get(f"/projects/icalendar/pull/{number}/").content.decode()
     shown = page.split("data-shown-step")[1]
-    address = f"https://dashboard.example.org/projects/icalendar/pull/{number}/"
-    path = f"/projects/icalendar/pull/{number}/badge.svg"  # loaded from this site
+    query = "?repository=collective%2Ficalendar"
+    address = f"https://dashboard.example.org/projects/icalendar/pull/{number}/{query}"
+    path = re.escape(f"/projects/icalendar/pull/{number}/badge.svg{query}")  # from this site
     assert re.search(rf'<a href="{re.escape(address)}"[^>]*><img src="{path}"', shown)
 
 

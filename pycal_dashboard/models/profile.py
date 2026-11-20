@@ -7,14 +7,15 @@ from django.db import models
 class Profile(models.Model):
     """The public names of a person who signed in, by platform.
 
-    The GitHub name is the handle on GitHub, taken at every sign in with GitHub. Other platforms,
-    such as GitLab, get their own fields: a name is always that of one platform.
+    The GitHub handle (``github_name``) is the login on GitHub, taken at every sign in with
+    GitHub. Other platforms, such as GitLab, get their own fields: a name is always that of
+    one platform.
     """
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
     )
-    github_name = models.CharField("GitHub name", max_length=39, blank=True, db_index=True)
+    github_name = models.CharField("GitHub handle", max_length=39, blank=True, db_index=True)
     github_id = models.CharField("GitHub id", max_length=30, blank=True, db_index=True)
 
     def __str__(self) -> str:

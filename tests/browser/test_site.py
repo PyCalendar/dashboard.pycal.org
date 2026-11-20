@@ -122,14 +122,14 @@ def test_the_browser_reaches_nothing_but_the_site(page, site):
 
 
 def test_delete_the_account(signed_in, site):
-    """The red area of the page Account deletes the account after the GitHub name is typed."""
+    """The red area of the page Account deletes the account after the GitHub handle is typed."""
     from django.contrib.auth import get_user_model
 
     page = signed_in
     page.goto(f"{site}/account/")
     area = page.locator("[data-delete-account]")
     expect(area).to_have_css("border-top-style", "solid")
-    area.get_by_label("Type your GitHub name, bob, to confirm").fill("bob")
+    area.get_by_label("Type your GitHub handle, bob, to confirm").fill("bob")
     area.get_by_role("button", name="Delete my account").click()
     expect(page).to_have_url(f"{site}/")
     expect(page.get_by_text("Your account is deleted.")).to_be_visible()

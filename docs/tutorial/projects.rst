@@ -377,20 +377,31 @@ in their groups. The examples are those of a pull request of
    * - ``{pr_url}``
      - The address of the pull request on GitHub
      - ``https://github.com/collective/icalendar/pull/42``
-   * - ``{pr_steps_url}``
-     - The address of the page of the pull request with its steps on this
-       site, see :ref:`pull-request-page`; with ``?repository=`` when the
-       project has several repositories
-     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/``
-   * - ``{pr_badge_url}``
-     - The address of the badge of the pull request, see
-       :ref:`pull-request-badge`
-     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg``
+
+.. list-table:: Badge
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
    * - ``{pr_badge}``
      - The badge of the pull request in Markdown, linked to its page with its
        steps: ``[![]({pr_badge_url})]({pr_steps_url})``, made of the
        addresses of the site, which are not escaped
-     - ``[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg)](https://dashboard.pycal.org/projects/icalendar/pull/42/)``
+     - ``[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)](https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)``
+   * - ``{pr_badge_url}``
+     - The address of the badge of the pull request, see
+       :ref:`pull-request-badge`
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar``
+   * - ``{pr_steps_url}``
+     - The address of the page of the pull request with its steps on this
+       site, see :ref:`pull-request-page`
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar``
+
+The addresses always name the repository of the pull request, so they stay the
+same when the project gets another repository with a pull request of the same
+number.
 
 .. list-table:: Author
    :header-rows: 1
@@ -403,10 +414,10 @@ in their groups. The examples are those of a pull request of
      - Who opened the pull request, mentioned
      - ``@niccokunzmann``
    * - ``{author_name}``
-     - The name of who opened it, else the GitHub name
+     - The GitHub name of who opened it, else their GitHub handle
      - ``Nicco Kunzmann``
    * - ``{author_handle}``
-     - The GitHub name of who opened it
+     - The GitHub handle of who opened it
      - ``niccokunzmann``
 
 .. list-table:: Repository
@@ -464,9 +475,9 @@ Roles in a project
 ==================
 
 On the tab *Collaborators*, the owners share the project with other people by
-their GitHub name, the name of their account on GitHub: the field proposes the
-people who signed in, with their avatar and name. The person must have
-signed in to the site once. What each role may do:
+their GitHub handle, such as *niccokunzmann*: the field proposes the people who
+signed in, by their GitHub handle or GitHub name, such as *Nicco Kunzmann*,
+with their avatar. The person must have signed in to the site once. What each role may do:
 
 .. list-table::
    :header-rows: 1

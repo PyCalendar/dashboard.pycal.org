@@ -12,3 +12,6 @@ Trivy
 uv
 zizmor
 towncrier
+niccokunzmann
+Nicco
+Kunzmann

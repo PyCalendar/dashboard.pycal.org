@@ -1,6 +1,7 @@
 {% load i18n %}<details class="account-menu">
   <summary>{% if github %}@{{ github.login }}{% else %}{{ user.username }}{% endif %}{% if notification_count %} <span class="count-badge" data-notification-count title="{% blocktranslate count counter=notification_count %}{{ counter }} unread notification{% plural %}{{ counter }} unread notifications{% endblocktranslate %}">{{ notification_count }}</span>{% endif %}</summary>
   <ul>
+    <li><a href="{% url 'projects' %}?mine=1" data-my-projects>{% translate "My projects" %}</a></li>
     <li><a href="{% url 'notifications' %}" data-notifications-link>{% translate "Notifications" %}{% if notification_count %} <span class="count-badge">{{ notification_count }}</span>{% endif %}</a></li>
     <li><a href="{% url 'account' %}">{% translate "Account and preferences" %}</a></li>
     <li><a href="{% url 'account_email' %}">{% translate "Email addresses" %}</a></li>

@@ -52,7 +52,7 @@ def add(client, project, *names):
     )
 
 
-# the GitHub name
+# the GitHub handle
 
 
 def test_the_github_name_is_kept_at_the_sign_in(client, db):
@@ -215,7 +215,7 @@ def test_share_the_project(client, project, bob, alice):
 
 @pytest.mark.parametrize(
     ("name", "role", "error"),
-    [("nobody", "read", "Nobody with this GitHub name"), ("alice", "boss", "Unknown role")],
+    [("nobody", "read", "Nobody with this GitHub handle"), ("alice", "boss", "Unknown role")],
 )
 def test_share_errors(client, project, bob, alice, name, role, error):
     client.force_login(bob)
@@ -632,4 +632,39 @@ def test_the_status_reads_the_update_after_the_job(project, repositories):
 
 def test_the_account_names_the_github_name(client, bob):
     client.force_login(bob)
-    assert "GitHub name: <strong>@bob</strong>" in client.get("/account/").content.decode()
+    assert "GitHub handle: <strong>@bob</strong>" in client.get("/account/").content.decode()
+
+
+@pytest.mark.django_db
+def test_my_projects(client, bob, alice):
+    from pycal_dashboard.services.project_editor import ProjectEditor
+
+    ProjectEditor.create(bob, "Mine of Bob", slug="bobs")
+    ProjectEditor.create(alice, "Of Alice", slug="alices")
+    client.force_login(bob)
+    menu = client.get("/").content.decode()
+    assert 'href="/projects/?mine=1" data-my-projects>My projects<' in menu
+    page = client.get("/projects/?mine=1").content.decode()
+    assert 'data-project="bobs"' in page and 'data-project="alices"' not in page
+    assert "<h1>My projects" in page
+    every = client.get("/projects/").content.decode()
+    assert 'data-project="bobs"' in every and 'data-project="alices"' in every
+    client.logout()
+    assert 'data-project="alices"' in client.get("/projects/?mine=1").content.decode()  # all
+
+
+@pytest.mark.django_db
+def test_a_refused_sign_in_asks_to_sign_in_again(client, github, bob, monkeypatch):
+    """A token of the sign-in that GitHub refuses (401) is not an error of the GitHub App."""
+    from pycal_dashboard.errors import GitHubLoginExpired
+    from pycal_dashboard.github.client import GitHubClient
+
+    def refused(self, method, path, **kwargs):
+        raise GitHubLoginExpired(f"{method} {path}: 401 Bad credentials")
+
+    monkeypatch.setattr(GitHubClient, "request", refused)
+    from pycal_dashboard.errors import GitHubSignInExpired
+    from pycal_dashboard.github.person_client import PersonClient
+
+    with pytest.raises(GitHubSignInExpired):
+        PersonClient("old-token", "bob").organizations()

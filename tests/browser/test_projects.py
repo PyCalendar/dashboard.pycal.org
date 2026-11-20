@@ -115,7 +115,7 @@ def test_create_a_project(signed_in, site, github, update_worker):
 
 
 def test_share_a_project(signed_in, site, alice):
-    """The owner gives another person a role by their GitHub name, which the field proposes."""
+    """The owner gives another person a role by their GitHub handle, which the field proposes."""
     page = signed_in
     page.goto(f"{site}/projects/new/")
     page.get_by_label("Name").fill("Shared")
@@ -123,12 +123,12 @@ def test_share_a_project(signed_in, site, alice):
     page.get_by_label("Private").check()
     page.get_by_role("button", name="Create the project").click()
     page.get_by_role("link", name="Collaborators").click()
-    expect(page.get_by_label("GitHub name")).to_have_attribute("data-complete-connected", "")
-    page.get_by_label("GitHub name").press_sequentially("ali")
+    expect(page.get_by_label("GitHub handle")).to_have_attribute("data-complete-connected", "")
+    page.get_by_label("GitHub handle").press_sequentially("ali")
     proposal = page.get_by_role("option", name="@alice")
     expect(proposal.locator("img.avatar")).to_have_count(1)
     proposal.click()
-    expect(page.get_by_label("GitHub name")).to_have_value("alice")
+    expect(page.get_by_label("GitHub handle")).to_have_value("alice")
     page.locator("[data-share]").get_by_label("Role", exact=True).select_option("write")
     page.get_by_role("button", name="Share").click()
     expect(page.get_by_text("@alice may change the project.")).to_be_visible()

@@ -100,13 +100,13 @@ class PrivateRepositoriesInProject(ProjectError):
 
 
 class PersonNotFound(ProjectError):
-    """Nobody with this GitHub name has signed in to the site yet.
+    """Nobody with this GitHub handle has signed in to the site yet.
 
     A project is shared with people who have an account on the site. Ask the
     person to sign in with GitHub once, then share the project again.
     """
 
-    title = _("Nobody with this GitHub name")
+    title = _("Nobody with this GitHub handle")
     status = 404
 
 
@@ -137,6 +137,19 @@ class GitHubTokenMissing(ProjectError):
     """
 
     title = _("Sign in again to list your repositories")
+    status = 401
+
+
+class GitHubSignInExpired(ProjectError):
+    """GitHub no longer accepts the token that the site got when you signed in.
+
+    You revoked the access of the dashboard in your settings on GitHub (*Applications*,
+    *Authorized OAuth Apps*), the people who run the site changed or reset its OAuth app, or
+    GitHub let the token expire. Sign out and sign in with GitHub again: GitHub then gives the
+    site a new token. The GitHub request in the details finds the request at GitHub.
+    """
+
+    title = _("Sign in again: GitHub no longer accepts your sign-in")
     status = 401
 
 

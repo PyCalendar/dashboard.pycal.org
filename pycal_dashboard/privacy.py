@@ -12,8 +12,8 @@ from django.utils.translation import gettext_lazy as _
 DATA = {
     "account": {
         "what": _(
-            "Your account on GitHub as GitHub describes it when you sign in: your GitHub name "
-            "and id, your name, your avatar and the other public details of your profile; "
+            "Your account on GitHub as GitHub describes it when you sign in: your GitHub handle "
+            "and id, your GitHub name, your avatar and the other public details of your profile; "
             "your verified email addresses; the time you signed in."
         ),
         "whose": _("People who sign in"),
@@ -40,7 +40,7 @@ DATA = {
     },
     "projects": {
         "what": _(
-            "The projects you create, and the role of each collaborator with their GitHub name."
+            "The projects you create, and the role of each collaborator with their GitHub handle."
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
@@ -54,8 +54,8 @@ DATA = {
             "The issues and pull requests of the repositories of the projects: their title, "
             "description and times, who created and who closed them, and the reviews of the pull "
             "requests: who gave them, when, and whether they approved; of these people their "
-            "GitHub name, id, name and the address of their avatar. The site counts with them how "
-            "many pull requests a person opened and reviewed in a project."
+            "GitHub handle, id, GitHub name and the address of their avatar. The site counts "
+            "with them how many pull requests a person opened and reviewed in a project."
         ),
         "whose": _("People on GitHub, also those who never use this site"),
         "seen_by": _(
@@ -85,7 +85,7 @@ DATA = {
     "log": {
         "what": _(
             "The log of the site and the webhooks GitHub sent: what happened, when, and the "
-            "GitHub name of who caused it."
+            "GitHub handle of who caused it."
         ),
         "whose": _("People who sign in or act on the repositories"),
         "seen_by": _("The people who run the site"),

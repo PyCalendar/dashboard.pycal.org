@@ -6,7 +6,7 @@
 {% include "pycal_dashboard/_project_tabs.html" %}
 <section class="card"><h2>{% translate "Collaborators of the project" %} {% translate "Roles in a project" as help %}{% help_link links.project_roles help %}</h2>
 <div class="table-wrap"><table class="table" data-members>
-  <thead><tr><th>{% translate "GitHub name" %}</th><th>{% translate "Role" %} {% translate "What each role may do" as roles_help %}{% help_link links.project_roles roles_help %}</th>{% if access.is_owner %}<th></th>{% endif %}</tr></thead>
+  <thead><tr><th>{% translate "GitHub handle" %}</th><th>{% translate "Role" %} {% translate "What each role may do" as roles_help %}{% help_link links.project_roles roles_help %}</th>{% if access.is_owner %}<th></th>{% endif %}</tr></thead>
   <tbody>{% for member in members %}<tr data-member="{{ member.user.profile.github_name|default:member.user.username }}">
     <td>{% github_user member.user.github_user|default:member.user.profile.github_name|default:member.user.username %}</td>
     <td>{% if access.is_owner and member.pk == only_owner %}{% for value, title in roles %}{% if member.role == value %}{{ title }}{% endif %}{% endfor %} <small class="muted" data-only-owner>{% translate "The only owner: share the project with another owner before changing this." %}</small>
@@ -18,7 +18,7 @@
 </section>
 {% if access.is_owner %}<section class="card"><h2>{% translate "Share the project" %}</h2>
 <form method="post" class="inline-form" data-share>{% csrf_token %}
-  <label for="github_name">{% translate "GitHub name" %}</label><span class="completion-field"><input id="github_name" name="github_name" placeholder="octocat" required autocomplete="off" data-complete-people="{% url 'people_complete' %}"></span>
+  <label for="github_name">{% translate "GitHub handle" %}</label><span class="completion-field"><input id="github_name" name="github_name" placeholder="octocat" required autocomplete="off" data-complete-people="{% url 'people_complete' %}"></span>
   <label for="role">{% translate "Role" %}</label><select id="role" name="role">{% for value, title in roles %}<option value="{{ value }}">{{ title }}</option>{% endfor %}</select>{% translate "What each role may do" as roles_help %}{% help_link links.project_roles roles_help %}
   <button class="button">{% translate "Share" %}</button>
 </form>

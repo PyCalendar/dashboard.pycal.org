@@ -46,7 +46,7 @@
   <p class="save-buttons"><button class="button" data-save-step>{% translate "Save the step" %}</button>
     <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" aria-live="polite"></span></p>
 </form>
-<form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-quiet button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
+<form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
 {% else %}<h2>{{ shown.name }}</h2>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
 {% if shown.actions %}<p class="muted" data-step-action-list>{% translate "When a pull request completes the step, the GitHub App adds the labels:" %} {% for action in shown.actions %}<span class="label-chip">{{ action.label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}

@@ -30,6 +30,7 @@ from pycal_dashboard.models import (
     GitHubUser,
     Issue,
     Label,
+    Profile,
     Project,
     ProjectMember,
     PullRequestFilter,
@@ -170,16 +171,21 @@ def projects(request: HttpRequest):
     """The projects that the visitor sees: all public ones, and private ones of their own.
 
     Parameters:
-        request: The request.
+        request: The request; ``mine`` lists only the projects of the person, of which they
+            are a collaborator (the menu of the account links it).
 
     Returns:
         The page or ``/projects.json``.
     """
-    found = list(ProjectAccess.visible(request.user).prefetch_related("repositories"))
+    mine = request.GET.get("mine") == "1" and request.user.is_authenticated
+    visible = ProjectAccess.visible(request.user)
+    if mine:
+        visible = visible.filter(members__user=request.user).distinct()
+    found = list(visible.prefetch_related("repositories"))
     return page(
         request,
         "pycal_dashboard/projects.html",
-        {"projects": found},
+        {"projects": found, "mine": mine},
         lambda: {
             "projects": [
                 {
@@ -769,29 +775,36 @@ def project_repositories(request: HttpRequest, slug: str):
 @login_required
 @require_http_methods(["GET"])
 def people_complete(request: HttpRequest):
-    """The people whose GitHub name is like what an owner types, to share a project with them.
+    """The people whose GitHub handle or name is like what an owner types, to share a project.
 
-    Only people who signed in to the site can get a role, so only they are proposed.
+    Only people who signed in to the site can get a role, so only they are proposed: those
+    with a profile of GitHub, also those whose account of GitHub the site does not keep yet.
 
     Parameters:
         request: The request, with ``q``.
 
     Returns:
-        The people as JSON: their GitHub name, full name and avatar.
+        The people as JSON: their GitHub handle (``login``), GitHub name and avatar.
     """
     text = request.GET.get("q", "").strip().removeprefix("@")
     if not text:
         return JsonResponse({"people": []})
-    found = (
-        GitHubUser.objects.filter(user__isnull=False)
-        .filter(Q(login__istartswith=text) | Q(name__icontains=text))
-        .order_by("login")[:10]
-    )
+    people = {
+        person.login.lower(): person
+        for person in GitHubUser.objects.filter(user__isnull=False).filter(
+            Q(login__istartswith=text) | Q(name__icontains=text)
+        )
+    }
+    for profile in Profile.objects.filter(github_name__istartswith=text).exclude(github_name=""):
+        people.setdefault(profile.github_name.lower(), profile.github_name)
+    found = sorted(people.values(), key=lambda p: (p if isinstance(p, str) else p.login).lower())
     return JsonResponse(
         {
             "people": [
-                {"login": person.login, "name": person.name, "avatar": avatar_url(person, 20)}
-                for person in found
+                {"login": person, "name": "", "avatar": avatar_url(person, 20)}
+                if isinstance(person, str)
+                else {"login": person.login, "name": person.name, "avatar": avatar_url(person, 20)}
+                for person in found[:10]
             ]
         }
     )

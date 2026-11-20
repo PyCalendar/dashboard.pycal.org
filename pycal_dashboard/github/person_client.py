@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from pycal_dashboard.errors import GitHubNotFound, GitHubTokenMissing
+from pycal_dashboard.errors import (
+    GitHubLoginExpired,
+    GitHubNotFound,
+    GitHubSignInExpired,
+    GitHubTokenMissing,
+)
 from pycal_dashboard.import_guard import IMPORT_GUARD
 
 from .client import GitHubClient
@@ -35,6 +40,25 @@ class PersonClient:
         """
         self.client = GitHubClient(token)
         self.login = login
+
+    def request(self, method: str, path: str, **kwargs: Any) -> Any:  # noqa: ANN401
+        """A request with the token of the person, see ``GitHubClient.request``.
+
+        Parameters:
+            method: GET, POST ...
+            path: The path of the API.
+            **kwargs: For httpx.
+
+        Returns:
+            The answer.
+
+        Raises:
+            GitHubSignInExpired: GitHub refused the token (401): the person signs in again.
+        """
+        try:
+            return self.client.request(method, path, **kwargs)
+        except GitHubLoginExpired as error:
+            raise GitHubSignInExpired(str(error)) from error
 
     @classmethod
     def of(cls, user: AbstractBaseUser | AnonymousUser, login: str) -> PersonClient:
@@ -74,7 +98,7 @@ class PersonClient:
         """
         found: list[dict] = []
         for number in range(1, PAGES + 1):
-            page = self.client.request(
+            page = self.request(
                 "GET", path, params={**params, "per_page": PER_PAGE, "page": number}
             ).json()
             found.extend(page)
@@ -140,7 +164,7 @@ class PersonClient:
         Returns:
             Their full names, the most popular first.
         """
-        answer = self.client.request(
+        answer = self.request(
             "GET",
             "/search/repositories",
             params={"q": self.query(text), "per_page": SEARCH_RESULTS},
@@ -157,6 +181,6 @@ class PersonClient:
             The repository, None if the person cannot see it.
         """
         try:
-            return self.client.request("GET", f"/repos/{full_name}").json()
+            return self.request("GET", f"/repos/{full_name}").json()
         except GitHubNotFound:
             return None

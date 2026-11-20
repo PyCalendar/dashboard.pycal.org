@@ -40,13 +40,13 @@ class UnknownPreference(AccountError):
 
 
 class AccountDeletionNotConfirmed(AccountError):
-    """The account was not deleted: the GitHub name typed to confirm it does not match.
+    """The account was not deleted: the GitHub handle typed to confirm it does not match.
 
-    Type your GitHub name, as the page *Account* shows it after *@*, into the field of the red
+    Type your GitHub handle, as the page *Account* shows it after *@*, into the field of the red
     area, and press the button again.
     """
 
-    title = _("Type your GitHub name to delete the account")
+    title = _("Type your GitHub handle to delete the account")
     status = 400
 
 
