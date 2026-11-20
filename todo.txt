@@ -299,7 +299,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Pull requests: without the sentence and the filters (later); 10, 25, 50, 100 a page at the
       top right, also the JSON (at most 100); a table whose columns Display chooses (CSS), the
       status as the color of the link to GitHub when its column is hidden
-- [ ] The person: translate the new texts (asked before translating)
+- [x] The person: translate the new texts (asked before translating)
 
 ## Open: decisions of the person
 
@@ -402,7 +402,7 @@ community: where to start, what waits for a review, who contributes.
       first and open, done with a green check mark and closed
 - [x] The tab Filters: a loading animation instead of three dots while the numbers are counted
 - [x] The tab Filters: a button + New filter opens the pull requests with the menu + open
-- [ ] The person: translate the new texts (asked at the end)
+- [x] The person: translate the new texts (asked at the end): 186 texts in German and Spanish
 
 ## 2026-11-20: states, the ratio of reviews, actions of steps
 

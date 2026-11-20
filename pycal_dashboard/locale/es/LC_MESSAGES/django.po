@@ -19,19 +19,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 msgid "not known: GitHub does not say who opened it"
-msgstr ""
+msgstr "desconocido: GitHub no dice quién lo abrió"
 
 msgid ""
 "not known yet: the reviews of a repository of the project are not read yet; "
 "they need the GitHub App"
 msgstr ""
+"aún desconocido: las revisiones de un repositorio del proyecto aún no se han "
+"leído; necesitan la GitHub App"
 
 #, python-format
 msgid "Author: %(state)s %(comparison)s %(number)s"
-msgstr ""
+msgstr "Autor: %(state)s %(comparison)s %(number)s"
 
 msgid "not known yet: the data of the pull request is not read yet"
 msgstr "aún no se sabe: los datos del pull request aún no se han leído"
@@ -121,26 +123,26 @@ msgid "Label %(name)s: %(mode)s"
 msgstr "Etiqueta %(name)s: %(mode)s"
 
 msgid "Reviews"
-msgstr ""
+msgstr "Revisiones"
 
 #, python-format
 msgid "%(count)s review"
 msgid_plural "%(count)s reviews"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(count)s revisión"
+msgstr[1] "%(count)s revisiones"
 
 #, python-format
 msgid "it has %(comparison)s %(number)s review"
 msgid_plural "it has %(comparison)s %(number)s reviews"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tiene %(comparison)s %(number)s revisión"
+msgstr[1] "tiene %(comparison)s %(number)s revisiones"
 
 msgid "reviews"
-msgstr ""
+msgstr "revisiones"
 
 #, python-format
 msgid "Reviews: %(comparison)s %(number)s"
-msgstr ""
+msgstr "Revisiones: %(comparison)s %(number)s"
 
 msgid "Status"
 msgstr "Estado"
@@ -169,73 +171,80 @@ msgid "or"
 msgstr "o"
 
 msgid "above"
-msgstr ""
+msgstr "por encima de"
 
 msgid "more than"
-msgstr ""
+msgstr "más de"
 
 msgid "below"
-msgstr ""
+msgstr "por debajo de"
 
 msgid "fewer than"
-msgstr ""
+msgstr "menos de"
 
 msgid "at most"
-msgstr ""
+msgstr "como máximo"
 
 msgid "at least"
-msgstr ""
+msgstr "al menos"
 
 msgid "exactly"
-msgstr ""
+msgstr "exactamente"
 
 msgid "not exactly"
-msgstr ""
+msgstr "no exactamente"
 
 msgid "Own pull requests closed"
-msgstr ""
+msgstr "Pull requests propios cerrados"
 
 msgid ""
 "How many pull requests a person opened and closed themselves in the project."
 msgstr ""
+"Cuántos pull requests abrió una persona en el proyecto y cerró ella misma."
 
 #, python-format
 msgid "its author closed %(comparison)s %(number)s of their own pull requests"
-msgstr ""
+msgstr "su autor cerró %(comparison)s %(number)s de sus propios pull requests"
 
 msgid "Pull requests opened"
-msgstr ""
+msgstr "Pull requests abiertos"
 
 msgid "How many pull requests a person opened in the project."
-msgstr ""
+msgstr "Cuántos pull requests abrió una persona en el proyecto."
 
 #, python-format
 msgid "its author opened %(comparison)s %(number)s pull requests"
-msgstr ""
+msgstr "su autor abrió %(comparison)s %(number)s pull requests"
 
 msgid "Review to pull request ratio"
-msgstr ""
+msgstr "Proporción de revisiones por pull request"
 
 msgid ""
 "The reviews a person gave in the project for each pull request they opened "
 "and did not close themselves."
 msgstr ""
+"Las revisiones que una persona dio en el proyecto por cada pull request que "
+"abrió y no cerró ella misma."
 
 #, python-format
 msgid "its author has a review to pull request ratio %(comparison)s %(number)s"
 msgstr ""
+"su autor tiene una proporción de revisiones por pull request %(comparison)s "
+"%(number)s"
 
 msgid "Reviews given"
-msgstr ""
+msgstr "Revisiones dadas"
 
 msgid ""
 "How many reviews a person gave in the project, without those of comments "
 "only."
 msgstr ""
+"Cuántas revisiones dio una persona en el proyecto, sin las que solo tienen "
+"comentarios."
 
 #, python-format
 msgid "its author gave %(comparison)s %(number)s reviews"
-msgstr ""
+msgstr "su autor dio %(comparison)s %(number)s revisiones"
 
 msgid "As the system"
 msgstr "Como el sistema"
@@ -259,7 +268,7 @@ msgid "Unknown preference"
 msgstr "Preferencia desconocida"
 
 msgid "Type your GitHub handle to delete the account"
-msgstr ""
+msgstr "Escribe tu identificador de GitHub para eliminar la cuenta"
 
 msgid "You are the only owner of shared projects"
 msgstr "Eres la única persona propietaria de proyectos compartidos"
@@ -295,7 +304,7 @@ msgid "The input is not a whole number"
 msgstr "La entrada no es un número entero"
 
 msgid "The input is not a number"
-msgstr ""
+msgstr "La entrada no es un número"
 
 msgid "The number is out of range"
 msgstr "El número está fuera del rango"
@@ -415,7 +424,7 @@ msgid "The project has private repositories"
 msgstr "El proyecto tiene repositorios privados"
 
 msgid "Nobody with this GitHub handle"
-msgstr ""
+msgstr "Nadie con este identificador de GitHub"
 
 msgid "Unknown role"
 msgstr "Rol desconocido"
@@ -427,13 +436,13 @@ msgid "Sign in again to list your repositories"
 msgstr "Inicia sesión de nuevo para listar tus repositorios"
 
 msgid "Sign in again: GitHub no longer accepts your sign-in"
-msgstr ""
+msgstr "Inicia sesión de nuevo: GitHub ya no acepta tu inicio de sesión"
 
 msgid "The backup cannot be restored"
-msgstr ""
+msgstr "La copia de seguridad no se puede restaurar"
 
 msgid "The backup has an unknown version"
-msgstr ""
+msgstr "La copia de seguridad tiene una versión desconocida"
 
 msgid "Not an address of a project"
 msgstr "No es una dirección de un proyecto"
@@ -451,16 +460,16 @@ msgid "The project has a filter of this name"
 msgstr "El proyecto tiene un filtro con este nombre"
 
 msgid "Step not found"
-msgstr ""
+msgstr "Paso no encontrado"
 
 msgid "The filter is a step already"
-msgstr ""
+msgstr "El filtro ya es un paso"
 
 msgid "Pull request not found"
-msgstr ""
+msgstr "Pull request no encontrado"
 
 msgid "Which repository?"
-msgstr ""
+msgstr "¿Qué repositorio?"
 
 msgid "The GitHub App could not be registered"
 msgstr "No se pudo registrar la GitHub App"
@@ -615,6 +624,10 @@ msgid ""
 "handle and id, your GitHub name, your avatar and the other public details of "
 "your profile; your verified email addresses; the time you signed in."
 msgstr ""
+"Tu cuenta de GitHub tal como GitHub la describe al iniciar sesión: tu "
+"identificador y tu id de GitHub, tu nombre de GitHub, tu avatar y los demás "
+"datos públicos de tu perfil; tus direcciones de correo verificadas; la hora "
+"en que iniciaste sesión."
 
 msgid "People who sign in"
 msgstr "Las personas que inician sesión"
@@ -652,6 +665,8 @@ msgid ""
 "The projects you create, and the role of each collaborator with their GitHub "
 "handle."
 msgstr ""
+"Los proyectos que creas y el rol de cada colaborador con su identificador de "
+"GitHub."
 
 msgid "Collaborators of projects"
 msgstr "Colaboradores de proyectos"
@@ -674,6 +689,12 @@ msgid ""
 "address of their avatar. The site counts with them how many pull requests a "
 "person opened and reviewed in a project."
 msgstr ""
+"Los issues y pull requests de los repositorios de los proyectos: su título, "
+"descripción y fechas, quién los creó y quién los cerró, y las revisiones de "
+"los pull requests: quién las dio, cuándo y si aprobaron; de estas personas, "
+"su identificador de GitHub, su id, su nombre de GitHub y la dirección de su "
+"avatar. Con ellos, el sitio cuenta cuántos pull requests abrió y revisó una "
+"persona en un proyecto."
 
 msgid "People on GitHub, also those who never use this site"
 msgstr "Personas en GitHub, también las que nunca usan este sitio"
@@ -718,6 +739,8 @@ msgid ""
 "The log of the site and the webhooks GitHub sent: what happened, when, and "
 "the GitHub handle of who caused it."
 msgstr ""
+"El registro del sitio y los webhooks que envió GitHub: qué pasó, cuándo y el "
+"identificador de GitHub de quien lo causó."
 
 msgid "People who sign in or act on the repositories"
 msgstr "Las personas que inician sesión o actúan en los repositorios"
@@ -754,6 +777,15 @@ msgid ""
 "(avatars.githubusercontent.com), which sees the address of your browser, but "
 "not the page: the site sends no referrer. Links to GitHub lead there."
 msgstr ""
+"Cuando inicias sesión, GitHub le dice al sitio quién eres; el sitio pide a "
+"GitHub repositorios, issues y pull requests con tu token o el de la GitHub "
+"App. La GitHub App añade y quita etiquetas en los pull requests que entran "
+"en un paso de un proyecto o lo completan, y escribe el mensaje de un "
+"proyecto como comentario en sus pull requests, según lo configuran los "
+"editores del proyecto. Tu navegador carga los avatares de las personas desde "
+"GitHub (avatars.githubusercontent.com), que ve la dirección de tu navegador, "
+"pero no la página: el sitio no envía referrer. Los enlaces a GitHub llevan "
+"allí."
 
 msgid "The mail server of the site"
 msgstr "El servidor de correo del sitio"
@@ -788,97 +820,99 @@ msgid "The colors you chose."
 msgstr "Los colores que elegiste."
 
 msgid "Nothing to do."
-msgstr ""
+msgstr "Nada que hacer."
 
 msgid "Nothing is done yet."
-msgstr ""
+msgstr "Aún no hay nada hecho."
 
 msgid "Steps"
-msgstr ""
+msgstr "Pasos"
 
 msgid "outside"
-msgstr ""
+msgstr "fuera"
 
 msgid "none"
-msgstr ""
+msgstr "ninguno"
 
 msgid "Pull request"
-msgstr ""
+msgstr "Pull request"
 
 msgid "the title of the pull request"
-msgstr ""
+msgstr "el título del pull request"
 
 msgid "the number of the pull request"
-msgstr ""
+msgstr "el número del pull request"
 
 msgid "the address of the pull request on GitHub"
-msgstr ""
+msgstr "la dirección del pull request en GitHub"
 
 msgid "Badge"
-msgstr ""
+msgstr "Insignia"
 
 msgid "the badge of the pull request, linked to its page with its steps"
-msgstr ""
+msgstr "la insignia del pull request, enlazada a su página con sus pasos"
 
 msgid "the address of the badge of the pull request: its step and tasks done"
 msgstr ""
+"la dirección de la insignia del pull request: su paso y las tareas hechas"
 
 msgid "the address of the page of the pull request with its steps on this site"
-msgstr ""
+msgstr "la dirección de la página del pull request con sus pasos en este sitio"
 
 msgid "who opened the pull request, mentioned"
-msgstr ""
+msgstr "quién abrió el pull request, mencionado"
 
 msgid "the GitHub name of who opened it, else their GitHub handle"
 msgstr ""
+"el nombre de GitHub de quien lo abrió; si no, su identificador de GitHub"
 
 msgid "the GitHub handle of who opened it"
-msgstr ""
+msgstr "el identificador de GitHub de quien lo abrió"
 
 msgid "Repository"
 msgstr "Repositorio"
 
 msgid "the name of the repository"
-msgstr ""
+msgstr "el nombre del repositorio"
 
 msgid "the account and the name of the repository"
-msgstr ""
+msgstr "la cuenta y el nombre del repositorio"
 
 msgid "the account of the repository"
-msgstr ""
+msgstr "la cuenta del repositorio"
 
 msgid "Project"
 msgstr "Proyecto"
 
 msgid "the name of the project"
-msgstr ""
+msgstr "el nombre del proyecto"
 
 msgid "Step"
-msgstr ""
+msgstr "Paso"
 
 msgid "the name of the step"
-msgstr ""
+msgstr "el nombre del paso"
 
 msgid "the place of the step, counted from 1"
-msgstr ""
+msgstr "la posición del paso, contando desde 1"
 
 msgid "the id of the step"
-msgstr ""
+msgstr "el id del paso"
 
 msgid "Message"
-msgstr ""
+msgstr "Mensaje"
 
 msgid "the summary of the step the pull request is in, in Markdown"
-msgstr ""
+msgstr "el resumen del paso en el que está el pull request, en Markdown"
 
 msgid "all tasks of the step, those to do first, those done at the bottom"
-msgstr ""
+msgstr "todas las tareas del paso, primero las pendientes, las hechas al final"
 
 msgid "the tasks to do; a sentence when there is nothing to do"
-msgstr ""
+msgstr "las tareas pendientes; una frase cuando no hay nada que hacer"
 
 msgid "the tasks done; a sentence when nothing is done"
-msgstr ""
+msgstr "las tareas hechas; una frase cuando no hay nada hecho"
 
 msgid "Email addresses"
 msgstr "Direcciones de correo"
@@ -1036,7 +1070,7 @@ msgstr[0] "%(counter)s notificación sin leer"
 msgstr[1] "%(counter)s notificaciones sin leer"
 
 msgid "My projects"
-msgstr ""
+msgstr "Mis proyectos"
 
 msgid "Notifications"
 msgstr "Notificaciones"
@@ -1087,10 +1121,10 @@ msgid "Code"
 msgstr "Código"
 
 msgid "Variables"
-msgstr ""
+msgstr "Variables"
 
 msgid "The variables of the templates"
-msgstr ""
+msgstr "Las variables de las plantillas"
 
 msgid "Write"
 msgstr "Escribir"
@@ -1123,7 +1157,7 @@ msgid "Filters"
 msgstr "Filtros"
 
 msgid "PR Message"
-msgstr ""
+msgstr "Mensaje del PR"
 
 msgid "Repositories"
 msgstr "Repositorios"
@@ -1246,7 +1280,7 @@ msgid "Only you see this page."
 msgstr "Solo tú ves esta página."
 
 msgid "GitHub handle"
-msgstr ""
+msgstr "Identificador de GitHub"
 
 msgid "No email address. GitHub did not share a verified one."
 msgstr "No hay dirección de correo. GitHub no compartió ninguna verificada."
@@ -1367,6 +1401,9 @@ msgid ""
 "email addresses, your preferences and your roles in projects. It cannot be "
 "undone. Issues and pull requests stay on GitHub, as before."
 msgstr ""
+"Esto elimina tu cuenta en este sitio: tu identificador y tu token de GitHub, "
+"tus direcciones de correo, tus preferencias y tus roles en proyectos. No se "
+"puede deshacer. Los issues y pull requests siguen en GitHub como antes."
 
 msgid ""
 "You are the only owner of projects that others share. Give another person "
@@ -1380,7 +1417,7 @@ msgstr "Estos proyectos no tienen a nadie más y se borran con ella:"
 
 #, python-format
 msgid "Type your GitHub handle, %(login)s, to confirm"
-msgstr ""
+msgstr "Escribe tu identificador de GitHub, %(login)s, para confirmar"
 
 msgid "Delete my account"
 msgstr "Borrar mi cuenta"
@@ -1491,21 +1528,23 @@ msgid "Choose a label of the repositories or type another one."
 msgstr "Elige una etiqueta de los repositorios o escribe otra."
 
 msgid "The pull request has"
-msgstr ""
+msgstr "El pull request tiene"
 
 msgid ""
 "Approvals and requested changes count, comments do not. At least and at most "
 "include the number."
 msgstr ""
+"Cuentan las aprobaciones y los cambios solicitados, los comentarios no. Al "
+"menos y como máximo incluyen el número."
 
 msgid "Of the author, in the project"
-msgstr ""
+msgstr "Del autor, en el proyecto"
 
 msgid "Is"
-msgstr ""
+msgstr "Es"
 
 msgid "The number to compare with"
-msgstr ""
+msgstr "El número con el que comparar"
 
 msgid ""
 "The review to pull request ratio is the reviews given for each pull request "
@@ -1513,6 +1552,10 @@ msgid ""
 "requests, 0.5 half as many, 2 twice as many. At least and at most include "
 "the number."
 msgstr ""
+"La proporción de revisiones por pull request son las revisiones dadas por "
+"cada pull request abierto y no cerrado por el propio autor: 1 son tantas "
+"revisiones como pull requests, 0,5 la mitad, 2 el doble. Al menos y como "
+"máximo incluyen el número."
 
 msgid "Change the column"
 msgstr "Cambiar la columna"
@@ -1521,7 +1564,7 @@ msgid "Add the column"
 msgstr "Añadir la columna"
 
 msgid "Actions"
-msgstr ""
+msgstr "Acciones"
 
 #, python-format
 msgid "Filter by %(name)s"
@@ -1535,10 +1578,10 @@ msgstr "Usarla"
 
 #, python-format
 msgid "Invert: %(sentence)s"
-msgstr ""
+msgstr "Invertir: %(sentence)s"
 
 msgid "Invert"
-msgstr ""
+msgstr "Invertir"
 
 msgid ""
 "The filter shows a pull request when one of the conditions above is met. A "
@@ -1748,7 +1791,7 @@ msgid "Add them to the GitHub App"
 msgstr "Añadirlos a la GitHub App"
 
 msgid "Check again"
-msgstr ""
+msgstr "Comprobar de nuevo"
 
 msgid ""
 "The owners of the GitHub App add these permissions and events in its "
@@ -2070,26 +2113,28 @@ msgstr "Guardar como filtro nuevo"
 msgid ""
 "A new filter: add its conditions as columns of the table of pull requests"
 msgstr ""
+"Un filtro nuevo: añade sus condiciones como columnas de la tabla de pull "
+"requests"
 
 msgid "New filter"
-msgstr ""
+msgstr "Filtro nuevo"
 
 msgid "Edit"
 msgstr "Editar"
 
 #, python-format
 msgid "Step: %(name)s"
-msgstr ""
+msgstr "Paso: %(name)s"
 
 msgid "Make it a step"
-msgstr ""
+msgstr "Convertirlo en un paso"
 
 msgid "Counting"
-msgstr ""
+msgstr "Contando"
 
 #, python-format
 msgid "The filter shows %(count)s pull requests."
-msgstr ""
+msgstr "El filtro muestra %(count)s pull requests."
 
 #, python-format
 msgid "%(counter)s condition"
@@ -2098,7 +2143,7 @@ msgstr[0] "%(counter)s condición"
 msgstr[1] "%(counter)s condiciones"
 
 msgid "count"
-msgstr ""
+msgstr "contar"
 
 #, python-format
 msgid ""
@@ -2179,36 +2224,43 @@ msgid "Old addresses"
 msgstr "Direcciones antiguas"
 
 msgid "Backup"
-msgstr ""
+msgstr "Copia de seguridad"
 
 msgid "The format of a backup"
-msgstr ""
+msgstr "El formato de una copia de seguridad"
 
 msgid ""
 "The backup is a file of YAML with the name and description of the project, "
 "its repositories, its filters and its steps."
 msgstr ""
+"La copia de seguridad es un archivo YAML con el nombre y la descripción del "
+"proyecto, sus repositorios, sus filtros y sus pasos."
 
 msgid "Download the backup"
-msgstr ""
+msgstr "Descargar la copia de seguridad"
 
 msgid "Restore"
-msgstr ""
+msgstr "Restaurar"
 
 msgid "A backup of a project"
-msgstr ""
+msgstr "Una copia de seguridad de un proyecto"
 
 msgid ""
 "Yes, replace the filters and steps of this project with those of the backup"
 msgstr ""
+"Sí, reemplazar los filtros y pasos de este proyecto por los de la copia de "
+"seguridad"
 
 msgid ""
 "The name and the description come from the backup, and its repositories that "
 "the project lacks are added. The visibility and the address stay as they are."
 msgstr ""
+"El nombre y la descripción vienen de la copia de seguridad, y se añaden sus "
+"repositorios que le faltan al proyecto. La visibilidad y la dirección se "
+"quedan como están."
 
 msgid "Restore the backup"
-msgstr ""
+msgstr "Restaurar la copia de seguridad"
 
 msgid "Delete the project"
 msgstr "Eliminar el proyecto"
@@ -2220,93 +2272,104 @@ msgid "Yes, delete this project"
 msgstr "Sí, eliminar este proyecto"
 
 msgid "The message of the pull requests"
-msgstr ""
+msgstr "El mensaje de los pull requests"
 
 msgid ""
 "The GitHub App writes this message as a comment on the pull requests of the "
 "scope below, and updates it whenever the message or the values of its "
 "variables change. No pull request gets it until the scope says so."
 msgstr ""
+"La GitHub App escribe este mensaje como comentario en los pull requests del "
+"alcance de abajo y lo actualiza cada vez que cambian el mensaje o los "
+"valores de sus variables. Ningún pull request lo recibe hasta que el alcance "
+"lo indique."
 
 msgid "Markdown"
-msgstr ""
+msgstr "Markdown"
 
 #, python-format
 msgid "As the pull request %(pull)s gets it."
-msgstr ""
+msgstr "Tal como lo recibe el pull request %(pull)s."
 
 msgid "With an example pull request."
-msgstr ""
+msgstr "Con un pull request de ejemplo."
 
 msgid "The message"
-msgstr ""
+msgstr "El mensaje"
 
 msgid "Which pull requests get it"
-msgstr ""
+msgstr "Qué pull requests lo reciben"
 
 msgid "Add to these pull requests:"
-msgstr ""
+msgstr "Añadir a estos pull requests:"
 
 msgid "The numbers of the pull requests"
-msgstr ""
+msgstr "Los números de los pull requests"
 
 msgid "Add to all new pull requests"
-msgstr ""
+msgstr "Añadir a todos los pull requests nuevos"
 
 msgid "Add to all open pull requests"
-msgstr ""
+msgstr "Añadir a todos los pull requests abiertos"
 
 msgid "Add to closed and merged pull requests"
-msgstr ""
+msgstr "Añadir a los pull requests cerrados y fusionados"
 
 msgid "Not preferred: they are done, and their people get a notification."
 msgstr ""
+"No recomendado: ya están terminados y sus personas reciben una notificación."
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #, python-format
 msgid "Pull requests #%(number)s"
-msgstr ""
+msgstr "Pull requests #%(number)s"
 
 msgid ""
 "Several repositories of the project have a pull request of this number. "
 "Choose one:"
 msgstr ""
+"Varios repositorios del proyecto tienen un pull request con este número. "
+"Elige uno:"
 
 #, python-format
 msgid "%(done)s of %(total)s tasks done"
-msgstr ""
+msgstr "%(done)s de %(total)s tareas hechas"
 
 msgid "The pull request is here"
-msgstr ""
+msgstr "El pull request está aquí"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "
 "any step applies to it."
 msgstr ""
+"Este pull request está fuera de los pasos habituales que debería seguir: "
+"ninguna tarea de ningún paso se aplica a él."
 
 #, python-format
 msgid ""
 "The project has no steps yet: see the tab <a href=\"%(steps_url)s\">Steps</"
 "a>."
 msgstr ""
+"El proyecto aún no tiene pasos: mira la pestaña <a "
+"href=\"%(steps_url)s\">Pasos</a>."
 
 #, python-format
 msgid "Step %(number)s: %(name)s"
-msgstr ""
+msgstr "Paso %(number)s: %(name)s"
 
 msgid "TODO"
-msgstr ""
+msgstr "PENDIENTE"
 
 msgid "not known yet"
-msgstr ""
+msgstr "aún desconocido"
 
 msgid "Condition:"
-msgstr ""
+msgstr "Condición:"
 
 msgid "This step has no tasks."
-msgstr ""
+msgstr "Este paso no tiene tareas."
 
 msgid "switch one on"
 msgstr "activa una"
@@ -2356,7 +2419,7 @@ msgstr "%(name)s#%(number)s en GitHub"
 
 #, python-format
 msgid "The step of #%(number)s"
-msgstr ""
+msgstr "El paso de #%(number)s"
 
 msgid "applies"
 msgstr "se aplica"
@@ -2483,85 +2546,98 @@ msgid "Go to the overview"
 msgstr "Ir al resumen"
 
 msgid "Steps of a pull request"
-msgstr ""
+msgstr "Pasos de un pull request"
 
 msgid ""
 "The pull requests outside of the steps: no task of any step applies to them"
 msgstr ""
+"Los pull requests fuera de los pasos: ninguna tarea de ningún paso se aplica "
+"a ellos"
 
 msgid "Check"
-msgstr ""
+msgstr "Comprobar"
 
 msgid "Add a filter as a step"
-msgstr ""
+msgstr "Añadir un filtro como paso"
 
 #, python-format
 msgid ""
 "Every filter is a step. Save more filters on the tab <a "
 "href=\"%(filters_url)s\">Filters</a>."
 msgstr ""
+"Cada filtro es un paso. Guarda más filtros en la pestaña <a "
+"href=\"%(filters_url)s\">Filtros</a>."
 
 msgid "Move left: earlier"
-msgstr ""
+msgstr "Mover a la izquierda: antes"
 
 #, python-format
 msgid "Step %(number)s"
-msgstr ""
+msgstr "Paso %(number)s"
 
 msgid "hidden"
-msgstr ""
+msgstr "oculto"
 
 msgid "Move right: later"
-msgstr ""
+msgstr "Mover a la derecha: después"
 
 msgid ""
 "A pull request is in the left-most step that has a task for it: a condition "
 "of its filter that applies. The tasks are what keeps it from being merged."
 msgstr ""
+"Un pull request está en el paso más a la izquierda que tiene una tarea para "
+"él: una condición de su filtro que se aplica. Las tareas son lo que impide "
+"fusionarlo."
 
 #, python-format
 msgid ""
 "No steps yet. Make a saved filter a step on the tab <a "
 "href=\"%(filters_url)s\">Filters</a>, or add one with the button +."
 msgstr ""
+"Aún no hay pasos. Convierte un filtro guardado en un paso en la pestaña <a "
+"href=\"%(filters_url)s\">Filtros</a>, o añade uno con el botón +."
 
 msgid "Edit the filter"
-msgstr ""
+msgstr "Editar el filtro"
 
 msgid "Color"
-msgstr ""
+msgstr "Color"
 
 msgid "No color"
-msgstr ""
+msgstr "Sin color"
 
 msgid "Visible in the page of a pull request"
-msgstr ""
+msgstr "Visible en la página de un pull request"
 
 msgid "A hidden step shows there only when the pull request is in it."
-msgstr ""
+msgstr "Un paso oculto solo aparece allí cuando el pull request está en él."
 
 msgid "Summary"
-msgstr ""
+msgstr "Resumen"
 
 msgid "Tasks"
-msgstr ""
+msgstr "Tareas"
 
 #, python-format
 msgid ""
 "The tasks of this step are the conditions of the filter %(name)s that keep a "
 "pull request in it. Guide people to do each one."
 msgstr ""
+"Las tareas de este paso son las condiciones del filtro %(name)s que "
+"mantienen un pull request en él. Guía a las personas para hacer cada una."
 
 msgid "Description: how to do it"
-msgstr ""
+msgstr "Descripción: cómo hacerlo"
 
 msgid ""
 "The filter has no conditions in force: this step has no tasks, and no pull "
 "request is in it."
 msgstr ""
+"El filtro no tiene condiciones en vigor: este paso no tiene tareas y ningún "
+"pull request está en él."
 
 msgid "Labels"
-msgstr ""
+msgstr "Etiquetas"
 
 msgid ""
 "The GitHub App adds and removes these labels when a pull request enters the "
@@ -2569,69 +2645,76 @@ msgid ""
 "Labels of the repositories or new ones, separated by commas; they follow a "
 "rename on GitHub."
 msgstr ""
+"La GitHub App añade y quita estas etiquetas cuando un pull request entra en "
+"el paso y cuando lo completa: sale del paso con todas sus tareas hechas. "
+"Etiquetas de los repositorios o nuevas, separadas por comas; siguen un "
+"cambio de nombre en GitHub."
 
 msgid "When a pull request enters the step"
-msgstr ""
+msgstr "Cuando un pull request entra en el paso"
 
 msgid "Add the labels"
-msgstr ""
+msgstr "Añadir las etiquetas"
 
 msgid "Remove the labels"
-msgstr ""
+msgstr "Quitar las etiquetas"
 
 msgid "When a pull request completes the step"
-msgstr ""
+msgstr "Cuando un pull request completa el paso"
 
 msgid "Labels of the repositories:"
-msgstr ""
+msgstr "Etiquetas de los repositorios:"
 
 msgid "Save the step"
-msgstr ""
+msgstr "Guardar el paso"
 
 msgid "Saving…"
-msgstr ""
+msgstr "Guardando…"
 
 msgid "Saved"
-msgstr ""
+msgstr "Guardado"
 
 msgid "Not saved: is the network away? It is tried again."
-msgstr ""
+msgstr "No guardado: ¿no hay red? Se vuelve a intentar."
 
 msgid "Remove the step"
-msgstr ""
+msgstr "Quitar el paso"
 
 msgid "The filter stays."
-msgstr ""
+msgstr "El filtro se queda."
 
 msgid "the GitHub App adds the labels"
-msgstr ""
+msgstr "la GitHub App añade las etiquetas"
 
 msgid "the GitHub App removes the labels"
-msgstr ""
+msgstr "la GitHub App quita las etiquetas"
 
 msgid "Outside of the steps"
-msgstr ""
+msgstr "Fuera de los pasos"
 
 msgid "← Back to the steps"
-msgstr ""
+msgstr "← Volver a los pasos"
 
 msgid ""
 "No task of any step applies to these pull requests: they are outside of the "
 "usual steps they should take. A filter of a step may lack a condition for "
 "them."
 msgstr ""
+"Ninguna tarea de ningún paso se aplica a estos pull requests: están fuera de "
+"los pasos habituales que deberían seguir. Puede que al filtro de un paso le "
+"falte una condición para ellos."
 
 msgid "All, also closed and merged"
-msgstr ""
+msgstr "Todos, también cerrados y fusionados"
 
 msgid "The project has no steps yet."
-msgstr ""
+msgstr "El proyecto aún no tiene pasos."
 
 #, python-format
 msgid "%(counter)s pull request is outside of the steps."
 msgid_plural "%(counter)s pull requests are outside of the steps."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(counter)s pull request está fuera de los pasos."
+msgstr[1] "%(counter)s pull requests están fuera de los pasos."
 
 msgid "Creator"
 msgstr "Autoría"
@@ -2640,13 +2723,13 @@ msgid "Created"
 msgstr "Creado"
 
 msgid "← Earlier"
-msgstr ""
+msgstr "← Antes"
 
 msgid "Later →"
-msgstr ""
+msgstr "Después →"
 
 msgid "Every pull request is in a step."
-msgstr ""
+msgstr "Cada pull request está en un paso."
 
 msgid ""
 "A project is a set of repositories on GitHub. Open one to see its open "
@@ -2656,7 +2739,7 @@ msgstr ""
 "issues y pull requests abiertos."
 
 msgid "All projects"
-msgstr ""
+msgstr "Todos los proyectos"
 
 #, python-format
 msgid "%(counter)s repository"
@@ -2668,6 +2751,8 @@ msgid ""
 "You are a collaborator of no project yet. Create one, or ask the owners of a "
 "project to share it with you."
 msgstr ""
+"Aún no colaboras en ningún proyecto. Crea uno o pide a los propietarios de "
+"un proyecto que lo compartan contigo."
 
 msgid "No projects yet."
 msgstr "Aún no hay proyectos."
@@ -2867,6 +2952,8 @@ msgstr "Tu cuenta está borrada."
 msgid ""
 "The site asks GitHub now. Reload this page in a moment to see the result."
 msgstr ""
+"El sitio pregunta a GitHub ahora. Recarga esta página en un momento para ver "
+"el resultado."
 
 msgid "Bad request"
 msgstr "Solicitud incorrecta"
@@ -2923,19 +3010,22 @@ msgstr "El filtro %(name)s está guardado."
 #, python-format
 msgid "Update %(count)s pull request"
 msgid_plural "Update %(count)s pull requests"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Actualizar %(count)s pull request"
+msgstr[1] "Actualizar %(count)s pull requests"
 
 #, python-format
 msgid "These are no numbers of pull requests: %(wrong)s"
-msgstr ""
+msgstr "Estos no son números de pull requests: %(wrong)s"
 
 #, python-format
 msgid "The message is saved: %(count)s pull request gets it in the background."
 msgid_plural ""
 "The message is saved: %(count)s pull requests get it in the background."
 msgstr[0] ""
+"El mensaje está guardado: %(count)s pull request lo recibe en segundo plano."
 msgstr[1] ""
+"El mensaje está guardado: %(count)s pull requests lo reciben en segundo "
+"plano."
 
 msgid "People now sign in with the OAuth app."
 msgstr "Ahora las personas inician sesión con la aplicación OAuth."
@@ -2995,9 +3085,10 @@ msgstr "poseer"
 
 msgid "Tick the box to confirm that the backup replaces them."
 msgstr ""
+"Marca la casilla para confirmar que la copia de seguridad los reemplaza."
 
 msgid "The backup is restored."
-msgstr ""
+msgstr "La copia de seguridad está restaurada."
 
 msgid "With an example pull request:"
-msgstr ""
+msgstr "Con un pull request de ejemplo:"
