@@ -15,16 +15,14 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.column import Column
-from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import FilterNameMissing, FilterNameTaken
 from pycal_dashboard.models import Label, PullRequestFilter
+from pycal_dashboard.services.column_results import ColumnResults
 
 from .json_page import page
 from .projects import (
     PER_PAGE,
-    condition_rows,
     opened,
-    pull_requests_of,
     saved_filter,
     shown_repositories,
     table_address,
@@ -135,11 +133,10 @@ def project_filters(request: HttpRequest, slug: str):
         )
 
     def data() -> dict:
-        repositories = shown_repositories(access)
-        pulls, scope = pull_requests_of(repositories), Scope(repositories)
+        results = ColumnResults(shown_repositories(access))  # loaded once for all filters
         return {
             "filters": [
-                filter_data(f["saved"], len(condition_rows(pulls, f["columns"], scope)), f["path"])
+                filter_data(f["saved"], len(results.matching(f["columns"])), f["path"])
                 for f in filters
             ]
         }
@@ -172,23 +169,17 @@ def project_filter_counts(request: HttpRequest, slug: str, number: int):
         return moved
     saved = saved_filter(access.project, str(number))
     columns = [Column.decode(value) for value in saved.columns]
-    repositories = shown_repositories(access)
-    scope = Scope(repositories)
-    pulls = list(
-        pull_requests_of(repositories)
-        .select_related("pull_state")
-        .prefetch_related("labels", "reviews")
-    )
+    results = ColumnResults(shown_repositories(access))
     # only the conditions in force: those that are off are no part of the filter
     rows = [item for item in summary(columns) if item["filters"]]
     for item in rows:
-        item["count"] = sum(item["column"].applies(pull, scope) is True for pull in pulls)
+        item["count"] = results.count(item["column"])
     context = {
         "project": access.project,
         "access": access,
         "saved": saved,
         "rows": rows,
-        "count": len(condition_rows(pull_requests_of(repositories), columns, scope)),
+        "count": len(results.matching(columns)),
         "tab": "filters",
     }
     if request.GET.get("numbers"):  # for the table of the tab Filters, which fills them in
@@ -266,9 +257,7 @@ def project_filter_save(request: HttpRequest, slug: str):
             "columns": columns,
             "summary": summary(columns),
             "saved": saved,
-            "count": len(
-                condition_rows(pull_requests_of(repositories), columns, Scope(repositories))
-            ),
+            "count": len(ColumnResults(repositories).matching(columns)),
             "back": access.project.path("pull-requests/")
             + table_address(columns, PER_PAGE, saved.pk if saved else None),
             "address": table_address(columns, PER_PAGE, saved.pk if saved else None),

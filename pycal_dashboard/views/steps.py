@@ -16,9 +16,9 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import Column
-from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
 from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
+from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.step_assignment import StepAssignment
 from pycal_dashboard.step_template import GROUPS, example, expand
 
@@ -300,21 +300,20 @@ def project_steps_check(request: HttpRequest, slug: str):
         return moved
     repositories = shown_repositories(access)
     every = request.GET.get("all") == "1"
-    pulls = pull_requests_of(repositories).select_related("pull_state")
-    if not every:
-        pulls = pulls.filter(state=Issue.OPEN)
     steps = list(access.project.steps.all())
-    assignment = StepAssignment(access.project, Scope(repositories))
-    outside = (
-        [
-            pull
-            for pull in pulls.prefetch_related("labels", "reviews")
-            if not assignment.step_of(pull)
-        ]
-        if steps
-        else []
+    results = ColumnResults(repositories)
+    places = StepAssignment(access.project, results.scope).step_of_all(results) if steps else {}
+    open_ids = (
+        None
+        if every
+        else set(
+            pull_requests_of(repositories).filter(state=Issue.OPEN).values_list("pk", flat=True)
+        )
     )
+    outside = [pk for pk, step in places.items() if step is None and (every or pk in open_ids)]
     shown = Paginator(outside, OUTSIDE_PER_PAGE).get_page(request.GET.get("page"))
+    loaded = pull_requests_of(repositories).in_bulk(list(shown.object_list))
+    shown.object_list = [loaded[pk] for pk in shown.object_list if pk in loaded]
     return render(
         request,
         "pycal_dashboard/project_steps_check.html",

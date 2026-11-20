@@ -211,7 +211,9 @@ keeps them, so it can be bookmarked and shared; the JSON has the result of each
 column for each pull request (``conditions``), see :doc:`/reference/json`. A
 question mark means that the data of the pull request is not complete yet, such
 as checks that were never read, or reviews of a repository without the GitHub
-App. See :doc:`/reference/conditions/index`.
+App. See :doc:`/reference/conditions/index`. The site keeps the results of the
+columns until a repository of the project is updated, so the table opens fast
+also with many pull requests.
 
 The tabs of a project are always in this order: the overview, the public tabs,
 then those of the collaborators.

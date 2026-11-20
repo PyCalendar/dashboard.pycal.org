@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
-from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import (
     ConditionInputUnknown,
     DashboardError,
@@ -36,6 +35,7 @@ from pycal_dashboard.models import (
     PullRequestFilter,
     Repository,
 )
+from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -472,47 +472,6 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
     return None
 
 
-def condition_rows(
-    pulls: QuerySet[Issue], columns: list[Column], scope: Scope | None = None
-) -> list[dict]:
-    """The pull requests with the result of each column, those that any filter shows.
-
-    The filters are an OR: a pull request is shown when any column that filters (one that
-    shows only the pull requests it applies to, or only those it does not apply to) shows it.
-    Columns that show both do not filter; without columns that filter, all are shown.
-
-    Parameters:
-        pulls: The pull requests, the newest first.
-        columns: The columns of conditions.
-        scope: The repositories of the project that the person sees, in which the states of
-            the authors are counted; the repository of each pull request when None.
-
-    Returns:
-        Each pull request with ``cells``: the column, whether it applies, and the parts of the
-        cell.
-    """
-    if not columns:
-        return [{"pull": pull, "cells": []} for pull in pulls]
-    rows = []
-    filtering = [index for index, column in enumerate(columns) if column.filter != "all"]
-    related = ["labels"] + (["reviews"] if any(c.group.id == "reviews" for c in columns) else [])
-    for pull in pulls.select_related("pull_state").prefetch_related(*related):
-        results = [column.applies(pull, scope) for column in columns]
-        # an OR: a pull request is shown when any column that filters shows it
-        if not filtering or any(columns[i].shows(results[i]) for i in filtering):
-            cells = [
-                {
-                    "column": column,
-                    "result": result,
-                    "parts": column.group.cell(pull, column.choices, scope),
-                    "reason": column.group.unknown(pull, column.choices) if result is None else "",
-                }
-                for column, result in zip(columns, results, strict=True)
-            ]
-            rows.append({"pull": pull, "cells": cells})
-    return rows
-
-
 @require_http_methods(["GET", "HEAD"])
 def project_pull_requests(request: HttpRequest, slug: str):
     """The pull requests of all repositories of a project together, public like the project.
@@ -542,9 +501,10 @@ def project_pull_requests(request: HttpRequest, slug: str):
         address = table_address(changed, size, saved.pk if saved else None)
         return redirect(access.project.path("pull-requests/") + address)
     repositories = shown_repositories(access)
-    rows = condition_rows(pull_requests_of(repositories), columns, Scope(repositories))
-    pages = Paginator(rows, size)
+    results = ColumnResults(repositories)
+    pages = Paginator(results.matching(columns), size)
     shown = pages.get_page(request.GET.get("page"))
+    shown.object_list = results.rows(list(shown.object_list), columns)  # only this page
     labels = Label.objects.filter(repository__in=repositories).order_by("name")
     return page(
         request,

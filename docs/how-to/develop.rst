@@ -100,6 +100,17 @@ image with its health check and the scan of Trivy. The image is pushed to
 ``ghcr.io`` only when all of them pass. For ``main``, Sencho then deploys it and
 ``make check-live`` checks the live site, see :doc:`run-docker`.
 
+``make measure-speed`` measures the speed of every condition on the live site
+through the JSON of the table of pull requests, and of the filters, the page of
+a pull request and its badge (``scripts/measure_speed.py``; ``LIVE_URL``,
+``PROJECT`` and ``LABEL`` change what it measures). ``--save before.json`` keeps
+the times and ``--compare before.json`` shows how much faster a change made
+them. The results of the columns are kept in the cache until a repository of
+the project is updated (``ColumnResults``); after an update, the site evaluates
+the columns of the saved filters and steps in the background, so that the pages
+need not. ``tests/test_speed.py`` checks that the pages ask the database as
+often with many pull requests as with few.
+
 Words that Vale does not know, such as names, go into
 ``.vale/styles/config/vocabularies/Dashboard/accept.txt``.
 

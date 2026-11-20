@@ -3,6 +3,7 @@
 from urllib.parse import parse_qs, urlparse
 
 import pytest
+from django.utils import timezone
 
 from pycal_dashboard import errors
 from pycal_dashboard.conditions.group.column import Column
@@ -240,6 +241,7 @@ def test_a_question_mark_says_why(client, project, github):
     from pycal_dashboard.models import PullRequestState
 
     PullRequestState.objects.update(checks_complete="")
+    project.repositories.update(updated=timezone.now())  # as an update does: new results
     page = page_of(client, project, "ci~all~passing")
     ready = page.split('data-pull-request="collective/icalendar#1"')[1].split("</tr>")[0]
     assert "accept the permissions checks and statuses on GitHub" in ready

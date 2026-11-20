@@ -447,13 +447,18 @@ community: where to start, what waits for a review, who contributes.
 
 ## Later (decided by the person: quick feedback first)
 
-- [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
+- [x] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
       the time goes. Seen so far: the conditions of labels ask the database once for each pull
       request (the labels are prefetched but filtered with a query); without columns, the table
       builds a list of all pull requests before the page; the JSON of the filters evaluates every
       filter. Then a cache of the results of each column with invalidation by the time of the
       last update of the repositories of the project
-- [ ] A script that measures the speed of every condition on the live site through the JSON of
+- [x] A script that measures the speed of every condition on the live site through the JSON of
       the pull requests, to see the impact of each change and bring the times down
-- [ ] Speed of finding the step of a pull request (StepAssignment, PullRequestProgress, the
+- [x] Speed of finding the step of a pull request (StepAssignment, PullRequestProgress, the
       badges of a page of the table): make it really fast
+- [x] Measured on the live site (icalendar, 1368 pull requests), median before: labels 3.3 s,
+      reviews 4.0 s, all conditions 12.4 s, the JSON of the filters 35.2 s; the labels and
+      reviews asked the database once for each pull request (prefetched now); the results of
+      each column are cached until an update and prepared after it; a page loads only its
+      pull requests; the step of all pull requests at once for Check

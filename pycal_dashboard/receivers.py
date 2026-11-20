@@ -52,3 +52,32 @@ def complete_steps(sender: type, repository: Repository, **kwargs: Any):
 
     for project in Project.objects.filter(repositories=repository, steps__isnull=False).distinct():
         StepCompletion(project).observe(repository)
+
+
+@receiver(repository_updated)
+def prepare_results(sender: type, repository: Repository, **kwargs: Any):
+    """Evaluate the columns of the saved filters and steps after an update, for fast pages.
+
+    The results are kept in the cache under the new version of the repositories
+    (:class:`~pycal_dashboard.services.column_results.ColumnResults`), for the public
+    repositories of a project and for all of them, as visitors and collaborators see them.
+
+    Parameters:
+        sender: Who sent the signal.
+        repository: The repository that was read.
+        **kwargs: More of the signal.
+    """
+    with IMPORT_GUARD:  # see import_guard.py
+        from pycal_dashboard.conditions.group.column import Column
+        from pycal_dashboard.services.column_results import ColumnResults
+
+    for project in Project.objects.filter(repositories=repository).prefetch_related("filters"):
+        values = {value for saved in project.filters.all() for value in saved.columns}
+        if not values:
+            continue
+        everything = list(project.repositories.all())
+        public = [found for found in everything if not found.private]
+        for repositories in {tuple(everything), tuple(public)}:
+            results = ColumnResults(list(repositories))
+            for value in values:
+                results.of(Column.decode(value))

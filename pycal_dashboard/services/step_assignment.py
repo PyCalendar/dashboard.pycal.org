@@ -9,6 +9,7 @@ from pycal_dashboard.conditions.state.scope import Scope
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project, PullRequestStep
+    from pycal_dashboard.services.column_results import ColumnResults
 
 
 class StepAssignment:
@@ -33,6 +34,23 @@ class StepAssignment:
         for step in project.steps.select_related("filter"):
             columns = [Column.decode(value) for value in step.filter.columns]
             self.steps.append((step, [c for c in columns if c.filter != "all"]))
+
+    def step_of_all(self, results: ColumnResults) -> dict[int, PullRequestStep | None]:
+        """The step of every pull request at once, from the cached results of the columns.
+
+        Parameters:
+            results: The results of the columns for the pull requests of the repositories.
+
+        Returns:
+            The step by the id of the pull request; None for those in no step.
+        """
+        found: dict[int, PullRequestStep | None] = dict.fromkeys(results.ids())
+        for step, columns in reversed(self.steps):  # the left-most step comes last and wins
+            shown = [(column, results.of(column)) for column in columns]
+            for pk in found:
+                if any(column.shows(cells.get(pk)) for column, cells in shown):
+                    found[pk] = step
+        return found
 
     def step_of(self, issue: Issue) -> PullRequestStep | None:
         """The step of a pull request.
