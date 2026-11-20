@@ -476,7 +476,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Above should be a drop down to choose "below" also
 - [x] similarly "at least as many reviews" should be also drop down changeable to "at most" and the documentation says that the value is inclusive
 - [x]  Hidden in the page of a pull request, unless the pull request is in it This should be: Visible by default and not fat and the button is not as huge - check the style (and it of cause inverts the value) default is visible.
-- [ ] https://github.com/PyCalendar/icalendar/pull/2167
+- [x] https://github.com/PyCalendar/icalendar/pull/2167 (omitted, as the person decided)
 - [x] https://dashboard.pycal.org/projects/icalendar/steps/?step=4 a step should next to its name on the top rigt also have a button to edit its filter
 - [x] Remember for this project, there should always be invert buttons on the https://dashboard.pycal.org/projects/icalendar/filters/save/ page. People might add the wrong condition and  might need to negate it.
 - [x] reviews given: default should be below for the author conditions. Wherever we compare numbers, it should read as "above >" "below <" "at most <=" "at least >=" "exactly =" that counts for all the conditions and states
