@@ -266,11 +266,11 @@ def test_a_task_has_its_description_below_it(project):
     step.save()
     values = MessageComments(project).values(Issue.objects.get(title="Ready"))
     assert values["tasks_todo"] == (
-        "- [ ] A person reviews it\n  Ask @octocat in the chat.\n\n  - the guide\n  - the FAQ"
+        "- [ ] A person reviews it  \n  Ask @octocat in the chat.\n\n  - the guide\n  - the FAQ"
     )
     html = render(values["tasks_all"])  # the description and its list are in the item
     assert html == (
         '<ul>\n<li class="task-item">\n<p><input type="checkbox" class="task-box" disabled>'
-        " A person reviews it\nAsk @octocat in the chat.</p>\n"
+        " A person reviews it<br>\nAsk @octocat in the chat.</p>\n"
         "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ul>"
     )

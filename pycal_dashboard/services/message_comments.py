@@ -118,7 +118,8 @@ class MessageComments:
         """A task as an item of a list of tasks of GitHub, checked when it is done.
 
         Its description follows on the next lines, indented by two spaces, so that it belongs
-        to the item; its empty lines stay empty.
+        to the item, after a line break (two spaces after the title); its empty lines stay
+        empty.
 
         Parameters:
             task: The task.
@@ -129,7 +130,10 @@ class MessageComments:
         """
         text = " ".join((task.summary or capfirst(str(task.column.sentence))).split())
         lines = [f"- [{'x' if done else ' '}] {text}"]
-        for line in (task.description or "").strip().splitlines():
+        description = (task.description or "").strip().splitlines()
+        if description:  # two spaces: a line break after the title, not one line with it
+            lines[0] += "  "
+        for line in description:
             lines.append(f"  {line}".rstrip())
         return "\n".join(lines)
 
