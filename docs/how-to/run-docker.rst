@@ -47,7 +47,10 @@ GitHub App and emails people whose installation lacks permissions
 
 The health check of the container calls ``/health/`` with the first host of
 ``ALLOWED_HOSTS``. While the site starts, nginx answers with a page that says
-so.
+so. With JavaScript, the page asks ``/health/`` every three seconds and then
+opens the page again with GET: a form sent during the start is not sent again,
+and a page that only takes a form (405) leads back to the page of the form.
+Without JavaScript, the page reloads itself every 10 seconds.
 
 .. _memory:
 
