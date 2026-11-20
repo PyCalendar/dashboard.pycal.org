@@ -396,7 +396,7 @@ community: where to start, what waits for a review, who contributes.
       of the documentation: author_mention, author_name, author_handle, pr_title, pr_number,
       step_name, step_number, step_id (tested against the documentation)
 - [x] In a step, its conditions are called tasks; in filters, conditions
-- [ ] The view of each pull request, /projects/<slug>/pull/<number>/: the progress bar of all
+- [x] The view of each pull request, /projects/<slug>/pull/<number>/: the progress bar of all
       steps (done left in green with a check mark, the current one chosen, X/Y and a square for
       each task, done green left, red right; flex), a click shows a step; below, its tasks: to do
       first and open, done with a green check mark and closed

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 00:15+0000\n"
+"POT-Creation-Date: 2026-11-20 00:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -336,6 +336,9 @@ msgid "Step not found"
 msgstr ""
 
 msgid "The filter is a step already"
+msgstr ""
+
+msgid "Pull request not found"
 msgstr ""
 
 msgid "The GitHub App could not be registered"
@@ -1999,6 +2002,51 @@ msgstr "Sus repositorios siguen en GitHub y en otros proyectos."
 msgid "Yes, delete this project"
 msgstr "Sí, eliminar este proyecto"
 
+#, python-format
+msgid "Pull requests #%(number)s"
+msgstr ""
+
+msgid ""
+"Several repositories of the project have a pull request of this number. "
+"Choose one:"
+msgstr ""
+
+#, python-format
+msgid "Step %(number)s"
+msgstr ""
+
+#, python-format
+msgid "%(done)s of %(total)s tasks done"
+msgstr ""
+
+msgid "The pull request is here"
+msgstr ""
+
+msgid "Every step is complete: no task keeps this pull request."
+msgstr ""
+
+#, python-format
+msgid ""
+"The project has no steps yet: see the tab <a href=\"%(steps_url)s\">Steps</"
+"a>."
+msgstr ""
+
+#, python-format
+msgid "Step %(number)s: %(name)s"
+msgstr ""
+
+msgid "TODO"
+msgstr ""
+
+msgid "not known yet"
+msgstr ""
+
+msgid "Condition:"
+msgstr ""
+
+msgid "This step has no tasks."
+msgstr ""
+
 msgid "switch one on"
 msgstr "activa una"
 
@@ -2179,10 +2227,6 @@ msgstr ""
 msgid ""
 "Every filter is a step. Save more filters on the tab <a "
 "href=\"%(filters_url)s\">Filters</a>."
-msgstr ""
-
-#, python-format
-msgid "Step %(number)s"
 msgstr ""
 
 msgid "Move left: earlier"

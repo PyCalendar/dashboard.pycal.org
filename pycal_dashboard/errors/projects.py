@@ -212,3 +212,16 @@ class FilterIsAStep(ProjectError):
 
     title = _("The filter is a step already")
     status = 409
+
+
+class PullRequestNotFound(ProjectError):
+    """The project has no pull request of this number that you may see.
+
+    Check the number on the tab *Pull requests* of the project. The repositories of the
+    project may not have it, its repository may have been removed from the project, or it is
+    private and you are not a collaborator of the project. A new pull request comes with the
+    next update of its repository.
+    """
+
+    title = _("Pull request not found")
+    status = 404

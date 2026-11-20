@@ -21,6 +21,13 @@ def project(github, bob):
     return project
 
 
+def project_pull_number(project) -> int:
+    """The number of a pull request of the project, for the addresses of the guideline."""
+    from pycal_dashboard.models import Issue
+
+    return Issue.objects.get(repository__projects=project, pull_request=True).number
+
+
 def test_every_page_with_json_is_in_the_guideline():
     assert {page["name"] for page in JSON_API} == JSON_PAGES
 
@@ -43,6 +50,7 @@ def test_every_json_of_the_guideline_answers(client, project):
     """Each address works, with the slug of a real project: the guideline is complete."""
     for page in JSON_API:
         address = page["json"].replace("<slug>", project.slug)
+        address = address.replace("<number>", str(project_pull_number(project)))
         answer = client.get(address)
         assert answer.status_code == 200, address
         assert answer["Content-Type"] == "application/json", address

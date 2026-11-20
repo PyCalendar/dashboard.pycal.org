@@ -45,7 +45,9 @@ def results(page: str) -> dict[str, list[str]]:
     """The result of each column of conditions, by the title of the pull request."""
     found = {}
     for row in page.split("<tr data-pull-request=")[1:]:
-        title = row.split('class="col-title"><a href="')[1].split('">')[1].split("<")[0]
+        title = (
+            row.split('class="col-title"><a href="')[1].split(" data-pull-page>")[1].split("<")[0]
+        )
         found[title] = [part.split('"')[0] for part in row.split('data-result="')[1:]]
     return found
 

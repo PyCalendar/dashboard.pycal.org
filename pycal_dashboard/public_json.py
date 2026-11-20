@@ -23,6 +23,7 @@ JSON_PAGES = {
     "project",
     "project_pull_requests",
     "project_filters",
+    "project_pull_request",
 }
 CORS = {
     "Access-Control-Allow-Origin": "*",

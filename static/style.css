@@ -421,3 +421,36 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .loading { display: inline-block; width: 1em; height: 1em; vertical-align: middle; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .loading { animation-duration: 3s; } }
 .filters-add { display: flex; justify-content: flex-end; margin: 0 0 1rem; }
+
+/* the page of a pull request: the bar of its steps, each with a square for each task */
+.pull-head h2 a { font-weight: 400; font-size: .9em; }
+.pull-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.progress-bar { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 1rem 0 0; padding: 0; }
+.progress-step { flex: 1 1 9rem; min-width: 0; }
+.progress-step > a { display: flex; flex-direction: column; align-items: center; gap: .35rem; height: 100%; padding: .5rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); text-decoration: none; text-align: center; }
+.progress-step > a:hover, .progress-step > a:focus-visible { background: var(--surface-tint); }
+.progress-step[data-complete="true"] > a { border-color: var(--success); }
+.progress-step[data-complete="true"] .progress-check { color: var(--success); font-weight: 700; }
+.progress-step > a[aria-current="step"] { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); background: var(--surface-tint); }
+.progress-title { font-weight: 600; overflow-wrap: anywhere; }
+.progress-tasks { display: flex; align-items: center; justify-content: center; gap: .4rem; flex-wrap: wrap; }
+.progress-count { font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: .85rem; }
+.squares { display: inline-flex; flex-wrap: wrap; gap: .2rem; }
+.square { width: .8rem; height: .8rem; border-radius: .15rem; background: var(--danger); }
+.square-done { background: var(--success); }
+.square-unknown { background: var(--border); }
+.progress-here { color: var(--primary); font-weight: 600; }
+
+/* the tasks of the step shown: to do first and open, done closed */
+.tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.task { border: 1px solid var(--border); border-left-width: .3rem; border-radius: .4rem; padding: .4rem .7rem; }
+.task-todo { border-left-color: var(--danger); }
+.task-done { border-left-color: var(--success); }
+.task > summary { display: flex; align-items: baseline; gap: .5rem; cursor: pointer; }
+.task-summary p { display: inline; margin: 0; }
+.task-mark { flex: none; font-weight: 700; }
+.task-mark-todo { padding: 0 .35rem; border-radius: .25rem; background: var(--danger); color: var(--surface); font-size: .75rem; letter-spacing: .04em; }
+.task-mark-done { color: var(--success); }
+.task-mark-unknown { color: var(--text-muted); }
+.task-done .task-summary { color: var(--text-muted); }
+.task-body { margin: .4rem 0 0 0; }

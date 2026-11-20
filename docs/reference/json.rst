@@ -38,6 +38,18 @@ Every public page has its information as JSON at the address of the page with
      - ``/projects/<slug>/filters.json``: the saved filters of a public project:
        each with its ``name``, ``description``, ``columns``, ``count`` of pull
        requests and the address of its ``pull_requests``
+   * - ``/projects/<slug>/pull/<number>/``
+     - ``/projects/<slug>/pull/<number>.json``: a pull request of a public
+       project, with its ``repository``, ``number``, ``title``, ``url``,
+       ``author``, ``status`` and times, ``step``, the id of the step it is in
+       (``null`` in none), and the ``steps`` of the project, see
+       :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
+       whether it is ``complete``, how many tasks are ``done`` of the
+       ``total``, and its ``tasks``, each with its ``condition``,
+       ``sentence``, ``state`` (``todo``, ``done`` or ``unknown``) and
+       ``summary``. When several repositories have a pull request of the
+       number, it lists them as ``pull_requests``: ``?repository=owner/name``
+       chooses one
    * - ``/projects/<slug>/``
      - ``/projects/<slug>.json``: a public
        project with its ``open_issues``,

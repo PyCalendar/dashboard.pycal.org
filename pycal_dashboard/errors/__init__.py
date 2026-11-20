@@ -69,6 +69,7 @@ from .projects import (
     ProjectReadOnly,
     ProjectSlugInvalid,
     ProjectSlugTaken,
+    PullRequestNotFound,
     RepositoryNameInvalid,
     RepositoryNotFound,
     StepNotFound,
@@ -100,6 +101,7 @@ from .webhooks import (
 __all__ = [
     "FilterIsAStep",
     "StepNotFound",
+    "PullRequestNotFound",
     "FilterNameMissing",
     "FilterNameTaken",
     "FilterNotFound",

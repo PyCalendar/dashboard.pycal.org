@@ -260,6 +260,26 @@ They take variables: the menu **Variables** in the bar of the editor inserts the
 one you click where the cursor is, see :ref:`step-variables`. The page shows them
 with an example pull request. A step saves itself while you edit it.
 
+.. _pull-request-page:
+
+The page of a pull request
+--------------------------
+
+The title of a pull request in the table opens its page,
+``/projects/<slug>/pull/<number>/``, public like the project. When several
+repositories of the project have a pull request of the number, it asks which.
+At the top, a bar shows every step of the project in its order. Each step shows
+its name, how many of its tasks are done, such as *1/3*, and a square for each
+task: green for a task done, on the left, and red for a task to do, on the
+right; gray while its data is not known yet. A complete step, with no task to
+do, has a green border and a check mark. The step the pull request is in, the
+left-most one with a task to do, says so and is chosen.
+
+A click on a step shows its summary and its tasks below the bar. The tasks to do
+come first, marked *TODO* and open, with their description; the tasks done have
+a green check mark and are closed. The summaries and descriptions show the
+values of the pull request in place of the variables.
+
 .. _step-variables:
 
 Variables of the templates

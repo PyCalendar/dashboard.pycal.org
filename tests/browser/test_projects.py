@@ -422,3 +422,46 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     expect(page.locator("[data-step-detail]").get_by_label("Name", exact=True)).to_have_value(
         "Waiting for a review"
     )
+
+
+def test_the_page_of_a_pull_request(page, site, github, bob):
+    """From the table to a pull request: the bar of its steps, a click on a step, its tasks."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    for position, (name, column, summary) in enumerate(
+        (
+            ("Conflicts", "branch~applies~conflict", "Solve the conflict"),
+            ("Review", "labels~applies~present~needs review", "Review it, {author_handle}"),
+        )
+    ):
+        saved = PullRequestFilter.objects.create(project=project, name=name, columns=[column])
+        PullRequestStep.objects.create(
+            project=project,
+            filter=saved,
+            name=name,
+            position=position,
+            conditions={column: {"summary": summary, "description": "See *the guide*."}},
+        )
+    page.set_viewport_size({"width": 390, "height": 800})  # a phone
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_role("link", name="Ready", exact=True).click()
+    bar = page.locator("[data-progress]")
+    expect(bar.locator("[data-step]")).to_have_count(2)
+    expect(bar.locator("[data-step]").first).to_have_attribute("data-complete", "true")
+    current = bar.locator("[data-current]")
+    expect(current).to_contain_text("Review")
+    expect(current.locator("a")).to_have_attribute("aria-current", "step")
+    expect(current.locator(".square-todo")).to_have_css(
+        "background-color", "rgb(163, 36, 47)"
+    )  # red
+    task = page.locator("[data-task='todo']")
+    expect(task.locator("em")).to_have_text("the guide")  # open: its description shows
+    expect(task).to_contain_text("Review it, octocat")
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")  # fits a phone
+    bar.get_by_role("link", name="Conflicts").click()
+    done = page.locator("[data-task='done']")
+    expect(done).to_contain_text("Solve the conflict")
+    expect(done.locator("em")).to_be_hidden()  # closed
+    done.locator("summary").click()
+    expect(done.locator("em")).to_be_visible()

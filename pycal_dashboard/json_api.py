@@ -43,6 +43,14 @@ JSON_API = [
         "how many pull requests each shows, and the address of its pull requests",
     },
     {
+        "name": "project_pull_request",
+        "page": "/projects/<slug>/pull/<number>/",
+        "json": "/projects/<slug>/pull/<number>.json",
+        "holds": "a pull request of a project with the steps it goes through: the step it is "
+        "in, and each step with its tasks, whether each is todo, done or unknown; repository "
+        "chooses when several repositories have a pull request of the number",
+    },
+    {
         "name": "about",
         "page": "/about/",
         "json": "/about.json",
