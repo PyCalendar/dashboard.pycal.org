@@ -511,7 +511,7 @@ community: where to start, what waits for a review, who contributes.
       tasks done; a text when nothing is done)
       The rendered message is a live preview; when people are happy with it, the button
       "Update X Pull Requests" saves it, next to a button Cancel
-- [ ] When a pull request completes the step: "Add the labels" with one field, a list of labels
+- [x] When a pull request completes the step: "Add the labels" with one field, a list of labels
       separated by commas, that follows the renames of labels on GitHub; also "Remove the
       labels"; the same actions when a pull request enters the step
 - [x] The button that removes a step is red

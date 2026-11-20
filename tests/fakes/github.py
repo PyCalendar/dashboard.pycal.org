@@ -438,6 +438,16 @@ class FakeGitHub:
                 if label not in issue["labels"]:
                     issue["labels"].append(label)
             return httpx.Response(200, json=issue["labels"])
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/labels/([^/]+)", path)
+        if request.method == "DELETE" and match and token.startswith("installation-"):
+            from urllib.parse import unquote
+
+            issue = self.repositories[match[1].lower()]["issues"][int(match[2]) - 1]
+            name = unquote(match[3])
+            if not any(label["name"] == name for label in issue["labels"]):
+                return httpx.Response(404, json={"message": "Label does not exist"})
+            issue["labels"] = [label for label in issue["labels"] if label["name"] != name]
+            return httpx.Response(200, json=issue["labels"])
         if request.method != "GET":
             return None
         person = token == self.PERSON_TOKEN

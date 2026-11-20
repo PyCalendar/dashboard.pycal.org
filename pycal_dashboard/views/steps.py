@@ -23,6 +23,7 @@ from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.step_assignment import StepAssignment
+from pycal_dashboard.step_actions import KINDS, TRIGGERS, labels, normalized
 from pycal_dashboard.step_template import GROUPS, VARIABLE, VARIABLES, example, expand
 
 from .projects import (
@@ -150,8 +151,7 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             )
             if shown
             else "",
-            "action_labels": [a.get("label", "") for a in (shown.actions if shown else [])]
-            + [""],  # and one more, empty
+            "actions": normalized(shown.actions if shown else None),
             "label_names": sorted(
                 set(
                     Label.objects.filter(
@@ -257,8 +257,10 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     Parameters:
         request: The request, with ``name``, ``summary``, ``visible`` (``on`` to show it in
             the page of a pull request, with ``visible_form``), ``color`` (one of
-            :data:`STEP_COLORS`), ``action_label`` (the labels to add when a pull
-            request completes the step, with ``actions_form``) and for each condition
+            :data:`STEP_COLORS`), ``enter_add``, ``enter_remove``, ``complete_add`` and
+            ``complete_remove`` (the labels separated by commas that the GitHub App adds or
+            removes when a pull request enters or completes the step, with ``actions_form``)
+            and for each condition
             ``value-<i>``, ``summary-<i>`` and ``description-<i>``.
         slug: The project.
         number: The step.
@@ -275,11 +277,11 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
         step.hidden = request.POST.get("visible") != "on"
     color = request.POST.get("color", step.color)
     step.color = color if color in STEP_COLORS else ""
-    if request.POST.get("actions_form"):  # the form shows the actions: an empty one removes it
-        labels = [" ".join(label.split())[:100] for label in request.POST.getlist("action_label")]
-        step.actions = [
-            {"kind": "add_label", "label": label} for label in dict.fromkeys(labels) if label
-        ]
+    if request.POST.get("actions_form"):  # the form shows the actions: empty fields have none
+        step.actions = {
+            trigger: {kind: labels(request.POST.get(f"{trigger}_{kind}", "")) for kind in KINDS}
+            for trigger in TRIGGERS
+        }
     notes = dict(step.conditions or {})
     for value in step.filter.columns:
         index = step.filter.columns.index(value)

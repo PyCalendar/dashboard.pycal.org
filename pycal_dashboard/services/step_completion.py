@@ -5,11 +5,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from pycal_dashboard.actions import LabelAdded
+from pycal_dashboard.actions import LabelAdded, LabelRemoved
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import Issue, PullRequestPlace
 from pycal_dashboard.services.step_assignment import StepAssignment
+from pycal_dashboard.step_actions import normalized
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Project, PullRequestStep, Repository
@@ -83,28 +84,35 @@ class StepCompletion:
                 PullRequestPlace.objects.create(project=self.project, issue=issue, step=step)
                 continue
             left = place.step
-            if left is not None and left != step and self.complete(left, issue):
+            if left == step:
+                continue
+            if left is not None and self.complete(left, issue):
                 completed.append((issue, left))
-                self.act(issue, left)
-            if place.step != step:
-                place.step = step
-                place.save(update_fields=["step", "updated"])
+                self.act(issue, left, "complete")
+            if step is not None:
+                self.act(issue, step, "enter")
+            place.step = step
+            place.save(update_fields=["step", "updated"])
         return completed
 
     @staticmethod
-    def act(issue: Issue, step: PullRequestStep) -> None:
-        """Do the actions of a step that a pull request completed; each failure is logged.
+    def act(issue: Issue, step: PullRequestStep, trigger: str) -> None:
+        """Do the actions of a step that a pull request entered or completed; failures are logged.
 
         Parameters:
             issue: The pull request.
-            step: The step it completed.
+            step: The step.
+            trigger: ``enter`` or ``complete``, see :mod:`pycal_dashboard.step_actions`.
         """
+        actions = normalized(step.actions)[trigger]
+        if not (actions["add"] or actions["remove"]):
+            return
         if not issue.repository.app_installed:
             log.info("%s: no GitHub App for the actions of %s", issue, step)
             return
-        for action in step.actions or []:
-            try:
-                if action.get("kind") == "add_label" and action.get("label"):
-                    LabelAdded(issue, action["label"], step).run()
-            except Exception:  # one failing action does not stop the others
-                log.exception("%s: the action %s of %s failed", issue, action, step)
+        for kind, action in (("add", LabelAdded), ("remove", LabelRemoved)):
+            for label in actions[kind]:
+                try:
+                    action(issue, label, step, trigger).run()
+                except Exception:  # one failing action does not stop the others
+                    log.exception("%s: %s %s for %s failed", issue, kind, label, step)

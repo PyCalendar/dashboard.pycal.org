@@ -38,18 +38,27 @@
       {% translate "Description: how to do it" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id=condition.target name=condition.target label=description_label value=condition.description rows=4 variables=variables preview_url=step_preview %}
     </details>
   </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: this step has no tasks, and no pull request is in it." %}</li>{% endfor %}</ul>
-  <h3>{% translate "When a pull request completes the step" %}</h3>
-  <p class="muted">{% translate "A pull request completes the step when it leaves it with all its tasks done. Then the GitHub App adds these labels to it: one of the repositories, or a new one. Leave a field empty to remove its label." %}</p>
+  <h3>{% translate "Labels" %}</h3>
+  <p class="muted">{% translate "The GitHub App adds and removes these labels when a pull request enters the step, and when it completes it: it leaves the step with all its tasks done. Labels of the repositories or new ones, separated by commas; they follow a rename on GitHub." %}</p>
   <input type="hidden" name="actions_form" value="1">
-  <ul class="step-actions" data-step-actions>{% for label in action_labels %}<li><label for="action-label-{{ forloop.counter0 }}">{% translate "Add the label" %}</label> <input id="action-label-{{ forloop.counter0 }}" name="action_label" list="step-label-names" maxlength="100" autocomplete="off" value="{{ label }}" data-action-label></li>{% endfor %}</ul>
-  <datalist id="step-label-names">{% for name in label_names %}<option value="{{ name }}">{% endfor %}</datalist>
+  <div class="step-actions" data-step-actions>
+    <fieldset><legend>{% translate "When a pull request enters the step" %}</legend>
+      <p><label for="enter-add">{% translate "Add the labels" %}</label><input id="enter-add" name="enter_add" maxlength="1000" autocomplete="off" value="{{ actions.enter.add|join:', ' }}" placeholder="triage, needs review" data-action-labels></p>
+      <p><label for="enter-remove">{% translate "Remove the labels" %}</label><input id="enter-remove" name="enter_remove" maxlength="1000" autocomplete="off" value="{{ actions.enter.remove|join:', ' }}" data-action-labels></p></fieldset>
+    <fieldset><legend>{% translate "When a pull request completes the step" %}</legend>
+      <p><label for="complete-add">{% translate "Add the labels" %}</label><input id="complete-add" name="complete_add" maxlength="1000" autocomplete="off" value="{{ actions.complete.add|join:', ' }}" data-action-labels></p>
+      <p><label for="complete-remove">{% translate "Remove the labels" %}</label><input id="complete-remove" name="complete_remove" maxlength="1000" autocomplete="off" value="{{ actions.complete.remove|join:', ' }}" data-action-labels></p></fieldset>
+  </div>
+  {% if label_names %}<p class="muted step-label-names"><small>{% translate "Labels of the repositories:" %} {% for name in label_names %}<code>{{ name }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}</small></p>{% endif %}
   <p class="save-buttons"><button class="button" data-save-step>{% translate "Save the step" %}</button>
     <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" aria-live="polite"></span></p>
 </form>
 <form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
 {% else %}<h2>{{ shown.name }}</h2>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
-{% if shown.actions %}<p class="muted" data-step-action-list>{% translate "When a pull request completes the step, the GitHub App adds the labels:" %} {% for action in shown.actions %}<span class="label-chip">{{ action.label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+<dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request completes the step" %}{% endif %}</dt>
+  {% if kinds.add %}<dd>{% translate "the GitHub App adds the labels" %} {% for label in kinds.add %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}
+  {% if kinds.remove %}<dd>{% translate "the GitHub App removes the labels" %} {% for label in kinds.remove %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}{% endif %}{% endfor %}</dl>
 <ul class="step-conditions">{% for condition in conditions %}<li><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}{% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}</li>{% endfor %}</ul>{% endif %}
 </section>{% endif %}
 {% endblock %}

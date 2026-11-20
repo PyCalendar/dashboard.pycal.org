@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 08:44+0000\n"
+"POT-Creation-Date: 2026-11-20 08:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2451,16 +2451,29 @@ msgid ""
 "request is in it."
 msgstr ""
 
-msgid "When a pull request completes the step"
+msgid "Labels"
 msgstr ""
 
 msgid ""
-"A pull request completes the step when it leaves it with all its tasks done. "
-"Then the GitHub App adds these labels to it: one of the repositories, or a "
-"new one. Leave a field empty to remove its label."
+"The GitHub App adds and removes these labels when a pull request enters the "
+"step, and when it completes it: it leaves the step with all its tasks done. "
+"Labels of the repositories or new ones, separated by commas; they follow a "
+"rename on GitHub."
 msgstr ""
 
-msgid "Add the label"
+msgid "When a pull request enters the step"
+msgstr ""
+
+msgid "Add the labels"
+msgstr ""
+
+msgid "Remove the labels"
+msgstr ""
+
+msgid "When a pull request completes the step"
+msgstr ""
+
+msgid "Labels of the repositories:"
 msgstr ""
 
 msgid "Save the step"
@@ -2481,7 +2494,10 @@ msgstr ""
 msgid "The filter stays."
 msgstr ""
 
-msgid "When a pull request completes the step, the GitHub App adds the labels:"
+msgid "the GitHub App adds the labels"
+msgstr ""
+
+msgid "the GitHub App removes the labels"
 msgstr ""
 
 msgid "Outside of the steps"

@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.group.labels import LabelsGroup
-from pycal_dashboard.models import PullRequestFilter
+from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+from pycal_dashboard.step_actions import normalized, renamed
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Repository
@@ -51,12 +52,19 @@ class LabelRename:
         return Column(column.group, (column.choices[0], self.new), column.filter).encode()
 
     def apply(self) -> int:
-        """Rename the label in the filters of the projects of the repository.
+        """Rename the label in the filters and in the actions of the steps of the projects.
 
         Returns:
-            How many filters changed.
+            How many filters and steps changed.
         """
         changed = 0
+        steps = PullRequestStep.objects.filter(project__repositories=self.repository)
+        for step in steps.distinct():
+            actions = renamed(step.actions, self.old, self.new)
+            if actions != normalized(step.actions):
+                step.actions = actions
+                step.save(update_fields=["actions", "updated"])
+                changed += 1
         filters = PullRequestFilter.objects.filter(project__repositories=self.repository)
         for saved in filters.distinct():
             columns = [self.column(value) for value in saved.columns]

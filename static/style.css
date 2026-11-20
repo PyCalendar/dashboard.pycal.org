@@ -399,9 +399,10 @@ form.stacked label.switch input { width: 3.2rem; max-width: none; }
 .step-item.current .step-box { border-color: var(--primary); background: var(--surface-tint); }
 .step-move:disabled { opacity: .35; cursor: not-allowed; }
 .steps-tools { display: inline-flex; align-items: center; gap: .4rem; margin-left: auto; }
-.step-actions { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
-.step-actions li { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.step-actions input { flex: 1 1 12rem; }
+.step-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 0 0 .5rem; }
+form.stacked .step-actions fieldset { flex: 1 1 18rem; padding: .5rem .75rem; }
+.step-action-list dt { font-weight: 600; margin-top: .4rem; }
+.step-action-list dd { margin: .1rem 0 0 1rem; }
 .step-item.dragged-over .step-box { outline: 2px dashed var(--primary); }
 .step-item + .step-item::before { content: "→"; margin-right: .3rem; color: var(--text-muted); }
 .step-item a { text-decoration: none; display: inline-flex; flex-direction: column; line-height: 1.2; }

@@ -109,21 +109,72 @@ def test_a_closed_pull_request_is_not_watched(github, project, step):
 def test_the_editor_keeps_the_labels(client, project, step, bob):
     client.force_login(bob)
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
-    assert 'value="conflict solved" data-action-label' in page
-    assert page.count("data-action-label") == 2  # and an empty one
+    assert 'name="complete_add"' in page and 'value="conflict solved"' in page  # saved before
+    assert 'name="enter_add"' in page and 'name="enter_remove"' in page
     client.post(
         f"/projects/icalendar/steps/{step.pk}/edit/",
-        {"name": "Conflicts", "actions_form": "1", "action_label": ["ready", " ", "ready", "x"]},
+        {
+            "name": "Conflicts",
+            "actions_form": "1",
+            "enter_add": "conflict, , Conflict",
+            "complete_add": "ready",
+            "complete_remove": "conflict, needs rebase",
+        },
         **JSON,
     )
     step.refresh_from_db()
-    assert step.actions == [
-        {"kind": "add_label", "label": "ready"},
-        {"kind": "add_label", "label": "x"},
-    ]
+    assert step.actions == {
+        "enter": {"add": ["conflict"], "remove": []},
+        "complete": {"add": ["ready"], "remove": ["conflict", "needs rebase"]},
+    }
+    page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
+    assert 'value="conflict, needs rebase"' in page
     client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "C"}, **JSON)
     step.refresh_from_db()
-    assert len(step.actions) == 2  # a form without the actions keeps them
+    assert step.actions["complete"]["add"] == ["ready"]  # a form without the actions keeps them
+
+
+def test_entering_a_step_and_removing_labels(github, project, step):
+    """Entering adds and removes the labels of entering; completing those of completing."""
+    step.actions = {
+        "enter": {"add": ["conflict"], "remove": []},
+        "complete": {"add": [], "remove": ["conflict"]},
+    }
+    step.save()
+    update(project)  # the first sight only records
+    pull = github.repositories[REPO]["issues"][1]  # Clean: gets a conflict
+    pull["pull"].update(mergeable=False, mergeable_state="dirty")
+    pull["updated_at"] = "2026-11-03T10:00:00Z"
+    update(project)
+    assert [w.method for w in label_writes(github)] == ["POST"]  # entered: added
+    assert [label["name"] for label in pull["labels"]] == ["conflict"]
+    pull["pull"].update(mergeable=True, mergeable_state="clean")
+    pull["updated_at"] = "2026-11-04T10:00:00Z"
+    update(project)
+    writes = [w for w in github.writes() if "/labels/" in w.url.path]
+    assert [w.method for w in writes] == ["DELETE"]  # completed: removed
+    assert pull["labels"] == []
+    assert LogAction.objects.filter(kind="label").count() == 2
+
+
+def test_removing_a_label_it_does_not_have(github, project, step):
+    step.actions = {"enter": {"add": [], "remove": []}, "complete": {"add": [], "remove": ["x"]}}
+    step.save()
+    update(project)
+    solve_the_conflict(github)
+    update(project)  # the label is not there: nothing fails
+    assert "removed from" in LogAction.objects.get(kind="label").text
+
+
+def test_a_renamed_label_is_renamed_in_the_actions(project, step):
+    from pycal_dashboard.services.label_rename import LabelRename
+
+    step.actions = {"enter": {"add": ["Conflict Solved"], "remove": []}}
+    step.save()
+    repository = project.repositories.get()
+    assert LabelRename(repository, "conflict solved", "resolved").apply() == 1
+    step.refresh_from_db()
+    assert step.actions["enter"]["add"] == ["resolved"]
 
 
 def test_the_issue_is_kept_once(project, step):

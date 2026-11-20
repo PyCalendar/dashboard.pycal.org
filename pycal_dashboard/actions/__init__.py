@@ -9,6 +9,7 @@ from .action import Action
 from .admin_rights_changed import AdminRightsChanged
 from .email_sent import EmailSent
 from .label_added import LabelAdded
+from .label_removed import LabelRemoved
 from .preferences_saved import PreferencesSaved
 from .settings_saved import SettingsSaved
 from .trigger import Trigger
@@ -19,6 +20,7 @@ __all__ = [
     "AdminRightsChanged",
     "EmailSent",
     "LabelAdded",
+    "LabelRemoved",
     "PreferencesSaved",
     "SettingsSaved",
     "Trigger",

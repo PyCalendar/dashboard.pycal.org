@@ -21,15 +21,16 @@ class LabelAdded(Action):
 
     kind = "label"
 
-    def __init__(self, issue: Issue, label: str, step: PullRequestStep):
+    def __init__(self, issue: Issue, label: str, step: PullRequestStep, trigger: str = "complete"):
         """The label to add.
 
         Parameters:
             issue: The pull request, of a repository with the GitHub App.
             label: The name of the label.
-            step: The step it completed.
+            step: The step it entered or completed.
+            trigger: ``enter`` or ``complete``.
         """
-        self.issue, self.label, self.step = issue, label, step
+        self.issue, self.label, self.step, self.trigger = issue, label, step, trigger
 
     def perform(self) -> None:
         """Add the label with the token of the installation of the repository."""
@@ -43,7 +44,8 @@ class LabelAdded(Action):
 
     def text(self) -> str:
         """What was added, to which pull request, and why."""
+        why = "entered" if self.trigger == "enter" else "completed"
         return (
             f"Label {self.label} added to {self.issue.repository.full_name}#{self.issue.number}: "
-            f"it completed the step {self.step.name}"
+            f"it {why} the step {self.step.name}"
         )

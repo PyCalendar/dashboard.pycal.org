@@ -291,14 +291,17 @@ default, shows the step in the bar of that page; switched off, the step shows
 there only when the pull request is in it, and the bar of the tab *Steps*
 marks it *hidden*.
 
-Below the tasks, *When a pull request completes the step* lists the labels
-that the GitHub App adds to a pull request that completes the step: one of the
-repositories, or a new one, which GitHub then creates. A pull request completes
-a step when an update finds it no longer in the step, with all tasks of the
-step done, while it is open. The site remembers the step of each open pull
-request at every update; the first time it sees a pull request, it only
-remembers where it is, so nothing happens for steps completed before. The log
-of the site records every label added. Leave a field empty to remove its label.
+Below the tasks, *Labels* has the labels that the GitHub App adds and removes
+*when a pull request enters the step* and *when a pull request completes the
+step*: labels of the repositories or new ones, which GitHub then creates,
+separated by commas, such as *triage, needs review*. A label renamed on GitHub
+is renamed there, too. A pull request enters a step when an update finds it in
+the step and it was in another one or in none before; it completes a step when
+an update finds it no longer in the step, with all tasks of the step done,
+while it is open. The site remembers the step of each open pull request at
+every update; the first time it sees a pull request, it only remembers where
+it is, so nothing happens for steps entered or completed before. The log of
+the site records every label added or removed.
 
 **Check** next to the button **+** lists the pull requests outside of the
 steps: no task of any step applies to them, so a filter of a step may lack a

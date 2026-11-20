@@ -529,12 +529,10 @@ def test_hide_a_step_and_check_the_pull_requests_outside(signed_in, site, github
     expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
     step.refresh_from_db()
     assert step.hidden
-    labels = page.locator("[data-action-label]")
-    labels.first.fill("conflict solved")  # a new label; a new empty field follows
-    expect(labels).to_have_count(2)
+    page.get_by_label("Add the labels").last.fill("conflict solved, done")  # on completing
     expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
     step.refresh_from_db()
-    assert step.actions == [{"kind": "add_label", "label": "conflict solved"}]
+    assert step.actions["complete"]["add"] == ["conflict solved", "done"]
     page.get_by_role("link", name="Check").click()
     expect(page.get_by_role("heading", name="Outside of the steps")).to_be_visible()
     expect(page.locator("[data-outside-pull]")).to_have_count(2)  # Ready and Behind
