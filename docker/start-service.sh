@@ -6,12 +6,17 @@ sed "s/LISTEN_PORT/${PORT}/g" /app/docker/nginx.conf > /tmp/nginx.conf
 nginx -c /tmp/nginx.conf
 # migrates; without a GitHub App it prints where to register it, with the setup code
 python manage.py prepare
-# the installations of the GitHub App: a new version may need more permissions, which the
-# people of each installation are told by email
-(python manage.py check_installations || true) &
-# the updates that wait, such as those that a migration of the data of GitHub queued, and every
-# hour those of the repositories not read in the last day: a process that ends each time
-(while true; do python manage.py update_projects --stale || true; sleep 3600; done) &
+# the background work (webhooks, updates and what follows them) as in community-insights: with
+# FETCH_WORKER=external-http-container (the default of the image) a process of its own, started
+# again when it stops, such as out of memory; external-separate-container runs it in the worker
+# service of docker-compose.yml; internal in a thread of gunicorn, with the hourly renewal here
+case "$FETCH_WORKER" in
+  external-http-container)
+    (while true; do python manage.py fetch_worker || true; sleep 5; done) & ;;
+  internal)
+    (python manage.py check_installations || true) &
+    (while true; do python manage.py update_projects --stale || true; sleep 3600; done) & ;;
+esac
 # a low footprint when idle: fewer arenas of malloc for the threads, and every worker is replaced
 # after about 1000 requests, which returns the memory that a busy time made it grow by
 export MALLOC_ARENA_MAX=2

@@ -50,6 +50,9 @@ def empty_cache():
 
 @pytest.fixture(autouse=True)
 def app_settings(settings, private_key, tmp_path):
+    # the tests handle the webhooks in the request; the cache of one process is enough
+    settings.FETCH_WORKER = "inline"
+    settings.CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
     settings.DATA_DIR = tmp_path / "data"
     settings.GITHUB_APP_ID = "1"
     settings.GITHUB_APP_SLUG = "dashboard-test"

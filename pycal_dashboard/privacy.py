@@ -278,6 +278,8 @@ MODELS = {
             "outcome",
             "error",
             "detail",
+            "payload",
+            "handled",
         },
     ),
     "pycal_dashboard.Notification": (

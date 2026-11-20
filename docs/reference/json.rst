@@ -100,8 +100,11 @@ Agents and robots
 <https://llmstxt.org/>`_ proposes: the JSON of every public page, what it
 holds, and how to navigate from ``/projects.json`` to the projects and their
 pull requests. ``/robots.txt`` lets robots read the public pages and their JSON
-and keeps them out of the pages of people, the setup and the admin; it points
-agents to ``/llms.txt``.
+and keeps them out of the pages of people, the setup and the admin, and out of
+the addresses that only show the same pages again: a pull request with a chosen
+step (``?step=``), the table with columns (``?col=``), the badges and the
+review of the message. Without them, a crawler would read every pull request
+with every step. It points agents to ``/llms.txt``.
 
 Both are made from ``pycal_dashboard/json_api.py``: a new page with JSON goes
 there, and ``tests/test_agents.py`` checks that every page with JSON is in it,

@@ -8,8 +8,11 @@ from typing import TYPE_CHECKING
 
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
+from django.core.cache import cache
 from django.db import connections
 
+from pycal_dashboard import worker_mode
+from pycal_dashboard.errors import GitHubAppNotConfigured
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Notification
 
@@ -85,17 +88,25 @@ class AppNotice:
 
         try:
             return cls(AppCheck.read()).notify()
-        except Exception:  # such as without an app or while GitHub is down: the next time
+        except GitHubAppNotConfigured:  # a site before its app is registered: nothing to check
+            return None
+        except Exception:  # such as while GitHub is down: the next time
             log.warning("The GitHub App could not be checked", exc_info=True)
             return None
 
     @classmethod
-    def refresh_in_background(cls) -> threading.Thread:
-        """Check the app in a thread, so that the page that asks for it does not wait.
+    def refresh_in_background(cls) -> threading.Thread | None:
+        """Check the app in the background, so that the page that asks for it does not wait.
+
+        With a process of its own for the background (``FETCH_WORKER=external-...``), the
+        cache asks ``manage.py fetch_worker`` for it; else a thread of this process checks.
 
         Returns:
-            The thread.
+            The thread; None when the worker checks.
         """
+        if worker_mode.external():
+            cache.set("app-check-requested", True, 3600)
+            return None
 
         def run() -> None:
             try:

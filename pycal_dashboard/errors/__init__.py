@@ -34,6 +34,7 @@ from .configuration import (
     InvalidFooterLink,
     InvalidOrganizationSetting,
     UnknownColor,
+    UnknownWorkerMode,
     UnsupportedFavicon,
 )
 from .dashboard import (
@@ -174,6 +175,7 @@ __all__ = [
     "SignInNotConfigured",
     "UnexpectedError",
     "UnknownColor",
+    "UnknownWorkerMode",
     "UnknownPreference",
     "UnknownRole",
     "UnsupportedFavicon",

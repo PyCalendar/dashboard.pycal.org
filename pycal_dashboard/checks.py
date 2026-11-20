@@ -8,7 +8,8 @@ from typing import Any
 from django.conf import settings
 from django.core.checks import Error, register
 
-from .errors import FaviconNotFound, UnsupportedFavicon
+from .errors import FaviconNotFound, UnknownWorkerMode, UnsupportedFavicon
+from .worker_mode import MODES
 
 FAVICON_TYPES = {".png": "image/png", ".ico": "image/x-icon", ".svg": "image/svg+xml"}
 
@@ -50,3 +51,21 @@ def check_favicon(app_configs: list | None | None = None, **kwargs: Any) -> list
         error = FaviconNotFound
         return [Error(error.title, hint=path, id="pycal_dashboard.E001", obj=error.docs_url())]
     return []
+
+
+@register()
+def check_worker_mode(app_configs: list | None = None, **kwargs: Any) -> list:
+    """``FETCH_WORKER`` is one of the modes of the background work.
+
+    Parameters:
+        app_configs: The apps to check.
+        **kwargs: More of Django.
+
+    Returns:
+        The errors.
+    """
+    if settings.FETCH_WORKER in MODES:
+        return []
+    error = UnknownWorkerMode
+    hint = f"FETCH_WORKER={settings.FETCH_WORKER!r}; use one of: {', '.join(MODES)}"
+    return [Error(error.title, hint=hint, id="pycal_dashboard.E003", obj=error.docs_url())]

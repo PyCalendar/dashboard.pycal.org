@@ -21,6 +21,18 @@ class ConfigurationError(DashboardError):
     guide_title = _("Settings")
 
 
+class UnknownWorkerMode(ConfigurationError):
+    """``FETCH_WORKER`` is none of the modes of the background work.
+
+    Set it to ``internal`` (a thread of the web process), ``external-http-container`` (a
+    process of its own in the web container, the default of the image),
+    ``external-separate-container`` (the worker service of ``docker-compose.yml``) or
+    ``inline`` (for the tests).
+    """
+
+    title = _("Unknown mode of the background work")
+
+
 class UnknownColor(ConfigurationError):
     """A ``COLOR_...`` setting names a color that the theme does not have.
 

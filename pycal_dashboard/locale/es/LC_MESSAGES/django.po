@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 12:36+0000\n"
+"POT-Creation-Date: 2026-11-20 20:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -320,6 +320,9 @@ msgstr "Un ajuste del sitio es incorrecto"
 
 msgid "Settings"
 msgstr "Ajustes"
+
+msgid "Unknown mode of the background work"
+msgstr ""
 
 msgid "Unknown color"
 msgstr "Color desconocido"

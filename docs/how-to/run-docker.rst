@@ -52,6 +52,34 @@ opens the page again with GET: a form sent during the start is not sent again,
 and a page that only takes a form (405) leads back to the page of the form.
 Without JavaScript, the page reloads itself every 10 seconds.
 
+.. _background:
+
+Background work
+===============
+
+What takes long runs in the background, as in community-insights: the webhooks
+of GitHub, the updates of the repositories, and what follows them, such as the
+comments of the message, the labels of steps and the results of the columns.
+The web process only records a webhook and answers GitHub at once, so pages
+never wait for this work, also during many deliveries. ``FETCH_WORKER`` says
+where it runs:
+
+``external-http-container``
+   The default of the image: ``manage.py fetch_worker`` runs as a process of
+   its own in the container, next to gunicorn. When it stops, such as out of
+   memory, it is started again after 5 seconds. It looks at the queues every
+   2 seconds, checks the installations of the GitHub App when it starts, and
+   renews every hour what no webhook tells of.
+``external-separate-container``
+   Only the ``worker`` service of ``docker-compose.yml`` runs it: remove the
+   comments of that service. The web container runs none.
+``internal``
+   A thread of gunicorn, the default outside the image, such as with ``make
+   run``.
+
+Both processes share the cache, files in ``/app/data/cache``: the results that
+the background prepares after an update make the pages fast.
+
 .. _memory:
 
 Memory

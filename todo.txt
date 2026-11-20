@@ -534,6 +534,15 @@ community: where to start, what waits for a review, who contributes.
       SIGKILL (not out of memory). TIMEOUT 120 s (setting), the receivers log their time when
       slow, nginx keeps webhooks in memory, one access log. Locally the receivers take 0.6 s
       with 1500 pull requests; Sencho's own probes of the workloads time out: the server is short
-- [ ] The person: look at the memory and CPU of the server (free -m, docker stats); decide whether
-      the updates run in a process of their own instead of a thread of gunicorn (more idle
-      memory, but pages never wait for them)
+- [x] The background work in a process of its own, as in community-insights: FETCH_WORKER
+      (external-http-container in the image, started again when it stops; the worker service of
+      docker-compose.yml; internal; inline for the tests); webhooks recorded and answered at
+      once, handled by manage.py fetch_worker with the updates, what follows them, the hourly
+      renewal, the check of the installations and Check again; the cache in files, shared
+- [x] A crawler (ClaudeBot) read every pull request with every step and badge, about 10 per
+      second: robots.txt leaves the repeated addresses alone (?step=, ?col=, badges, ...)
+- [x] Load test of the image with 2 CPUs and 1 GB, 1500 pull requests, 20 visitors at once and a
+      webhook every half second for 60 s, the work after updates meanwhile: no error, no
+      timeout; 10.7 requests per second with WORKERS=1 (240 MB), 16.6 with WORKERS=2 (390 MB)
+- [x] The worker ran into a loop of restarts without a GitHub App (check_installations): fixed
+- [ ] The person: WORKERS=2 on the server doubles the requests per second for 150 MB more

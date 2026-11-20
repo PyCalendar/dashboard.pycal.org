@@ -64,6 +64,21 @@ JSON_API = [
     },
 ]
 
+# the addresses that only show the same pages again in other ways: robots leave them alone,
+# so that a crawler does not read every pull request with every step and every column
+REPEATED = [
+    "/*?step=",
+    "/*&step=",
+    "/*?col=",
+    "/*&col=",
+    "/*?example=",
+    "/*?pull=",
+    "/*?view=",
+    "/*/badge.svg",
+    "/*/badge.png",
+    "/projects/*/message/review/",
+]
+
 # the pages that robots and agents leave alone: those of people, setup and the admin
 PRIVATE = [
     "/account/",

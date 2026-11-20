@@ -20,3 +20,16 @@ services:
       - ./data:/app/data   # the database, the secret key and the GitHub App
     restart: unless-stopped
     logging: *logging
+
+  # Optional: the background work in a container of its own. Set
+  # FETCH_WORKER=external-separate-container in .env (then the web container starts no
+  # worker) and remove the comments. By default the image runs the worker in the web
+  # container (external-http-container), started again when it stops.
+  # worker:
+  #   image: ghcr.io/pycalendar/dashboard.pycal.org:latest
+  #   entrypoint: ["python", "manage.py", "fetch_worker"]
+  #   env_file: .env
+  #   volumes:
+  #     - ./data:/app/data
+  #   restart: unless-stopped
+  #   logging: *logging

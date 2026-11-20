@@ -95,8 +95,18 @@ The container
    visitors, see :ref:`memory`.
 ``TIMEOUT``
    The seconds a process of gunicorn may be busy before gunicorn replaces it.
-   Default: ``120``. The updates from GitHub run in a thread of the process;
-   the log says how long the work after each update takes.
+   Default: ``120``.
+``FETCH_WORKER``
+   Where the background work runs: the webhooks of GitHub, the updates of the
+   repositories and what follows them, such as the comments of the message.
+   ``external-http-container``, the default of the image, runs ``manage.py
+   fetch_worker`` as a process of its own in the web container, started again
+   when it stops, such as out of memory; ``external-separate-container`` runs
+   it only in the ``worker`` service of ``docker-compose.yml``; ``internal``,
+   the default outside the image, in a thread of gunicorn; ``inline`` in the
+   request, for the tests. The web process then only records the webhooks and
+   answers GitHub at once; the log says how long the work after each update
+   takes. See :ref:`background`.
 
 Email
 =====

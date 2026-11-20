@@ -128,6 +128,22 @@ if DATABASES["default"]["ENGINE"].endswith("sqlite3"):
     )
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# The cache in files of the data folder: the web process and the background process share it,
+# such as the results of the columns that the background prepares after each update.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": str(DATA_DIR / "cache"),
+        "OPTIONS": {"MAX_ENTRIES": 3000},
+    }
+}
+
+# Where the background work runs (webhooks, updates from GitHub and what follows them):
+# internal (a thread of the web process, for development), external-http-container (a process
+# of its own in the web container, the default of the image), external-separate-container (the
+# worker service of docker-compose.yml) or inline (in the request, for the tests).
+FETCH_WORKER = env("FETCH_WORKER", default="internal")
+
 # Sign in with GitHub only: no passwords, no email sign up.
 AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 SITE_ID = 1

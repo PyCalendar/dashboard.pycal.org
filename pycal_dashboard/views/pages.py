@@ -27,7 +27,7 @@ from django.views.i18n import set_language
 from pycal_dashboard import build_info, licenses
 from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
-from pycal_dashboard.json_api import JSON_API, PRIVATE
+from pycal_dashboard.json_api import JSON_API, PRIVATE, REPEATED
 from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Preferences
 from pycal_dashboard.privacy import COOKIES, DATA, EXTERNAL_HOSTS, PARTIES
@@ -123,7 +123,7 @@ def robots_txt(request: HttpRequest):
     return render(
         request,
         "pycal_dashboard/robots.txt",
-        {"private": PRIVATE, "site_url": settings.SITE_URL.rstrip("/")},
+        {"private": PRIVATE, "repeated": REPEATED, "site_url": settings.SITE_URL.rstrip("/")},
         content_type="text/plain; charset=utf-8",
     )
 

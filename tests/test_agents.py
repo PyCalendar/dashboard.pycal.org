@@ -2,7 +2,7 @@
 
 import pytest
 
-from pycal_dashboard.json_api import JSON_API, PRIVATE
+from pycal_dashboard.json_api import JSON_API, PRIVATE, REPEATED
 from pycal_dashboard.models import Repository
 from pycal_dashboard.public_json import JSON_PAGES
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -73,11 +73,11 @@ def test_robots_may_read_the_public_pages(client, project, bob):
     text = answer.content.decode()
     assert "User-agent: *" in text and "llms.txt" in text and text.rstrip().endswith("Allow: /")
     disallowed = [line.split(": ")[1] for line in text.splitlines() if line.startswith("Disallow")]
-    assert disallowed == PRIVATE
+    assert disallowed == PRIVATE + REPEATED  # the private pages, then the repeated ones
     for page in JSON_API:  # the public pages and their JSON are allowed
         for address in (page["page"], page["json"]):
             path = address.replace("<slug>", "icalendar").split("?")[0]
-            assert not any(path.startswith(private) for private in disallowed), path
+            assert not any(path.startswith(private) for private in PRIVATE), path
 
 
 @pytest.mark.parametrize("path", PRIVATE)
@@ -92,3 +92,20 @@ def test_the_json_reference_documents_every_json():
     reference = (Path(__file__).parent.parent / "docs/reference/json.rst").read_text()
     for page in JSON_API:
         assert f"``{page['json'].split('?')[0]}``" in reference, page["json"]
+
+
+def test_robots_leave_the_repeated_addresses_alone(client):
+    """Every pull request with every step, column and badge would be read again and again."""
+    import re
+
+    text = client.get("/robots.txt").content.decode()
+    for path in ("/*?step=", "/*?col=", "/*/badge.svg", "/*/badge.png", "/*?example="):
+        assert f"Disallow: {path}\n" in text
+    disallowed = [
+        re.compile("^" + re.escape(line.split(": ", 1)[1]).replace(r"\*", ".*"))
+        for line in text.splitlines()
+        if line.startswith("Disallow: ")
+    ]
+    for page in JSON_API:  # the JSON that the guideline shows stays open
+        address = page["json"].replace("<slug>", "icalendar").replace("<number>", "1")
+        assert not any(rule.match(address) for rule in disallowed), address

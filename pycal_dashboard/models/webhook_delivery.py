@@ -11,9 +11,13 @@ class WebhookDelivery(models.Model):
     action = models.CharField(max_length=100, blank=True, default="")
     repository = models.CharField(max_length=200, blank=True, default="")
     received = models.DateTimeField(auto_now_add=True)
-    outcome = models.CharField(max_length=20)  # done, refused or failed
+    # queued (recorded, for the background), handling, done, refused or failed
+    outcome = models.CharField(max_length=20)
     error = models.CharField(max_length=100, blank=True, default="")
     detail = models.TextField(blank=True, default="")
+    # the body of a queued webhook until the background handled it; then empty
+    payload = models.TextField(blank=True, default="")
+    handled = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-received"]
