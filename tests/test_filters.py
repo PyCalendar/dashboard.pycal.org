@@ -56,10 +56,35 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     # the conditions read as sentences, as they filter
     assert "It is open" in rows[0] and "It does not have the label needs review" in rows[1]
     assert 'name="on" value="0" checked' in rows[0] and 'name="on" value="1" checked' in rows[1]
-    assert 'name="on" value="2">' in rows[2] and 'class="off"' in rows[2]  # shows both: off
+    # a new filter: every condition on, also the one that shows both
+    assert 'name="on" value="2" checked' in rows[2] and 'class="off"' not in rows[2]
     assert "data-opposite" in rows[1] and "&amp;swap=1" in rows[1]
     assert "The filter shows a pull request when one of the conditions above is met." in page
     assert page.count('<input type="hidden" name="col"') == 3
+    # each condition can be inverted and removed
+    assert "&amp;invert=0" in rows[0] and "&amp;remove=0" in rows[0]
+    assert 'title="Invert: it is closed or merged"' in rows[0]
+
+
+def test_a_saved_filter_keeps_its_conditions_that_are_off(client, project, bob):
+    saved = PullRequestFilter.objects.create(project=project, name="Open", columns=COLUMNS)
+    client.force_login(bob)
+    page = save_page(client, *COLUMNS, saved=saved.pk)
+    row = page.split('<tr data-condition-row="2"')[1].split("</tr>")[0]
+    assert 'name="on" value="2">' in row and 'class="off"' in row  # shows both: off
+
+
+def test_invert_and_remove_a_condition(client, project, bob):
+    client.force_login(bob)
+    address = "/projects/icalendar/filters/save/?" + "&".join(f"col={c}" for c in COLUMNS)
+    inverted = client.get(address + "&invert=0")["Location"]
+    assert "col=status~applies~closed~merged" in inverted.replace("%7E", "~")
+    inverted = client.get(address + "&invert=2")["Location"].replace("%7E", "~")
+    assert "col=branch~all~conflict" in inverted  # it does not filter: as it was
+    removed = client.get(address + "&remove=1")["Location"].replace("%7E", "~")
+    assert "needs" not in removed and removed.count("col=") == 2
+    auto = "/projects/icalendar/filters/save/?col=status~applies~auto_merge&invert=0"
+    assert "col=status~not~auto_merge" in client.get(auto)["Location"].replace("%7E", "~")
 
 
 def test_a_condition_switched_off_does_not_filter(client, project, bob):

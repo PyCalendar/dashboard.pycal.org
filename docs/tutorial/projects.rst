@@ -188,15 +188,19 @@ check mark, or not, with a red cross, and why:
 **Status**
    Open, closed, merged or auto-merging, with their colors.
 **Reviews**
-   At least a number of reviews. Approvals, requested changes and reviews
-   dismissed later count, comments do not. The cell shows how many it has.
+   The pull request has a number of reviews: *at least* (the default), *at
+   most*, *more than*, *fewer than* or *exactly*. At least and at most include
+   the number. Approvals, requested changes and reviews dismissed later count,
+   comments do not. The cell shows how many it has.
 **Author**
-   A state of the author above a number, counted in all repositories of the
-   project that you see: the review to pull request ratio, the reviews given,
-   the pull requests opened, or those of them closed by the author. The ratio
-   is the reviews given for each pull request that the author opened and did
-   not close themselves, such as *1.5*. The cell shows the number of the
-   author. See :doc:`/reference/states/index`.
+   A state of the author compared with a number, counted in all repositories
+   of the project that you see: the review to pull request ratio, the reviews
+   given, the pull requests opened, or those of them closed by the author;
+   *below* (the default), *above*, *at most*, *at least* or *exactly* the
+   number. The ratio is the reviews given for each pull request that the
+   author opened and did not close themselves: *1* is as many reviews as pull
+   requests, *0.5* half as many and *2* twice as many. The cell shows the
+   number of the author. See :doc:`/reference/states/index`.
 
 The header of a column is short: the label, struck through when it must be
 absent, or the states chosen, such as *conflict*. Below it, the gear changes
@@ -230,7 +234,10 @@ unique in the project, and a description in Markdown, and lists the conditions
 in one table, with their long names, such as *Label needs review: present*, and
 whether each shows the pull requests it applies to or those it does not. They
 filter as an *or*. A switch at each condition turns it off: it is grayed out and
-stays a column of the table without filtering. For a condition that shows only
+stays a column of the table without filtering; when a filter is saved the
+first time, every condition is on. **Invert** next to a condition turns it
+into its opposite, such as *it is not auto-merging* for *it is auto-merging*
+or *fewer than 2 reviews* for *at least 2*, and **Remove** removes it. For a condition that shows only
 what it does not apply to, the page suggests its opposite where it is the same,
 such as *label absent* for not *label present*; **Use it** switches it.
 

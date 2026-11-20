@@ -28,10 +28,7 @@ class ReviewsGiven(PersonState):
     )
     data = (ReviewsData(),)
 
-    phrase = (
-        gettext_noop("its author gave more than %(number)s reviews"),
-        gettext_noop("its author gave at most %(number)s reviews"),
-    )
+    phrase = gettext_noop("its author gave %(comparison)s %(number)s reviews")
 
     @classmethod
     def measure(cls, person: GitHubUser, scope: Scope, values: dict) -> int:

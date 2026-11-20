@@ -34,10 +34,8 @@ class ReviewRatio(PersonState):
     )
     data = (IssueData(), ReviewsData())
 
-    phrase = (
-        gettext_noop("its author has a review to pull request ratio above %(number)s"),
-        gettext_noop("its author has a review to pull request ratio of at most %(number)s"),
-    )
+    phrase = gettext_noop("its author has a review to pull request ratio %(comparison)s %(number)s")
+    counted = False
 
     @classmethod
     def measure(cls, person: GitHubUser, scope: Scope, values: dict) -> float:

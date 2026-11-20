@@ -7,7 +7,7 @@ did not close themselves.
 
 It is ``reviews_given / (pull_requests_opened - own_pull_requests_closed)``,
 made of those states. Without such pull requests, it is infinite with reviews,
-and 0 without. The condition :doc:`/reference/conditions/review_ratio_above`
+and 0 without. The condition :doc:`/reference/conditions/review_ratio`
 checks it.
 
 It is observed on a person in a project: the author of a pull request, or a

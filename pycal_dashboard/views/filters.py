@@ -29,11 +29,13 @@ from .projects import (
 )
 
 
-def summary(columns: list[Column]) -> list[dict]:
+def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
     """The conditions of a filter as the pages of filters show them, in their order.
 
     Parameters:
         columns: The columns of conditions.
+        enabled: Whether every condition is switched on, as for a filter saved the first
+            time; else those that filter.
 
     Returns:
         Each column with its ``index``, whether it ``filters`` (a column that shows both the
@@ -44,11 +46,41 @@ def summary(columns: list[Column]) -> list[dict]:
         {
             "column": column,
             "index": index,
-            "filters": column.filter != "all",
+            "filters": enabled or column.filter != "all",
             "opposite": column.opposite(),
+            "inverted": column.inverted(),
         }
         for index, column in enumerate(columns)
     ]
+
+
+def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
+    """The columns after a button of the page of saving: ``swap``, ``invert`` or ``remove``.
+
+    Parameters:
+        request: The request, with the number of the column of the button.
+        columns: The columns of conditions.
+
+    Returns:
+        The changed columns; None without such a button.
+    """
+    for action in ("swap", "invert", "remove"):
+        if action not in request.GET:
+            continue
+        changed = list(columns)
+        try:
+            index = int(request.GET[action])
+            column = changed[index]
+        except (ValueError, IndexError):
+            return changed
+        if action == "remove":
+            del changed[index]
+        elif action == "invert":
+            changed[index] = column.inverted() or column
+        else:  # a column of crosses for its opposite of check marks
+            changed[index] = column.opposite() or column
+        return changed
+    return None
 
 
 def switched(columns: list[Column], on: set[int]) -> list[Column]:
@@ -219,13 +251,9 @@ def project_filter_save(request: HttpRequest, slug: str):
     form = request.POST if request.method == "POST" else request.GET
     columns = [Column.decode(value) for value in form.getlist("col")]
     saved = saved_filter(access.project, form.get("saved"))
-    if "swap" in request.GET:  # a column of crosses for its opposite of check marks
-        try:
-            index = int(request.GET["swap"])
-            columns[index] = columns[index].opposite() or columns[index]
-        except (ValueError, IndexError):
-            pass
-        address = table_address(columns, PER_PAGE, saved.pk if saved else None)
+    changed = saved_columns(request, columns)
+    if changed is not None:  # a button of a condition: use the opposite, invert or remove it
+        address = table_address(changed, PER_PAGE, saved.pk if saved else None)
         return redirect(access.project.path("filters/save/") + address)
     if request.method == "POST":
         name = " ".join(request.POST.get("name", "").split())[:100]
@@ -255,7 +283,7 @@ def project_filter_save(request: HttpRequest, slug: str):
             "project": access.project,
             "access": access,
             "columns": columns,
-            "summary": summary(columns),
+            "summary": summary(columns, enabled=saved is None),  # new: every condition on
             "saved": saved,
             "count": len(ColumnResults(repositories).matching(columns)),
             "back": access.project.path("pull-requests/")

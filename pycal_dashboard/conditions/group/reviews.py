@@ -1,4 +1,4 @@
-"""The group of reviews: a pull request has at least a number of reviews."""
+"""The group of reviews: how many reviews a pull request has, compared with a number."""
 
 from __future__ import annotations
 
@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING
 from django.utils.translation import gettext, ngettext
 from django.utils.translation import gettext_lazy as _
 
-from pycal_dashboard.conditions.condition.reviews_at_least import ReviewsAtLeast
+from pycal_dashboard.conditions.condition.reviews import Reviews
 from pycal_dashboard.conditions.group.base import ConditionGroup
+from pycal_dashboard.conditions.input.comparison import COMPARISONS, INVERSE, NOT_EXACTLY
 from pycal_dashboard.conditions.spec.reviews import COUNTED
 from pycal_dashboard.errors import ConditionInputMissing
 
@@ -18,61 +19,70 @@ if TYPE_CHECKING:
     from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue
 
+DEFAULT = "at_least"
+
 
 class ReviewsGroup(ConditionGroup):
-    """At least a number of reviews: ``reviews_at_least``.
+    """The reviews of a pull request compared with a number: the condition ``reviews``.
 
-    The choice is the number, from 1 up; reviews of comments only do not count.
+    The choices are the comparison, such as ``at_least``, and the number, from 0 up; reviews
+    of comments only do not count. A choice of the number alone, as columns were saved
+    before, is at least that number.
     """
 
     id = "reviews"
     title = _("Reviews")
+    comparisons = COMPARISONS  # for the menu of the column
+    default = DEFAULT
 
     @classmethod
     def check(cls, choices: tuple[str, ...]) -> tuple[str, ...]:
-        """Check the number.
+        """Check the comparison and the number.
 
         Parameters:
-            choices: The number of reviews.
+            choices: The comparison and the number; or the number alone: at least.
 
         Returns:
             The choices.
 
         Raises:
             ConditionInputMissing: There is no number.
-            ConditionError: It is not a whole number from 1 up.
+            ConditionError: The comparison is not known, or the number is not one from 0 up.
         """
-        if len(choices) != 1 or not choices[0].strip():
+        if len(choices) == 1:
+            choices = (DEFAULT, *choices)
+        if len(choices) != 2 or not choices[1].strip():
             raise ConditionInputMissing("reviews: reviews")
-        return (str(ReviewsAtLeast.configure({"reviews": choices[0]})["reviews"]),)
+        values = Reviews.configure({"comparison": choices[0], "reviews": choices[1]})
+        return values["comparison"], str(values["reviews"])
 
     @classmethod
     def parse(cls, form: QueryDict) -> tuple[str, ...]:
-        """The number of a form.
+        """The comparison and the number of a form.
 
         Parameters:
-            form: ``reviews``.
+            form: ``reviews_comparison`` and ``reviews``.
 
         Returns:
             The choices.
         """
-        return cls.check((form.get("reviews", ""),))
+        return cls.check((form.get("reviews_comparison", DEFAULT), form.get("reviews", "")))
 
     @classmethod
     def applies(
         cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
     ) -> bool | None:
-        """Whether the pull request has at least the number of reviews.
+        """Whether the number of reviews of the pull request compares with the number.
 
         Parameters:
             issue: The pull request.
-            choices: The number.
+            choices: The comparison and the number.
             scope: Not used: the reviews are of the pull request itself.
 
         Returns:
             True or False; None while the reviews are not read.
         """
-        return ReviewsAtLeast.check(issue, {"reviews": int(choices[0])})
+        return Reviews.check(issue, {"comparison": choices[0], "reviews": int(choices[1])})
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -80,62 +90,76 @@ class ReviewsGroup(ConditionGroup):
 
         Parameters:
             issue: The pull request.
-            choices: The number.
+            choices: The comparison and the number.
             scope: Not used.
 
         Returns:
             The number of reviews, when they are read.
         """
-        if not ReviewsAtLeast.complete(issue):
+        if not Reviews.complete(issue):
             return []
         count = sum(review.state in COUNTED for review in issue.reviews.all())
         text = ngettext("%(count)s review", "%(count)s reviews", count) % {"count": count}
         return [{"text": text, "kind": "number"}]
 
     @classmethod
+    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """The opposite comparison, such as below 2 for at least 2.
+
+        Parameters:
+            choices: The comparison and the number.
+
+        Returns:
+            The choices; None for exactly, which has no opposite comparison.
+        """
+        inverse = INVERSE.get(choices[0])
+        return (inverse, choices[1]) if inverse else None
+
+    @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
         """Such as ``it has at least 2 reviews`` or ``it has fewer than 2 reviews``.
 
         Parameters:
-            choices: The number.
+            choices: The comparison and the number.
             negative: The pull requests that it does not apply to.
 
         Returns:
             The part of the sentence.
         """
-        number = int(choices[0])
+        comparison, number = choices[0], int(choices[1])
         if negative:
-            return ngettext(
-                "it has fewer than %(number)s review",
-                "it has fewer than %(number)s reviews",
-                number,
-            ) % {"number": number}
+            comparison = INVERSE.get(comparison, "")
+        words = gettext(COMPARISONS[comparison][2]) if comparison else gettext(NOT_EXACTLY)
         return ngettext(
-            "it has at least %(number)s review", "it has at least %(number)s reviews", number
-        ) % {"number": number}
+            "it has %(comparison)s %(number)s review",
+            "it has %(comparison)s %(number)s reviews",
+            number,
+        ) % {"comparison": words, "number": number}
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
-        """Such as ``≥ 2 reviews``.
+        """Such as ``reviews ≥ 2``.
 
         Parameters:
-            choices: The number.
+            choices: The comparison and the number.
 
         Returns:
             One part.
         """
-        number = int(choices[0])
-        text = ngettext("≥ %(number)s review", "≥ %(number)s reviews", number)
-        return [{"text": text % {"number": number}, "kind": "number"}]
+        sign = COMPARISONS[choices[0]][0]
+        return [{"text": f"{gettext('reviews')} {sign} {choices[1]}", "kind": "number"}]
 
     @classmethod
     def summary(cls, choices: tuple[str, ...]) -> str:
         """Such as ``Reviews: at least 2``.
 
         Parameters:
-            choices: The number.
+            choices: The comparison and the number.
 
         Returns:
             The header.
         """
-        return gettext("Reviews: at least %(number)s") % {"number": choices[0]}
+        return gettext("Reviews: %(comparison)s %(number)s") % {
+            "comparison": gettext(COMPARISONS[choices[0]][1]),
+            "number": choices[1],
+        }

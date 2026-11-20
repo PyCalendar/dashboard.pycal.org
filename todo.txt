@@ -467,28 +467,42 @@ community: where to start, what waits for a review, who contributes.
 - [x] remove ✎ from the steps page
 - [ ] varaibles for the badge of the pr
 - [ ] Share the project - github name should have auto completion. niccokunzmann - is called github handle and Nicco Kunzmann is the github name that I use. I think, this should be consistent across the project as to avoid confusion
-- [ ] "At least this many reviews" -> "The pull request has at least so many reviews"
-- [ ] Make also sure that the "Approvals and requested changes count, comments do not." and the input are on different lines.
-- [ ] The review to pull request ratio is the reviews given for each pull request opened (and not closed by the author personally). Examples:
+- [x] "At least this many reviews" -> "The pull request has at least so many reviews"
+- [x] Make also sure that the "Approvals and requested changes count, comments do not." and the input are on different lines.
+- [x] The review to pull request ratio is the reviews given for each pull request opened (and not closed by the author personally). Examples:
        - 1 = as many reviews as PRs
        - 0.5 = half as many reviews as PRs
        - 2 = twice as many reviews as PRs
-- [ ] Above should be a drop down to choose "below" also
-- [ ] similarly "at least as many reviews" should be also drop down changeable to "at most" and the documentation says that the value is inclusive
+- [x] Above should be a drop down to choose "below" also
+- [x] similarly "at least as many reviews" should be also drop down changeable to "at most" and the documentation says that the value is inclusive
 - [x]  Hidden in the page of a pull request, unless the pull request is in it This should be: Visible by default and not fat and the button is not as huge - check the style (and it of cause inverts the value) default is visible.
 - [ ] https://github.com/PyCalendar/icalendar/pull/2167
 - [x] https://dashboard.pycal.org/projects/icalendar/steps/?step=4 a step should next to its name on the top rigt also have a button to edit its filter
-- [ ] Remember for this project, there should always be invert buttons on the https://dashboard.pycal.org/projects/icalendar/filters/save/ page. People might add the wrong condition and  might need to negate it.
-- [ ] reviews given: default should be below for the author conditions. Wherever we compare numbers, it should read as "above >" "below <" "at most <=" "at least >=" "exactly =" that counts for all the conditions and states
-- [ ] It is auto-merging and all conditions must be invertible. For that, there is a button on the https://dashboard.pycal.org/projects/icalendar/filters/save/ site in the table of the condisions in a new column which is Actions and it allows to remove and to invert this condition.
+- [x] Remember for this project, there should always be invert buttons on the https://dashboard.pycal.org/projects/icalendar/filters/save/ page. People might add the wrong condition and  might need to negate it.
+- [x] reviews given: default should be below for the author conditions. Wherever we compare numbers, it should read as "above >" "below <" "at most <=" "at least >=" "exactly =" that counts for all the conditions and states
+- [x] It is auto-merging and all conditions must be invertible. For that, there is a button on the https://dashboard.pycal.org/projects/icalendar/filters/save/ site in the table of the condisions in a new column which is Actions and it allows to remove and to invert this condition.
 - [x] Next to the name, it should be possible to give each of the steps a distinct color. That is a color that is used for the background
 - [x] https://dashboard.pycal.org/projects/icalendar/pull/2166/ that is no place to copy & past the badge. Show the badge elsewhere should not be on the page.
 - [x] https://dashboard.pycal.org/projects/icalendar/pull/2166/?step=1 all future steps always have a gray border. The current step has a yellow border when it is partially complete and a red border if it is 100% incomplete. The blue border is not used for selection but the background indicates which step one selected. future steps can also not have a check mark
 - [x] remove step X from the https://dashboard.pycal.org/projects/icalendar/pull/2166/ progress bar - not needed
 - [x] With an example pull request - this excactly what the preview button should do. This is duplicated functionality. Only use the preview button and add a note that this is with an example PR - and only add the note when there are varaibles used. If there are no varaibles used, this just works like markdown.
-- [ ] when saving a filter for the first time, all the conditions should be enabled.
+- [x] when saving a filter for the first time, all the conditions should be enabled.
 - [ ] Is the PR link still stable even if several repositories have e.g. PR #1 ?
-- [ ] The ratio computation should use inf and -inf for zero division or a huge value in case this does not work with JSON.
+- [x] The ratio computation should use inf and -inf for zero division or a huge value in case this does not work with JSON.
+      (it does: inf with reviews and no pull requests, 0 without; the JSON has no ratios, only
+      whether conditions apply, and the cell shows ∞)
 - [x] future steps should not show the X/Y and also the boxes should neither be green nor red but gray. Future steps should not show the status. That is confusing.
 - [ ] try to speed up page loading in case there are many PRs
 - [ ] The menu of the account (top right) has an entry My projects
+- [ ] A new tab PR Message, right of Steps: a message about the state of a pull request, added
+      as a comment to the pull requests and updated by the site; off by default, enabled for
+      the whole project or for single pull requests. The page: the rendered message with a
+      tab Markdown that shows its Markdown; the editor of Markdown with the variables; the
+      scope of the message, at the bottom: a switch "Add to these pull requests:" (on by
+      default) with their numbers, a switch "Add to all new pull requests", a switch "Add to
+      all open pull requests", and a switch, light red, not preferred, "Add to closed and merged
+      pull requests" (the others off by default). A pull request with the message has it
+      updated whenever its variables or the message change; saving the message applies to all
+      of them, updated in the background
+      The rendered message is a live preview; when people are happy with it, the button
+      "Update X Pull Requests" saves it, next to a button Cancel

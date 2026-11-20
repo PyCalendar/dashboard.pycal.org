@@ -133,6 +133,19 @@ class ConditionGroup(ABC):
         return None
 
     @classmethod
+    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """The choices that apply exactly when these do not, to invert a condition.
+
+        Parameters:
+            choices: The choices.
+
+        Returns:
+            The inverted choices, such as label absent for present; None when the group has
+            none, then the filter of the column is inverted instead.
+        """
+        return cls.opposite(choices)
+
+    @classmethod
     @abstractmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
         """The shortest header of the column: the parts it shows, such as the states chosen.

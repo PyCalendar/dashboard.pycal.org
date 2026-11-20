@@ -8,7 +8,7 @@ repository reads for it in the background. A condition
 (:doc:`/reference/conditions/index`) is a state of a pull request that is true
 or false; the states of people are numbers, counted in all repositories of a
 project, such as the reviews a person gave. Conditions check them, such as
-:doc:`/reference/conditions/review_ratio_above`.
+:doc:`/reference/conditions/review_ratio`.
 
 .. list-table::
    :header-rows: 1

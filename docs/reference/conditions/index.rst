@@ -6,7 +6,7 @@ A condition is checked on a pull request, such as whether it has a label. Each
 has an id, the inputs that configure it, and the data that the update of the
 repository reads for it in the background. A condition is a state of a pull
 request that is true or false; the :doc:`states of people </reference/states/index>`
-are numbers, and conditions such as ``review_ratio_above`` check them.
+are numbers, and conditions such as ``review_ratio`` compare them with a number.
 
 .. list-table::
    :header-rows: 1
@@ -37,11 +37,10 @@ are numbers, and conditions such as ``review_ratio_above`` check them.
      - A pull request was merged.
    * - :doc:`closed`
      - A pull request was closed without being merged.
-   * - :doc:`reviews_at_least`
-     - A pull request has at least a number of reviews, without those of
-       comments.
-   * - :doc:`review_ratio_above`
-     - The review to pull request ratio of the author is above a number.
+   * - :doc:`reviews`
+     - A pull request has a number of reviews, without those of comments only.
+   * - :doc:`review_ratio`
+     - The review to pull request ratio of the author compared with a number.
 
 .. toctree::
    :hidden:
@@ -58,8 +57,8 @@ are numbers, and conditions such as ``review_ratio_above`` check them.
    open
    merged
    closed
-   reviews_at_least
-   review_ratio_above
+   reviews
+   review_ratio
    api
 
 Inputs
@@ -77,6 +76,9 @@ partial ``conditions/_input.html``):
    A whole number from 1 up.
 ``number``
    A number, also with a fraction, such as ``1.5``.
+``comparison``
+   How a number is compared: ``above``, ``below``, ``at_most``, ``at_least``
+   or ``exactly``; at most and at least include the number.
 ``range``
    Two whole numbers, ``[low, high]``, low not above high.
 ``string-label``

@@ -499,3 +499,10 @@ form.stacked label.color-choice { display: inline-flex; margin: 0; cursor: point
 .step-visible { margin: .5rem 0 1rem; }
 .step-visible small { display: block; }
 form.stacked .step-visible label.switch { font-weight: 400; }
+
+/* the buttons of a condition on the page of saving a filter */
+.condition-buttons { display: inline-flex; flex-wrap: wrap; gap: .3rem; }
+.filter-conditions .condition-actions { width: 1%; white-space: nowrap; }
+.comparison-row { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.comparison-row input[type="number"] { width: 6rem; }
+.condition-form small { display: block; margin-top: .3rem; }

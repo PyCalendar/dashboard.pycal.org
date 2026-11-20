@@ -30,8 +30,8 @@ IDS = [
     "open",
     "merged",
     "closed",
-    "reviews_at_least",
-    "review_ratio_above",
+    "reviews",
+    "review_ratio",
 ]
 REPO = "collective/icalendar"
 

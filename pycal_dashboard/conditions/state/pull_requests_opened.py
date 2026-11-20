@@ -26,10 +26,7 @@ class PullRequestsOpened(PersonState):
     description = gettext_noop("How many pull requests a person opened in the project.")
     data = (IssueData(),)
 
-    phrase = (
-        gettext_noop("its author opened more than %(number)s pull requests"),
-        gettext_noop("its author opened at most %(number)s pull requests"),
-    )
+    phrase = gettext_noop("its author opened %(comparison)s %(number)s pull requests")
 
     @classmethod
     def measure(cls, person: GitHubUser, scope: Scope, values: dict) -> int:

@@ -41,6 +41,10 @@ Inputs
    :members:
    :show-inheritance:
 
+.. automodule:: pycal_dashboard.conditions.input.comparison
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.input.range
    :members:
    :show-inheritance:
@@ -111,8 +115,8 @@ Conditions
 .. automodule:: pycal_dashboard.conditions.condition.ci_unknown
    :no-members:
 
-.. automodule:: pycal_dashboard.conditions.condition.reviews_at_least
+.. automodule:: pycal_dashboard.conditions.condition.reviews
    :no-members:
 
-.. automodule:: pycal_dashboard.conditions.condition.review_ratio_above
+.. automodule:: pycal_dashboard.conditions.condition.review_ratio
    :no-members:

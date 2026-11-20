@@ -12,16 +12,18 @@
     <small class="muted">{% translate "Choose a label of the repositories or type another one." %}</small></p>
   </fieldset>
   <fieldset class="group-fields fields-reviews"><legend>{% translate "Reviews" %}</legend>
-    <p><label for="reviews-{{ index }}">{% translate "At least this many reviews" %}</label>
-    <input id="reviews-{{ index }}" name="reviews" type="number" inputmode="numeric" min="1" step="1" data-required-for="reviews" value="{% if column.group.id == 'reviews' %}{{ column.choices.0 }}{% else %}1{% endif %}">
-    <small class="muted">{% translate "Approvals and requested changes count, comments do not." %}</small></p>
+    <p><label for="reviews-comparison-{{ index }}">{% translate "The pull request has" %}</label>
+    <span class="comparison-row"><select id="reviews-comparison-{{ index }}" name="reviews_comparison">{% for name, about in groups.reviews.comparisons.items %}<option value="{{ name }}"{% if column.group.id == 'reviews' %}{% if column.choices.0 == name %} selected{% endif %}{% elif name == groups.reviews.default %} selected{% endif %}>{% translate about.1 %} {{ about.0 }}</option>{% endfor %}</select>
+    <input id="reviews-{{ index }}" name="reviews" type="number" inputmode="numeric" min="0" step="1" data-required-for="reviews" aria-label="{% translate "Reviews" %}" value="{% if column.group.id == 'reviews' %}{{ column.choices.1 }}{% else %}1{% endif %}"> <span>{% translate "reviews" %}</span></span>
+    <small class="muted">{% translate "Approvals and requested changes count, comments do not. At least and at most include the number." %}</small></p>
   </fieldset>
   <fieldset class="group-fields fields-author"><legend>{% translate "Author" %}</legend>
     <p><label for="state-{{ index }}">{% translate "Of the author, in the project" %}</label>
     <select id="state-{{ index }}" name="state">{% for state_id, state in groups.author.states.items %}<option value="{{ state_id }}"{% if column.group.id == 'author' and column.choices.0 == state_id %} selected{% endif %} title="{% translate state.description %}">{% translate state.title %}</option>{% endfor %}</select></p>
-    <p><label for="above-{{ index }}">{% translate "Above" %}</label>
-    <input id="above-{{ index }}" name="above" type="number" inputmode="decimal" min="0" step="any" data-required-for="author" value="{% if column.group.id == 'author' %}{{ column.choices.1 }}{% else %}1{% endif %}">
-    <small class="muted">{% translate "The review to pull request ratio is the reviews given for each pull request opened and not closed by the author." %}</small></p>
+    <p><label for="comparison-{{ index }}">{% translate "Is" %}</label>
+    <span class="comparison-row"><select id="comparison-{{ index }}" name="comparison">{% for name, about in groups.author.comparisons.items %}<option value="{{ name }}"{% if column.group.id == 'author' %}{% if column.choices.1 == name %} selected{% endif %}{% elif name == groups.author.default %} selected{% endif %}>{% translate about.1 %} {{ about.0 }}</option>{% endfor %}</select>
+    <input id="number-{{ index }}" name="number" type="number" inputmode="decimal" min="0" step="any" data-required-for="author" aria-label="{% translate "The number to compare with" %}" value="{% if column.group.id == 'author' %}{{ column.choices.2 }}{% else %}1{% endif %}"></span>
+    <small class="muted">{% translate "The review to pull request ratio is the reviews given for each pull request opened and not closed by the author personally: 1 is as many reviews as pull requests, 0.5 half as many, 2 twice as many. At least and at most include the number." %}</small></p>
   </fieldset>
   {% for id, group in groups.items %}{% if group.switches %}<fieldset class="group-fields fields-{{ id }}" data-switches="{{ id }}"><legend>{% translate group.title %}</legend>
     {% for name, condition, text in group.switches %}{% translate text as switch_text %}{% if column.group.id == id and name in column.choices %}{% include "pycal_dashboard/_switch.html" with name=id value=name checked=True text=switch_text hidden_text="" %}{% else %}{% include "pycal_dashboard/_switch.html" with name=id value=name checked=False text=switch_text hidden_text="" %}{% endif %}{% endfor %}

@@ -100,7 +100,7 @@ def test_create_a_project(signed_in, site, github, update_worker):
     expect(row).to_have_css("border-left-color", "rgb(29, 107, 51)")  # open: green
     table.get_by_text("Display:").click()
     table.get_by_label("Title").uncheck()
-    table.get_by_label("Number").uncheck()
+    table.get_by_label("Number", exact=True).uncheck()
     expect(table.locator("td.col-title").first).to_be_hidden()
     expect(table.locator("td.col-link").first).to_be_visible()  # now the icon links
     expect(table.locator("[data-columns-shown]")).to_have_text("Step, Creator")
@@ -492,17 +492,20 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     menu = page.locator("[data-add-condition] [data-condition-form]")
     menu.get_by_label("Condition").select_option("reviews")
     expect(menu.get_by_label("Name of the label")).to_be_hidden()
-    menu.get_by_label("At least this many reviews").fill("1")
+    expect(menu.get_by_label("The pull request has")).to_have_value("at_least")  # by default
+    menu.get_by_label("Reviews", exact=True).fill("1")
     menu.get_by_role("button", name="Add the column").click()
-    expect(page).to_have_url(re.compile(r"col=reviews~all~1"))
+    expect(page).to_have_url(re.compile(r"col=reviews~all~at_least~1"))
     ready = page.locator("[data-pull-request='collective/icalendar#1']")
     expect(ready.locator(".col-condition")).to_contain_text("1 review")
     page.get_by_label("Add a condition").click()
     menu.get_by_label("Condition").select_option("author")
     menu.get_by_label("Of the author, in the project").select_option("review_ratio")
-    menu.get_by_label("Above", exact=True).fill("0.3")
+    expect(menu.get_by_label("Is", exact=True)).to_have_value("below")  # by default
+    menu.get_by_label("Is", exact=True).select_option("above")
+    menu.get_by_label("The number to compare with").fill("0.3")
     menu.get_by_role("button", name="Add the column").click()
-    expect(page).to_have_url(re.compile(r"col=author~all~review_ratio~0.3"))
+    expect(page).to_have_url(re.compile(r"col=author~all~review_ratio~above~0.3"))
     # octocat opened 3 and reviewed once: 0.33
     expect(ready.locator(".col-condition").nth(1)).to_contain_text("0.33")
     expect(ready.locator(".col-condition").nth(1)).to_have_attribute("data-result", "yes")

@@ -1,13 +1,14 @@
-==============================================================
-``review_ratio_above``: Review to pull request ratio above
-==============================================================
+==================================================
+``review_ratio``: Review to pull request ratio
+==================================================
 
-The review to pull request ratio of the author is above a number.
+The review to pull request ratio of the author compared with a number.
 
 Holds when the state :doc:`/reference/states/review_ratio` of the author of the
-pull request, counted in all repositories of the project, is above the input
-``ratio``, such as ``1.5``: the author gave more than one and a half reviews
-for each pull request of theirs. The ratio is
+pull request, counted in all repositories of the project, compares with the
+input ``ratio`` as the input ``comparison`` says, such as below 1: the author
+gave fewer reviews than they opened pull requests that others had to look at.
+The ratio is
 
 .. code-block:: text
 
@@ -15,7 +16,11 @@ for each pull request of theirs. The ratio is
 
 of the states :doc:`/reference/states/reviews_given`,
 :doc:`/reference/states/pull_requests_opened` and
-:doc:`/reference/states/own_pull_requests_closed`.
+:doc:`/reference/states/own_pull_requests_closed`. For example:
+
+- ``1``: as many reviews as pull requests,
+- ``0.5``: half as many reviews as pull requests,
+- ``2``: twice as many reviews as pull requests.
 
 It is checked on pull requests only. While the data of a repository of the
 project is not complete, the condition cannot be assessed yet.
@@ -30,6 +35,12 @@ Inputs
      - Type
      - Required
      - What it is
+   * - ``comparison``
+     - ``comparison``
+     - no, ``above``
+     - How the ratio compares with the number: ``above``, ``below``,
+       ``at_most``, ``at_least`` or ``exactly``, see :doc:`reviews`; at most
+       and at least include the number.
    * - ``ratio``
      - ``number``
      - yes
@@ -42,7 +53,7 @@ The inputs as JSON:
 
 .. code-block:: json
 
-   {"ratio": 1.5}
+   {"comparison": "below", "ratio": 1}
 
 Data
 ====
@@ -60,6 +71,6 @@ The update of the repository reads in the background:
 API reference
 =============
 
-.. autoclass:: pycal_dashboard.conditions.condition.review_ratio_above.ReviewRatioAbove
+.. autoclass:: pycal_dashboard.conditions.condition.review_ratio.ReviewRatioCompared
    :members: assess
    :show-inheritance:

@@ -153,8 +153,8 @@ def test_unknown_while_the_reviews_are_not_read(repositories):
     assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 1
     assert STATES["pull_requests_opened"].observe(pull("Anna 1"), Scope([repository])) == 3
     assert (
-        CONDITIONS["review_ratio_above"].check(
-            pull("Anna 1"), {"ratio": 0.1}, Scope([repository, other])
+        CONDITIONS["review_ratio"].check(
+            pull("Anna 1"), {"comparison": "above", "ratio": 0.1}, Scope([repository, other])
         )
         is None
     )
@@ -166,24 +166,42 @@ def test_without_an_author_there_is_no_state(repositories):
     assert STATES["reviews_given"].observe(issue) is None
 
 
-def test_reviews_at_least(repositories):
-    condition = CONDITIONS["reviews_at_least"]
-    values = condition.configure({"reviews": "2"})
-    assert condition.check(pull("Anna 1"), values) is True  # approved, changes; not the comment
-    assert condition.check(pull("Ben 1"), values) is False
-    assert condition.check(pull("Ben 1"), condition.configure({"reviews": 1})) is True
+@pytest.mark.parametrize(
+    ("comparison", "number", "anna", "ben"),
+    [  # Anna 1 has 2 reviews (approved, changes; not the comment), Ben 1 has 1
+        ("at_least", 2, True, False),  # the number counts
+        ("at_most", 1, False, True),
+        ("above", 1, True, False),
+        ("below", 2, False, True),
+        ("exactly", 1, False, True),
+    ],
+)
+def test_reviews(repositories, comparison, number, anna, ben):
+    condition = CONDITIONS["reviews"]
+    values = condition.configure({"comparison": comparison, "reviews": str(number)})
+    assert condition.check(pull("Anna 1"), values) is anna
+    assert condition.check(pull("Ben 1"), values) is ben
+
+
+def test_reviews_at_least_by_default(repositories):
+    condition = CONDITIONS["reviews"]
+    assert condition.configure({"reviews": 0}) == {"comparison": "at_least", "reviews": 0}
+    with pytest.raises(errors.ConditionInputUnknown):
+        condition.configure({"comparison": "around", "reviews": 1})
     with pytest.raises(errors.ConditionInputOutOfRange):
-        condition.configure({"reviews": 0})
+        condition.configure({"reviews": -1})
 
 
-def test_review_ratio_above(repositories):
-    condition = CONDITIONS["review_ratio_above"]
+def test_review_ratio(repositories):
+    condition = CONDITIONS["review_ratio"]
     scope = Scope(repositories)
+    above = {"comparison": "above"}
     assert condition.check(pull("Ben 1"), condition.configure({"ratio": "1.4"}), scope) is True
     assert condition.check(pull("Ben 1"), condition.configure({"ratio": 1.5}), scope) is False
-    assert condition.check(pull("Anna 1"), {"ratio": 0.4}, scope) is True
-    assert condition.check(pull("Anna 1"), {"ratio": 0.4}) is True  # its repository
-    assert condition.describe()["inputs"][0]["type"] == "number"
+    assert condition.check(pull("Ben 1"), {"comparison": "at_least", "ratio": 1.5}, scope)
+    assert condition.check(pull("Anna 1"), {**above, "ratio": 0.4}, scope) is True
+    assert condition.check(pull("Anna 1"), {"comparison": "below", "ratio": 1}) is True
+    assert [i["type"] for i in condition.describe()["inputs"]] == ["comparison", "number"]
 
 
 @pytest.mark.parametrize(
@@ -214,7 +232,7 @@ def test_without_the_app_reviews_are_not_read(github):
     assert RepositoryUpdate(repository).run()
     repository.refresh_from_db()
     assert repository.reviews_changed is None and github.graphql_reviews_queries == []
-    assert CONDITIONS["reviews_at_least"].check(Issue.objects.get(), {"reviews": 1}) is None
+    assert CONDITIONS["reviews"].check(Issue.objects.get(), {"reviews": 1}) is None
 
 
 # the columns of the table: the groups Reviews and Author
@@ -232,24 +250,35 @@ def project(repositories, bob):
 def test_a_column_of_reviews(repositories):
     from pycal_dashboard.conditions.group.column import Column
 
-    column = Column.decode("reviews~applies~2")
+    column = Column.decode("reviews~applies~2")  # as saved before: at least
+    assert column.encode() == "reviews~applies~at_least~2"
     assert column.applies(pull("Anna 1")) is True and column.applies(pull("Ben 1")) is False
     assert column.sentence == "it has at least 2 reviews"
+    assert column.head[0]["text"] == "reviews ≥ 2"
     assert column.opposite() is None
-    assert Column.decode("reviews~not~1").sentence == "it has fewer than 1 review"
+    assert column.inverted().encode() == "reviews~applies~below~2"
+    assert Column.decode("reviews~not~at_least~1").sentence == "it has fewer than 1 review"
+    assert Column.decode("reviews~all~exactly~0").sentence == "it has exactly 0 reviews"
+    exactly = Column.decode("reviews~applies~exactly~1")
+    assert exactly.inverted().encode() == "reviews~not~exactly~1"  # no opposite comparison
+    assert exactly.inverted().sentence == "it has not exactly 1 review"
     assert column.group.cell(pull("Anna 1"), column.choices) == [
         {"text": "2 reviews", "kind": "number"}
     ]
     with pytest.raises(errors.ConditionInputOutOfRange):
-        Column.decode("reviews~all~0")
+        Column.decode("reviews~all~at_least~-1")
 
 
 def test_a_column_of_the_author(repositories):
     from pycal_dashboard.conditions.group.column import Column
 
     scope = Scope(repositories)
-    column = Column.decode("author~applies~review_ratio~1.40")
-    assert column.encode() == "author~applies~review_ratio~1.4"
+    column = Column.decode("author~applies~review_ratio~1.40")  # as saved before: above
+    assert column.encode() == "author~applies~review_ratio~above~1.4"
+    assert column.head[0]["text"] == "Review to pull request ratio > 1.4"
+    assert column.inverted().sentence == (
+        "its author has a review to pull request ratio at most 1.4"
+    )
     assert column.applies(pull("Ben 1"), scope) is True  # 1.5 in the project
     assert column.applies(pull("Ben 1")) is False  # 2 reviews / 2 in its repository only
     assert column.applies(pull("Anna 1"), scope) is False  # 0.5
@@ -258,13 +287,18 @@ def test_a_column_of_the_author(repositories):
     assert column.group.summary(column.choices) == (
         "Author: review to pull request ratio above 1.4"
     )
-    given = Column.decode("author~not~reviews_given~2")
+    given = Column.decode("author~not~reviews_given~above~2")
     assert given.sentence == "its author gave at most 2 reviews"
+    below = Column.decode("author~applies~reviews_given~below~2")
+    assert below.sentence == "its author gave fewer than 2 reviews"
+    assert below.applies(pull("Anna 1"), scope) is True  # 1 review
     assert given.shows(given.applies(pull("Anna 1"), scope)) is True
     with pytest.raises(errors.ConditionInputUnknown):
         Column.decode("author~all~nothing~1")
     with pytest.raises(errors.ConditionInputNotNumber):
-        Column.decode("author~all~review_ratio~many")
+        Column.decode("author~all~review_ratio~above~many")
+    with pytest.raises(errors.ConditionInputUnknown):
+        Column.decode("author~all~review_ratio~around~1")
 
 
 def test_the_author_is_unknown_without_the_reviews(repositories):
@@ -291,11 +325,18 @@ def test_the_table_counts_in_the_project(client, project):
 
 def test_a_column_from_the_menu(client, project):
     answer = client.get(
-        "/projects/icalendar/pull-requests/?add=1&group=author&state=reviews_given&above=2"
+        "/projects/icalendar/pull-requests/?add=1&group=author&state=reviews_given&number=2"
     )
-    assert "col=author%7Eall%7Ereviews_given%7E2" in answer["Location"].replace("~", "%7E")
-    answer = client.get("/projects/icalendar/pull-requests/?add=1&group=reviews&reviews=2")
-    assert "reviews%7Eall%7E2" in answer["Location"].replace("~", "%7E")
+    location = answer["Location"].replace("~", "%7E")
+    assert "col=author%7Eall%7Ereviews_given%7Ebelow%7E2" in location  # below by default
+    answer = client.get(
+        "/projects/icalendar/pull-requests/?add=1&group=reviews&reviews_comparison=at_most"
+        "&reviews=2"
+    )
+    assert "reviews%7Eall%7Eat_most%7E2" in answer["Location"].replace("~", "%7E")
+    menu = client.get("/projects/icalendar/pull-requests/").content.decode()
+    assert '<option value="below" selected>below &lt;<' in menu
+    assert '<option value="at_least" selected>at least ≥' in menu
 
 
 def test_a_step_counts_in_the_project(project):

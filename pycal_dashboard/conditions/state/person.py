@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
+from pycal_dashboard.conditions.input.comparison import compare
 from pycal_dashboard.conditions.state.base import State
 from pycal_dashboard.conditions.state.scope import Scope
 
@@ -19,11 +20,15 @@ class PersonState(State):
     author of a pull request, or a person of GitHub. A subclass has :meth:`measure`.
 
     Attributes:
-        phrase: The sentence of the state above a number, with ``%(number)s``: positive and
-            negative, for the columns of the table.
+        phrase: The state compared with a number, with ``%(comparison)s`` and ``%(number)s``,
+            for the columns of the table, such as ``its author gave %(comparison)s
+            %(number)s reviews``.
+        counted: Whether it is a count, such as reviews, whose comparisons read *more than*
+            and *fewer than*; else a value, such as a ratio: *above* and *below*.
     """
 
-    phrase: ClassVar[tuple[str, str]] = ("", "")
+    phrase: ClassVar[str] = ""
+    counted: ClassVar[bool] = True
 
     @classmethod
     def observe(
@@ -48,21 +53,27 @@ class PersonState(State):
         return cls.measure(person, scope, values or {})
 
     @classmethod
-    def above(
-        cls, subject: Issue | GitHubUser, threshold: float, scope: Scope | None = None
+    def compare(
+        cls,
+        subject: Issue | GitHubUser,
+        comparison: str,
+        number: float,
+        scope: Scope | None = None,
     ) -> bool | None:
-        """Whether the state is above a number: what the conditions of states check.
+        """Whether the state compares with a number: what the conditions of states check.
 
         Parameters:
             subject: A pull request or a person, see :meth:`observe`.
-            threshold: The number.
+            comparison: Such as ``below`` or ``at_least``, see ``COMPARISONS`` of
+                :mod:`pycal_dashboard.conditions.input.comparison`.
+            number: The number.
             scope: The repositories counted.
 
         Returns:
-            True if it is above; None while it is not known.
+            True if it holds; None while the state is not known.
         """
         value = cls.observe(subject, scope)
-        return None if value is None else value > threshold
+        return None if value is None else compare(value, comparison, number)
 
     @classmethod
     @abstractmethod

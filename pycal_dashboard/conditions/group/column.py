@@ -176,6 +176,30 @@ class Column:
             return other  # the last one that was on: the other one instead
         return "all"  # switch this one on too
 
+    def inverted(self) -> Column | None:
+        """The column that shows exactly the pull requests that this one does not show.
+
+        Its group inverts its choices where it can, such as label absent for present or below
+        for at least; else its filter is inverted: the pull requests it does not apply to,
+        such as *it is not auto-merging*.
+
+        Returns:
+            The inverted column; None for a column that does not filter.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.group.status import StatusGroup
+            >>> Column(StatusGroup, ("auto_merge",), "applies").inverted().encode()
+            'status~not~auto_merge'
+            >>> Column(StatusGroup, ("open",), "applies").inverted().encode()
+            'status~applies~closed~merged'
+        """
+        choices = self.group.invert(self.choices)
+        if choices is not None and self.filter != "all":
+            return Column(self.group, choices, self.filter)
+        if self.filter == "all":
+            return None
+        return Column(self.group, self.choices, "not" if self.filter == "applies" else "applies")
+
     def opposite(self) -> Column | None:
         """The opposite of a column that shows only those it does not apply to.
 

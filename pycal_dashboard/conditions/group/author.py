@@ -9,6 +9,12 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from pycal_dashboard.conditions.group.base import ConditionGroup
+from pycal_dashboard.conditions.input.comparison import (
+    COMPARISONS,
+    INVERSE,
+    NOT_EXACTLY,
+    ComparisonInput,
+)
 from pycal_dashboard.conditions.input.number import NumberInput
 from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
@@ -28,7 +34,9 @@ STATES: dict[str, type[PersonState]] = {
     state.id: state
     for state in (ReviewRatio, ReviewsGiven, PullRequestsOpened, OwnPullRequestsClosed)
 }
-NUMBER = NumberInput("above", "Above", minimum=0)
+NUMBER = NumberInput("number", "Number", minimum=0)
+COMPARISON = ComparisonInput("comparison", "Comparison")
+DEFAULT = "below"  # such as fewer reviews than pull requests
 
 
 def number_text(number: float) -> str:
@@ -50,59 +58,68 @@ def number_text(number: float) -> str:
 
 
 class AuthorGroup(ConditionGroup):
-    """A state of the author above a number, such as ``review_ratio_above``.
+    """A state of the author compared with a number, such as ``review_ratio``.
 
-    The choices are the id of the state, such as ``review_ratio``, and the number. The state is
+    The choices are the id of the state, such as ``review_ratio``, the comparison, such as
+    ``below``, and the number. The state is
     counted in all repositories of the project that the viewer sees; the condition
-    ``review_ratio_above`` checks the same with the state ``review_ratio``.
+    ``review_ratio`` checks the same with the state ``review_ratio``. A choice of the state
+    and the number alone, as columns were saved before, is above that number.
     """
 
     id = "author"
     title = _("Author")
     states = STATES  # for the menu of the column
+    comparisons = COMPARISONS
+    default = DEFAULT
 
     @classmethod
     def check(cls, choices: tuple[str, ...]) -> tuple[str, ...]:
-        """Check the state and the number.
+        """Check the state, the comparison and the number.
 
         Parameters:
-            choices: The id of the state and the number.
+            choices: The id of the state, the comparison and the number; or the state and the
+                number alone: above.
 
         Returns:
             The choices, the number as people write it.
 
         Raises:
             ConditionInputMissing: There is no number.
-            ConditionInputUnknown: The state is not known.
+            ConditionInputUnknown: The state or the comparison is not known.
             ConditionError: The number is wrong.
         """
-        if len(choices) != 2 or not choices[1].strip():
-            raise ConditionInputMissing("author: above")
+        if len(choices) == 2:
+            choices = (choices[0], "above", choices[1])
+        if len(choices) != 3 or not choices[2].strip():
+            raise ConditionInputMissing("author: number")
         if choices[0] not in STATES:
             raise ConditionInputUnknown(f"author: {choices[0]}")
-        return choices[0], number_text(NUMBER.parse(choices[1]))
+        return choices[0], COMPARISON.parse(choices[1]), number_text(NUMBER.parse(choices[2]))
 
     @classmethod
     def parse(cls, form: QueryDict) -> tuple[str, ...]:
-        """The state and the number of a form.
+        """The state, the comparison and the number of a form.
 
         Parameters:
-            form: ``state`` and ``above``.
+            form: ``state``, ``comparison`` and ``number``.
 
         Returns:
             The choices.
         """
-        return cls.check((form.get("state", ""), form.get("above", "")))
+        return cls.check(
+            (form.get("state", ""), form.get("comparison", DEFAULT), form.get("number", ""))
+        )
 
     @classmethod
     def applies(
         cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
     ) -> bool | None:
-        """Whether the state of the author is above the number.
+        """Whether the state of the author compares with the number.
 
         Parameters:
             issue: The pull request.
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
             scope: The repositories of the project.
 
         Returns:
@@ -111,7 +128,7 @@ class AuthorGroup(ConditionGroup):
         """
         if not issue.pull_request:
             return None
-        return STATES[choices[0]].above(issue, float(choices[1]), scope)
+        return STATES[choices[0]].compare(issue, choices[1], float(choices[2]), scope)
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -119,7 +136,7 @@ class AuthorGroup(ConditionGroup):
 
         Parameters:
             issue: The pull request.
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
             scope: The repositories of the project.
 
         Returns:
@@ -134,7 +151,7 @@ class AuthorGroup(ConditionGroup):
 
         Parameters:
             issue: The pull request.
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
 
         Returns:
             The reason, translated.
@@ -147,42 +164,64 @@ class AuthorGroup(ConditionGroup):
         )
 
     @classmethod
-    def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``its author has a review to pull request ratio above 1.5``.
+    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """The opposite comparison, such as at least 1 for below 1.
 
         Parameters:
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
+
+        Returns:
+            The choices; None for exactly, which has no opposite comparison.
+        """
+        inverse = INVERSE.get(choices[1])
+        return (choices[0], inverse, choices[2]) if inverse else None
+
+    @classmethod
+    def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
+        """Such as ``its author has a review to pull request ratio below 1``.
+
+        Parameters:
+            choices: The state, the comparison and the number.
             negative: The pull requests that it does not apply to.
 
         Returns:
             The part of the sentence.
         """
-        return gettext(STATES[choices[0]].phrase[1 if negative else 0]) % {"number": choices[1]}
+        state, comparison = STATES[choices[0]], choices[1]
+        if negative:
+            comparison = INVERSE.get(comparison, "")
+        if comparison:
+            words = gettext(COMPARISONS[comparison][2 if state.counted else 1])
+        else:
+            words = gettext(NOT_EXACTLY)
+        return gettext(state.phrase) % {"comparison": words, "number": choices[2]}
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
-        """Such as ``Review to pull request ratio > 1.5``.
+        """Such as ``Review to pull request ratio < 1``.
 
         Parameters:
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
 
         Returns:
             One part.
         """
         title = gettext(STATES[choices[0]].title)
-        return [{"text": f"{title} > {choices[1]}", "kind": "number"}]
+        sign = COMPARISONS[choices[1]][0]
+        return [{"text": f"{title} {sign} {choices[2]}", "kind": "number"}]
 
     @classmethod
     def summary(cls, choices: tuple[str, ...]) -> str:
-        """Such as ``Author: review to pull request ratio above 1.5``.
+        """Such as ``Author: review to pull request ratio below 1``.
 
         Parameters:
-            choices: The state and the number.
+            choices: The state, the comparison and the number.
 
         Returns:
             The header.
         """
-        return gettext("Author: %(state)s above %(number)s") % {
+        return gettext("Author: %(state)s %(comparison)s %(number)s") % {
             "state": gettext(STATES[choices[0]].title).lower(),
-            "number": choices[1],
+            "comparison": gettext(COMPARISONS[choices[1]][1]),
+            "number": choices[2],
         }
