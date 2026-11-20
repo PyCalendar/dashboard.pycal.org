@@ -165,9 +165,11 @@ def preview(
     if pull is None and examples:
         shown = examples[place]
         pull = Issue.objects.select_related("author", "repository").get(pk=shown["pk"])
-        label = _("Example %(number)s of %(count)s: %(done)s of %(total)s tasks done") % {
+        where = shown["step"] or _("outside of the steps")
+        label = _("Example %(number)s of %(count)s: %(step)s, %(done)s of %(total)s tasks done") % {
             "number": place + 1,
             "count": len(examples),
+            "step": where,
             "done": shown["done"],
             "total": shown["total"],
         }

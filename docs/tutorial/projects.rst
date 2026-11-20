@@ -521,9 +521,10 @@ Writers and owners edit it in four pages, which a bar at the top names:
    the group *Message*, such as the tasks of the step as a list of tasks of
    GitHub. **Preview** shows it with a pull request. **Next: review** keeps it
    as a draft of yours: nothing is written to GitHub before the last page.
-3. **Review**: the draft as example pull requests get it. The examples go from
-   no task done to all of them: **→** shows a pull request with one more task
-   done, **←** one with one less, such as *Example 2 of 6: 1 of 5 tasks done*.
+3. **Review**: the draft as example pull requests get it. Each example is in
+   another state: another step, or another task done, to do or not known yet.
+   They go from no task done to all of them: **→** shows the next one, **←**
+   the one before, such as *Example 2 of 6: Review, 1 of 5 tasks done*.
    **Show** shows the message of a pull request by its number instead. **Edit
    this step** opens the step that the pull request is in, with **Back to the
    review of the message** at the top.

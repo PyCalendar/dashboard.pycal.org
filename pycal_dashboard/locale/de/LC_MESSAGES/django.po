@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 12:27+0000\n"
+"POT-Creation-Date: 2026-11-20 12:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3134,10 +3134,15 @@ msgstr "Der Filter %(name)s ist gespeichert."
 msgid "The project has no pull request %(pull)s."
 msgstr "Das Projekt hat keinen Pull Request %(pull)s."
 
+msgid "outside of the steps"
+msgstr "außerhalb der Schritte"
+
 #, python-format
-msgid "Example %(number)s of %(count)s: %(done)s of %(total)s tasks done"
+msgid ""
+"Example %(number)s of %(count)s: %(step)s, %(done)s of %(total)s tasks done"
 msgstr ""
-"Beispiel %(number)s von %(count)s: %(done)s von %(total)s Aufgaben erledigt"
+"Beispiel %(number)s von %(count)s: %(step)s, %(done)s von %(total)s Aufgaben "
+"erledigt"
 
 #, python-format
 msgid "Update %(count)s pull request"

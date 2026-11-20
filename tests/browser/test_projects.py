@@ -602,10 +602,10 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     page.get_by_role("textbox", name="The message").fill("**{pr_title}**: {tasks_todo}")
     page.get_by_role("button", name="Next: review →").click()  # 3. review
     label = page.locator("[data-example-label]")
-    expect(label).to_have_text("Example 1 of 2: 0 of 1 tasks done")
+    expect(label).to_have_text("Example 1 of 2: Review, 0 of 1 tasks done")
     expect(page.locator("[data-message-rendered] strong")).to_be_visible()
     page.get_by_role("link", name="The next example: one more task done").click()
-    expect(label).to_have_text("Example 2 of 2: 1 of 1 tasks done")
+    expect(label).to_have_text("Example 2 of 2: outside of the steps, 1 of 1 tasks done")
     expect(page.locator("[data-message-rendered]")).to_contain_text("Nothing to do.")
     page.get_by_role("textbox", name="The message of the pull request").fill("1")
     page.get_by_role("button", name="Show").click()
