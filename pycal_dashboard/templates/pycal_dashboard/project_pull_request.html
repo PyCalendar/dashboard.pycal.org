@@ -24,7 +24,7 @@
 {% else %}<p class="muted" data-no-steps>{% url 'project_steps' project.slug as steps_url %}{% blocktranslate %}The project has no steps yet: see the tab <a href="{{ steps_url }}">Steps</a>.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card" data-shown-step="{{ shown.step.pk }}">
-<h2>{% blocktranslate with number=shown.number name=shown.step.name %}Step {{ number }}: {{ name }}{% endblocktranslate %}</h2>
+<h2>{{ shown.step.name }}</h2>
 {% if step_summary %}<div class="markdown">{{ step_summary|markdown }}</div>{% endif %}
 {% if shown.tasks %}<ul class="tasks" data-tasks>{% for task in shown.tasks %}<li>
   <details class="task task-{{ task.state }}" data-task="{{ task.state }}"{% if task.todo %} open{% endif %}>

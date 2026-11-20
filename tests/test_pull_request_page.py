@@ -1,5 +1,7 @@
 """The page of a pull request: the bar of the steps with their tasks, and the tasks of a step."""
 
+import re
+
 import pytest
 
 from pycal_dashboard.models import Issue, PullRequestFilter, PullRequestStep, Repository
@@ -63,7 +65,8 @@ def test_the_page_shows_the_bar_and_the_tasks(client, project, steps):  # noqa: 
     assert bar.count("square-done") == 1 and bar.count("square-todo") == 1
     assert ">0/1<" in bar and ">1/1<" in bar
     shown = page.split("data-shown-step")[1]
-    assert "Step 2: Review" in shown and "Thanks, @octocat!" in shown
+    assert "<h2>Review</h2>" in shown and "Thanks, @octocat!" in shown
+    assert not re.search(r"Step \d", page)  # no number of a step for viewers
     assert 'data-task="todo" open>' in shown and ">TODO<" in shown
     assert 'href="https://chat.example.org"' in shown  # the description, expanded
 
