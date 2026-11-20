@@ -366,7 +366,7 @@ community: where to start, what waits for a review, who contributes.
       pycal_dashboard/github/permission_names.txt, tested)
 - [x] The tab Filters: the numbers of each condition when a filter is opened, a button Edit; the
       names not bold; the save page without the column Shows
-- [ ] The person: the license of permission_names.txt, the text of a page of GitHub
+- [x] The license of permission_names.txt: the texts of GitHub under CC-BY-4.0 (REUSE.toml)
 - [x] Conditions as sentences; "The filter shows a pull request when one of the conditions above
       is met"; larger switches with a background and a thick contrasting border when on
 - [x] No automatic sign-out by default (SIGN_OUT_MINUTES=0)
@@ -403,6 +403,23 @@ community: where to start, what waits for a review, who contributes.
 - [x] The tab Filters: a loading animation instead of three dots while the numbers are counted
 - [x] The tab Filters: a button + New filter opens the pull requests with the menu + open
 - [ ] The person: translate the new texts (asked at the end)
+
+## 2026-11-20: states, the ratio of reviews, actions of steps
+
+- [ ] States work like conditions, with the code they share (a condition is a state that is
+      true or false); they are observed on the author of a pull request in a project (all its
+      repositories); the tests of the conditions stay as they are
+- [ ] State pull_requests_opened: how many pull requests the person opened
+- [ ] State own_pull_requests_closed: how many of them they closed themselves
+- [ ] State reviews_given: how many reviews they gave in the project
+- [ ] The model extended: reviews, who closed a pull request (DATA_VERSION raised)
+- [ ] Condition review_ratio_above: reviews / (opened - closed by themselves) above a number
+- [ ] Condition reviews_at_least: at least a number of reviews on the pull request, not
+      comments (approved, changes requested, dismissed)
+- [ ] Actions when a step is complete, in the editor of the step: add a label (one of the
+      existing ones, or a new one)
+- [ ] The person: running the actions writes to GitHub: the GitHub App then needs to write
+      (Issues or Pull requests: Read and write), which is the decision of the person
 
 ## Later (decided by the person: quick feedback first)
 

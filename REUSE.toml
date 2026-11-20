@@ -41,3 +41,12 @@ path = "static/vendor/markdown-toolbar-element-2.2.3.js"
 precedence = "override"
 SPDX-FileCopyrightText = "2017-2018 GitHub, Inc."
 SPDX-License-Identifier = "MIT"
+
+# The names and descriptions of the permissions and events of GitHub Apps, copied from the page of
+# the permissions of a GitHub App and from GitHub Docs (https://docs.github.com), whose texts are
+# licensed under CC-BY-4.0 (https://github.com/github/docs/blob/main/LICENSE)
+[[annotations]]
+path = "pycal_dashboard/github/permission_names.txt"
+precedence = "override"
+SPDX-FileCopyrightText = "GitHub, Inc."
+SPDX-License-Identifier = "CC-BY-4.0"
