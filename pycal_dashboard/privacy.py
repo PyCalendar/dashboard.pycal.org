@@ -139,6 +139,26 @@ MODELS = {
         },
     ),
     "pycal_dashboard.PullRequestPlace": (None, {"id", "project", "issue", "step", "updated"}),
+    "pycal_dashboard.PullRequestMessage": (
+        "projects",
+        {
+            "id",
+            "project",
+            "template",
+            "listed",
+            "to_listed",
+            "to_new",
+            "new_since",
+            "to_open",
+            "to_closed",
+            "updated",
+            "updated_by",
+        },
+    ),
+    "pycal_dashboard.PullRequestComment": (
+        None,
+        {"id", "project", "issue", "github_id", "digest", "updated"},
+    ),
     "pycal_dashboard.PullRequestFilter": (
         "projects",
         {"id", "project", "name", "description", "columns", "created_by", "created", "updated"},
@@ -298,8 +318,9 @@ PARTIES = [
         "gets": _(
             "When you sign in, GitHub tells the site who you are; the site asks GitHub for "
             "repositories, issues and pull requests with your token or that of the GitHub App. "
-            "The GitHub App adds labels to pull requests that complete a step of a project, as "
-            "the writers of the project set them. "
+            "The GitHub App adds and removes labels on pull requests that enter or complete a "
+            "step of a project, and writes the message of a project as a comment on its pull "
+            "requests, as the writers of the project set them. "
             "Your browser loads the avatars of people from GitHub "
             "(avatars.githubusercontent.com), which sees the address of your browser, but not "
             "the page: the site sends no referrer. Links to GitHub lead there."

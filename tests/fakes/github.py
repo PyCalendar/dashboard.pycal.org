@@ -47,6 +47,7 @@ class FakeGitHub:
         self.pull_requests_read: list[int] = []  # the numbers of GET /pulls/<number>
         self.graphql_queries: list[dict] = []  # the queries of GraphQL: query and variables
         self.graphql_reviews_queries: list[dict] = []  # those of the reviews of all
+        self.comments: dict[int, dict] = {}  # the comments the app wrote, by their id
 
     def add_repository(
         self,
@@ -438,6 +439,23 @@ class FakeGitHub:
                 if label not in issue["labels"]:
                     issue["labels"].append(label)
             return httpx.Response(200, json=issue["labels"])
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/comments", path)
+        if request.method == "POST" and match and token.startswith("installation-"):
+            self.comment_count = getattr(self, "comment_count", 0) + 1
+            comment = {
+                "id": 70000 + self.comment_count,
+                "issue": f"{match[1]}#{match[2]}",
+                "body": json.loads(request.content)["body"],
+            }
+            self.comments[comment["id"]] = comment
+            return httpx.Response(201, json=comment)
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/comments/(\d+)", path)
+        if request.method == "PATCH" and match and token.startswith("installation-"):
+            comment = self.comments.get(int(match[2]))
+            if comment is None:  # deleted on GitHub
+                return httpx.Response(404, json={"message": "Not Found"})
+            comment["body"] = json.loads(request.content)["body"]
+            return httpx.Response(200, json=comment)
         match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/labels/([^/]+)", path)
         if request.method == "DELETE" and match and token.startswith("installation-"):
             from urllib.parse import unquote

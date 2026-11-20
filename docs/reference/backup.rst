@@ -46,6 +46,13 @@ this page.
        complete:
          add: []
          remove: [needs review]
+   message:
+     template: '{pr_badge} **{step_name}** {tasks_all}'
+     listed: ['2166']
+     to_listed: true
+     to_new: false
+     to_open: true
+     to_closed: false
 
 The keys
 ========
@@ -77,12 +84,19 @@ The keys
    ``tasks`` (the ``summary`` and ``description`` of each condition of its
    filter, by the column) and its ``actions``: the labels to ``add`` and to
    ``remove`` when a pull request will ``enter`` the step or ``complete`` it.
+``message``
+   The message of the tab *PR Message*, see :ref:`pr-message`: its
+   ``template``, the pull requests ``listed`` by their numbers, and the
+   switches of its scope, ``to_listed``, ``to_new``, ``to_open`` and
+   ``to_closed``; empty without a message. Restoring sets it, with new pull
+   requests from the time of restoring, and leaves the message as it is for a
+   file without one.
 
 Restoring
 =========
 
 Restoring replaces all filters and steps of the project with those of the file,
-and sets its name and description. It forgets which step each open pull request
+and the message, and sets its name and description. It forgets which step each open pull request
 was in: the next update only records it, so no label is added or removed
 because of the restored steps. A file that is not a backup, has another version,
 or has a wrong part, such as a step whose filter is not in the file, changes

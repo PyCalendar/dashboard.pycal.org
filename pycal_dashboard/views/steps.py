@@ -24,7 +24,7 @@ from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, Pul
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.step_assignment import StepAssignment
 from pycal_dashboard.step_actions import KINDS, TRIGGERS, labels, normalized
-from pycal_dashboard.step_template import GROUPS, VARIABLE, VARIABLES, example, expand
+from pycal_dashboard.step_template import STEP_GROUPS, VARIABLE, VARIABLES, example, expand
 
 from .projects import (
     PER_PAGE,
@@ -159,7 +159,7 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
                     ).values_list("name", flat=True)
                 )
             ),
-            "variables": GROUPS,
+            "variables": STEP_GROUPS,
             "tab": "steps",
         },
     )

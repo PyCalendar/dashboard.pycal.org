@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 08:52+0000\n"
+"POT-Creation-Date: 2026-11-20 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -747,11 +747,12 @@ msgstr "GitHub"
 msgid ""
 "When you sign in, GitHub tells the site who you are; the site asks GitHub "
 "for repositories, issues and pull requests with your token or that of the "
-"GitHub App. The GitHub App adds labels to pull requests that complete a step "
-"of a project, as the writers of the project set them. Your browser loads the "
-"avatars of people from GitHub (avatars.githubusercontent.com), which sees "
-"the address of your browser, but not the page: the site sends no referrer. "
-"Links to GitHub lead there."
+"GitHub App. The GitHub App adds and removes labels on pull requests that "
+"enter or complete a step of a project, and writes the message of a project "
+"as a comment on its pull requests, as the writers of the project set them. "
+"Your browser loads the avatars of people from GitHub "
+"(avatars.githubusercontent.com), which sees the address of your browser, but "
+"not the page: the site sends no referrer. Links to GitHub lead there."
 msgstr ""
 
 msgid "The mail server of the site"
@@ -785,6 +786,12 @@ msgstr "El idioma que elegiste."
 
 msgid "The colors you chose."
 msgstr "Los colores que elegiste."
+
+msgid "Nothing to do."
+msgstr ""
+
+msgid "Nothing is done yet."
+msgstr ""
 
 msgid "Steps"
 msgstr ""
@@ -856,6 +863,21 @@ msgid "the place of the step, counted from 1"
 msgstr ""
 
 msgid "the id of the step"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "the summary of the step the pull request is in, in Markdown"
+msgstr ""
+
+msgid "all tasks of the step, those to do first, those done at the bottom"
+msgstr ""
+
+msgid "the tasks to do; a sentence when there is nothing to do"
+msgstr ""
+
+msgid "the tasks done; a sentence when nothing is done"
 msgstr ""
 
 msgid "Email addresses"
@@ -1099,6 +1121,9 @@ msgstr "Pull requests"
 
 msgid "Filters"
 msgstr "Filtros"
+
+msgid "PR Message"
+msgstr ""
 
 msgid "Repositories"
 msgstr "Repositorios"
@@ -2194,6 +2219,52 @@ msgstr "Sus repositorios siguen en GitHub y en otros proyectos."
 msgid "Yes, delete this project"
 msgstr "Sí, eliminar este proyecto"
 
+msgid "The message of the pull requests"
+msgstr ""
+
+msgid ""
+"The GitHub App writes this message as a comment on the pull requests of the "
+"scope below, and updates it whenever the message or the values of its "
+"variables change. No pull request gets it until the scope says so."
+msgstr ""
+
+msgid "Markdown"
+msgstr ""
+
+#, python-format
+msgid "As the pull request %(pull)s gets it."
+msgstr ""
+
+msgid "With an example pull request."
+msgstr ""
+
+msgid "The message"
+msgstr ""
+
+msgid "Which pull requests get it"
+msgstr ""
+
+msgid "Add to these pull requests:"
+msgstr ""
+
+msgid "The numbers of the pull requests"
+msgstr ""
+
+msgid "Add to all new pull requests"
+msgstr ""
+
+msgid "Add to all open pull requests"
+msgstr ""
+
+msgid "Add to closed and merged pull requests"
+msgstr ""
+
+msgid "Not preferred: they are done, and their people get a notification."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
 #, python-format
 msgid "Pull requests #%(number)s"
 msgstr ""
@@ -2848,6 +2919,23 @@ msgstr ""
 #, python-format
 msgid "The filter %(name)s is saved."
 msgstr "El filtro %(name)s está guardado."
+
+#, python-format
+msgid "Update %(count)s pull request"
+msgid_plural "Update %(count)s pull requests"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "These are no numbers of pull requests: %(wrong)s"
+msgstr ""
+
+#, python-format
+msgid "The message is saved: %(count)s pull request gets it in the background."
+msgid_plural ""
+"The message is saved: %(count)s pull requests get it in the background."
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "People now sign in with the OAuth app."
 msgstr "Ahora las personas inician sesión con la aplicación OAuth."

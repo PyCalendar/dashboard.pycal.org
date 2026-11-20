@@ -12,7 +12,12 @@ from django.utils import timezone
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import BackupInvalid, BackupVersionUnknown, DashboardError
 from pycal_dashboard.import_guard import IMPORT_GUARD
-from pycal_dashboard.models import PullRequestFilter, PullRequestPlace, PullRequestStep
+from pycal_dashboard.models import (
+    PullRequestFilter,
+    PullRequestMessage,
+    PullRequestPlace,
+    PullRequestStep,
+)
 from pycal_dashboard.step_actions import normalized
 
 if TYPE_CHECKING:
@@ -28,9 +33,9 @@ class ProjectBackup:
 
     The file has ``dashboard_backup``, the version of its format, ``documentation``, the
     address of the description of the format, the ``project`` with its name and
-    description, its ``repositories``, its ``filters`` and its ``steps``. Restoring replaces
-    the filters and steps, sets the name and the description, and lists the repositories to
-    add; the visibility and the address of the project stay as they are.
+    description, its ``repositories``, its ``filters``, its ``steps`` and its ``message``.
+    Restoring replaces the filters and steps, sets the name, the description and the message,
+    and lists the repositories to add; the visibility and the address stay as they are.
     """
 
     def __init__(self, project: Project):
@@ -81,6 +86,21 @@ class ProjectBackup:
                 }
                 for step in project.steps.select_related("filter")
             ],
+            "message": self.message(),
+        }
+
+    def message(self) -> dict | None:
+        """The message of the tab PR Message, as the file keeps it; None without one."""
+        message = PullRequestMessage.objects.filter(project=self.project).first()
+        if message is None:
+            return None
+        return {
+            "template": message.template,
+            "listed": list(message.listed or []),
+            "to_listed": message.to_listed,
+            "to_new": message.to_new,
+            "to_open": message.to_open,
+            "to_closed": message.to_closed,
         }
 
     def export(self) -> str:
@@ -191,7 +211,37 @@ class ProjectBackup:
                     actions=normalized(step.get("actions")),
                     position=position,
                 )
+            self.restore_message(data.get("message"))
         return [str(name) for name in data.get("repositories") or []]
+
+    def restore_message(self, data: dict | None) -> None:
+        """Set the message of the tab PR Message; a file without one leaves it as it is.
+
+        New pull requests are those opened from now on.
+
+        Parameters:
+            data: The message of the file, or None.
+
+        Raises:
+            BackupInvalid: The message is no mapping.
+        """
+        if data is None:
+            return
+        if not isinstance(data, dict):
+            raise BackupInvalid("message: a mapping with template and the switches")
+        to_new = bool(data.get("to_new"))
+        PullRequestMessage.objects.update_or_create(
+            project=self.project,
+            defaults={
+                "template": str(data.get("template") or ""),
+                "listed": [str(name) for name in data.get("listed") or []],
+                "to_listed": bool(data.get("to_listed", True)),
+                "to_new": to_new,
+                "new_since": timezone.now() if to_new else None,
+                "to_open": bool(data.get("to_open")),
+                "to_closed": bool(data.get("to_closed")),
+            },
+        )
 
 
 def _color(value: Any) -> str:  # noqa: ANN401 - a value of YAML

@@ -211,7 +211,9 @@ def test_the_variables_are_grouped_and_documented_with_examples():
     for _key, (title, members) in GROUPS.items():
         assert f".. list-table:: {title}" in docs
         for name, (_meaning, example) in members.items():
-            assert f"``{{{name}}}``" in docs and f"``{example}``" in docs, name
+            assert f"``{{{name}}}``" in docs, name
+            for line in example.split("\n"):  # an example of several lines: each line
+                assert f"``{line}``" in docs, name
     assert {"author_mention", "author_name", "author_handle", "step_id"} <= set(VARIABLES)
 
 

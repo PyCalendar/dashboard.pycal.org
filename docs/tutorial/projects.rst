@@ -468,9 +468,71 @@ number.
      - The id of the step
      - ``7``
 
+.. list-table:: Message
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{step_description}``
+     - The summary of the step the pull request is in, in Markdown, with its
+       variables
+     - ``Thanks, @niccokunzmann! A person reviews it soon.``
+   * - ``{tasks_all}``
+     - All tasks of the step, as a list of tasks of GitHub: those to do first,
+       those done at the bottom, checked
+     - | ``- [ ] Solve the conflict``
+       | ``- [x] Review it``
+   * - ``{tasks_todo}``
+     - The tasks to do; *Nothing to do.* when there are none
+     - ``- [ ] Solve the conflict``
+   * - ``{tasks_done}``
+     - The tasks done; *Nothing is done yet.* when there are none
+     - ``- [x] Review it``
+
+The variables of the group *Message* are for the message of the tab
+*PR Message* only, see :ref:`pr-message`; in a pull request in no step, the
+variables of the step are empty.
+
 The values are text: a title such as ``[click](https://example.org)`` stays
 text, and nothing else of a template is evaluated; a name in braces that is not
-a variable stays as it is.
+a variable stays as it is. The badge, the description of the step and the
+tasks are Markdown, made by the site and the writers of the project.
+
+.. _pr-message:
+
+PR Message
+==========
+
+The tab *PR Message*, right of *Steps*, has the message of the project: the
+GitHub App writes it as a comment on pull requests, and updates the comment
+whenever the message or the values of its variables change, such as when a pull
+request enters the next step. It is off until its scope says which pull
+requests get it.
+
+At the top, the message shows as a pull request gets it: the newest pull request
+of the scope, else the newest open one; **Markdown** shows its text. Writers and
+owners edit it below in the editor of Markdown, with the menu **Variables**:
+those of the steps, see :ref:`step-variables`, and those of the group *Message*,
+such as the tasks of the step as a list of tasks of GitHub. The message above
+follows what they type.
+
+The scope, at the bottom:
+
+- *Add to these pull requests:* the pull requests of the numbers in the field,
+  such as *2166, 2167*, or *collective/icalendar#42* where several repositories
+  have the number; on by default;
+- *Add to all new pull requests*: those opened after the switch was switched on;
+- *Add to all open pull requests*;
+- *Add to closed and merged pull requests*, in light red: not preferred, as they
+  are done and their people get a notification.
+
+**Update X pull requests** saves the message and the scope: the comments are
+written or updated in the background, after an update of the project, and every
+update after it updates those whose text changed. **Cancel** leaves the page
+without saving. The log of the site records every comment written or updated;
+the comment ends with a hidden line that says that the site wrote it.
 
 .. _project-backup:
 
@@ -479,7 +541,7 @@ Backup
 
 The settings of a project have *Backup*, for writers and owners. **Download the
 backup** saves a file of YAML with the name and description of the project, its
-repositories, its filters and its steps, see :doc:`/reference/backup`.
+repositories, its filters, its steps and its message, see :doc:`/reference/backup`.
 **Restore the backup** reads such a file: it replaces the filters and steps of
 the project, sets its name and description, and adds the repositories that the
 project lacks; the visibility and the address stay as they are. A box confirms

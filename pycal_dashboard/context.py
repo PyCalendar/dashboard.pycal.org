@@ -86,6 +86,7 @@ def site(request: HttpRequest) -> dict:
             "project_roles": f"{docs}tutorial/projects.html#project-roles",
             "project_address": f"{docs}tutorial/projects.html#project-address",
             "backup": f"{docs}reference/backup.html",
+            "pr_message": f"{docs}tutorial/projects.html#pr-message",
             "add_repositories": f"{docs}tutorial/projects.html#add-repositories",
             "private_repositories": f"{docs}tutorial/projects.html#private-repositories",
             "permissions": f"{docs}reference/permissions.html",

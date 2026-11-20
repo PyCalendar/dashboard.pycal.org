@@ -507,3 +507,14 @@ form.stacked .step-visible label.switch { font-weight: 400; }
 .comparison-row { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
 .comparison-row input[type="number"] { width: 6rem; }
 .condition-form small { display: block; margin-top: .3rem; }
+
+/* the tab PR Message: the preview, the scope */
+.message-preview { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface-tint); }
+.message-preview .markdown-tabs { display: flex; gap: .3rem; margin-bottom: .5rem; }
+.message-preview [aria-selected="true"] { font-weight: 700; border-color: var(--primary); }
+.message-markdown { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; font-size: .9rem; }
+form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap: .2rem; padding: .5rem .75rem; }
+.scope-listed { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.scope-listed input[name="listed"] { flex: 1 1 14rem; width: auto; }
+.scope-not-preferred { padding: .2rem .5rem; border-radius: .4rem; background: color-mix(in srgb, var(--danger) 12%, var(--surface)); }
+.scope-not-preferred small { display: block; color: var(--text-muted); }

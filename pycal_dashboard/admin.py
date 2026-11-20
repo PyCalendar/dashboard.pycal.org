@@ -15,7 +15,9 @@ from .models import (
     Project,
     ProjectMember,
     ProjectSlug,
+    PullRequestComment,
     PullRequestFilter,
+    PullRequestMessage,
     PullRequestPlace,
     PullRequestState,
     PullRequestStep,
@@ -64,6 +66,12 @@ admin.site.register(
 )
 admin.site.register(
     PullRequestStep, list_display=["name", "project", "filter", "position", "hidden"]
+)
+admin.site.register(PullRequestMessage, list_display=["project", "to_listed", "to_new", "to_open"])
+admin.site.register(
+    PullRequestComment,
+    list_display=["issue", "project", "github_id", "updated"],
+    raw_id_fields=["issue"],
 )
 admin.site.register(
     PullRequestPlace, list_display=["issue", "project", "step", "updated"], raw_id_fields=["issue"]

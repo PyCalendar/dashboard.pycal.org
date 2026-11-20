@@ -81,3 +81,22 @@ def prepare_results(sender: type, repository: Repository, **kwargs: Any):
             results = ColumnResults(list(repositories))
             for value in values:
                 results.of(Column.decode(value))
+
+
+@receiver(repository_updated)
+def write_messages(sender: type, repository: Repository, **kwargs: Any):
+    """Write or update the message of each project as a comment on the pull requests in scope.
+
+    See :class:`~pycal_dashboard.services.message_comments.MessageComments`: a message changes
+    with its template and with the values of its variables, which an update can change.
+
+    Parameters:
+        sender: Who sent the signal.
+        repository: The repository that was read.
+        **kwargs: More of the signal.
+    """
+    with IMPORT_GUARD:  # see import_guard.py: what writes to GitHub, only when needed
+        from pycal_dashboard.services.message_comments import MessageComments
+
+    for project in Project.objects.filter(repositories=repository, message__isnull=False):
+        MessageComments(project).sync(repository)

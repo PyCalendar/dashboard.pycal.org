@@ -82,10 +82,34 @@ GROUPS = {
             "step_id": (_("the id of the step"), "7"),
         },
     ),
+    "message": (
+        _("Message"),
+        {
+            "step_description": (
+                _("the summary of the step the pull request is in, in Markdown"),
+                "Thanks, @niccokunzmann! A person reviews it soon.",
+            ),
+            "tasks_all": (
+                _("all tasks of the step, those to do first, those done at the bottom"),
+                "- [ ] Solve the conflict\n- [x] Review it",
+            ),
+            "tasks_todo": (
+                _("the tasks to do; a sentence when there is nothing to do"),
+                "- [ ] Solve the conflict",
+            ),
+            "tasks_done": (
+                _("the tasks done; a sentence when nothing is done"),
+                "- [x] Review it",
+            ),
+        },
+    ),
 }
+# the groups of the templates of steps: the message has more, which steps cannot fill
+STEP_GROUPS = {key: group for key, group in GROUPS.items() if key != "message"}
 # every variable with what it is, in the order of the groups
 # the variables whose values are Markdown that the site makes of its own addresses: not escaped
-MARKDOWN_VALUES = {"pr_badge"}
+# and the description and tasks of a step in the message, written by the writers of the project
+MARKDOWN_VALUES = {"pr_badge", "step_description", "tasks_all", "tasks_todo", "tasks_done"}
 VARIABLES = {
     name: about[0] for _title, members in GROUPS.values() for name, about in members.items()
 }

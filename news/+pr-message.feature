@@ -1,0 +1,1 @@
+A new tab PR Message writes a message about the state of each pull request as a comment on it and keeps it up to date: its template with the variables of steps and of the tasks, a live preview with its Markdown, and the scope of the pull requests that get it.

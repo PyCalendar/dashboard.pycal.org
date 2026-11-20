@@ -133,3 +133,25 @@ def test_restore_adds_the_repositories_the_project_lacks(
     data["repositories"].append("collective/other")
     restore(client, yaml.safe_dump(data))
     assert added == ["collective/other"]
+
+
+def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
+    from pycal_dashboard.models import PullRequestMessage
+
+    PullRequestMessage.objects.create(
+        project=project, template="Hi {author_handle}", listed=["1"], to_open=True
+    )
+    client.force_login(bob)
+    data = yaml.safe_load(download(client))
+    assert data["message"] == {
+        "template": "Hi {author_handle}",
+        "listed": ["1"],
+        "to_listed": True,
+        "to_new": False,
+        "to_open": True,
+        "to_closed": False,
+    }
+    data["message"].update(template="Changed", to_new=True)
+    restore(client, yaml.safe_dump(data))
+    message = PullRequestMessage.objects.get()
+    assert message.template == "Changed" and message.new_since is not None

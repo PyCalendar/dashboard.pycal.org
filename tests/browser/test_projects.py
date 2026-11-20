@@ -583,3 +583,30 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
     page.get_by_role("button", name="Restore the backup").click()
     expect(page.get_by_text("The backup is restored.")).to_be_visible()
     assert list(PullRequestFilter.objects.values_list("name", flat=True)) == ["Open"]
+
+
+def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
+    """The tab PR Message: the preview follows the editor, the button counts the pull requests."""
+    from pycal_dashboard.models import PullRequestMessage
+
+    pull_request_project(github, bob)
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_role("link", name="PR Message").click()
+    save = page.locator("[data-save-message]")
+    expect(save).to_have_text("Update 0 pull requests")  # off by default
+    editor = page.get_by_role("textbox", name="The message")
+    editor.fill("**{pr_title}** by {author_handle}")
+    page.locator("[data-message-scope]").get_by_text("Add to all open pull requests").click()
+    expect(save).to_have_text("Update 3 pull requests")
+    rendered = page.locator("[data-message-rendered]")
+    expect(rendered.locator("strong")).to_be_visible()
+    expect(rendered).to_contain_text("by octocat")
+    page.get_by_role("tab", name="Markdown").click()
+    expect(page.locator("[data-message-markdown]")).to_contain_text("**")
+    page.set_viewport_size({"width": 390, "height": 900})
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")  # fits a phone
+    save.click()
+    expect(page.get_by_text("The message is saved: 3 pull requests get it")).to_be_visible()
+    message = PullRequestMessage.objects.get()
+    assert message.to_open and message.template.startswith("**{pr_title}**")

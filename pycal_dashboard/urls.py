@@ -8,6 +8,7 @@ from .project_slug_converter import ProjectSlugConverter
 from .views import (
     account,
     filters,
+    message,
     oauth_app,
     pages,
     projects,
@@ -62,6 +63,12 @@ urlpatterns = [
     ),
     path("projects/<project_slug:slug>/filters/", filters.project_filters, name="project_filters"),
     path("projects/<project_slug:slug>/steps/", steps.project_steps, name="project_steps"),
+    path("projects/<project_slug:slug>/message/", message.project_message, name="project_message"),
+    path(
+        "projects/<project_slug:slug>/message/preview/",
+        message.project_message_preview,
+        name="project_message_preview",
+    ),
     path(
         "projects/<project_slug:slug>/steps/add/", steps.project_step_add, name="project_step_add"
     ),

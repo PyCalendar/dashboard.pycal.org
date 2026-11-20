@@ -495,7 +495,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] future steps should not show the X/Y and also the boxes should neither be green nor red but gray. Future steps should not show the status. That is confusing.
 - [ ] try to speed up page loading in case there are many PRs
 - [x] The menu of the account (top right) has an entry My projects
-- [ ] A new tab PR Message, right of Steps: a message about the state of a pull request, added
+- [x] A new tab PR Message, right of Steps: a message about the state of a pull request, added
       as a comment to the pull requests and updated by the site; off by default, enabled for
       the whole project or for single pull requests. The page: the rendered message with a
       tab Markdown that shows its Markdown; the editor of Markdown with the variables; the
@@ -522,4 +522,4 @@ community: where to start, what waits for a review, who contributes.
       of the person was refused (revoked, the OAuth app changed, or expired): its own error
       now says to sign out and sign in again (GitHubSignInExpired)
 - [x] The export of a project also has its repositories
-- [ ] The backup gets the configuration of the message when the tab PR Message exists
+- [x] The backup gets the configuration of the message when the tab PR Message exists

@@ -1,0 +1,30 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n static markdown help %}
+{% block title %}{% translate "PR Message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}{% if access.can_write %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'message.js' %}" defer></script>{% endif %}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card message-page" data-message>
+<div class="table-head"><h2>{% translate "PR Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+<p class="muted">{% translate "The GitHub App writes this message as a comment on the pull requests of the scope below, and updates it whenever the message or the values of its variables change. No pull request gets it until the scope says so." %}</p>
+<div class="message-preview" data-message-preview>
+  <div class="markdown-tabs" role="tablist"><button type="button" class="button button-quiet button-small" role="tab" aria-selected="true" data-show-rendered>{% translate "Message" %}</button><button type="button" class="button button-quiet button-small" role="tab" aria-selected="false" data-show-markdown>{% translate "Markdown" %}</button></div>
+  <div class="markdown message-rendered" data-message-rendered>{{ preview.markdown|markdown }}</div>
+  <pre class="message-markdown" data-message-markdown hidden>{{ preview.markdown }}</pre>
+  <noscript><details><summary>{% translate "Markdown" %}</summary><pre class="message-markdown">{{ preview.markdown }}</pre></details></noscript>
+  <p class="muted" data-message-pull data-as="{% blocktranslate with pull="%(pull)s" %}As the pull request {{ pull }} gets it.{% endblocktranslate %}">{% if preview.pull %}{% blocktranslate with pull=preview.pull %}As the pull request {{ pull }} gets it.{% endblocktranslate %}{% else %}{% translate "With an example pull request." %}{% endif %}</p>
+</div>
+{% if access.can_write %}<form method="post" class="stacked message-form" data-message-form data-preview="{% url 'project_message_preview' project.slug %}">{% csrf_token %}
+  {% translate "The message" as template_label %}{% include "pycal_dashboard/_markdown_field.html" with id="template" name="template" label=template_label value=message.template rows=8 variables=variables %}
+  <fieldset class="message-scope" data-message-scope><legend>{% translate "Which pull requests get it" %}</legend>
+    <div class="scope-listed">{% translate "Add to these pull requests:" as listed_label %}{% include "pycal_dashboard/_switch.html" with name="to_listed" value="on" checked=message.to_listed text=listed_label hidden_text="" %}
+      <input name="listed" value="{{ listed }}" placeholder="2166, 2167, collective/icalendar#42" aria-label="{% translate "The numbers of the pull requests" %}" autocomplete="off"></div>
+    {% translate "Add to all new pull requests" as new_label %}{% include "pycal_dashboard/_switch.html" with name="to_new" value="on" checked=message.to_new text=new_label hidden_text="" %}
+    {% translate "Add to all open pull requests" as open_label %}{% include "pycal_dashboard/_switch.html" with name="to_open" value="on" checked=message.to_open text=open_label hidden_text="" %}
+    <div class="scope-not-preferred">{% translate "Add to closed and merged pull requests" as closed_label %}{% include "pycal_dashboard/_switch.html" with name="to_closed" value="on" checked=message.to_closed text=closed_label hidden_text="" %}
+      <small>{% translate "Not preferred: they are done, and their people get a notification." %}</small></div>
+  </fieldset>
+  <p class="save-buttons"><button class="button" data-save-message>{{ preview.button }}</button> <a class="button button-quiet" href="{% url 'project_message' project.slug %}" data-cancel>{% translate "Cancel" %}</a></p>
+</form>{% endif %}
+</section>
+{% endblock %}
