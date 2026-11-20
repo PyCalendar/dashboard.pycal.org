@@ -220,7 +220,9 @@ what it does not apply to, the page suggests its opposite where it is the same,
 such as *label absent* for not *label present*; **Use it** switches it.
 
 The tab *Filters*, public like the project, lists the saved filters with their
-description; opening one counts the pull requests it shows and those each of its
+description. **+ New filter** opens the table of pull requests with its menu **+**
+open, to add the first condition of a new filter. Opening a filter shows a
+loading animation while it counts the pull requests it shows and those each of its
 conditions applies to. It shows only the conditions in force: those that are
 off are no part of the filter and appear only in the table of pull requests and
 when the filter is edited. **Pull requests** opens them with the filter, and
@@ -240,10 +242,10 @@ Steps
 
 The tab *Steps*, right of *Filters*, shows the steps that a pull request goes
 through, from left to right: *Step 1 → Step 2 → Step 3*. Each step is a saved
-filter, whose conditions are what keeps a pull request in it, such as a
-conflict or a missing review: failures to remove before it can be merged. A
-pull request is in the left-most step whose filter shows it, and in no step
-when none does.
+filter. In a step, the conditions of its filter are called its *tasks*: what
+keeps a pull request in it, such as a conflict or a missing review, to be done
+before it can be merged. A pull request is in the left-most step with a task
+for it, a condition of the filter that applies, and in no step when none does.
 
 There are no steps until they are made: **Make it a step** next to a filter on
 the tab *Filters*, or the button **+** of the tab *Steps*, adds the filter as
@@ -252,9 +254,8 @@ to the left come first.
 
 A click on a step shows it below the bar. Its name is that of its filter until
 you change it, and its summary is a template in Markdown. The pencil next to each
-condition of the filter edits its summary, a line of text, and its description,
-which guides people to remove the condition, such as with a link to the
-documentation. Both are written in the editor of Markdown, the description too.
+task edits its summary, a line of text, and its description, which guides
+people to do it, such as with a link to the documentation. Both are written in the editor of Markdown, the description too.
 They take variables: the menu **Variables** in the bar of the editor inserts the
 one you click where the cursor is, see :ref:`step-variables`. The page shows them
 with an example pull request. A step saves itself while you edit it.
@@ -264,30 +265,89 @@ with an example pull request. A step saves itself while you edit it.
 Variables of the templates
 --------------------------
 
-.. list-table::
+The summary of a step and the descriptions of its tasks take these variables,
+in their groups. The examples are those of a pull request of
+``collective/icalendar``; the page of a step shows its templates with them.
+
+
+.. list-table:: Pull request
    :header-rows: 1
+   :widths: 25 45 30
 
    * - Variable
      - Its value
-   * - ``{author}``
-     - the GitHub name of who opened the pull request
-   * - ``{title}``
-     - the title of the pull request
-   * - ``{number}``
-     - the number of the pull request
-   * - ``{url}``
-     - the address of the pull request on GitHub
-   * - ``{repository}``
-     - the name of the repository
-   * - ``{full_name}``
-     - the account and the name of the repository, such as
-       ``collective/icalendar``
-   * - ``{owner}``
-     - the account of the repository
-   * - ``{project}``
-     - the name of the project
-   * - ``{step}``
-     - the name of the step
+     - Example
+   * - ``{pr_title}``
+     - The title of the pull request
+     - ``Fix the time zones``
+   * - ``{pr_number}``
+     - The number of the pull request
+     - ``42``
+   * - ``{pr_url}``
+     - The address of the pull request on GitHub
+     - ``https://github.com/collective/icalendar/pull/42``
+
+.. list-table:: Author
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{author_mention}``
+     - Who opened the pull request, mentioned
+     - ``@niccokunzmann``
+   * - ``{author_name}``
+     - The name of who opened it, else the GitHub name
+     - ``Nicco Kunzmann``
+   * - ``{author_handle}``
+     - The GitHub name of who opened it
+     - ``niccokunzmann``
+
+.. list-table:: Repository
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{repository_name}``
+     - The name of the repository
+     - ``icalendar``
+   * - ``{repository_full_name}``
+     - The account and the name of the repository
+     - ``collective/icalendar``
+   * - ``{repository_owner}``
+     - The account of the repository
+     - ``collective``
+
+.. list-table:: Project
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{project_name}``
+     - The name of the project
+     - ``iCalendar``
+
+.. list-table:: Step
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{step_name}``
+     - The name of the step
+     - ``Review``
+   * - ``{step_number}``
+     - The place of the step, counted from 1
+     - ``2``
+   * - ``{step_id}``
+     - The id of the step
+     - ``7``
 
 The values are text: a title such as ``[click](https://example.org)`` stays
 text, and nothing else of a template is evaluated; a name in braces that is not

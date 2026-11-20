@@ -348,8 +348,14 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_text("The filter Waiting is saved.")).to_be_visible()
     item = page.locator("[data-filter='Waiting']")
     expect(item.locator("em")).to_have_text("reviewed")
+    held = []  # the numbers wait until the spinner is seen
+    page.route(re.compile(r"/filters/\d+/\?numbers=1$"), lambda route: held.append(route))
     item.locator("summary").click()  # the table of conditions, its numbers filled in
     expect(item.locator("[data-filter-conditions] tr[data-condition-count]")).to_have_count(2)
+    expect(item.locator("[data-count-of='0'] .loading[role=status]")).to_be_visible()
+    while not held:
+        page.wait_for_timeout(20)
+    held[0].continue_()
     expect(item.locator("[data-count-of='0']")).to_have_text("2")  # without the label
     expect(item.locator("[data-filter-total]")).to_have_text("The filter shows 3 pull requests.")
     item.get_by_role("link", name="Pull requests").click()
@@ -358,6 +364,10 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()
     page.get_by_role("link", name="← Back to the pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
+    page.get_by_role("link", name="Filters", exact=True).click()
+    page.get_by_role("link", name="New filter").click()  # the table, its menu + open
+    expect(page.locator("[data-add-condition]")).to_have_attribute("open", "")
+    expect(page.get_by_role("heading", name="Waiting")).to_have_count(0)
 
 
 def test_steps_of_pull_requests(signed_in, site, github, bob):
@@ -396,19 +406,19 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     detail.get_by_label("Name", exact=True).fill("Waiting for a review")
     detail.locator(".condition-edit > summary").click()
     detail.get_by_label("Summary", exact=True).last.fill("A person reviews it")
-    description = detail.get_by_label("Description: how to remove it")
+    description = detail.get_by_label("Description: how to do it")
     description.fill("Ask @")
     editor = detail.locator("[data-markdown-field]:has(#description-0)")
     editor.get_by_text("Variables", exact=True).click()  # the menu of the bar of the editor
-    editor.get_by_role("menuitem", name="{author}").click()  # inserted at once, no button
-    expect(description).to_have_value("Ask @{author}")
+    editor.get_by_role("menuitem", name="{author_handle}").click()  # inserted, no button
+    expect(description).to_have_value("Ask @{author_handle}")
     expect(editor.locator("[data-variables-menu]")).not_to_have_attribute("open", "")
     # it saves itself: no button, a status that says so
     expect(detail.get_by_role("button", name="Save the step")).to_be_hidden()
     expect(detail.locator("[data-save-status]")).to_have_text("✓ Saved", timeout=10000)
     expect(page.locator("[data-step-bar]")).to_contain_text("Waiting for a review")
     page.reload()
-    expect(page.locator(".condition-description")).to_contain_text("Ask @octocat")
+    expect(page.locator(".condition-description")).to_contain_text("Ask @niccokunzmann")
     expect(page.locator("[data-step-detail]").get_by_label("Name", exact=True)).to_have_value(
         "Waiting for a review"
     )

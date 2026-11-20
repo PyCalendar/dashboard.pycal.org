@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 23:06+0000\n"
+"POT-Creation-Date: 2026-11-20 00:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -331,6 +331,12 @@ msgstr "El filtro necesita un nombre"
 
 msgid "The project has a filter of this name"
 msgstr "El proyecto tiene un filtro con este nombre"
+
+msgid "Step not found"
+msgstr ""
+
+msgid "The filter is a step already"
+msgstr ""
 
 msgid "The GitHub App could not be registered"
 msgstr "No se pudo registrar la GitHub App"
@@ -666,6 +672,60 @@ msgstr "El idioma que elegiste."
 msgid "The colors you chose."
 msgstr "Los colores que elegiste."
 
+msgid "Pull request"
+msgstr ""
+
+msgid "the title of the pull request"
+msgstr ""
+
+msgid "the number of the pull request"
+msgstr ""
+
+msgid "the address of the pull request on GitHub"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "who opened the pull request, mentioned"
+msgstr ""
+
+msgid "the name of who opened it, else the GitHub name"
+msgstr ""
+
+msgid "the GitHub name of who opened it"
+msgstr ""
+
+msgid "Repository"
+msgstr "Repositorio"
+
+msgid "the name of the repository"
+msgstr ""
+
+msgid "the account and the name of the repository"
+msgstr ""
+
+msgid "the account of the repository"
+msgstr ""
+
+msgid "Project"
+msgstr "Proyecto"
+
+msgid "the name of the project"
+msgstr ""
+
+msgid "Step"
+msgstr ""
+
+msgid "the name of the step"
+msgstr ""
+
+msgid "the place of the step, counted from 1"
+msgstr ""
+
+msgid "the id of the step"
+msgstr ""
+
 msgid "Email addresses"
 msgstr "Direcciones de correo"
 
@@ -869,6 +929,12 @@ msgstr "Cita"
 msgid "Code"
 msgstr "Código"
 
+msgid "Variables"
+msgstr ""
+
+msgid "The variables of the templates"
+msgstr ""
+
 msgid "Write"
 msgstr "Escribir"
 
@@ -890,9 +956,6 @@ msgstr "A la GitHub App %(app)s le faltan permisos o eventos"
 msgid "private"
 msgstr "privado"
 
-msgid "Project"
-msgstr "Proyecto"
-
 msgid "Overview"
 msgstr "Resumen"
 
@@ -901,6 +964,9 @@ msgstr "Pull requests"
 
 msgid "Filters"
 msgstr "Filtros"
+
+msgid "Steps"
+msgstr ""
 
 msgid "Repositories"
 msgstr "Repositorios"
@@ -1258,9 +1324,6 @@ msgstr "Condición"
 msgid "Applies to"
 msgstr "Se aplica a"
 
-msgid "off"
-msgstr "desactivada"
-
 msgid "From"
 msgstr "Desde"
 
@@ -1311,9 +1374,6 @@ msgstr "Recibido"
 
 msgid "Event"
 msgstr "Evento"
-
-msgid "Repository"
-msgstr "Repositorio"
 
 msgid "Outcome"
 msgstr "Resultado"
@@ -1498,6 +1558,9 @@ msgstr ""
 
 msgid "Add them to the GitHub App"
 msgstr "Añadirlos a la GitHub App"
+
+msgid "Check again"
+msgstr ""
 
 msgid ""
 "The owners of the GitHub App add these permissions and events in its "
@@ -1816,8 +1879,29 @@ msgstr "Guardar %(name)s"
 msgid "Save as a new filter"
 msgstr "Guardar como filtro nuevo"
 
+msgid ""
+"A new filter: add its conditions as columns of the table of pull requests"
+msgstr ""
+
+msgid "New filter"
+msgstr ""
+
 msgid "Edit"
 msgstr "Editar"
+
+#, python-format
+msgid "Step: %(name)s"
+msgstr ""
+
+msgid "Make it a step"
+msgstr ""
+
+msgid "Counting"
+msgstr ""
+
+#, python-format
+msgid "The filter shows %(count)s pull requests."
+msgstr ""
 
 #, python-format
 msgid "%(counter)s condition"
@@ -1825,8 +1909,8 @@ msgid_plural "%(counter)s conditions"
 msgstr[0] "%(counter)s condición"
 msgstr[1] "%(counter)s condiciones"
 
-msgid "Count the pull requests of each condition"
-msgstr "Contar los pull requests de cada condición"
+msgid "count"
+msgstr ""
 
 #, python-format
 msgid ""
@@ -2085,6 +2169,83 @@ msgstr "Repositorios privados"
 msgid "Go to the overview"
 msgstr "Ir al resumen"
 
+msgid "Steps of a pull request"
+msgstr ""
+
+msgid "Add a filter as a step"
+msgstr ""
+
+#, python-format
+msgid ""
+"Every filter is a step. Save more filters on the tab <a "
+"href=\"%(filters_url)s\">Filters</a>."
+msgstr ""
+
+#, python-format
+msgid "Step %(number)s"
+msgstr ""
+
+msgid "Move left: earlier"
+msgstr ""
+
+msgid "Move right: later"
+msgstr ""
+
+msgid ""
+"A pull request is in the left-most step that has a task for it: a condition "
+"of its filter that applies. The tasks are what keeps it from being merged."
+msgstr ""
+
+#, python-format
+msgid ""
+"No steps yet. Make a saved filter a step on the tab <a "
+"href=\"%(filters_url)s\">Filters</a>, or add one with the button +."
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "With an example pull request:"
+msgstr ""
+
+msgid "Tasks"
+msgstr ""
+
+#, python-format
+msgid ""
+"The tasks of this step are the conditions of the filter %(name)s that keep a "
+"pull request in it. Guide people to do each one."
+msgstr ""
+
+msgid "Edit the summary and the description"
+msgstr ""
+
+msgid "Description: how to do it"
+msgstr ""
+
+msgid ""
+"The filter has no conditions in force: this step has no tasks, and no pull "
+"request is in it."
+msgstr ""
+
+msgid "Save the step"
+msgstr ""
+
+msgid "Saving…"
+msgstr ""
+
+msgid "Saved"
+msgstr ""
+
+msgid "Not saved: is the network away? It is tried again."
+msgstr ""
+
+msgid "Remove the step"
+msgstr ""
+
+msgid "The filter stays."
+msgstr ""
+
 msgid ""
 "A project is a set of repositories on GitHub. Open one to see its open "
 "issues and pull requests."
@@ -2292,6 +2453,10 @@ msgstr "Tu cuenta está borrada, con los proyectos %(names)s."
 
 msgid "Your account is deleted."
 msgstr "Tu cuenta está borrada."
+
+msgid ""
+"The site asks GitHub now. Reload this page in a moment to see the result."
+msgstr ""
 
 msgid "Bad request"
 msgstr "Solicitud incorrecta"

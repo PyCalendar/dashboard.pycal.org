@@ -113,16 +113,19 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     assert "✎" in detail and detail.count("data-variables-menu") == 2  # summary, condition
     assert "tutorial/projects.html#step-variables" in detail  # the documentation, no list
     assert "variables-help" not in detail
-    assert 'role="menuitem" data-variable="{author}"' in detail and "Insert</button>" not in detail
+    assert (
+        'role="menuitem" data-variable="{author_mention}"' in detail
+        and "Insert</button>" not in detail
+    )
     assert '<textarea id="description-0" name="description-0"' in detail  # the editor
     client.post(
         f"/projects/icalendar/steps/{step.pk}/edit/",
         {
             "name": "Waiting for a review",
-            "summary": "Thanks, @{author}! Waiting for {project}.",
+            "summary": "Thanks, {author_mention}! Waiting for {project_name}.",
             "value-0": "labels~applies~present~needs review",
             "summary-0": "A person reviews it",
-            "description-0": "See [the guide](https://docs.example.org/) for {full_name}.",
+            "description-0": "See [the guide](https://docs.example.org/) for {repository_full_name}.",
         },
     )
     step.refresh_from_db()
@@ -130,7 +133,7 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     notes = step.conditions["labels~applies~present~needs review"]
     assert notes["summary"] == "A person reviews it"
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
-    assert "Thanks, @octocat! Waiting for iCalendar." in page  # the preview with an example
+    assert "Thanks, @niccokunzmann! Waiting for iCalendar." in page  # with the examples
     assert 'href="https://docs.example.org/"' in page and "collective/icalendar" in page
     client.logout()
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
@@ -165,10 +168,10 @@ def test_templates_are_safe_for_the_input_of_others():
     """A title of anybody stays text: no links, images or HTML of its own."""
     from pycal_dashboard.markdown_text import render
 
-    values = {"title": "[click](https://evil.example) ![x](https://evil.example/x.png) <b>"}
-    html = render(expand("Title: {title} {unknown} {title.upper}", values))
+    values = {"pr_title": "[click](https://evil.example) ![x](https://evil.example/x.png) <b>"}
+    html = render(expand("Title: {pr_title} {unknown} {pr_title.upper}", values))
     assert "<a " not in html and "<img" not in html and "<b>" not in html
-    assert "{unknown}" in html and "{title.upper}" in html  # nothing else is evaluated
+    assert "{unknown}" in html and "{pr_title.upper}" in html  # nothing else is evaluated
     assert escape("a\nb") == "a b"
 
 
@@ -181,3 +184,35 @@ def test_a_step_saves_itself_for_the_script(client, project, filters, bob):
     assert answer.status_code == 200 and answer.json() == {"step": step.pk, "name": "Wait"}
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
     assert "data-save-status" in page and 'data-saving="Saving…"' in page
+
+
+def test_the_variables_are_grouped_and_documented_with_examples():
+    """Every variable is in its group, with an example, in the code and in the docs."""
+    from pathlib import Path
+
+    from pycal_dashboard.step_template import GROUPS, VARIABLES
+
+    docs = (Path(__file__).parent.parent / "docs" / "tutorial" / "projects.rst").read_text()
+    for _key, (title, members) in GROUPS.items():
+        assert f".. list-table:: {title}" in docs
+        for name, (_meaning, example) in members.items():
+            assert f"``{{{name}}}``" in docs and f"``{example}``" in docs, name
+    assert {"author_mention", "author_name", "author_handle", "step_id"} <= set(VARIABLES)
+
+
+def test_the_values_of_a_pull_request(project, filters):
+    from pycal_dashboard.models import GitHubUser
+    from pycal_dashboard.step_template import values_of
+
+    _conflict, review = filters
+    step = PullRequestStep.objects.create(project=project, filter=review, name="Review")
+    GitHubUser.objects.filter(login="octocat").update(name="The Octocat")
+    pull = Issue.objects.select_related("author", "repository").get(title="Ready")
+    values = values_of(pull, project, step)
+    assert values["author_mention"] == "@octocat" and values["author_name"] == "The Octocat"
+    assert values["author_handle"] == "octocat" and values["pr_number"] == "1"
+    assert (values["step_name"], values["step_number"], values["step_id"]) == (
+        "Review",
+        "1",
+        str(step.pk),
+    )

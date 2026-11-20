@@ -15,7 +15,7 @@
   <a href="?step={{ step.pk }}"{% if step == shown %} aria-current="step"{% endif %}><small class="muted step-number">{% blocktranslate with number=forloop.counter %}Step {{ number }}{% endblocktranslate %}</small> <span class="step-name">{{ step.name }}</span></a>
   {% if access.can_write %}<span class="step-moves"><form method="post" action="{% url 'project_step_move' project.slug step.pk %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="direction" value="left" title="{% translate "Move left: earlier" %}" aria-label="{% translate "Move left: earlier" %}"{% if forloop.first %} disabled{% endif %}>←</button><button class="button button-quiet button-small" name="direction" value="right" title="{% translate "Move right: later" %}" aria-label="{% translate "Move right: later" %}"{% if forloop.last %} disabled{% endif %}>→</button></form></span>{% endif %}
 </li>{% endfor %}</ol>
-<p class="muted">{% translate "A pull request is in the left-most step whose filter shows it: one of its conditions applies. The conditions are what keeps it from being merged." %}</p>
+<p class="muted">{% translate "A pull request is in the left-most step that has a task for it: a condition of its filter that applies. The tasks are what keeps it from being merged." %}</p>
 {% else %}<p data-no-steps>{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}No steps yet. Make a saved filter a step on the tab <a href="{{ filters_url }}">Filters</a>, or add one with the button +.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">
@@ -23,16 +23,16 @@
   <p><label for="step-name">{% translate "Name" %}</label><input id="step-name" name="name" maxlength="100" value="{{ shown.name }}" placeholder="{{ shown.filter.name }}"></p>
   {% translate "Summary" as summary_label %}{% include "pycal_dashboard/_markdown_field.html" with id="summary" name="summary" label=summary_label value=shown.summary rows=4 variables=variables %}
   {% if summary_preview %}<div class="template-preview"><small class="muted">{% translate "With an example pull request:" %}</small><div class="markdown">{{ summary_preview|markdown }}</div></div>{% endif %}
-  <h3>{% translate "Conditions" %}</h3>
-  <p class="muted">{% blocktranslate with name=shown.filter.name %}The conditions of the filter {{ name }} that keep a pull request in this step. Guide people to remove each one.{% endblocktranslate %}</p>
+  <h3>{% translate "Tasks" %}</h3>
+  <p class="muted">{% blocktranslate with name=shown.filter.name %}The tasks of this step are the conditions of the filter {{ name }} that keep a pull request in it. Guide people to do each one.{% endblocktranslate %}</p>
   <ul class="step-conditions">{% for condition in conditions %}<li data-step-condition="{{ condition.index }}">
     <input type="hidden" name="value-{{ condition.index }}" value="{{ condition.value }}">
     <details class="condition-edit"><summary><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %} <span class="pencil" title="{% translate "Edit the summary and the description" %}" aria-label="{% translate "Edit the summary and the description" %}">✎</span></summary>
       <p><label for="summary-{{ condition.index }}">{% translate "Summary" %}</label><input id="summary-{{ condition.index }}" name="summary-{{ condition.index }}" maxlength="200" value="{{ condition.summary }}"></p>
-      {% translate "Description: how to remove it" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id=condition.target name=condition.target label=description_label value=condition.description rows=4 variables=variables %}
+      {% translate "Description: how to do it" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id=condition.target name=condition.target label=description_label value=condition.description rows=4 variables=variables %}
     </details>
     {% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}
-  </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: no pull request is in this step." %}</li>{% endfor %}</ul>
+  </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: this step has no tasks, and no pull request is in it." %}</li>{% endfor %}</ul>
   <p class="save-buttons"><button class="button" data-save-step>{% translate "Save the step" %}</button>
     <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" aria-live="polite"></span></p>
 </form>

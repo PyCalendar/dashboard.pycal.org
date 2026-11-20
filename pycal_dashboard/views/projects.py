@@ -556,6 +556,7 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "label_colors": {label.name.lower(): label.color for label in labels},
             "address": table_address(columns, size, saved.pk if saved else None),
             "saved": saved,
+            "adding": "new" in request.GET,  # the button New filter of the tab Filters
             "repositories": repositories,
             "tab": "pull-requests",
         },

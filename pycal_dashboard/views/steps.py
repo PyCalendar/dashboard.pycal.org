@@ -17,7 +17,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
 from pycal_dashboard.models import Project, PullRequestFilter, PullRequestStep
-from pycal_dashboard.step_template import VARIABLES, example, expand
+from pycal_dashboard.step_template import GROUPS, example, expand
 
 from .projects import opened, saved_filter
 
@@ -63,7 +63,7 @@ def conditions_of(step: PullRequestStep) -> list[dict]:
         Each condition: its ``index``, ``value``, ``column``, ``summary``, ``description`` and
         the ``preview`` of the description, expanded with values of an example.
     """
-    values = example(step.project, step.name)
+    values = example(step.project, step)
     found = []
     for index, value in enumerate(step.filter.columns):
         column = Column.decode(value)
@@ -110,11 +110,11 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             "steps": steps,
             "shown": shown,
             "conditions": conditions_of(shown) if shown else [],
-            "summary_preview": expand(shown.summary, example(access.project, shown.name))
+            "summary_preview": expand(shown.summary, example(access.project, shown))
             if shown
             else "",
             "free_filters": access.project.filters.filter(step__isnull=True),
-            "variables": VARIABLES,
+            "variables": GROUPS,
             "tab": "steps",
         },
     )

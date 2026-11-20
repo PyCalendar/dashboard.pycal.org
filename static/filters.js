@@ -8,7 +8,14 @@
     details.addEventListener("toggle", function () {
       if (!details.open || loaded) { return; }
       loaded = true;
-      details.querySelectorAll("[data-count-of]").forEach(function (cell) { cell.textContent = "…"; });
+      details.querySelectorAll("[data-count-of]").forEach(function (cell) {
+        var spinner = document.createElement("span");
+        spinner.className = "loading";
+        spinner.setAttribute("role", "status");
+        spinner.setAttribute("aria-label", details.dataset.loadingText || "");
+        spinner.title = details.dataset.loadingText || "";
+        cell.replaceChildren(spinner);
+      });
       fetch(details.dataset.numbers, {credentials: "same-origin"})
         .then(function (answer) { return answer.ok ? answer.json() : Promise.reject(answer); })
         .then(function (numbers) {
@@ -19,7 +26,16 @@
           var total = details.querySelector("[data-filter-total]");
           total.textContent = (details.dataset.totalText || "").replace("%(count)s", numbers.count);
         })
-        .catch(function () { loaded = false; });
+        .catch(function () {
+          loaded = false;  // the links to count stay usable: open it again to retry
+          details.querySelectorAll("[data-count-of]").forEach(function (cell) {
+            var link = document.createElement("a");
+            link.href = details.dataset.numbers.replace("?numbers=1", "");
+            link.className = "muted";
+            link.textContent = "–";
+            cell.replaceChildren(link);
+          });
+        });
     });
   });
 }());

@@ -1,0 +1,1 @@
+The variables of the templates of steps are grouped, with examples in the documentation; new are ``{author_mention}``, ``{author_name}``, ``{author_handle}``, ``{pr_title}``, ``{pr_number}``, ``{step_name}``, ``{step_number}`` and ``{step_id}``.

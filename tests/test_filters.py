@@ -236,3 +236,14 @@ def test_the_filters_are_cards_without_bullets():
 
     css = (Path(__file__).parent.parent / "static" / "style.css").read_text()
     assert ".filters { display: grid; gap: 1rem; list-style: none;" in css
+
+
+def test_new_filter_opens_the_menu_of_conditions(client, project):
+    """The button New filter of the tab Filters opens the table with its menu + open."""
+    page = client.get("/projects/icalendar/filters/").content.decode()
+    assert 'href="/projects/icalendar/pull-requests/?new=1#add-condition"' in page
+    assert "data-new-filter" in page
+    table = client.get("/projects/icalendar/pull-requests/?new=1").content.decode()
+    assert 'id="add-condition" data-add-condition open>' in table
+    table = client.get("/projects/icalendar/pull-requests/").content.decode()
+    assert 'id="add-condition" data-add-condition>' in table

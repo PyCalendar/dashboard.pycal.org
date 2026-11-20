@@ -4,6 +4,7 @@
 {% block head %}<script src="{% static 'filters.js' %}" defer></script><script src="{% static 'steps.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
+{% url 'project_pull_requests' project.slug as pulls %}<p class="filters-add"><a class="button" href="{{ pulls }}?new=1#add-condition" data-new-filter title="{% translate "A new filter: add its conditions as columns of the table of pull requests" %}"><span aria-hidden="true">+</span> {% translate "New filter" %}</a></p>
 {% if filters %}<ul class="filters" data-filters>{% for item in filters %}<li class="card filter" data-filter="{{ item.saved.name }}">
   <div class="table-head"><h2>{{ item.saved.name }}</h2>
   <span class="filter-actions"><a class="button" href="{{ item.path }}" data-filter-pull-requests>{% translate "Pull requests" %}</a>
@@ -11,7 +12,7 @@
   {% if item.step %}<a class="button button-quiet" href="{% url 'project_steps' project.slug %}?step={{ item.step.pk }}" data-step-link>{% blocktranslate with name=item.step.name %}Step: {{ name }}{% endblocktranslate %}</a>
   {% else %}<form method="post" action="{% url 'project_step_add' project.slug %}" class="inline" data-make-step data-made-text="{% blocktranslate with name="%(name)s" %}Step: {{ name }}{% endblocktranslate %}">{% csrf_token %}<input type="hidden" name="filter" value="{{ item.saved.pk }}"><button class="button button-quiet">{% translate "Make it a step" %}</button></form>{% endif %}{% endif %}</span></div>
   {% if item.saved.description %}<div class="markdown">{{ item.saved.description|markdown }}</div>{% endif %}
-  <details class="filter-details" data-filter-details data-numbers="{{ item.counts }}?numbers=1" data-total-text="{% blocktranslate with count="%(count)s" %}The filter shows {{ count }} pull requests.{% endblocktranslate %}">
+  <details class="filter-details" data-filter-details data-numbers="{{ item.counts }}?numbers=1" data-loading-text="{% translate "Counting" %}" data-total-text="{% blocktranslate with count="%(count)s" %}The filter shows {{ count }} pull requests.{% endblocktranslate %}">
     <summary>{% blocktranslate count counter=item.in_force %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>
     {% if item.rows %}<div class="table-wrap"><table class="table filter-conditions" data-filter-conditions>
       <thead><tr><th>{% translate "Condition" %}</th><th class="numeric">{% translate "Applies to" %}</th></tr></thead>
@@ -20,5 +21,5 @@
     <p class="muted" data-filter-total></p>
   </details>
 </li>{% endfor %}</ul>
-{% else %}<p class="card" data-no-filters>{% url 'project_pull_requests' project.slug as pulls %}{% blocktranslate %}No filters yet. Add columns of conditions on the tab <a href="{{ pulls }}">Pull requests</a> and save them there as a filter.{% endblocktranslate %}</p>{% endif %}
+{% else %}<p class="card" data-no-filters>{% blocktranslate %}No filters yet. Add columns of conditions on the tab <a href="{{ pulls }}">Pull requests</a> and save them there as a filter.{% endblocktranslate %}</p>{% endif %}
 {% endblock %}
