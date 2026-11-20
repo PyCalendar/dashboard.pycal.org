@@ -12,6 +12,10 @@
 <h2>{{ pull.title }} <a class="muted" href="{{ pull.url }}">{{ pull.repository.full_name }}#{{ pull.number }}</a></h2>
 <p class="pull-meta"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span>
 {% github_user pull.author %} <span class="muted">{% when pull.created %}</span></p>
+<div class="pull-badge" data-badge><a href="{{ addresses.pr_steps_url }}"><img src="{{ addresses.pr_badge_url }}" alt="{% blocktranslate with number=pull.number %}The step of #{{ number }}{% endblocktranslate %}" height="20"></a>
+  <details><summary>{% translate "Show the badge elsewhere" %}</summary>
+  <p><label for="badge-markdown">{% translate "Markdown, such as for a comment on GitHub" %}</label><input id="badge-markdown" readonly value="{{ addresses.pr_badge }}"></p>
+  <p><label for="badge-png">{% translate "The badge as PNG" %}</label><input id="badge-png" readonly value="{{ badge_png }}"></p></details></div>
 {% if progress.steps %}<ol class="progress-bar" data-progress>{% for step in progress.steps %}
 <li class="progress-step" data-step="{{ step.step.pk }}" data-complete="{{ step.complete|yesno:'true,false' }}"{% if step.current %} data-current{% endif %}>
   <a href="{{ step_query }}{{ step.step.pk }}"{% if step == shown %} aria-current="step"{% endif %}>

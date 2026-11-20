@@ -320,6 +320,7 @@ PER_PAGE = 25
 PULL_REQUEST_COLUMNS = (
     ("status", gettext_lazy("Status"), False),
     ("title", gettext_lazy("Title"), True),
+    ("step", gettext_lazy("Step"), True),  # the badge, linked to the page of the pull request
     ("organization", gettext_lazy("Organization"), False),
     ("repository", gettext_lazy("Repository"), False),
     ("number", gettext_lazy("Number"), True),

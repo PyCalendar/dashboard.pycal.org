@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 00:41+0000\n"
+"POT-Creation-Date: 2026-11-20 00:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -451,6 +451,9 @@ msgstr ""
 msgid "Pull request not found"
 msgstr ""
 
+msgid "Which repository?"
+msgstr ""
+
 msgid "The GitHub App could not be registered"
 msgstr "No se pudo registrar la GitHub App"
 
@@ -785,6 +788,15 @@ msgstr "El idioma que elegiste."
 msgid "The colors you chose."
 msgstr "Los colores que elegiste."
 
+msgid "Steps"
+msgstr ""
+
+msgid "complete"
+msgstr ""
+
+msgid "none"
+msgstr ""
+
 msgid "Pull request"
 msgstr ""
 
@@ -798,6 +810,12 @@ msgid "the address of the pull request on GitHub"
 msgstr ""
 
 msgid "the address of the page of the pull request with its steps on this site"
+msgstr ""
+
+msgid "the address of the badge of the pull request: its step and tasks done"
+msgstr ""
+
+msgid "the badge of the pull request, linked to its page with its steps"
 msgstr ""
 
 msgid "who opened the pull request, mentioned"
@@ -1077,9 +1095,6 @@ msgstr "Pull requests"
 
 msgid "Filters"
 msgstr "Filtros"
-
-msgid "Steps"
-msgstr ""
 
 msgid "Repositories"
 msgstr "Repositorios"
@@ -2136,6 +2151,19 @@ msgstr ""
 msgid ""
 "Several repositories of the project have a pull request of this number. "
 "Choose one:"
+msgstr ""
+
+#, python-format
+msgid "The step of #%(number)s"
+msgstr ""
+
+msgid "Show the badge elsewhere"
+msgstr ""
+
+msgid "Markdown, such as for a comment on GitHub"
+msgstr ""
+
+msgid "The badge as PNG"
 msgstr ""
 
 #, python-format

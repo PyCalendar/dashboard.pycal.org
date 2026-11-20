@@ -48,6 +48,18 @@ urlpatterns = [
         pull_request.project_pull_request,
         name="project_pull_request",
     ),
+    path(
+        "projects/<project_slug:slug>/pull/<int:number>/badge.svg",
+        pull_request.project_pull_request_badge,
+        {"kind": "svg"},
+        name="project_pull_request_badge",
+    ),
+    path(
+        "projects/<project_slug:slug>/pull/<int:number>/badge.png",
+        pull_request.project_pull_request_badge,
+        {"kind": "png"},
+        name="project_pull_request_badge_png",
+    ),
     path("projects/<project_slug:slug>/filters/", filters.project_filters, name="project_filters"),
     path("projects/<project_slug:slug>/steps/", steps.project_steps, name="project_steps"),
     path(

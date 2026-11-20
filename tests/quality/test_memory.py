@@ -12,8 +12,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 
-# loaded only when the site speaks with GitHub or reads the licenses itself
-HEAVY = ["httpx", "jwt", "cryptography", "reuse", "piplicenses"]
+# loaded only when the site speaks with GitHub, reads the licenses itself or draws a badge
+HEAVY = ["httpx", "jwt", "cryptography", "reuse", "piplicenses", "anybadge", "PIL"]
 PAGES = [
     "/health/",
     "/",

@@ -19,6 +19,8 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
   the field makes text bold or italic, adds links, lists, quotes and code;
   **Preview** shows it as the page will. Without JavaScript, you type the
   Markdown yourself, such as ``**bold**`` and ``[a link](https://pycal.org)``.
+  Images show only from this site, such as the badges of pull requests: the
+  site loads nothing from other sites.
 - the **visibility**: *Public*, the default, for everybody, or *Private*, only
   for its collaborators, see :ref:`project-roles`,
 - optionally its **address**, see :ref:`project-address`.
@@ -291,6 +293,26 @@ come first, marked *TODO* and open, with their description; the tasks done have
 a green check mark and are closed. The summaries and descriptions show the
 values of the pull request in place of the variables.
 
+.. _pull-request-badge:
+
+The badge of a pull request
+---------------------------
+
+Each pull request has a badge with the step it is in and how many of its tasks
+are done, such as *Triage 3/4*; *Steps: complete* when no task is to do, and
+*Steps: none* without steps. It is at the address of its page with
+``badge.svg``, or ``badge.png`` for places that show no SVG, such as
+``/projects/icalendar/pull/42/badge.svg``; when several repositories of the
+project have pull requests, the address names the repository with
+``?repository=collective/icalendar``. A badge is always a link to the page of
+its pull request. The column *Step* of the table of pull requests shows it,
+and the variable ``{pr_badge}`` puts it into a summary or description.
+
+The site draws a badge once and keeps it until the repositories are updated or
+the steps change; browsers and GitHub keep it for five minutes and then ask
+whether it changed. The badge of a private repository is seen only by the
+collaborators of its project, like the repository.
+
 .. _step-variables:
 
 Variables of the templates
@@ -322,6 +344,15 @@ in their groups. The examples are those of a pull request of
        site, see :ref:`pull-request-page`; with ``?repository=`` when the
        project has several repositories
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/``
+   * - ``{pr_badge_url}``
+     - The address of the badge of the pull request, see
+       :ref:`pull-request-badge`
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg``
+   * - ``{pr_badge}``
+     - The badge of the pull request in Markdown, linked to its page with its
+       steps: ``[![]({pr_badge_url})]({pr_steps_url})``, made of the
+       addresses of the site, which are not escaped
+     - ``[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg)](https://dashboard.pycal.org/projects/icalendar/pull/42/)``
 
 .. list-table:: Author
    :header-rows: 1

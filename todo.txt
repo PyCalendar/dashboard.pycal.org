@@ -424,6 +424,11 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: running the actions writes to GitHub: the GitHub App then needs to write
       (Issues or Pull requests: Read and write), which is the decision of the person
 
+- [x] The badge of a pull request (badge.svg, badge.png at the address of its page), such as
+      Triage 3/4, with anybadge as community-insights; cached until something changes; the
+      column Step of the table (on by default), always linked to the page of the pull request
+- [x] Variables pr_badge_url and pr_badge ([![]({pr_badge_url})]({pr_steps_url})), static links
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where
@@ -434,3 +439,5 @@ community: where to start, what waits for a review, who contributes.
       last update of the repositories of the project
 - [ ] A script that measures the speed of every condition on the live site through the JSON of
       the pull requests, to see the impact of each change and bring the times down
+- [ ] Speed of finding the step of a pull request (StepAssignment, PullRequestProgress, the
+      badges of a page of the table): make it really fast

@@ -37,6 +37,7 @@
     <td class="col-link">{% blocktranslate with name=pull.repository.full_name number=pull.number asvar label %}{{ name }}#{{ number }} on GitHub{% endblocktranslate %}{% github_link pull.url label %}</td>
     <td class="col-status"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span></td>
     <td class="col-title"><a href="{% url 'project_pull_request' project.slug pull.number %}{% if repositories|length > 1 %}?repository={{ pull.repository.full_name|urlencode:'' }}{% endif %}" data-pull-page>{{ pull.title }}</a></td>
+    <td class="col-step"><a href="{% url 'project_pull_request' project.slug pull.number %}{% if repositories|length > 1 %}?repository={{ pull.repository.full_name|urlencode:'' }}{% endif %}" data-pull-badge><img src="{% url 'project_pull_request_badge' project.slug pull.number %}{% if repositories|length > 1 %}?repository={{ pull.repository.full_name|urlencode:'' }}{% endif %}" alt="{% blocktranslate with number=pull.number %}The step of #{{ number }}{% endblocktranslate %}" height="20" loading="lazy"></a></td>
     <td class="col-organization">{{ pull.repository.owner }}</td>
     <td class="col-repository">{{ pull.repository.name }}</td>
     <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}</a></td>

@@ -186,7 +186,7 @@ def test_the_pull_requests_are_a_table_with_columns_to_choose(client, project):
     page = client.get(f"/projects/{project.slug}/pull-requests/").content.decode()
     assert "?state=" not in page and "the newest first, as of the last update" not in page
     choice = page.split("data-columns>")[1].split("</details>")[0]
-    assert "Display: <span data-columns-shown>Title, Number, Creator</span>" in choice
+    assert "Display: <span data-columns-shown>Title, Step, Number, Creator</span>" in choice
     for column in ("title", "number", "creator"):  # shown first
         assert f'id="column-{column}" data-column="{column}" checked>' in choice
     for column in ("status", "organization", "repository", "created"):  # hidden first

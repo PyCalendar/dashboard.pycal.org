@@ -225,3 +225,15 @@ class PullRequestNotFound(ProjectError):
 
     title = _("Pull request not found")
     status = 404
+
+
+class PullRequestNumberAmbiguous(ProjectError):
+    """Several repositories of the project have a pull request of this number.
+
+    Name the repository in the address, such as ``badge.svg?repository=collective/icalendar``.
+    The variables ``{pr_badge_url}`` and ``{pr_steps_url}`` of the steps name it when the
+    project has several repositories.
+    """
+
+    title = _("Which repository?")
+    status = 404

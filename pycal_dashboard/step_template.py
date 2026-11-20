@@ -35,6 +35,15 @@ GROUPS = {
                 _("the address of the page of the pull request with its steps on this site"),
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/",
             ),
+            "pr_badge_url": (
+                _("the address of the badge of the pull request: its step and tasks done"),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg",
+            ),
+            "pr_badge": (
+                _("the badge of the pull request, linked to its page with its steps"),
+                "[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg)]"
+                "(https://dashboard.pycal.org/projects/icalendar/pull/42/)",
+            ),
         },
     ),
     "author": (
@@ -70,6 +79,8 @@ GROUPS = {
     ),
 }
 # every variable with what it is, in the order of the groups
+# the variables whose values are Markdown that the site makes of its own addresses: not escaped
+MARKDOWN_VALUES = {"pr_badge"}
 VARIABLES = {
     name: about[0] for _title, members in GROUPS.values() for name, about in members.items()
 }
@@ -112,7 +123,7 @@ def expand(template: str, values: dict[str, str]) -> str:
     def replace(match: re.Match) -> str:
         name = match[1]
         if name in VARIABLES and name in values:
-            return escape(values[name])
+            return values[name] if name in MARKDOWN_VALUES else escape(values[name])
         return match[0]
 
     return VARIABLE.sub(replace, template or "")
@@ -136,7 +147,7 @@ def values_of(issue: Issue, project: Project, step: PullRequestStep | None = Non
         "pr_title": issue.title,
         "pr_number": str(issue.number),
         "pr_url": issue.url,
-        "pr_steps_url": steps_url(project, issue.number, repository.full_name),
+        **pull_addresses(project, issue.number, repository.full_name),
         "author_mention": f"@{login}" if login else "",
         "author_name": (author.name or login) if author else "",
         "author_handle": login,
@@ -177,25 +188,41 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
         name: about[1] for _title, members in GROUPS.values() for name, about in members.items()
     }
     return (
-        values
-        | {"project_name": project.name, "pr_steps_url": steps_url(project, 42)}
-        | step_values(step)
+        values | {"project_name": project.name, **pull_addresses(project, 42)} | step_values(step)
     )
 
 
-def steps_url(project: Project, number: int, repository: str = "") -> str:
-    """The address of the page of a pull request with its steps, on this site.
+def steps_url(project: Project, number: int, repository: str = "", page: str = "") -> str:
+    """The address of the page of a pull request with its steps, or of its badge, on this site.
 
     Parameters:
         project: The project.
         number: The number of the pull request.
         repository: Its repository, such as ``collective/icalendar``: named in the address
             when the project has several, which may have pull requests of the same number.
+        page: ``badge.svg`` for the badge; "" for the page.
 
     Returns:
         Such as ``https://dashboard.pycal.org/projects/icalendar/pull/42/``.
     """
-    address = f"{settings.SITE_URL}{project.path(f'pull/{number}/')}"
+    address = f"{settings.SITE_URL}{project.path(f'pull/{number}/{page}')}"
     if repository and project.repositories.count() > 1:
         address += "?" + urlencode({"repository": repository})
     return address
+
+
+def pull_addresses(project: Project, number: int, repository: str = "") -> dict[str, str]:
+    """The variables of the addresses of a pull request on this site, and its badge.
+
+    Parameters:
+        project: The project.
+        number: The number of the pull request.
+        repository: Its repository, see :func:`steps_url`.
+
+    Returns:
+        ``pr_steps_url``, ``pr_badge_url`` and ``pr_badge``, the badge in Markdown linked to
+        the page: made of the addresses of the site only, so it is not escaped.
+    """
+    page = steps_url(project, number, repository)
+    badge = steps_url(project, number, repository, "badge.svg")
+    return {"pr_steps_url": page, "pr_badge_url": badge, "pr_badge": f"[![]({badge})]({page})"}

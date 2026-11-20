@@ -92,7 +92,7 @@ def test_create_a_project(signed_in, site, github, update_worker):
     expect(page.locator("[data-pull-request] [data-github-user='octocat']").first).to_be_visible()
     # the columns: hidden by CSS, the choice kept by the browser
     table = page.locator("[data-pull-requests]")
-    expect(table.locator("[data-columns-shown]")).to_have_text("Title, Number, Creator")
+    expect(table.locator("[data-columns-shown]")).to_have_text("Title, Step, Number, Creator")
     expect(table.locator("td.col-title").first).to_be_visible()
     expect(table.locator("td.col-status").first).to_be_hidden()
     expect(table.locator("td.col-link").first).to_be_hidden()  # the title and number link
@@ -103,7 +103,7 @@ def test_create_a_project(signed_in, site, github, update_worker):
     table.get_by_label("Number").uncheck()
     expect(table.locator("td.col-title").first).to_be_hidden()
     expect(table.locator("td.col-link").first).to_be_visible()  # now the icon links
-    expect(table.locator("[data-columns-shown]")).to_have_text("Creator")
+    expect(table.locator("[data-columns-shown]")).to_have_text("Step, Creator")
     table.get_by_label("Status").check()
     expect(row).to_have_css("border-left-style", "none")
     page.reload()

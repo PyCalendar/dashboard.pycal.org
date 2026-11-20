@@ -6,21 +6,34 @@ and a preview, and the preview is made here too, so that it looks as the page wi
 ``tests/test_markdown.py`` checks the rules.
 
 The HTML is cleaned (nh3): no scripts, styles or raw HTML of the text, links only to http,
-https and mail, and every link with ``rel="nofollow noopener noreferrer"``.
+https and mail, and every link with ``rel="nofollow noopener noreferrer"``. Images are shown
+only from this site, such as the badges of pull requests: nothing is loaded from other sites.
 """
 
+import re
 from functools import cache
 
+from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 
 from pycal_dashboard.import_guard import IMPORT_GUARD
+
+# an image whose address was removed: it shows nothing
+EMPTY_IMAGE = re.compile(r"<img(?![^>]*\ssrc=)[^>]*>")
 
 # the elements and attributes that the HTML of Markdown may have
 TAGS = {
     "a", "blockquote", "br", "code", "del", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
     "li", "ol", "p", "pre", "s", "strong", "table", "tbody", "td", "th", "thead", "tr", "ul",
+    "img",
 }  # fmt: skip
-ATTRIBUTES = {"a": {"href", "title"}, "th": {"align"}, "td": {"align"}, "ol": {"start"}}
+ATTRIBUTES = {
+    "a": {"href", "title"},
+    "img": {"src", "alt", "title"},
+    "th": {"align"},
+    "td": {"align"},
+    "ol": {"start"},
+}
 SCHEMES = {"http", "https", "mailto"}
 
 
@@ -33,6 +46,36 @@ def parser():
     return MarkdownIt("commonmark", {"html": False, "linkify": False}).enable(
         ["table", "strikethrough"]
     )
+
+
+def own_images(element: str, attribute: str, value: str) -> str | None:
+    """Keep the images of this site only, such as the badges of pull requests.
+
+    An image of another site would load it when the page is shown, which the site never does
+    (see the privacy policy): its address is removed. The address of this site becomes a path.
+
+    Parameters:
+        element: The element, such as ``img``.
+        attribute: The attribute, such as ``src``.
+        value: Its value.
+
+    Returns:
+        The value; the path of an image of this site; None to remove the attribute.
+
+    Examples:
+        >>> own_images("img", "src", "https://evil.example/x.png") is None
+        True
+        >>> own_images("a", "href", "https://pycal.org")
+        'https://pycal.org'
+    """
+    if element != "img" or attribute != "src":
+        return value
+    site = settings.SITE_URL.rstrip("/") + "/"
+    if value.startswith(site):
+        return "/" + value[len(site) :]
+    if value.startswith("/") and not value.startswith("//"):
+        return value
+    return None
 
 
 def render(text: str) -> SafeString:
@@ -61,5 +104,7 @@ def render(text: str) -> SafeString:
         attributes=ATTRIBUTES,
         url_schemes=SCHEMES,
         link_rel="nofollow noopener noreferrer",
+        attribute_filter=own_images,
     )
+    html = EMPTY_IMAGE.sub("", html)
     return mark_safe(html.strip())  # noqa: S308 - cleaned by nh3
