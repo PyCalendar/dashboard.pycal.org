@@ -2,7 +2,7 @@
 
 import pytest
 
-from pycal_dashboard.models import Issue, PullRequestStep, Repository
+from pycal_dashboard.models import Issue, PullRequestFilter, PullRequestStep, Repository
 from pycal_dashboard.services.progress import PullRequestProgress
 
 from .test_steps import filters, project  # noqa: F401 (fixtures)
@@ -55,8 +55,10 @@ def test_the_progress_of_a_pull_request(project, steps):  # noqa: F811
 def test_the_page_shows_the_bar_and_the_tasks(client, project, steps):  # noqa: F811
     first, second = steps
     page = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/").content.decode()
-    assert f'data-step="{first.pk}" data-complete="true"' in page
-    assert f'data-step="{second.pk}" data-complete="false" data-current' in page
+    assert f'data-step="{first.pk}" data-stage="past" data-complete="true"' in page
+    assert (
+        f'data-step="{second.pk}" data-stage="current" data-complete="false" data-current' in page
+    )
     bar = page.split("data-progress>")[1].split("</ol>")[0]
     assert bar.count("square-done") == 1 and bar.count("square-todo") == 1
     assert ">0/1<" in bar and ">1/1<" in bar
@@ -101,7 +103,10 @@ def test_hidden_steps_show_only_with_the_pull_request(client, project, steps):  
     second.save()
     page = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/").content.decode()
     assert f'data-step="{first.pk}"' not in page  # hidden
-    assert f'data-step="{second.pk}" data-complete="false" data-current data-hidden' in page
+    assert (
+        f'data-step="{second.pk}" data-stage="current" data-complete="false" data-current data-hidden'
+        in page
+    )
     shown = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/?step={first.pk}")
     assert f'data-shown-step="{first.pk}"' in shown.content.decode()  # by its address
     progress = PullRequestProgress(Issue.objects.get(title="Ready"), project)
@@ -162,3 +167,27 @@ def test_the_same_number_in_two_repositories(client, github, project):  # noqa: 
 def test_the_table_links_the_page(client, project):  # noqa: F811
     table = client.get("/projects/icalendar/pull-requests/").content.decode()
     assert f'href="/projects/icalendar/pull/{number_of("Ready")}/" data-pull-page>Ready<' in table
+
+
+def test_the_stages_of_the_steps(client, project, filters):  # noqa: F811
+    """Past steps green with a check mark, the current one red or yellow, future ones gray."""
+    conflict, review = filters
+    PullRequestStep.objects.create(project=project, filter=conflict, name="Conflicts", position=0)
+    PullRequestStep.objects.create(project=project, filter=review, name="Review", position=1)
+    third = PullRequestFilter.objects.create(
+        project=project, name="Later", columns=["status~applies~open"]
+    )
+    PullRequestStep.objects.create(project=project, filter=third, name="Later", position=2)
+    progress = PullRequestProgress(Issue.objects.get(title="Conflict"), project)
+    assert [step.stage for step in progress.steps] == ["current", "future", "future"]
+    progress = PullRequestProgress(Issue.objects.get(title="Ready"), project)
+    assert [step.stage for step in progress.steps] == ["past", "current", "future"]
+    page = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/").content.decode()
+    bar = page.split("data-progress>")[1].split("</ol>")[0]
+    future = bar.split('data-stage="future"')[1]
+    assert "progress-count" not in future and "progress-check" not in future  # no status
+    assert "progress-check" in bar.split('data-stage="past"')[1].split("</li>")[0]
+    assert "Step 1" not in bar  # the names only
+    assert PullRequestProgress(Issue.objects.get(title="Merged"), project).steps[0].stage == (
+        "outside"
+    )

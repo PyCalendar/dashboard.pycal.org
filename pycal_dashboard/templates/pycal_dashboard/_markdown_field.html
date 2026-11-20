@@ -13,7 +13,7 @@
     {% if variables %}<details class="variables-menu" data-variables-menu><summary class="button button-quiet button-small">{% translate "Variables" %}</summary>
       <ul class="variables-list" role="menu">{% for key, group in variables.items %}<li role="none" class="variables-group">{{ group.0 }}</li>{% for variable, about in group.1.items %}<li role="none"><button type="button" role="menuitem" data-variable="{{ '{' }}{{ variable }}{{ '}' }}"><code>{{ '{' }}{{ variable }}{{ '}' }}</code> <span class="muted">{{ about.0 }}</span></button></li>{% endfor %}{% endfor %}</ul>
     </details>{% translate "The variables of the templates" as variables_help %}{% help_link links.step_variables variables_help %}{% endif %}
-    <span class="markdown-tabs"><button type="button" class="button button-quiet button-small" aria-pressed="true" data-markdown-write>{% translate "Write" %}</button><button type="button" class="button button-quiet button-small" aria-pressed="false" data-markdown-preview="{% url 'markdown_preview' %}">{% translate "Preview" %}</button></span>
+    <span class="markdown-tabs"><button type="button" class="button button-quiet button-small" aria-pressed="true" data-markdown-write>{% translate "Write" %}</button><button type="button" class="button button-quiet button-small" aria-pressed="false" data-markdown-preview="{% if preview_url %}{{ preview_url }}{% else %}{% url 'markdown_preview' %}{% endif %}">{% translate "Preview" %}</button></span>
   </div>
   <textarea id="{{ id }}" name="{{ name }}" rows="{{ rows|default:6 }}">{{ value }}</textarea>
   <div class="markdown markdown-preview" hidden data-markdown-shown aria-live="polite"></div>

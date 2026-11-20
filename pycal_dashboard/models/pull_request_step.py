@@ -25,6 +25,8 @@ class PullRequestStep(models.Model):
     position = models.PositiveIntegerField(default=0)
     # not shown in the bar of the page of a pull request, unless the pull request is in it
     hidden = models.BooleanField(default=False)
+    # the color of its background, such as #fde68a; "" for none (STEP_COLORS of views/steps.py)
+    color = models.CharField(max_length=7, blank=True)
     # what the site does when a pull request completes the step, such as
     # [{"kind": "add_label", "label": "reviewed"}] (StepCompletion)
     actions = models.JSONField(default=list, blank=True)

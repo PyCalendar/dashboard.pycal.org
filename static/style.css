@@ -446,9 +446,18 @@ form.stacked label.switch input { width: 3.2rem; max-width: none; }
 .progress-step { flex: 1 1 9rem; min-width: 0; }
 .progress-step > a { display: flex; flex-direction: column; align-items: center; gap: .35rem; height: 100%; padding: .5rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); text-decoration: none; text-align: center; }
 .progress-step > a:hover, .progress-step > a:focus-visible { background: var(--surface-tint); }
-.progress-step[data-complete="true"] > a { border-color: var(--success); }
-.progress-step[data-complete="true"] .progress-check { color: var(--success); font-weight: 700; }
-.progress-step > a[aria-current="step"] { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); background: var(--surface-tint); }
+/* past steps green with a check mark; the current one yellow when partly done, red when
+   nothing is done; future steps gray, without numbers; the chosen step has a background */
+.progress-step[data-stage="past"] > a { border-color: var(--success); }
+.progress-step[data-stage="past"] .progress-check { color: var(--success); font-weight: 700; }
+.progress-step[data-stage="current"] > a { border-color: var(--danger); }
+.progress-step[data-stage="current"][data-partial] > a { border-color: var(--warning); }
+.progress-step[data-stage="future"] > a { color: var(--text-muted); }
+.progress-step[data-stage="future"] .square, .progress-step[data-stage="outside"] .square { background: var(--border); }
+.progress-step > a[aria-current="step"] { background: var(--surface-tint); font-weight: 600; }
+/* a step with its color: the background, stronger when it is chosen */
+.progress-step > a[style*="--step-color"] { background: color-mix(in srgb, var(--step-color) 30%, var(--surface)); }
+.progress-step > a[style*="--step-color"][aria-current="step"] { background: color-mix(in srgb, var(--step-color) 65%, var(--surface)); }
 .progress-title { font-weight: 600; overflow-wrap: anywhere; }
 .progress-tasks { display: flex; align-items: center; justify-content: center; gap: .4rem; flex-wrap: wrap; }
 .progress-count { font-variant-numeric: tabular-nums; color: var(--text-muted); font-size: .85rem; }
@@ -474,3 +483,19 @@ form.stacked label.switch input { width: 3.2rem; max-width: none; }
 .task-mark-unknown { color: var(--text-muted); }
 .task-done .task-summary { color: var(--text-muted); }
 .task-body { margin: .4rem 0 0 0; }
+
+/* the colors of steps: a background in the bars */
+.step-box[style*="--step-color"] { background: color-mix(in srgb, var(--step-color) 35%, var(--surface)); }
+.step-item.current .step-box[style*="--step-color"] { background: color-mix(in srgb, var(--step-color) 65%, var(--surface)); }
+form.stacked fieldset.step-colors { display: flex; flex-wrap: wrap; gap: .35rem; border: 0; padding: 0; margin: .5rem 0 1rem; }
+.step-colors legend { font-weight: 600; margin-bottom: .3rem; padding: 0; }
+form.stacked label.color-choice { display: inline-flex; margin: 0; cursor: pointer; }
+.color-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.swatch { display: inline-block; width: 1.8rem; height: 1.8rem; border-radius: .4rem; border: 2px solid var(--border); background: var(--swatch); }
+.swatch-none { background: repeating-linear-gradient(45deg, var(--surface), var(--surface) 4px, var(--border) 4px, var(--border) 6px); }
+.color-choice input:checked + .swatch { border-color: var(--text); box-shadow: 0 0 0 2px var(--primary); }
+.color-choice input:focus-visible + .swatch { outline: 3px solid var(--primary); outline-offset: 2px; }
+.step-head { margin-bottom: .5rem; }
+.step-visible { margin: .5rem 0 1rem; }
+.step-visible small { display: block; }
+form.stacked .step-visible label.switch { font-weight: 400; }

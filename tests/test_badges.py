@@ -111,8 +111,7 @@ def test_the_table_and_the_page_show_the_badge_linked(client, project, steps):  
     )
     assert linked in table and 'id="column-step" data-column="step" checked' in table
     page = client.get(f"/projects/icalendar/pull/{number}/").content.decode()
-    assert f'pull/{number}/badge.svg"' in page.split("data-badge>")[1].split("</a>")[0]
-    assert f"/pull/{number}/badge.png" in page and "[![](" in page
+    assert "badge.png" not in page and "[![](" not in page  # no place to copy it
 
 
 def test_a_step_description_shows_the_badge(client, project, steps, settings):  # noqa: F811

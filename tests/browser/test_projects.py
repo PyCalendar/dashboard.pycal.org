@@ -425,8 +425,12 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     expect(detail.get_by_role("button", name="Save the step")).to_be_hidden()
     expect(detail.locator("[data-save-status]")).to_have_text("✓ Saved", timeout=10000)
     expect(page.locator("[data-step-bar]")).to_contain_text("Waiting for a review")
+    # Preview: the text with an example pull request, said above it
+    editor.get_by_role("button", name="Preview").click()
+    shown = editor.locator("[data-markdown-shown]")
+    expect(shown).to_contain_text("Ask @niccokunzmann")
+    expect(shown).to_contain_text("With an example pull request:")
     page.reload()
-    expect(page.locator(".condition-description")).to_contain_text("Ask @niccokunzmann")
     expect(page.locator("[data-step-detail]").get_by_label("Name", exact=True)).to_have_value(
         "Waiting for a review"
     )
@@ -515,9 +519,10 @@ def test_hide_a_step_and_check_the_pull_requests_outside(signed_in, site, github
     step = PullRequestStep.objects.create(project=project, filter=saved, name="Conflicts")
     page = signed_in
     page.goto(f"{site}/projects/icalendar/steps/")
-    switch = page.locator("[data-step-hidden] input[role=switch]").bounding_box()
-    assert switch["width"] < 60  # the switch as everywhere, not as wide as the fields
-    page.locator("[data-step-hidden] label.switch").click()
+    switch = page.locator("[data-step-visible] input[role=switch]")
+    expect(switch).to_be_checked()  # visible by default
+    assert switch.bounding_box()["width"] < 60  # the switch as everywhere
+    page.locator("[data-step-visible] label.switch").click()  # hidden
     expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
     step.refresh_from_db()
     assert step.hidden

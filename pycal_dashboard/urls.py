@@ -81,6 +81,11 @@ urlpatterns = [
         name="project_step_edit",
     ),
     path(
+        "projects/<project_slug:slug>/steps/<int:number>/preview/",
+        steps.project_step_preview,
+        name="project_step_preview",
+    ),
+    path(
         "projects/<project_slug:slug>/steps/<int:number>/remove/",
         steps.project_step_remove,
         name="project_step_remove",

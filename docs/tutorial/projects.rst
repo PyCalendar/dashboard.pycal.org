@@ -267,15 +267,21 @@ the tab *Filters*, or the button **+** of the tab *Steps*, adds the filter as
 the last step. Drag a step in the bar to move it, or use its arrows; steps more
 to the left come first.
 
-A click on a step shows it below the bar. Its name is that of its filter until
-you change it, and its summary is a template in Markdown. The pencil next to each
-task edits its summary, a line of text, and its description, which guides
-people to do it, such as with a link to the documentation. Both are written in the editor of Markdown, the description too.
-They take variables: the menu **Variables** in the bar of the editor inserts the
-one you click where the cursor is, see :ref:`step-variables`. The page shows them
-with an example pull request. A step saves itself while you edit it. The
-switch *Hidden in the page of a pull request* leaves the step out of the bar
-of that page, unless the pull request is in it; the bar of the tab *Steps*
+A click on a step shows it below the bar, with **Edit the filter** at the top
+right, which opens the page of saving its filter. Its name is that of its filter
+until you change it, and its summary is a template in Markdown. A click on a
+task opens its summary, a line of text, and its description, which guides
+people to do it, such as with a link to the documentation; the description is
+written in the editor of Markdown, too. They take variables: the menu
+**Variables** in the bar of the editor inserts the one you click where the
+cursor is, see :ref:`step-variables`. **Preview** shows the text with an example
+pull request, and says so when it uses variables. A step saves itself while you
+edit it.
+
+*Color* gives the step a color, the background of its box in the bars of the
+steps, or none. The switch *Visible in the page of a pull request*, on by
+default, shows the step in the bar of that page; switched off, the step shows
+there only when the pull request is in it, and the bar of the tab *Steps*
 marks it *hidden*.
 
 Below the tasks, *When a pull request completes the step* lists the labels
@@ -300,13 +306,15 @@ The page of a pull request
 The title of a pull request in the table opens its page,
 ``/projects/<slug>/pull/<number>/``, public like the project. When several
 repositories of the project have a pull request of the number, it asks which.
-At the top, a bar shows every step of the project in its order. Each step shows
-its name, how many of its tasks are done, such as *1/3*, and a square for each
-task: green for a task done, on the left, and red for a task to do, on the
-right; gray while its data is not known yet. Hidden steps are left out, unless
-the pull request is in one. A complete step, with no task to
-do, has a green border and a check mark. The step the pull request is in, the
-left-most one with a task to do, says so and is chosen. When no task of any
+At the top, a bar shows every step of the project in its order, with its name
+and a square for each task. The steps the pull request went through, left of
+the step it is in, have a green border and a check mark. The step it is in, the
+left-most one with a task to do, says so and shows how many of its tasks are
+done, such as *1/3*: its squares are green for a task done, on the left, and red
+for a task to do, on the right, gray while its data is not known yet; its
+border is yellow when some tasks are done and red when none is. The steps after
+it are gray, without numbers. Hidden steps are left out, unless the pull request
+is in one. The step shown below the bar has a darker background. When no task of any
 step applies to the pull request, all steps are gray and a note says that it is
 outside of the usual steps it should take, such as a merged pull request.
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 04:02+0000\n"
+"POT-Creation-Date: 2026-11-20 08:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2151,23 +2151,6 @@ msgid ""
 msgstr ""
 
 #, python-format
-msgid "The step of #%(number)s"
-msgstr ""
-
-msgid "Show the badge elsewhere"
-msgstr ""
-
-msgid "Markdown, such as for a comment on GitHub"
-msgstr ""
-
-msgid "The badge as PNG"
-msgstr ""
-
-#, python-format
-msgid "Step %(number)s"
-msgstr ""
-
-#, python-format
 msgid "%(done)s of %(total)s tasks done"
 msgstr ""
 
@@ -2246,6 +2229,10 @@ msgstr "Añadir una condición"
 #, python-format
 msgid "%(name)s#%(number)s on GitHub"
 msgstr "%(name)s#%(number)s en GitHub"
+
+#, python-format
+msgid "The step of #%(number)s"
+msgstr ""
 
 msgid "applies"
 msgstr "se aplica"
@@ -2393,6 +2380,10 @@ msgstr ""
 msgid "Move left: earlier"
 msgstr ""
 
+#, python-format
+msgid "Step %(number)s"
+msgstr ""
+
 msgid "hidden"
 msgstr ""
 
@@ -2410,13 +2401,22 @@ msgid ""
 "href=\"%(filters_url)s\">Filters</a>, or add one with the button +."
 msgstr ""
 
-msgid "Hidden in the page of a pull request, unless the pull request is in it"
+msgid "Edit the filter"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "No color"
+msgstr ""
+
+msgid "Visible in the page of a pull request"
+msgstr ""
+
+msgid "A hidden step shows there only when the pull request is in it."
 msgstr ""
 
 msgid "Summary"
-msgstr ""
-
-msgid "With an example pull request:"
 msgstr ""
 
 msgid "Tasks"
@@ -2426,9 +2426,6 @@ msgstr ""
 msgid ""
 "The tasks of this step are the conditions of the filter %(name)s that keep a "
 "pull request in it. Guide people to do each one."
-msgstr ""
-
-msgid "Edit the summary and the description"
 msgstr ""
 
 msgid "Description: how to do it"
@@ -2830,3 +2827,6 @@ msgstr "cambiar"
 
 msgid "own"
 msgstr "poseer"
+
+msgid "With an example pull request:"
+msgstr ""

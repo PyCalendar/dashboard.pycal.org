@@ -100,6 +100,9 @@
         .then(function (answer) { return answer.ok ? answer.json() : Promise.reject(answer); })
         .then(function (step) {
           if (name) { name.textContent = step.name; }
+          var box = bar && bar.querySelector('[data-step="' + step.step + '"] .step-box');
+          if (box && step.color) { box.style.setProperty("--step-color", step.color); }
+          if (box && !step.color) { box.removeAttribute("style"); }  // its color, at once
           if (!pending && !again) { show("saved"); }  // a newer change is not saved yet
         })
         .catch(function () { show("failed"); timer = setTimeout(save, 5000); })

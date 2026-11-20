@@ -13,16 +13,26 @@ from django.db import transaction
 from django.db.models import Max
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils.html import format_html
+from django.utils.translation import gettext
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
+from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.step_assignment import StepAssignment
-from pycal_dashboard.step_template import GROUPS, example, expand
+from pycal_dashboard.step_template import GROUPS, VARIABLE, VARIABLES, example, expand
 
-from .projects import opened, pull_requests_of, saved_filter, shown_repositories
+from .projects import (
+    PER_PAGE,
+    opened,
+    pull_requests_of,
+    saved_filter,
+    shown_repositories,
+    table_address,
+)
 
 
 def wants_json(request: HttpRequest) -> bool:
@@ -87,6 +97,20 @@ def conditions_of(step: PullRequestStep) -> list[dict]:
     return found
 
 
+# the colors of the background of steps, light enough for dark text; "" for none
+STEP_COLORS = (
+    "",
+    "#fecaca",
+    "#fed7aa",
+    "#fde68a",
+    "#bbf7d0",
+    "#a5f3fc",
+    "#bfdbfe",
+    "#ddd6fe",
+    "#fbcfe8",
+)
+
+
 def steps_page(request: HttpRequest, slug: str, number: str | None = None):
     """The tab Steps, with one step shown below the bar.
 
@@ -117,6 +141,15 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             if shown
             else "",
             "free_filters": access.project.filters.filter(step__isnull=True),
+            "colors": STEP_COLORS,
+            "filter_edit": access.project.path("filters/save/")
+            + table_address(
+                [Column.decode(value) for value in shown.filter.columns],
+                PER_PAGE,
+                shown.filter.pk,
+            )
+            if shown
+            else "",
             "action_labels": [a.get("label", "") for a in (shown.actions if shown else [])]
             + [""],  # and one more, empty
             "label_names": sorted(
@@ -222,8 +255,9 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     """Save the name and summary of a step, and the summary and description of its conditions.
 
     Parameters:
-        request: The request, with ``name``, ``summary``, ``hidden`` (``on`` to hide it in
-            the page of a pull request), ``action_label`` (the labels to add when a pull
+        request: The request, with ``name``, ``summary``, ``visible`` (``on`` to show it in
+            the page of a pull request, with ``visible_form``), ``color`` (one of
+            :data:`STEP_COLORS`), ``action_label`` (the labels to add when a pull
             request completes the step, with ``actions_form``) and for each condition
             ``value-<i>``, ``summary-<i>`` and ``description-<i>``.
         slug: The project.
@@ -237,7 +271,10 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     step = step_of(access.project, number)
     step.name = " ".join(request.POST.get("name", "").split())[:100] or step.filter.name
     step.summary = request.POST.get("summary", "")
-    step.hidden = request.POST.get("hidden") == "on"
+    if request.POST.get("visible_form"):  # the switch: unchecked is not sent
+        step.hidden = request.POST.get("visible") != "on"
+    color = request.POST.get("color", step.color)
+    step.color = color if color in STEP_COLORS else ""
     if request.POST.get("actions_form"):  # the form shows the actions: an empty one removes it
         labels = [" ".join(label.split())[:100] for label in request.POST.getlist("action_label")]
         step.actions = [
@@ -255,7 +292,7 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     step.conditions = notes
     step.save()
     if wants_json(request):  # saved while editing, by the script of the page
-        return JsonResponse({"step": step.pk, "name": step.name})
+        return JsonResponse({"step": step.pk, "name": step.name, "color": step.color})
     return redirect(access.project.path("steps/") + f"?step={step.pk}")
 
 
@@ -327,3 +364,29 @@ def project_steps_check(request: HttpRequest, slug: str):
             "tab": "steps",
         },
     )
+
+
+@login_required
+@require_POST
+def project_step_preview(request: HttpRequest, slug: str, number: int):
+    """The preview of a template of a step: the Markdown with an example pull request.
+
+    A note above it says so when the text uses variables; without them, it is the Markdown as
+    it is.
+
+    Parameters:
+        request: The request, with ``text``.
+        slug: The project.
+        number: The step.
+
+    Returns:
+        The cleaned HTML.
+    """
+    access, _moved = opened(request, slug, "steps/")
+    step = step_of(access.project, number)
+    text = request.POST.get("text", "")
+    html = render_markdown(expand(text, example(access.project, step)))
+    if VARIABLE.search(text) and any(name in VARIABLES for name in VARIABLE.findall(text)):
+        note = gettext("With an example pull request:")
+        html = format_html('<p class="muted template-note">{}</p>{}', note, html)
+    return HttpResponse(html)

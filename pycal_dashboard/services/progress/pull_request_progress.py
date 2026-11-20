@@ -62,6 +62,13 @@ class PullRequestProgress:
         self.current = next((step for step in self.steps if not step.complete), None)
         if self.current:
             self.current.current = True
+        stage = "past" if self.current else "outside"
+        for step in self.steps:
+            if step.current:
+                stage = "current"
+            step.stage = stage
+            if stage == "current":
+                stage = "future"
 
     @property
     def visible(self) -> list[StepProgress]:

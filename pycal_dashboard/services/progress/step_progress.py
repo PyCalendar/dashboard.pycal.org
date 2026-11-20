@@ -26,6 +26,9 @@ class StepProgress:
     number: int
     tasks: list[Task] = field(default_factory=list)
     current: bool = False
+    # past (complete, left of the current step), current, future (right of it), or outside
+    # (the pull request is in no step: every step is gray)
+    stage: str = "future"
 
     @property
     def done(self) -> int:

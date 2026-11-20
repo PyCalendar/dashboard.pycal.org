@@ -112,7 +112,8 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     detail = page.split("data-step-detail")[1]
     assert "It has the label needs review" in detail
     assert "It is open" not in detail  # off: no part of the filter
-    assert "✎" in detail and detail.count("data-variables-menu") == 2  # summary, condition
+    assert "✎" not in detail and detail.count("data-variables-menu") == 2  # summary, condition
+    assert f'data-markdown-preview="/projects/icalendar/steps/{step.pk}/preview/"' in detail
     assert "tutorial/projects.html#step-variables" in detail  # the documentation, no list
     assert "variables-help" not in detail
     assert (
@@ -135,11 +136,19 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     notes = step.conditions["labels~applies~present~needs review"]
     assert notes["summary"] == "A person reviews it"
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
-    assert "Thanks, @niccokunzmann! Waiting for iCalendar." in page  # with the examples
-    assert 'href="https://docs.example.org/"' in page and "collective/icalendar" in page
+    assert "With an example pull request" not in page  # only the button Preview shows it
+    preview = client.post(
+        f"/projects/icalendar/steps/{step.pk}/preview/", {"text": step.summary}
+    ).content.decode()
+    assert "Thanks, @niccokunzmann! Waiting for iCalendar." in preview
+    assert "With an example pull request:" in preview  # it has variables
+    plain = client.post(f"/projects/icalendar/steps/{step.pk}/preview/", {"text": "*Just* {x}"})
+    assert plain.content.decode() == "<p><em>Just</em> {x}</p>"  # Markdown as it is
     client.logout()
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
     assert "data-edit-step" not in page and "A person reviews it" in page  # public, read only
+    assert "Thanks, @niccokunzmann! Waiting for iCalendar." in page  # with the examples
+    assert 'href="https://docs.example.org/"' in page and "collective/icalendar" in page
 
 
 def test_remove_a_step_keeps_its_filter(client, project, filters, bob):
@@ -183,7 +192,11 @@ def test_a_step_saves_itself_for_the_script(client, project, filters, bob):
     make_step(client, review)
     step = PullRequestStep.objects.get()
     answer = client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "Wait"}, **JSON)
-    assert answer.status_code == 200 and answer.json() == {"step": step.pk, "name": "Wait"}
+    assert answer.status_code == 200 and answer.json() == {
+        "step": step.pk,
+        "name": "Wait",
+        "color": "",
+    }
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
     assert "data-save-status" in page and 'data-saving="Saving…"' in page
 
@@ -240,14 +253,39 @@ def test_a_step_hidden_in_the_page_of_a_pull_request(client, project, filters, b
     make_step(client, conflict)
     step = PullRequestStep.objects.get()
     page = client.get("/projects/icalendar/steps/").content.decode()
-    assert 'name="hidden" value="on"' in page and "data-hidden-mark" not in page
-    client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "C", "hidden": "on"}, **JSON)
+    assert 'name="visible" value="on" checked' in page  # visible by default
+    assert "data-hidden-mark" not in page
+    edit = f"/projects/icalendar/steps/{step.pk}/edit/"
+    client.post(edit, {"name": "C", "visible_form": "1"}, **JSON)  # switched off
     step.refresh_from_db()
     assert step.hidden
     assert "data-hidden-mark" in client.get("/projects/icalendar/steps/").content.decode()
-    client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "C"}, **JSON)
+    client.post(edit, {"name": "C"}, **JSON)  # a form without the switch keeps it
+    step.refresh_from_db()
+    assert step.hidden
+    client.post(edit, {"name": "C", "visible_form": "1", "visible": "on"}, **JSON)
     step.refresh_from_db()
     assert not step.hidden
+
+
+def test_a_step_has_a_color_and_a_button_to_edit_its_filter(client, project, filters, bob):
+    conflict, _review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    step = PullRequestStep.objects.get()
+    edit = f"/projects/icalendar/steps/{step.pk}/edit/"
+    client.post(edit, {"name": "C", "color": "#bbf7d0"}, **JSON)
+    step.refresh_from_db()
+    assert step.color == "#bbf7d0"
+    page = client.get("/projects/icalendar/steps/").content.decode()
+    assert 'style="--step-color: #bbf7d0"' in page
+    assert 'name="color" value="#bbf7d0" checked' in page
+    edit_filter = page.split(" data-edit-filter")[0].rsplit('href="', 1)[1]
+    assert edit_filter.startswith("/projects/icalendar/filters/save/?col=branch")
+    assert edit_filter.endswith(f'saved={conflict.pk}"')
+    client.post(edit, {"name": "C", "color": "red; background: url(x)"}, **JSON)
+    step.refresh_from_db()
+    assert step.color == ""  # only the colors of the palette
 
 
 def test_check_lists_the_pull_requests_outside_of_the_steps(client, project, filters):

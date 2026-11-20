@@ -18,7 +18,7 @@ from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import PullRequestNotFound, PullRequestNumberAmbiguous
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
-from pycal_dashboard.step_template import expand, pull_addresses, steps_url, values_of
+from pycal_dashboard.step_template import expand, values_of
 
 from .json_page import page
 from .projects import issue_data, opened, pull_requests_of, shown_repositories
@@ -95,10 +95,6 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
         {
             **context,
             "pull": issue,
-            "addresses": pull_addresses(access.project, issue.number, issue.repository.full_name),
-            "badge_png": steps_url(
-                access.project, issue.number, issue.repository.full_name, "badge.png"
-            ),
             "progress": progress,
             "shown": shown,
             "step_query": "?" + urlencode(keep) + "&step=" if keep else "?step=",

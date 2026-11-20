@@ -132,6 +132,7 @@ MODELS = {
             "conditions",
             "position",
             "hidden",
+            "color",
             "actions",
             "created",
             "updated",
