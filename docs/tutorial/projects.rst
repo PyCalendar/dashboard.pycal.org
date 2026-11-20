@@ -472,6 +472,19 @@ The values are text: a title such as ``[click](https://example.org)`` stays
 text, and nothing else of a template is evaluated; a name in braces that is not
 a variable stays as it is.
 
+.. _project-backup:
+
+Backup
+======
+
+The settings of a project have *Backup*, for writers and owners. **Download the
+backup** saves a file of YAML with the name and description of the project, its
+repositories, its filters and its steps, see :doc:`/reference/backup`.
+**Restore the backup** reads such a file: it replaces the filters and steps of
+the project, sets its name and description, and adds the repositories that the
+project lacks; the visibility and the address stay as they are. A box confirms
+that the filters and steps are replaced.
+
 .. _project-roles:
 
 Roles in a project

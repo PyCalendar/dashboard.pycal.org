@@ -101,6 +101,16 @@ urlpatterns = [
         name="project_filter_save",
     ),
     path("projects/<project_slug:slug>/settings/", projects.project_edit, name="project_edit"),
+    path(
+        "projects/<project_slug:slug>/settings/backup/",
+        projects.project_backup,
+        name="project_backup",
+    ),
+    path(
+        "projects/<project_slug:slug>/settings/restore/",
+        projects.project_restore,
+        name="project_restore",
+    ),
     path("projects/<project_slug:slug>/address/", projects.project_slug, name="project_slug"),
     path(
         "projects/<project_slug:slug>/repositories/",

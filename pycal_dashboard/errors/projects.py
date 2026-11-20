@@ -153,6 +153,29 @@ class GitHubSignInExpired(ProjectError):
     status = 401
 
 
+class BackupInvalid(ProjectError):
+    """The file is not a backup of a project that the site can restore.
+
+    A backup is a file of YAML, as *Download the backup* in the settings of a project makes
+    it. The details say what is wrong, such as a filter without a name or a step whose filter
+    is not in the file. Nothing of the project was changed.
+    """
+
+    title = _("The backup cannot be restored")
+    status = 400
+
+
+class BackupVersionUnknown(ProjectError):
+    """The backup has a version of its format that this site does not know.
+
+    It was made by a newer version of the site, or it is no backup of the site. Restore it on
+    a site of the same version or newer; nothing of the project was changed.
+    """
+
+    title = _("The backup has an unknown version")
+    status = 400
+
+
 class ProjectSlugInvalid(ProjectError):
     """The address of a project may only have the letters of a GitHub handle.
 

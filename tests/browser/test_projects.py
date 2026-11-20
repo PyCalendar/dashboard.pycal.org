@@ -562,3 +562,24 @@ def test_a_form_sent_while_the_site_starts_comes_back(signed_in, site, github, b
     # the update takes only POST: back to the page of the form, not 405
     expect(page).to_have_url(f"{site}/projects/icalendar/", timeout=10000)
     expect(page.get_by_role("heading", name="iCalendar")).to_be_visible()
+
+
+def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
+    """The settings save the project as YAML and read it back."""
+    from pycal_dashboard.models import PullRequestFilter
+
+    project = pull_request_project(github, bob)
+    PullRequestFilter.objects.create(project=project, name="Open", columns=["status~applies~open"])
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/settings/")
+    with page.expect_download() as download:
+        page.get_by_role("link", name="Download the backup").click()
+    backup = tmp_path / "backup.yaml"
+    download.value.save_as(backup)
+    assert "dashboard_backup: 1" in backup.read_text()
+    PullRequestFilter.objects.all().delete()
+    page.locator("[data-restore]").get_by_label("A backup of a project").set_input_files(backup)
+    page.get_by_label("Yes, replace the filters and steps").check()
+    page.get_by_role("button", name="Restore the backup").click()
+    expect(page.get_by_text("The backup is restored.")).to_be_visible()
+    assert list(PullRequestFilter.objects.values_list("name", flat=True)) == ["Open"]

@@ -515,10 +515,11 @@ community: where to start, what waits for a review, who contributes.
       separated by commas, that follows the renames of labels on GitHub; also "Remove the
       labels"; the same actions when a pull request enters the step
 - [x] The button that removes a step is red
-- [ ] The settings of a project: a new section with Backup and Restore: the settings of the
+- [x] The settings of a project: a new section with Backup and Restore: the settings of the
       project, all filters, steps and the configuration of the message as a YAML file, with a
       version and a link to the documentation of its format, which the documentation describes
 - [x] 401 Bad credentials for GET /user/orgs on the page Repositories: the token of the sign-in
       of the person was refused (revoked, the OAuth app changed, or expired): its own error
       now says to sign out and sign in again (GitHubSignInExpired)
-- [ ] The export of a project also has its repositories
+- [x] The export of a project also has its repositories
+- [ ] The backup gets the configuration of the message when the tab PR Message exists

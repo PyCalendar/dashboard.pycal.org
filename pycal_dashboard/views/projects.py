@@ -9,14 +9,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet
-from django.http import HttpRequest, HttpResponsePermanentRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
 from pycal_dashboard.errors import (
+    BackupInvalid,
     ConditionInputUnknown,
     DashboardError,
     FilterNotFound,
@@ -26,6 +28,7 @@ from pycal_dashboard.errors import (
     translate,
 )
 from pycal_dashboard.github.person_client import PersonClient
+from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import (
     GitHubUser,
     Issue,
@@ -59,6 +62,7 @@ if TYPE_CHECKING:
 BACK_PAGES = {"settings/", "repositories/"}
 # the repositories offered while typing, of those the site knows
 KNOWN_CHOICES = 200
+MAX_BACKUP = 1_000_000  # bytes of a file of a backup, see ProjectBackup
 MIN_SEARCH = 2
 
 
@@ -908,3 +912,72 @@ def role_title(role: str) -> str:
         ProjectMember.WRITE: _("change"),
         ProjectMember.OWNER: _("own"),
     }.get(role, role)
+
+
+@login_required
+@require_http_methods(["GET"])
+def project_backup(request: HttpRequest, slug: str):
+    """Download the backup of a project: its settings, repositories, filters and steps.
+
+    Parameters:
+        request: The request.
+        slug: The project.
+
+    Returns:
+        The file of YAML.
+    """
+    access = ProjectAccess.of(slug, request.user).require_write()
+    with IMPORT_GUARD:  # see import_guard.py: what makes YAML, only when needed
+        from pycal_dashboard.services.project_backup import ProjectBackup
+
+    answer = HttpResponse(
+        ProjectBackup(access.project).export(), content_type="application/yaml; charset=utf-8"
+    )
+    day = timezone.now().date().isoformat()
+    answer["Content-Disposition"] = (
+        f'attachment; filename="{access.project.slug}-backup-{day}.yaml"'
+    )
+    return answer
+
+
+@login_required
+@require_POST
+def project_restore(request: HttpRequest, slug: str):
+    """Restore a project from a backup: its filters and steps, name and description.
+
+    The repositories of the backup that the project lacks are added as on the tab
+    *Repositories*, with the rights of the person.
+
+    Parameters:
+        request: The request, with the file ``backup`` and ``confirm``.
+        slug: The project.
+
+    Returns:
+        A redirect to the settings.
+
+    Raises:
+        BackupInvalid: The file is no backup that the site can restore.
+        BackupVersionUnknown: The backup has a version that the site does not know.
+    """
+    access = ProjectAccess.of(slug, request.user).require_write()
+    with IMPORT_GUARD:  # see import_guard.py
+        from pycal_dashboard.services.project_backup import ProjectBackup
+
+    if request.POST.get("confirm") != "yes":
+        messages.error(request, _("Tick the box to confirm that the backup replaces them."))
+        return redirect(access.project.path("settings/") + "#backup")
+    upload = request.FILES.get("backup")
+    if upload is None:
+        raise BackupInvalid("no file")
+    try:
+        text = upload.read(MAX_BACKUP + 1).decode("utf-8")
+    except UnicodeDecodeError:
+        raise BackupInvalid("not a text in UTF-8") from None
+    backup = ProjectBackup(access.project)
+    names = backup.restore(backup.read(text))
+    known = {r.full_name.lower() for r in access.project.repositories.all()}
+    missing = [name for name in names if name.lower() not in known]
+    messages.success(request, _("The backup is restored."))
+    if missing:
+        add_repositories(request, ProjectEditor(access), missing)
+    return redirect(access.project.path("settings/") + "#backup")

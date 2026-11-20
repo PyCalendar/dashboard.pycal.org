@@ -29,6 +29,17 @@
   <p class="muted">{% translate "Letters a to z, digits, single hyphens and one ~ between an account and a repository. Old addresses keep leading to the project, and no other project gets them." %}</p>
   {% if old_slugs %}<h3>{% translate "Old addresses" %}</h3><ul class="list" data-old-slugs>{% for old in old_slugs %}<li><code>{{ old.slug }}</code> <small class="muted">{% when old.since %} – {% when old.until %}</small></li>{% endfor %}</ul>{% endif %}
 </section>
+{% endif %}{% if not new and access.can_write %}<section class="card" id="backup" data-backup><h2>{% translate "Backup" %} {% translate "The format of a backup" as help %}{% help_link links.backup help %}</h2>
+  <p>{% translate "The backup is a file of YAML with the name and description of the project, its repositories, its filters and its steps." %}</p>
+  <p><a class="button" href="{% url 'project_backup' project.slug %}" data-download-backup download>{% translate "Download the backup" %}</a></p>
+  <form method="post" action="{% url 'project_restore' project.slug %}" enctype="multipart/form-data" class="stacked" data-restore>{% csrf_token %}
+    <h3>{% translate "Restore" %}</h3>
+    <p><label for="backup-file">{% translate "A backup of a project" %}</label><input id="backup-file" name="backup" type="file" accept=".yaml,.yml,application/yaml,text/yaml" required></p>
+    <p><label class="check"><input type="checkbox" name="confirm" value="yes"> {% translate "Yes, replace the filters and steps of this project with those of the backup" %}</label></p>
+    <p class="muted">{% translate "The name and the description come from the backup, and its repositories that the project lacks are added. The visibility and the address stay as they are." %}</p>
+    <p><button class="button button-danger">{% translate "Restore the backup" %}</button></p>
+  </form>
+</section>{% endif %}{% if not new and access.is_owner %}
 <form method="post" class="card" data-delete-project>{% csrf_token %}
   <h2>{% translate "Delete the project" %}</h2>
   <p>{% translate "Its repositories stay on GitHub and in other projects." %}</p>

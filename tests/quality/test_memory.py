@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 # loaded only when the site speaks with GitHub, reads the licenses itself or draws a badge
-HEAVY = ["httpx", "jwt", "cryptography", "reuse", "piplicenses", "anybadge", "PIL"]
+HEAVY = ["httpx", "jwt", "cryptography", "reuse", "piplicenses", "anybadge", "PIL", "yaml"]
 PAGES = [
     "/health/",
     "/",

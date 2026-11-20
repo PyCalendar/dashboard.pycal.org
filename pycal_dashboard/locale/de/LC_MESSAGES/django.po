@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 08:48+0000\n"
+"POT-Creation-Date: 2026-11-20 08:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -428,6 +428,12 @@ msgid "Sign in again to list your repositories"
 msgstr "Melde dich erneut an, um deine Repositorys aufzulisten"
 
 msgid "Sign in again: GitHub no longer accepts your sign-in"
+msgstr ""
+
+msgid "The backup cannot be restored"
+msgstr ""
+
+msgid "The backup has an unknown version"
 msgstr ""
 
 msgid "Not an address of a project"
@@ -2152,6 +2158,38 @@ msgstr ""
 msgid "Old addresses"
 msgstr "Alte Adressen"
 
+msgid "Backup"
+msgstr ""
+
+msgid "The format of a backup"
+msgstr ""
+
+msgid ""
+"The backup is a file of YAML with the name and description of the project, "
+"its repositories, its filters and its steps."
+msgstr ""
+
+msgid "Download the backup"
+msgstr ""
+
+msgid "Restore"
+msgstr ""
+
+msgid "A backup of a project"
+msgstr ""
+
+msgid ""
+"Yes, replace the filters and steps of this project with those of the backup"
+msgstr ""
+
+msgid ""
+"The name and the description come from the backup, and its repositories that "
+"the project lacks are added. The visibility and the address stay as they are."
+msgstr ""
+
+msgid "Restore the backup"
+msgstr ""
+
 msgid "Delete the project"
 msgstr "Das Projekt löschen"
 
@@ -2880,6 +2918,12 @@ msgstr "ändern"
 
 msgid "own"
 msgstr "besitzen"
+
+msgid "Tick the box to confirm that the backup replaces them."
+msgstr ""
+
+msgid "The backup is restored."
+msgstr ""
 
 msgid "With an example pull request:"
 msgstr ""

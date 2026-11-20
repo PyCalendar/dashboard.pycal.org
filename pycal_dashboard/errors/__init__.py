@@ -54,6 +54,8 @@ from .github import (
     SignInNotConfigured,
 )
 from .projects import (
+    BackupInvalid,
+    BackupVersionUnknown,
     FilterIsAStep,
     FilterNameMissing,
     FilterNameTaken,
@@ -102,6 +104,8 @@ from .webhooks import (
 )
 
 __all__ = [
+    "BackupInvalid",
+    "BackupVersionUnknown",
     "FilterIsAStep",
     "StepNotFound",
     "PullRequestNotFound",

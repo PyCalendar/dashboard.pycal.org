@@ -495,6 +495,7 @@ dependencies = [
     { name = "pillow" },
     { name = "pip-licenses" },
     { name = "pyjwt", extra = ["crypto"] },
+    { name = "pyyaml" },
     { name = "reuse" },
     { name = "whitenoise" },
 ]
@@ -538,6 +539,7 @@ requires-dist = [
     { name = "pip-licenses", specifier = ">=5.5.5" },
     { name = "pydata-sphinx-theme", marker = "extra == 'docs'", specifier = "==0.23.0" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10" },
+    { name = "pyyaml", specifier = ">=6" },
     { name = "reuse", specifier = ">=6.3.0" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = "==9.1.0" },
     { name = "sphinx-autobuild", marker = "extra == 'docs'", specifier = "==2025.8.25" },
