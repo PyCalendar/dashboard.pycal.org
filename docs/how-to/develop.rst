@@ -109,7 +109,8 @@ them. The results of the columns are kept in the cache until a repository of
 the project is updated (``ColumnResults``); after an update, the site evaluates
 the columns of the saved filters and steps in the background, so that the pages
 need not. ``tests/test_speed.py`` checks that the pages ask the database as
-often with many pull requests as with few.
+often with many pull requests as with few. ``make benchmark`` times the pages locally with 1500
+pull requests (``tests/benchmark``, not part of ``make test``).
 
 Words that Vale does not know, such as names, go into
 ``.vale/styles/config/vocabularies/Dashboard/accept.txt``.

@@ -71,7 +71,7 @@ dev = [
 DJANGO_SETTINGS_MODULE = "pycal_dashboard.settings"
 pythonpath = ["."]
 testpaths = ["tests", "pycal_dashboard"]
-addopts = "--doctest-modules --ignore=docs --ignore=docker --ignore=tests/browser"
+addopts = "--doctest-modules --ignore=docs --ignore=docker --ignore=tests/browser --ignore=tests/benchmark"
 filterwarnings = ["ignore:No directory at:UserWarning"]
 
 [tool.ruff]

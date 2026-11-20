@@ -74,6 +74,10 @@ test: .venv  ## Run the unit and API tests on all processors with coverage; chec
 browser-test: .venv  ## Run the browser tests in Chromium (Playwright), on all processors
 	@uv run --group browser pytest -o addopts= -n "$(JOBS)" -p no:cacheprovider tests/browser
 
+.PHONY: benchmark
+benchmark: .venv  ## Time the pages with 1500 pull requests (tests/benchmark, not part of make test)
+	@uv run pytest -o addopts= -s -p no:randomly -p no:cacheprovider tests/benchmark
+
 .PHONY: browser-install
 browser-install: .venv  ## Install Chromium for the browser tests
 	@uv run --group browser playwright install --only-shell chromium

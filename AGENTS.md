@@ -78,8 +78,11 @@ Calendaring Ecosystem](https://icalendar.readthedocs.io/en/latest/contribute/ind
   background -> the signals of `update_signals.py`. What follows an update is a receiver in
   `receivers.py`, never code of one trigger. `tests/test_update_paths.py` checks it. It reads GitHub in the background only
   (`UpdateQueue`, run by `UpdateWorker`), never while a page waits, except to
-  find what a person adds. It writes nothing to GitHub yet; the app may write
-  labels and a comment on pull requests for the automation, designed later.
+  find what a person adds. It writes to GitHub only in the background, after an
+  update, for the actions of steps: the labels of a step that an open pull request
+  completed (`StepCompletion`, a receiver; each write is an `Action` in the log).
+  The first time it sees a pull request it only records its step, so nothing is
+  written for what happened before. A comment on pull requests may follow.
 - Every flow of people (signing in, creating a project, ...) has a browser test
   in `tests/browser/`. The browser reaches nothing but the site.
 - Every setting that can be set is in `.env.example`, with its description (a `##` line
