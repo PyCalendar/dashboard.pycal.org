@@ -111,3 +111,21 @@ def test_the_preview_renders_as_the_page(client, bob):
     answer = client.post("/markdown/preview/", {"text": "**x** <script>y</script>"})
     assert answer.content.decode() == "<p><strong>x</strong> &lt;script&gt;y&lt;/script&gt;</p>"
     assert client.get("/markdown/preview/").status_code == 405
+
+
+def test_lists_of_tasks_show_checkboxes_as_on_github():
+    """- [ ] and - [x] show a checkbox with the state, which cannot be changed."""
+    from pycal_dashboard.markdown_text import render
+
+    html = render("- [ ] to do\n- [x] done\n- [X] also done\n- no task\n\nnot [x] a task")
+    assert html.count('<input type="checkbox" class="task-box" disabled>') == 1
+    assert html.count('<input type="checkbox" class="task-box" disabled checked>') == 2
+    assert html.count('<li class="task-item">') == 3 and "<li>no task</li>" in html
+    assert "<p>not [x] a task</p>" in html  # only at the start of an item
+
+
+def test_text_cannot_make_its_own_checkboxes():
+    from pycal_dashboard.markdown_text import render
+
+    html = render('<input type="checkbox" checked> <li>[x] raw</li>')
+    assert "<input" not in html.replace("&lt;input", "")  # raw HTML stays text

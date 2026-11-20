@@ -18,6 +18,8 @@ from django.utils.safestring import SafeString, mark_safe
 
 from pycal_dashboard.import_guard import IMPORT_GUARD
 
+# an item of a list of tasks as GitHub writes it: - [ ] or - [x], also in a paragraph of its own
+TASK = re.compile(r"<li>(\s*<p>)?\[( |x|X)\] ")
 # an image whose address was removed: it shows nothing
 EMPTY_IMAGE = re.compile(r"<img(?![^>]*\ssrc=)[^>]*>")
 
@@ -78,6 +80,24 @@ def own_images(element: str, attribute: str, value: str) -> str | None:
     return None
 
 
+def task_box(match: re.Match) -> str:
+    """An item of a list of tasks with a checkbox, as GitHub shows it: checked or not, fixed.
+
+    Parameters:
+        match: The start of the item and its ``[ ]`` or ``[x]``.
+
+    Returns:
+        The start of the item with a checkbox that cannot be changed.
+
+    Examples:
+        >>> TASK.sub(task_box, "<li>[x] done</li>")
+        '<li class="task-item"><input type="checkbox" class="task-box" disabled checked> done</li>'
+    """
+    checked = " checked" if match[2].lower() == "x" else ""
+    box = f'<input type="checkbox" class="task-box" disabled{checked}>'
+    return f'<li class="task-item">{match[1] or ""}{box} '
+
+
 def render(text: str) -> SafeString:
     """The HTML of a text in Markdown, cleaned.
 
@@ -107,4 +127,5 @@ def render(text: str) -> SafeString:
         attribute_filter=own_images,
     )
     html = EMPTY_IMAGE.sub("", html)
+    html = TASK.sub(task_box, html)
     return mark_safe(html.strip())  # noqa: S308 - cleaned by nh3

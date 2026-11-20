@@ -21,6 +21,8 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
   Markdown yourself, such as ``**bold**`` and ``[a link](https://pycal.org)``.
   Images show only from this site, such as the badges of pull requests: the
   site loads nothing from other sites.
+  Lists of tasks, ``- [ ]`` and ``- [x]``, show checkboxes as on GitHub, which
+  show the state but cannot be changed.
 - the **visibility**: *Public*, the default, for everybody, or *Private*, only
   for its collaborators, see :ref:`project-roles`,
 - optionally its **address**, see :ref:`project-address`.

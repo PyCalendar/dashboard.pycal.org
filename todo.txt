@@ -547,3 +547,4 @@ community: where to start, what waits for a review, who contributes.
 - [x] The worker ran into a loop of restarts without a GitHub App (check_installations): fixed
 - [x] The person: WORKERS=2 on the server (set 2026-11-20; two workers and the fetch worker run, 494 MB of 951 MB used)
 - [x] The tasks of the message have their descriptions below each item, indented
+- [x] - [ ] and - [x] show checkboxes as on GitHub in the Markdown of the site, fixed

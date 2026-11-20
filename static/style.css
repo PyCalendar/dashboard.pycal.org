@@ -530,3 +530,6 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 .message-flow li { padding: .25rem .6rem; border: 1px solid var(--border); border-radius: 1rem; color: var(--text-muted); }
 .message-flow li[aria-current="step"] { border-color: var(--primary); background: var(--surface-tint); color: var(--text); font-weight: 600; }
 .message-flow a { text-decoration: none; }
+/* the lists of tasks as GitHub shows them: a checkbox that shows the state, without a bullet */
+.markdown li.task-item { list-style: none; }
+.markdown li.task-item > .task-box, .markdown li.task-item > p > .task-box { margin: 0 .35rem 0 -1.35rem; vertical-align: middle; }

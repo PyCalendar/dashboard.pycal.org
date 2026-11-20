@@ -270,6 +270,7 @@ def test_a_task_has_its_description_below_it(project):
     )
     html = render(values["tasks_all"])  # the description and its list are in the item
     assert html == (
-        "<ul>\n<li>\n<p>[ ] A person reviews it\nAsk @octocat in the chat.</p>\n"
+        '<ul>\n<li class="task-item">\n<p><input type="checkbox" class="task-box" disabled>'
+        " A person reviews it\nAsk @octocat in the chat.</p>\n"
         "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ul>"
     )
