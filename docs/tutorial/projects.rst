@@ -185,6 +185,16 @@ check mark, or not, with a red cross, and why:
    ones run.
 **Status**
    Open, closed, merged or auto-merging, with their colors.
+**Reviews**
+   At least a number of reviews. Approvals, requested changes and reviews
+   dismissed later count, comments do not. The cell shows how many it has.
+**Author**
+   A state of the author above a number, counted in all repositories of the
+   project that you see: the review to pull request ratio, the reviews given,
+   the pull requests opened, or those of them closed by the author. The ratio
+   is the reviews given for each pull request that the author opened and did
+   not close themselves, such as *1.5*. The cell shows the number of the
+   author. See :doc:`/reference/states/index`.
 
 The header of a column is short: the label, struck through when it must be
 absent, or the states chosen, such as *conflict*. Below it, the gear changes
@@ -198,7 +208,8 @@ columns of conditions stay right of the other columns. The address of the page
 keeps them, so it can be bookmarked and shared; the JSON has the result of each
 column for each pull request (``conditions``), see :doc:`/reference/json`. A
 question mark means that the data of the pull request is not complete yet, such
-as checks that were never read. See :doc:`/reference/conditions/index`.
+as checks that were never read, or reviews of a repository without the GitHub
+App. See :doc:`/reference/conditions/index`.
 
 The tabs of a project are always in this order: the overview, the public tabs,
 then those of the collaborators.
@@ -306,6 +317,11 @@ in their groups. The examples are those of a pull request of
    * - ``{pr_url}``
      - The address of the pull request on GitHub
      - ``https://github.com/collective/icalendar/pull/42``
+   * - ``{pr_steps_url}``
+     - The address of the page of the pull request with its steps on this
+       site, see :ref:`pull-request-page`; with ``?repository=`` when the
+       project has several repositories
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/``
 
 .. list-table:: Author
    :header-rows: 1

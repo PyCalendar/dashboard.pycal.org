@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 00:22+0000\n"
+"POT-Creation-Date: 2026-11-20 00:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,21 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Author"
+msgstr ""
+
+msgid "not known: GitHub does not say who opened it"
+msgstr ""
+
+msgid ""
+"not known yet: the reviews of a repository of the project are not read yet; "
+"they need the GitHub App"
+msgstr ""
+
+#, python-format
+msgid "Author: %(state)s above %(number)s"
+msgstr ""
 
 msgid "not known yet: the data of the pull request is not read yet"
 msgstr "aún no se sabe: los datos del pull request aún no se han leído"
@@ -105,6 +120,37 @@ msgstr "ausente"
 msgid "Label %(name)s: %(mode)s"
 msgstr "Etiqueta %(name)s: %(mode)s"
 
+msgid "Reviews"
+msgstr ""
+
+#, python-format
+msgid "%(count)s review"
+msgid_plural "%(count)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "it has fewer than %(number)s review"
+msgid_plural "it has fewer than %(number)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "it has at least %(number)s review"
+msgid_plural "it has at least %(number)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "≥ %(number)s review"
+msgid_plural "≥ %(number)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "Reviews: at least %(number)s"
+msgstr ""
+
 msgid "Status"
 msgstr "Estado"
 
@@ -130,6 +176,67 @@ msgstr "no está %(states)s"
 
 msgid "or"
 msgstr "o"
+
+msgid "Own pull requests closed"
+msgstr ""
+
+msgid ""
+"How many pull requests a person opened and closed themselves in the project."
+msgstr ""
+
+#, python-format
+msgid "its author closed more than %(number)s of their own pull requests"
+msgstr ""
+
+#, python-format
+msgid "its author closed at most %(number)s of their own pull requests"
+msgstr ""
+
+msgid "Pull requests opened"
+msgstr ""
+
+msgid "How many pull requests a person opened in the project."
+msgstr ""
+
+#, python-format
+msgid "its author opened more than %(number)s pull requests"
+msgstr ""
+
+#, python-format
+msgid "its author opened at most %(number)s pull requests"
+msgstr ""
+
+msgid "Review to pull request ratio"
+msgstr ""
+
+msgid ""
+"The reviews a person gave in the project for each pull request they opened "
+"and did not close themselves."
+msgstr ""
+
+#, python-format
+msgid "its author has a review to pull request ratio above %(number)s"
+msgstr ""
+
+#, python-format
+msgid "its author has a review to pull request ratio of at most %(number)s"
+msgstr ""
+
+msgid "Reviews given"
+msgstr ""
+
+msgid ""
+"How many reviews a person gave in the project, without those of comments "
+"only."
+msgstr ""
+
+#, python-format
+msgid "its author gave more than %(number)s reviews"
+msgstr ""
+
+#, python-format
+msgid "its author gave at most %(number)s reviews"
+msgstr ""
 
 msgid "As the system"
 msgstr "Como el sistema"
@@ -187,6 +294,9 @@ msgstr "La entrada no es un texto"
 
 msgid "The input is not a whole number"
 msgstr "La entrada no es un número entero"
+
+msgid "The input is not a number"
+msgstr ""
 
 msgid "The number is out of range"
 msgstr "El número está fuera del rango"
@@ -552,12 +662,12 @@ msgstr "Para mostrar los proyectos y decidir quién puede cambiarlos."
 
 msgid ""
 "The issues and pull requests of the repositories of the projects: their "
-"title, description and times, and who created them with their GitHub name, "
-"id, name and the address of their avatar."
+"title, description and times, who created and who closed them, and the "
+"reviews of the pull requests: who gave them, when, and whether they "
+"approved; of these people their GitHub name, id, name and the address of "
+"their avatar. The site counts with them how many pull requests a person "
+"opened and reviewed in a project."
 msgstr ""
-"Los issues y pull requests de los repositorios de los proyectos: su título, "
-"descripción y fechas, y quién los creó con su nombre de GitHub, id, nombre y "
-"la dirección de su avatar."
 
 msgid "People on GitHub, also those who never use this site"
 msgstr "Personas en GitHub, también las que nunca usan este sitio"
@@ -687,7 +797,7 @@ msgstr ""
 msgid "the address of the pull request on GitHub"
 msgstr ""
 
-msgid "Author"
+msgid "the address of the page of the pull request with its steps on this site"
 msgstr ""
 
 msgid "who opened the pull request, mentioned"
@@ -1338,6 +1448,23 @@ msgstr "Nombre de la etiqueta"
 
 msgid "Choose a label of the repositories or type another one."
 msgstr "Elige una etiqueta de los repositorios o escribe otra."
+
+msgid "At least this many reviews"
+msgstr ""
+
+msgid "Approvals and requested changes count, comments do not."
+msgstr ""
+
+msgid "Of the author, in the project"
+msgstr ""
+
+msgid "Above"
+msgstr ""
+
+msgid ""
+"The review to pull request ratio is the reviews given for each pull request "
+"opened and not closed by the author."
+msgstr ""
 
 msgid "Change the column"
 msgstr "Cambiar la columna"

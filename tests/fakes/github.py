@@ -46,6 +46,7 @@ class FakeGitHub:
         self.issue_requests: list[dict] = []  # the parameters of each GET of the issues
         self.pull_requests_read: list[int] = []  # the numbers of GET /pulls/<number>
         self.graphql_queries: list[dict] = []  # the queries of GraphQL: query and variables
+        self.graphql_reviews_queries: list[dict] = []  # those of the reviews of all
 
     def add_repository(
         self,
@@ -123,6 +124,7 @@ class FakeGitHub:
         labels: tuple[str, ...] = (),
         mergeable_state: str = "clean",
         auto_merge: bool = False,
+        closed_by: dict | None = None,
     ) -> dict:
         """An issue or a pull request of a repository of the fake GitHub.
 
@@ -138,6 +140,7 @@ class FakeGitHub:
             labels: The names of its labels, which the repository gets if it lacks them.
             mergeable_state: Of a pull request: clean, dirty, behind, unknown ...
             auto_merge: Whether a pull request has auto-merge enabled.
+            closed_by: Who closed it, as GitHub describes accounts; its author by default.
 
         Returns:
             The issue as GitHub lists it.
@@ -155,6 +158,8 @@ class FakeGitHub:
             "updated_at": updated,
             "closed_at": "2026-11-01T09:00:00Z" if state == "closed" else None,
             "labels": [self.add_label(full_name, name) for name in labels],
+            "reviews": [],  # what GraphQL answers, see add_review()
+            "closed_by": dict(closed_by or user or self.OCTOCAT) if state == "closed" else None,
         }
         if pull_request:
             issue["pull_request"] = {
@@ -193,6 +198,81 @@ class FakeGitHub:
         sha = repository["issues"][number - 1]["pull"]["head"]["sha"]
         repository["checks"][sha] = rollup
 
+    def add_review(
+        self, full_name: str, number: int, user: dict | None = None, state: str = "APPROVED"
+    ) -> dict:
+        """A review of a pull request, as GraphQL describes it; it changes the pull request.
+
+        Parameters:
+            full_name: The repository.
+            number: The pull request.
+            user: Who gave it, as GitHub describes accounts; octocat by default.
+            state: APPROVED, CHANGES_REQUESTED, COMMENTED or DISMISSED.
+
+        Returns:
+            The review.
+        """
+        issue = self.repositories[full_name.lower()]["issues"][number - 1]
+        self.review_count = getattr(self, "review_count", 0) + 1
+        review = {
+            "databaseId": 50000 + self.review_count,
+            "state": state,
+            "submittedAt": "2026-11-02T09:00:00Z",
+            "author": self.actor(user or self.OCTOCAT),
+        }
+        issue["reviews"].append(review)
+        issue["updated_at"] = f"2026-11-02T{min(self.review_count, 59):02d}:00:00Z"
+        return review
+
+    @staticmethod
+    def actor(user: dict | None) -> dict | None:
+        """An account of the REST API as GraphQL describes it."""
+        if user is None:
+            return None
+        return {
+            "__typename": user.get("type", "User"),
+            "login": user["login"],
+            "avatarUrl": user.get("avatar_url", ""),
+            "databaseId": user["id"],
+        }
+
+    def reviews_page(self, repository: dict, variables: dict) -> httpx.Response:
+        """All pull requests, the last changed first, with their reviews and who closed them."""
+        pulls = sorted(
+            (i for i in repository["issues"] if "pull" in i),
+            key=lambda issue: issue["updated_at"],
+            reverse=True,
+        )
+        start = int(variables.get("after") or 0)
+        size = variables.get("first", 50)
+        nodes = [
+            {
+                "number": issue["number"],
+                "updatedAt": issue["updated_at"],
+                "reviews": {"nodes": list(issue["reviews"])},
+                "timelineItems": {
+                    "nodes": [{"actor": self.actor(issue["closed_by"])}]
+                    if issue["state"] == "closed"
+                    else []
+                },
+            }
+            for issue in pulls[start : start + size]
+        ]
+        more = start + size < len(pulls)
+        data = {
+            "rateLimit": {"cost": 1, "remaining": 4999, "resetAt": "2026-11-19T13:00:00Z"},
+            "repository": {
+                "pullRequests": {
+                    "pageInfo": {
+                        "hasNextPage": more,
+                        "endCursor": str(start + size) if more else None,
+                    },
+                    "nodes": nodes,
+                }
+            },
+        }
+        return httpx.Response(200, json={"data": data})
+
     MERGEABLE = {True: "MERGEABLE", False: "CONFLICTING", None: "UNKNOWN"}
 
     def graphql(self, request: httpx.Request) -> httpx.Response:
@@ -205,7 +285,8 @@ class FakeGitHub:
                 401, json={"message": "This endpoint requires you to be authenticated."}
             )
         body = json.loads(request.content)
-        self.graphql_queries.append(body)
+        reviews = "orderBy: {field: UPDATED_AT" in body["query"]  # REVIEWS, else the open ones
+        (self.graphql_reviews_queries if reviews else self.graphql_queries).append(body)
         variables = body["variables"]
         if variables.get("first", 50) > self.graphql_max_first:
             return httpx.Response(
@@ -215,6 +296,8 @@ class FakeGitHub:
         if repository is None or not self.sees(request, repository):
             error = {"type": "NOT_FOUND", "message": "Could not resolve to a Repository"}
             return httpx.Response(200, json={"data": {"repository": None}, "errors": [error]})
+        if reviews:
+            return self.reviews_page(repository, variables)
         pulls = [i for i in repository["issues"] if "pull" in i and i["state"] == "open"]
         start = int(variables.get("after") or 0)
         size = variables.get("first", 50)

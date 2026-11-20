@@ -9,8 +9,12 @@ API reference
 The base classes
 ================
 
+.. automodule:: pycal_dashboard.conditions.state.base
+   :members:
+
 .. automodule:: pycal_dashboard.conditions.condition.base
    :members:
+   :show-inheritance:
 
 .. automodule:: pycal_dashboard.conditions.input.base
    :members:
@@ -30,6 +34,10 @@ Inputs
    :show-inheritance:
 
 .. automodule:: pycal_dashboard.conditions.input.positive_integer
+   :members:
+   :show-inheritance:
+
+.. automodule:: pycal_dashboard.conditions.input.number
    :members:
    :show-inheritance:
 
@@ -57,6 +65,10 @@ Data
    :show-inheritance:
 
 .. automodule:: pycal_dashboard.conditions.spec.checks
+   :members:
+   :show-inheritance:
+
+.. automodule:: pycal_dashboard.conditions.spec.reviews
    :members:
    :show-inheritance:
 
@@ -97,4 +109,10 @@ Conditions
    :no-members:
 
 .. automodule:: pycal_dashboard.conditions.condition.ci_unknown
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.reviews_at_least
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.review_ratio_above
    :no-members:

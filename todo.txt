@@ -406,16 +406,19 @@ community: where to start, what waits for a review, who contributes.
 
 ## 2026-11-20: states, the ratio of reviews, actions of steps
 
-- [ ] States work like conditions, with the code they share (a condition is a state that is
+- [x] States work like conditions, with the code they share (a condition is a state that is
       true or false); they are observed on the author of a pull request in a project (all its
       repositories); the tests of the conditions stay as they are
-- [ ] State pull_requests_opened: how many pull requests the person opened
-- [ ] State own_pull_requests_closed: how many of them they closed themselves
-- [ ] State reviews_given: how many reviews they gave in the project
-- [ ] The model extended: reviews, who closed a pull request (DATA_VERSION raised)
-- [ ] Condition review_ratio_above: reviews / (opened - closed by themselves) above a number
-- [ ] Condition reviews_at_least: at least a number of reviews on the pull request, not
+- [x] State pull_requests_opened: how many pull requests the person opened
+- [x] State own_pull_requests_closed: how many of them they closed themselves
+- [x] State reviews_given: how many reviews they gave in the project
+- [x] The model extended: reviews, who closed a pull request (DATA_VERSION raised)
+- [x] Condition review_ratio_above: reviews / (opened - closed by themselves) above a number
+- [x] Condition reviews_at_least: at least a number of reviews on the pull request, not
       comments (approved, changes requested, dismissed)
+- [x] Columns of the table for them: Reviews (at least a number) and Author (a state above a
+      number), counted in the repositories of the project that the person sees
+- [x] Variable pr_steps_url: the address of the page of the pull request with its steps
 - [ ] Actions when a step is complete, in the editor of the step: add a label (one of the
       existing ones, or a new one)
 - [ ] The person: running the actions writes to GitHub: the GitHub App then needs to write

@@ -53,7 +53,8 @@ EVENT_PERMISSIONS = {
 DATA_EVENTS = {
     "Repository": ["repository", "public"],  # also made private (privatized) or public
     "Issue": ["issues", "issue_comment", "pull_request", "pull_request_review"],
-    "GitHubUser": ["issues", "pull_request"],
+    "GitHubUser": ["issues", "pull_request", "pull_request_review"],
+    "Review": ["pull_request_review", "pull_request"],  # also who closed a pull request
     "Label": ["label", "issues", "pull_request"],
     "PullRequestState": ["pull_request", "push", "check_run", "check_suite", "status"],
     "Installation": ["installation", "installation_repositories"],

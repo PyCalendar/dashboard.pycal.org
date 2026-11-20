@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from django.http import QueryDict
 
     from pycal_dashboard.conditions.condition.base import Condition
+    from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue
 
 
@@ -82,12 +83,15 @@ class SwitchesGroup(ConditionGroup):
         return {name: condition.check(issue, {}) for name, condition, _text in cls.switches}
 
     @classmethod
-    def applies(cls, issue: Issue, choices: tuple[str, ...]) -> bool | None:
+    def applies(
+        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
+    ) -> bool | None:
         """Whether one of the switches that are on holds.
 
         Parameters:
             issue: The pull request.
             choices: The switches that are on.
+            scope: Not used: the condition is of the pull request itself.
 
         Returns:
             True if one holds; None if none holds and one cannot be assessed.
@@ -99,12 +103,13 @@ class SwitchesGroup(ConditionGroup):
         return None if None in chosen else False
 
     @classmethod
-    def cell(cls, issue: Issue, choices: tuple[str, ...]) -> list[dict]:
+    def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
         """The texts of all switches that hold, such as ``outdated, conflict``.
 
         Parameters:
             issue: The pull request.
             choices: The switches that are on.
+            scope: Not used: the condition is of the pull request itself.
 
         Returns:
             Each text that holds, with its name as its kind.

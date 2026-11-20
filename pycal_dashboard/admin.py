@@ -19,6 +19,7 @@ from .models import (
     PullRequestState,
     PullRequestStep,
     Repository,
+    Review,
     UpdateJob,
     WebhookDelivery,
 )
@@ -61,3 +62,6 @@ admin.site.register(
     Notification, list_display=["user", "kind", "key", "created", "read", "resolved"]
 )
 admin.site.register(PullRequestStep, list_display=["name", "project", "filter", "position"])
+admin.site.register(
+    Review, list_display=["issue", "author", "state", "submitted"], raw_id_fields=["issue"]
+)

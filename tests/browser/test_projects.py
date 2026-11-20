@@ -465,3 +465,32 @@ def test_the_page_of_a_pull_request(page, site, github, bob):
     expect(done.locator("em")).to_be_hidden()  # closed
     done.locator("summary").click()
     expect(done.locator("em")).to_be_visible()
+
+
+def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
+    """The menu + adds the reviews of a pull request and the ratio of its author."""
+    project = pull_request_project(github, bob)
+    github.add_review("collective/icalendar", 1)
+    github.add_review("collective/icalendar", 1, state="COMMENTED")  # not counted
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+
+    assert RepositoryUpdate(project.repositories.get()).run()
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    menu.get_by_label("Condition").select_option("reviews")
+    expect(menu.get_by_label("Name of the label")).to_be_hidden()
+    menu.get_by_label("At least this many reviews").fill("1")
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=reviews~all~1"))
+    ready = page.locator("[data-pull-request='collective/icalendar#1']")
+    expect(ready.locator(".col-condition")).to_contain_text("1 review")
+    page.get_by_label("Add a condition").click()
+    menu.get_by_label("Condition").select_option("author")
+    menu.get_by_label("Of the author, in the project").select_option("review_ratio")
+    menu.get_by_label("Above", exact=True).fill("0.3")
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=author~all~review_ratio~0.3"))
+    # octocat opened 3 and reviewed once: 0.33
+    expect(ready.locator(".col-condition").nth(1)).to_contain_text("0.33")
+    expect(ready.locator(".col-condition").nth(1)).to_have_attribute("data-result", "yes")

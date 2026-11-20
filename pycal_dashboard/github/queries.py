@@ -16,3 +16,27 @@ query ($owner: String!, $name: String!, $after: String, $first: Int!) {
   }
 }
 """
+
+# a person on GitHub, as the site keeps them (GitHubUser): users and bots have a databaseId
+ACTOR = "__typename login avatarUrl ... on User { databaseId } ... on Bot { databaseId }"
+
+# ``REVIEWS`` reads all pull requests of a repository, the last changed first, with their
+# reviews and who closed them: ReviewsData stops at those it read before.
+REVIEWS = """
+query ($owner: String!, $name: String!, $after: String, $first: Int!) {
+  rateLimit { cost remaining resetAt }
+  repository(owner: $owner, name: $name) {
+    pullRequests(first: $first, after: $after, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      pageInfo { hasNextPage endCursor }
+      nodes {
+        number
+        updatedAt
+        reviews(first: 100) { nodes { databaseId state submittedAt author { ACTOR } } }
+        timelineItems(itemTypes: [CLOSED_EVENT], last: 1) {
+          nodes { ... on ClosedEvent { actor { ACTOR } } }
+        }
+      }
+    }
+  }
+}
+""".replace("ACTOR", ACTOR)

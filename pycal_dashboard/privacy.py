@@ -52,8 +52,10 @@ DATA = {
     "github": {
         "what": _(
             "The issues and pull requests of the repositories of the projects: their title, "
-            "description and times, and who created them with their GitHub name, id, name and "
-            "the address of their avatar."
+            "description and times, who created and who closed them, and the reviews of the pull "
+            "requests: who gave them, when, and whether they approved; of these people their "
+            "GitHub name, id, name and the address of their avatar. The site counts with them how "
+            "many pull requests a person opened and reviewed in a project."
         ),
         "whose": _("People on GitHub, also those who never use this site"),
         "seen_by": _(
@@ -153,7 +155,12 @@ MODELS = {
             "closed",
             "merged",
             "changed",
+            "closed_by",
         },
+    ),
+    "pycal_dashboard.Review": (
+        "github",
+        {"id", "github_id", "issue", "author", "state", "submitted"},
     ),
     "pycal_dashboard.Label": (
         None,
@@ -193,6 +200,7 @@ MODELS = {
             "error_at",
             "data_version",
             "issues_changed",
+            "reviews_changed",
             "created",
         },
     ),

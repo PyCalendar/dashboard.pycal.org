@@ -20,6 +20,7 @@ from .pull_request_filter import PullRequestFilter
 from .pull_request_state import PullRequestState
 from .pull_request_step import PullRequestStep
 from .repository import Repository
+from .review import Review
 from .update_job import UpdateJob
 from .webhook_delivery import WebhookDelivery
 
@@ -40,6 +41,7 @@ __all__ = [
     "PullRequestState",
     "PullRequestStep",
     "Repository",
+    "Review",
     "UpdateJob",
     "WebhookDelivery",
 ]

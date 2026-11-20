@@ -88,6 +88,20 @@ class DataSpec(ABC):
             True if the data is there and current.
         """
 
+    def complete_in(self, repositories: list[Repository]) -> bool:
+        """Whether the data of all pull requests of repositories is complete, for a state.
+
+        A state counts in all repositories of a project, such as the reviews a person gave.
+
+        Parameters:
+            repositories: The repositories.
+
+        Returns:
+            True if the data of every repository is there; the data of single pull requests,
+            such as their checks, does not need more.
+        """
+        return True
+
     def describe(self) -> dict:
         """The data spec for the JSON and the documentation.
 

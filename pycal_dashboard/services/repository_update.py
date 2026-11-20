@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from pycal_dashboard.conditions import DATA_SPECS, LabelsData
-from pycal_dashboard.errors import DashboardError, GitHubUnavailable, translate
+from pycal_dashboard.errors import DashboardError, translate
 from pycal_dashboard.github.client import GitHubClient
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.installation_token import InstallationToken
@@ -252,25 +252,21 @@ class RepositoryUpdate:
                 repository=repository, pull_request=True, state=Issue.OPEN
             )
         }
-        read, after, first = 0, None, PULL_REQUESTS_PER_PAGE
-        for _page in range(MAX_PAGES):
-            try:
-                data = client.graphql(query, owner=owner, name=name, after=after, first=first)
-            except GitHubUnavailable:  # too slow for GitHub: the same page, smaller
-                if first <= MIN_PULL_REQUESTS_PER_PAGE:
-                    raise
-                first = max(MIN_PULL_REQUESTS_PER_PAGE, first // 2)
-                continue
-            page = data["repository"]["pullRequests"]
-            for node in page["nodes"]:
+        read = 0
+        for nodes in client.graphql_pages(
+            query,
+            ("repository", "pullRequests"),
+            PULL_REQUESTS_PER_PAGE,
+            MIN_PULL_REQUESTS_PER_PAGE,
+            owner=owner,
+            name=name,
+        ):
+            for node in nodes:
                 issue = issues.get(node["number"])
                 if issue is None:  # opened after the issues were read: the next update
                     continue
                 for spec in specs:
                     spec.keep_pull_request(issue, node)
                 read += 1
-            if not page["pageInfo"]["hasNextPage"]:
-                break
-            after = page["pageInfo"]["endCursor"]
         log.info("%s: %s pull requests, rate %s", repository.full_name, read, client.rate)
         return read

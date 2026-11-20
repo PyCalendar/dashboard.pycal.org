@@ -1,0 +1,314 @@
+"""The states of people, shared with the conditions: reviews, pull requests opened and closed."""
+
+import math
+import re
+from pathlib import Path
+
+import pytest
+
+from pycal_dashboard import errors
+from pycal_dashboard.conditions import CONDITIONS, STATES
+from pycal_dashboard.conditions.condition.base import Condition
+from pycal_dashboard.conditions.input.number import NumberInput
+from pycal_dashboard.conditions.state.base import State
+from pycal_dashboard.conditions.state.scope import Scope
+from pycal_dashboard.models import GitHubUser, Issue, Repository, Review
+from pycal_dashboard.services.repository_update import RepositoryUpdate
+
+pytestmark = pytest.mark.django_db
+DOCS = Path(__file__).parent.parent / "docs" / "reference" / "states"
+REPO = "collective/icalendar"
+OTHER = "collective/other"
+ANNA = {"id": 101, "login": "anna", "avatar_url": "https://avatars.example/a", "type": "User"}
+BEN = {"id": 102, "login": "ben", "avatar_url": "https://avatars.example/b", "type": "User"}
+BOT = {"id": 103, "login": "helper[bot]", "avatar_url": "https://avatars.example/c", "type": "Bot"}
+
+
+@pytest.fixture
+def repositories(github):
+    """Anna opened three pull requests and withdrew one; Ben reviews in two repositories."""
+    github.add_repository(REPO, installation=11)
+    github.add_repository(OTHER, installation=11)
+    github.add_issue(REPO, "Anna 1", pull_request=True, user=ANNA)
+    github.add_issue(REPO, "Anna 2", pull_request=True, user=ANNA, state="closed", merged=True)
+    github.add_issue(REPO, "Anna withdrawn", pull_request=True, user=ANNA, state="closed")
+    github.add_issue(REPO, "Ben 1", pull_request=True, user=BEN)
+    github.add_issue(
+        REPO, "Ben closed by Anna", pull_request=True, user=BEN, state="closed", closed_by=ANNA
+    )
+    github.add_issue(OTHER, "Bot", pull_request=True, user=BOT)
+    github.add_review(REPO, 1, BEN)  # approved
+    github.add_review(REPO, 1, BEN, "CHANGES_REQUESTED")
+    github.add_review(REPO, 1, ANNA, "COMMENTED")  # only comments: not counted
+    github.add_review(REPO, 4, ANNA)
+    github.add_review(OTHER, 1, BEN, "DISMISSED")
+    found = []
+    for name in (REPO, OTHER):
+        repository = Repository.objects.create(full_name=name)
+        assert RepositoryUpdate(repository).run()
+        repository.refresh_from_db()
+        found.append(repository)
+    return found
+
+
+def pull(title):
+    return Issue.objects.select_related("author", "repository").get(title=title)
+
+
+def person(login):
+    return GitHubUser.objects.get(login=login)
+
+
+def test_the_states_have_their_ids():
+    assert list(STATES) == [
+        "pull_requests_opened",
+        "own_pull_requests_closed",
+        "reviews_given",
+        "review_ratio",
+    ]
+    assert issubclass(Condition, State)  # a condition is a state that is true or false
+    assert all(issubclass(state, State) for state in STATES.values())
+
+
+@pytest.mark.parametrize("id", list(STATES))
+def test_every_state_has_its_page_with_the_api_at_the_bottom(id, settings):
+    state = STATES[id]
+    page = (DOCS / f"{id}.rst").read_text()
+    assert page.startswith("=") and f"``{id}``" in page.split("\n")[1]
+    assert " ".join(state.description.split()) in " ".join(page.split())
+    for spec in state.data:
+        assert f"``{spec.id}``" in page
+    api = page.rsplit("API reference\n=============", 1)
+    assert f".. autoclass:: {state.__module__}.{state.__name__}" in api[1]
+    assert not re.search(r"\n[^\n]+\n={3,}\n", api[1]), "no section after it"
+    settings.DOCS_URL = "https://docs.example.org/"
+    assert state.docs_url() == f"https://docs.example.org/reference/states/{id}.html"
+    assert state.describe()["documentation"] == state.docs_url()  # shared with conditions
+    index = (DOCS / "index.rst").read_text()
+    assert f":doc:`{id}`" in index and f"   {id}\n" in index
+
+
+def test_the_update_reads_the_reviews_and_who_closed(repositories, github):
+    repository, _other = repositories
+    assert repository.reviews_changed is not None
+    reviews = Review.objects.filter(issue__repository=repository)
+    assert sorted(reviews.values_list("author__login", "state")) == [
+        ("anna", "APPROVED"),
+        ("anna", "COMMENTED"),
+        ("ben", "APPROVED"),
+        ("ben", "CHANGES_REQUESTED"),
+    ]
+    assert pull("Anna withdrawn").closed_by.login == "anna"
+    assert pull("Ben closed by Anna").closed_by.login == "anna"
+    assert pull("Anna 1").closed_by is None  # open
+    assert person("helper[bot]").type == "Bot"
+    assert github.graphql_reviews_queries[0]["variables"]["first"] == 20
+
+
+def test_the_next_update_reads_only_what_changed(repositories, github):
+    repository, _other = repositories
+    github.graphql_reviews_queries.clear()
+    github.add_review(REPO, 4, BEN)  # changes Ben 1, the last changed now
+    assert RepositoryUpdate(repository).run()
+    assert Review.objects.filter(issue__title="Ben 1").count() == 2
+    (query,) = github.graphql_reviews_queries  # stopped at what it had read
+
+
+def test_the_states_of_a_person_in_a_project(repositories):
+    scope = Scope(repositories)
+    anna = pull("Anna 1")
+    assert STATES["pull_requests_opened"].observe(anna, scope) == 3
+    assert STATES["own_pull_requests_closed"].observe(anna, scope) == 1  # not the merged one
+    assert STATES["reviews_given"].observe(anna, scope) == 1  # not the comment
+    assert STATES["review_ratio"].observe(anna, scope) == 0.5  # 1 / (3 - 1)
+    ben = person("ben")
+    assert STATES["reviews_given"].observe(ben, scope) == 3  # in both repositories
+    assert STATES["own_pull_requests_closed"].observe(ben, scope) == 0  # Anna closed it
+    assert STATES["review_ratio"].observe(ben, scope) == 1.5  # 3 / (2 - 0)
+    assert STATES["reviews_given"].observe(pull("Ben 1")) == 2  # its repository only
+
+
+def test_the_ratio_without_pull_requests(repositories):
+    scope = Scope(repositories)
+    reviewer = GitHubUser.objects.create(github_id=200, login="reviewer")
+    Review.objects.create(github_id=1, issue=pull("Anna 1"), author=reviewer, state="APPROVED")
+    assert STATES["review_ratio"].observe(reviewer, scope) == math.inf
+    nobody = GitHubUser.objects.create(github_id=201, login="nobody")
+    assert STATES["review_ratio"].observe(nobody, scope) == 0
+
+
+def test_the_numbers_are_counted_once_for_everybody(repositories, django_assert_num_queries):
+    scope = Scope(repositories)
+    pulls = list(Issue.objects.filter(pull_request=True).select_related("author", "repository"))
+    with django_assert_num_queries(3):  # opened, closed by themselves, reviews
+        for issue in pulls:
+            STATES["review_ratio"].observe(issue, scope)
+
+
+def test_unknown_while_the_reviews_are_not_read(repositories):
+    repository, other = repositories
+    other.reviews_changed = None
+    other.save()
+    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository, other])) is None
+    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 1
+    assert STATES["pull_requests_opened"].observe(pull("Anna 1"), Scope([repository])) == 3
+    assert (
+        CONDITIONS["review_ratio_above"].check(
+            pull("Anna 1"), {"ratio": 0.1}, Scope([repository, other])
+        )
+        is None
+    )
+
+
+def test_without_an_author_there_is_no_state(repositories):
+    issue = pull("Anna 1")
+    issue.author = None
+    assert STATES["reviews_given"].observe(issue) is None
+
+
+def test_reviews_at_least(repositories):
+    condition = CONDITIONS["reviews_at_least"]
+    values = condition.configure({"reviews": "2"})
+    assert condition.check(pull("Anna 1"), values) is True  # approved, changes; not the comment
+    assert condition.check(pull("Ben 1"), values) is False
+    assert condition.check(pull("Ben 1"), condition.configure({"reviews": 1})) is True
+    with pytest.raises(errors.ConditionInputOutOfRange):
+        condition.configure({"reviews": 0})
+
+
+def test_review_ratio_above(repositories):
+    condition = CONDITIONS["review_ratio_above"]
+    scope = Scope(repositories)
+    assert condition.check(pull("Ben 1"), condition.configure({"ratio": "1.4"}), scope) is True
+    assert condition.check(pull("Ben 1"), condition.configure({"ratio": 1.5}), scope) is False
+    assert condition.check(pull("Anna 1"), {"ratio": 0.4}, scope) is True
+    assert condition.check(pull("Anna 1"), {"ratio": 0.4}) is True  # its repository
+    assert condition.describe()["inputs"][0]["type"] == "number"
+
+
+@pytest.mark.parametrize(
+    ("value", "error"),
+    [
+        ("many", errors.ConditionInputNotNumber),
+        (True, errors.ConditionInputNotNumber),
+        ("inf", errors.ConditionInputNotNumber),
+        (-1, errors.ConditionInputOutOfRange),
+    ],
+)
+def test_a_number_input_refuses_wrong_values(value, error):
+    with pytest.raises(error):
+        NumberInput("ratio", "Ratio", minimum=0).parse(value)
+
+
+def test_a_number_input_makes_its_field():
+    assert NumberInput("ratio", "Ratio", minimum=0).widget() == {
+        "kind": "number",
+        "attributes": {"step": "any", "min": 0},
+    }
+    assert NumberInput("ratio", "Ratio", maximum=3).describe()["maximum"] == 3
+
+
+def test_without_the_app_reviews_are_not_read(github):
+    github.add_repository(REPO, pulls=1)
+    repository = Repository.objects.create(full_name=REPO)
+    assert RepositoryUpdate(repository).run()
+    repository.refresh_from_db()
+    assert repository.reviews_changed is None and github.graphql_reviews_queries == []
+    assert CONDITIONS["reviews_at_least"].check(Issue.objects.get(), {"reviews": 1}) is None
+
+
+# the columns of the table: the groups Reviews and Author
+
+
+@pytest.fixture
+def project(repositories, bob):
+    from pycal_dashboard.services.project_editor import ProjectEditor
+
+    project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    project.repositories.add(*repositories)
+    return project
+
+
+def test_a_column_of_reviews(repositories):
+    from pycal_dashboard.conditions.group.column import Column
+
+    column = Column.decode("reviews~applies~2")
+    assert column.applies(pull("Anna 1")) is True and column.applies(pull("Ben 1")) is False
+    assert column.sentence == "it has at least 2 reviews"
+    assert column.opposite() is None
+    assert Column.decode("reviews~not~1").sentence == "it has fewer than 1 review"
+    assert column.group.cell(pull("Anna 1"), column.choices) == [
+        {"text": "2 reviews", "kind": "number"}
+    ]
+    with pytest.raises(errors.ConditionInputOutOfRange):
+        Column.decode("reviews~all~0")
+
+
+def test_a_column_of_the_author(repositories):
+    from pycal_dashboard.conditions.group.column import Column
+
+    scope = Scope(repositories)
+    column = Column.decode("author~applies~review_ratio~1.40")
+    assert column.encode() == "author~applies~review_ratio~1.4"
+    assert column.applies(pull("Ben 1"), scope) is True  # 1.5 in the project
+    assert column.applies(pull("Ben 1")) is False  # 2 reviews / 2 in its repository only
+    assert column.applies(pull("Anna 1"), scope) is False  # 0.5
+    assert column.sentence == "its author has a review to pull request ratio above 1.4"
+    assert column.group.cell(pull("Ben 1"), column.choices, scope)[0]["text"] == "1.5"
+    assert column.group.summary(column.choices) == (
+        "Author: review to pull request ratio above 1.4"
+    )
+    given = Column.decode("author~not~reviews_given~2")
+    assert given.sentence == "its author gave at most 2 reviews"
+    assert given.shows(given.applies(pull("Anna 1"), scope)) is True
+    with pytest.raises(errors.ConditionInputUnknown):
+        Column.decode("author~all~nothing~1")
+    with pytest.raises(errors.ConditionInputNotNumber):
+        Column.decode("author~all~review_ratio~many")
+
+
+def test_the_author_is_unknown_without_the_reviews(repositories):
+    from pycal_dashboard.conditions.group.column import Column
+
+    _repository, other = repositories
+    other.reviews_changed = None
+    other.save()
+    column = Column.decode("author~applies~reviews_given~0")
+    assert column.applies(pull("Anna 1"), Scope(repositories)) is None
+    assert "need the GitHub App" in column.group.unknown(pull("Anna 1"), column.choices)
+
+
+def test_the_table_counts_in_the_project(client, project):
+    page = client.get(
+        "/projects/icalendar/pull-requests/?col=author~applies~review_ratio~1.4"
+    ).content.decode()
+    assert page.count("<tr data-pull-request=") == 2  # the two of Ben: 1.5 in the project
+    assert "Review to pull request ratio &gt; 1.4" in page
+    menu = client.get("/projects/icalendar/pull-requests/").content.decode()
+    assert 'class="group-fields fields-author"' in menu and 'value="review_ratio"' in menu
+    assert 'name="reviews" type="number"' in menu
+
+
+def test_a_column_from_the_menu(client, project):
+    answer = client.get(
+        "/projects/icalendar/pull-requests/?add=1&group=author&state=reviews_given&above=2"
+    )
+    assert "col=author%7Eall%7Ereviews_given%7E2" in answer["Location"].replace("~", "%7E")
+    answer = client.get("/projects/icalendar/pull-requests/?add=1&group=reviews&reviews=2")
+    assert "reviews%7Eall%7E2" in answer["Location"].replace("~", "%7E")
+
+
+def test_a_step_counts_in_the_project(project):
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+    from pycal_dashboard.services.progress import PullRequestProgress
+    from pycal_dashboard.services.step_assignment import StepAssignment
+
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review more", columns=["author~not~review_ratio~1"]
+    )
+    step = PullRequestStep.objects.create(project=project, filter=saved, name="Review more")
+    assignment = StepAssignment(project)
+    assert assignment.step_of(pull("Anna 1")) == step  # 0.5: to review more
+    assert assignment.step_of(pull("Ben 1")) is None  # 1.5
+    progress = PullRequestProgress(pull("Anna 1"), project)
+    assert progress.current.tasks[0].todo

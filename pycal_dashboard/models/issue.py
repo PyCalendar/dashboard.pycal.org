@@ -33,6 +33,14 @@ class Issue(models.Model):
     closed = models.DateTimeField(null=True, blank=True)
     merged = models.DateTimeField(null=True, blank=True)
     changed = models.DateTimeField(null=True, blank=True)
+    # who closed it, read with the reviews (ReviewsData); None while not known
+    closed_by = models.ForeignKey(
+        "GitHubUser",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="closed_issues",
+    )
 
     class Meta:
         ordering = ["-created"]

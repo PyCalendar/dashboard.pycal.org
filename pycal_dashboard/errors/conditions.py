@@ -62,6 +62,15 @@ class ConditionInputNotInteger(ConditionError):
     title = _("The input is not a whole number")
 
 
+class ConditionInputNotNumber(ConditionError):
+    """An input of a condition must be a number.
+
+    Give it as a number, with a point before a fraction, such as ``1.5`` or ``2``.
+    """
+
+    title = _("The input is not a number")
+
+
 class ConditionInputOutOfRange(ConditionError):
     """A number given to a condition is smaller or larger than it allows.
 

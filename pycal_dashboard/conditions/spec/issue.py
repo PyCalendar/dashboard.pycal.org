@@ -45,3 +45,14 @@ class IssueData(DataSpec):
             True.
         """
         return True
+
+    def complete_in(self, repositories: list[Repository]) -> bool:
+        """The issues and pull requests of every repository were read.
+
+        Parameters:
+            repositories: The repositories.
+
+        Returns:
+            True if each was read at least once.
+        """
+        return all(repository.issues_changed is not None for repository in repositories)

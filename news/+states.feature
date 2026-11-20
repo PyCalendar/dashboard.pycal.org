@@ -1,0 +1,1 @@
+States of people, counted in all repositories of a project: ``pull_requests_opened``, ``own_pull_requests_closed``, ``reviews_given`` and ``review_ratio``. They share their code with the conditions: a condition is a state that is true or false.

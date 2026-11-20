@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import time
+from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
@@ -33,6 +34,7 @@ API_VERSION = "2022-11-28"
 # GitHub is busy or a query took too long: ask again after these seconds (the tests: none)
 BUSY = (502, 503, 504)
 RETRY_DELAYS = (1.0, 3.0)
+MAX_GRAPHQL_PAGES = 1000  # 100 000 nodes at most, also with the smallest pages
 
 
 class GitHubClient:
@@ -167,6 +169,46 @@ class GitHubClient:
                 raise MissingPermissions(detail)
             raise GitHubQueryFailed(detail)
         return data
+
+    def graphql_pages(
+        self, query: str, path: tuple[str, ...], first: int, least: int, **variables: Any
+    ) -> Iterator[list[dict]]:
+        """Ask GraphQL for a list page by page, the nodes of each page in turn.
+
+        GitHub gives up on a query that takes too long, such as whether many pull requests can
+        be merged: then the same page is asked again with half as many, down to ``least``.
+        The query has the variables ``after`` and ``first``, and asks the list for
+        ``pageInfo { hasNextPage endCursor }`` and ``nodes``.
+
+        Parameters:
+            query: The query.
+            path: The keys from the data to the list, such as
+                ``("repository", "pullRequests")``.
+            first: How many nodes a page asks for.
+            least: The fewest nodes of a page, below which giving up is an error.
+            **variables: The other variables of the query.
+
+        Yields:
+            The nodes of each page.
+
+        Raises:
+            GitHubUnavailable: GitHub gave up also on the smallest page.
+        """
+        after = None
+        for _page in range(MAX_GRAPHQL_PAGES):
+            try:
+                data = self.graphql(query, after=after, first=first, **variables)
+            except GitHubUnavailable:  # too slow for GitHub: the same page, smaller
+                if first <= least:
+                    raise
+                first = max(least, first // 2)
+                continue
+            for key in path:
+                data = data[key]
+            yield data["nodes"]
+            if not data["pageInfo"]["hasNextPage"]:
+                return
+            after = data["pageInfo"]["endCursor"]
 
     @staticmethod
     def message(response: httpx.Response) -> str:

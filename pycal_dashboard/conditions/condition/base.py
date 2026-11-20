@@ -2,25 +2,23 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
-from django.conf import settings
-
-from pycal_dashboard.conditions.input.base import InputSpec
-from pycal_dashboard.conditions.spec.base import DataSpec
-from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
+from pycal_dashboard.conditions.state.base import State
+from pycal_dashboard.conditions.state.scope import Scope
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue
 
 
-class Condition(ABC):
-    """A condition of a pull request, configured by its inputs, assessed from its data.
+class Condition(State):
+    """A condition of a pull request: a state that is true or false.
 
     A subclass has an ``id``, the ``inputs`` that configure it, the ``data`` that the
     background reads for it, and :meth:`assess`. Each has its page in the documentation,
-    ``reference/conditions/<id>.html``, with its API reference at the bottom.
+    ``reference/conditions/<id>.html``, with its API reference at the bottom. The id, inputs,
+    data, configuration and description are those of every state (:class:`~.state.base.State`).
 
     Attributes:
         id: The name of the condition in configurations, such as ``label_exists``.
@@ -30,43 +28,7 @@ class Condition(ABC):
         data: What it needs of the pull request.
     """
 
-    id: ClassVar[str] = ""
-    title: ClassVar[str] = ""
-    description: ClassVar[str] = ""
-    inputs: ClassVar[tuple[InputSpec, ...]] = ()
-    data: ClassVar[tuple[DataSpec, ...]] = ()
-
-    @classmethod
-    def configure(cls, config: dict | None = None, context: dict | None = None) -> dict:
-        """Check a configuration of the condition and return its values.
-
-        Parameters:
-            config: The inputs by name, such as ``{"label": "bug"}``.
-            context: What the inputs may need, such as the ``repository``.
-
-        Returns:
-            The value of every input; the default for one that is not required and not given.
-
-        Raises:
-            ConditionInputMissing: A required input is not given.
-            ConditionInputUnknown: The configuration has an input that the condition does not
-                know.
-            ConditionError: An input is wrong: a subclass of it says how.
-        """
-        config = dict(config or {})
-        names = {spec.name for spec in cls.inputs}
-        unknown = sorted(set(config) - names)
-        if unknown:
-            raise ConditionInputUnknown(f"{cls.id}: {', '.join(unknown)}")
-        values = {}
-        for spec in cls.inputs:
-            if spec.name in config:
-                values[spec.name] = spec.parse(config[spec.name], context)
-            elif spec.required:
-                raise ConditionInputMissing(f"{cls.id}: {spec.name}")
-            else:
-                values[spec.name] = spec.default
-        return values
+    section: ClassVar[str] = "conditions"
 
     @classmethod
     def complete(cls, issue: Issue) -> bool:
@@ -81,19 +43,46 @@ class Condition(ABC):
         return all(spec.complete(issue) for spec in cls.data)
 
     @classmethod
-    def check(cls, issue: Issue, values: dict) -> bool | None:
+    def check(cls, issue: Issue, values: dict, scope: Scope | None = None) -> bool | None:
         """Assess the condition on a pull request, if its data allows it.
 
         Parameters:
             issue: The pull request (``Issue``); conditions are checked on pull requests only.
-            values: The configuration, from :meth:`configure`.
+            values: The configuration, from
+                :meth:`~pycal_dashboard.conditions.state.base.State.configure`.
+            scope: The repositories of the project, for the states of its author.
 
         Returns:
             True or False; None if it is not a pull request or its data is not complete yet.
         """
         if not issue.pull_request or not cls.complete(issue):
             return None
-        return cls.assess(issue, values)
+        if not cls.scoped:
+            return cls.assess(issue, values)
+        scope = scope or Scope.of(issue)
+        if not all(spec.complete_in(scope.repositories) for spec in cls.data):
+            return None
+        return cls.assess(issue, values, scope)
+
+    # whether it checks states of the author, counted in the repositories of the project: then
+    # assess() takes the scope, and the data of all of them must be complete
+    scoped: ClassVar[bool] = False
+
+    @classmethod
+    def observe(
+        cls, subject: Issue, scope: Scope | None = None, values: dict | None = None
+    ) -> bool | None:
+        """The condition as a state of a pull request, see :meth:`check`.
+
+        Parameters:
+            subject: The pull request.
+            scope: The repositories of the project.
+            values: The configuration.
+
+        Returns:
+            True or False; None while it is not known.
+        """
+        return cls.check(subject, values or {}, scope)
 
     @classmethod
     @abstractmethod
@@ -107,24 +96,3 @@ class Condition(ABC):
         Returns:
             True if it holds.
         """
-
-    @classmethod
-    def docs_url(cls) -> str:
-        """The page of the condition in the documentation."""
-        return f"{settings.DOCS_URL.rstrip('/')}/reference/conditions/{cls.id}.html"
-
-    @classmethod
-    def describe(cls) -> dict:
-        """The condition for the JSON and the documentation.
-
-        Returns:
-            Its id, title, description, inputs, data and page.
-        """
-        return {
-            "id": cls.id,
-            "title": str(cls.title),
-            "description": str(cls.description),
-            "inputs": [spec.describe() for spec in cls.inputs],
-            "data": [spec.describe() for spec in cls.data],
-            "documentation": cls.docs_url(),
-        }

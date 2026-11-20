@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.state.scope import Scope
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project, PullRequestStep
@@ -19,12 +20,15 @@ class StepAssignment:
     and in none when none does. A step whose filter has no condition in force shows none.
     """
 
-    def __init__(self, project: Project):
+    def __init__(self, project: Project, scope: Scope | None = None):
         """The steps of a project, in their order, with the columns of their filters.
 
         Parameters:
             project: The project.
+            scope: The repositories in which the states of the authors are counted; all of
+                the project when None.
         """
+        self.scope = scope or Scope.of(project)
         self.steps: list[tuple[PullRequestStep, list[Column]]] = []
         for step in project.steps.select_related("filter"):
             columns = [Column.decode(value) for value in step.filter.columns]
@@ -40,6 +44,6 @@ class StepAssignment:
             The left-most step whose filter shows it; None if none does.
         """
         for step, columns in self.steps:
-            if any(column.shows(column.applies(issue)) for column in columns):
+            if any(column.shows(column.applies(issue, self.scope)) for column in columns):
                 return step
         return None

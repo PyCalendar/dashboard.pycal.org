@@ -16,6 +16,7 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue
 
 MODES = {"present": LabelExists, "absent": LabelAbsent}
@@ -64,12 +65,15 @@ class LabelsGroup(ConditionGroup):
         return cls.check((form.get("mode", "present"), form.get("label", "")))
 
     @classmethod
-    def applies(cls, issue: Issue, choices: tuple[str, ...]) -> bool | None:
+    def applies(
+        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
+    ) -> bool | None:
         """Whether the pull request has the label, or not, as the mode says.
 
         Parameters:
             issue: The pull request.
             choices: The mode and the name.
+            scope: Not used: the condition is of the pull request itself.
 
         Returns:
             True or False; None while the labels are not read.
@@ -77,12 +81,13 @@ class LabelsGroup(ConditionGroup):
         return MODES[choices[0]].check(issue, {"label": choices[1]})
 
     @classmethod
-    def cell(cls, issue: Issue, choices: tuple[str, ...]) -> list[dict]:
+    def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
         """Nothing: the label is in the header, the cell says whether it applies.
 
         Parameters:
             issue: The pull request.
             choices: The mode and the name.
+            scope: Not used: the condition is of the pull request itself.
 
         Returns:
             No parts.

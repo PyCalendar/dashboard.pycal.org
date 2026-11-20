@@ -13,6 +13,7 @@ from urllib.parse import urlencode
 from django.http import HttpRequest
 from django.views.decorators.http import require_http_methods
 
+from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import PullRequestNotFound
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.step_template import expand, values_of
@@ -41,7 +42,8 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
     access, moved = opened(request, slug, f"pull/{number}/")
     if moved:
         return moved
-    found = list(pull_requests_of(shown_repositories(access)).filter(number=number))
+    repositories = shown_repositories(access)
+    found = list(pull_requests_of(repositories).filter(number=number))
     name = request.GET.get("repository")
     if name:
         found = [issue for issue in found if issue.repository.full_name == name]
@@ -59,7 +61,7 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             lambda: {"pull_requests": [issue_data(issue) for issue, _query in choices]},
         )
     issue = found[0]
-    progress = PullRequestProgress(issue, access.project)
+    progress = PullRequestProgress(issue, access.project, Scope(repositories))
     shown = progress.chosen(request.GET.get("step"))
     keep = {"repository": name} if name else {}
     return page(

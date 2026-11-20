@@ -4,8 +4,9 @@ Conditions
 
 A condition is checked on a pull request, such as whether it has a label. Each
 has an id, the inputs that configure it, and the data that the update of the
-repository reads for it in the background. The conditions are not shown on the
-pages yet.
+repository reads for it in the background. A condition is a state of a pull
+request that is true or false; the :doc:`states of people </reference/states/index>`
+are numbers, and conditions such as ``review_ratio_above`` check them.
 
 .. list-table::
    :header-rows: 1
@@ -36,6 +37,11 @@ pages yet.
      - A pull request was merged.
    * - :doc:`closed`
      - A pull request was closed without being merged.
+   * - :doc:`reviews_at_least`
+     - A pull request has at least a number of reviews, without those of
+       comments.
+   * - :doc:`review_ratio_above`
+     - The review to pull request ratio of the author is above a number.
 
 .. toctree::
    :hidden:
@@ -52,6 +58,8 @@ pages yet.
    open
    merged
    closed
+   reviews_at_least
+   review_ratio_above
    api
 
 Inputs
@@ -67,6 +75,8 @@ partial ``conditions/_input.html``):
    A whole number, with an optional smallest and largest number.
 ``positive-int``
    A whole number from 1 up.
+``number``
+   A number, also with a fraction, such as ``1.5``.
 ``range``
    Two whole numbers, ``[low, high]``, low not above high.
 ``string-label``
@@ -94,5 +104,10 @@ app does not ask for is not read.
    Whether the pull request can be merged, is behind its base, and merges itself.
 ``checks``
    The checks and statuses of the last commit of the pull request.
+``reviews``
+   The reviews of all pull requests of the repository, open and closed, and
+   who closed each. One query of GraphQL reads 20 pull requests, the last
+   changed first, and stops at those it read before; the first 100 reviews of
+   a pull request are read.
 
 See :doc:`api` for the classes.

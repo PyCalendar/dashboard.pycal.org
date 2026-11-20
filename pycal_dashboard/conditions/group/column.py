@@ -6,9 +6,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from urllib.parse import unquote
 
+from pycal_dashboard.conditions.group.author import AuthorGroup
 from pycal_dashboard.conditions.group.branch import BranchGroup
 from pycal_dashboard.conditions.group.ci import CiGroup
 from pycal_dashboard.conditions.group.labels import LabelsGroup
+from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 from pycal_dashboard.conditions.group.status import StatusGroup
 from pycal_dashboard.errors import ConditionInputUnknown, UnknownCondition
 
@@ -16,11 +18,13 @@ if TYPE_CHECKING:
     from django.http import QueryDict
 
     from pycal_dashboard.conditions.group.base import ConditionGroup
+    from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue
 
 # the groups in the order of the menu
 GROUPS: dict[str, type[ConditionGroup]] = {
-    group.id: group for group in (LabelsGroup, BranchGroup, CiGroup, StatusGroup)
+    group.id: group
+    for group in (LabelsGroup, BranchGroup, CiGroup, StatusGroup, ReviewsGroup, AuthorGroup)
 }
 # which pull requests the column shows: all, those it applies to, those it does not apply to
 FILTERS = ("all", "applies", "not")
@@ -100,16 +104,18 @@ class Column:
         # only % and the separator ~ are escaped: the address escapes the rest once
         return "~".join(part.replace("%", "%25").replace("~", "%7E") for part in parts)
 
-    def applies(self, issue: Issue) -> bool | None:
+    def applies(self, issue: Issue, scope: Scope | None = None) -> bool | None:
         """Whether the condition of the column applies to a pull request.
 
         Parameters:
             issue: The pull request.
+            scope: The repositories of the project, for the states of its author; its
+                repository when None.
 
         Returns:
             True or False; None while its data is not complete.
         """
-        return self.group.applies(issue, self.choices)
+        return self.group.applies(issue, self.choices, scope)
 
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.

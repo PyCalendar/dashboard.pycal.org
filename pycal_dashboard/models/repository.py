@@ -36,6 +36,9 @@ class Repository(models.Model):
     # when GitHub last changed the issues and pull requests the site has: the next update
     # reads only those changed since
     issues_changed = models.DateTimeField(null=True, blank=True)
+    # when GitHub last changed the pull requests whose reviews and closers the site read
+    # (ReviewsData): the next update reads those changed since; None while never read
+    reviews_changed = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

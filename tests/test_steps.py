@@ -216,3 +216,17 @@ def test_the_values_of_a_pull_request(project, filters):
         "1",
         str(step.pk),
     )
+
+
+def test_the_address_of_the_steps_of_a_pull_request(project, filters, settings):
+    from pycal_dashboard.step_template import example, values_of
+
+    settings.SITE_URL = "https://dashboard.example.org"
+    pull = Issue.objects.select_related("author", "repository").get(title="Ready")
+    url = values_of(pull, project)["pr_steps_url"]
+    assert url == "https://dashboard.example.org/projects/icalendar/pull/1/"
+    assert example(project)["pr_steps_url"].endswith("/projects/icalendar/pull/42/")
+    project.repositories.add(Repository.objects.create(full_name="collective/other"))
+    assert values_of(pull, project)["pr_steps_url"].endswith(
+        "/pull/1/?repository=collective%2Ficalendar"
+    )

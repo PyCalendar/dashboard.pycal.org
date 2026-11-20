@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import re
 from typing import TYPE_CHECKING
+from urllib.parse import urlencode
 
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 if TYPE_CHECKING:
@@ -28,6 +30,10 @@ GROUPS = {
             "pr_url": (
                 _("the address of the pull request on GitHub"),
                 "https://github.com/collective/icalendar/pull/42",
+            ),
+            "pr_steps_url": (
+                _("the address of the page of the pull request with its steps on this site"),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/",
             ),
         },
     ),
@@ -130,6 +136,7 @@ def values_of(issue: Issue, project: Project, step: PullRequestStep | None = Non
         "pr_title": issue.title,
         "pr_number": str(issue.number),
         "pr_url": issue.url,
+        "pr_steps_url": steps_url(project, issue.number, repository.full_name),
         "author_mention": f"@{login}" if login else "",
         "author_name": (author.name or login) if author else "",
         "author_handle": login,
@@ -169,4 +176,26 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
     values = {
         name: about[1] for _title, members in GROUPS.values() for name, about in members.items()
     }
-    return values | {"project_name": project.name} | step_values(step)
+    return (
+        values
+        | {"project_name": project.name, "pr_steps_url": steps_url(project, 42)}
+        | step_values(step)
+    )
+
+
+def steps_url(project: Project, number: int, repository: str = "") -> str:
+    """The address of the page of a pull request with its steps, on this site.
+
+    Parameters:
+        project: The project.
+        number: The number of the pull request.
+        repository: Its repository, such as ``collective/icalendar``: named in the address
+            when the project has several, which may have pull requests of the same number.
+
+    Returns:
+        Such as ``https://dashboard.pycal.org/projects/icalendar/pull/42/``.
+    """
+    address = f"{settings.SITE_URL}{project.path(f'pull/{number}/')}"
+    if repository and project.repositories.count() > 1:
+        address += "?" + urlencode({"repository": repository})
+    return address

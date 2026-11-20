@@ -10,6 +10,7 @@ from django.utils.translation import gettext
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue
 
 
@@ -60,12 +61,16 @@ class ConditionGroup(ABC):
 
     @classmethod
     @abstractmethod
-    def applies(cls, issue: Issue, choices: tuple[str, ...]) -> bool | None:
+    def applies(
+        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
+    ) -> bool | None:
         """Whether the condition applies to a pull request.
 
         Parameters:
             issue: The pull request, with its labels and state.
             choices: The choices.
+            scope: The repositories of the project, for the states of its author; its
+                repository when None.
 
         Returns:
             True or False; None while its data is not complete.
@@ -73,12 +78,13 @@ class ConditionGroup(ABC):
 
     @classmethod
     @abstractmethod
-    def cell(cls, issue: Issue, choices: tuple[str, ...]) -> list[dict]:
+    def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
         """What the cell of a pull request shows besides whether the condition applies.
 
         Parameters:
             issue: The pull request.
             choices: The choices.
+            scope: The repositories of the project, see :meth:`applies`.
 
         Returns:
             Parts of the cell: ``text`` and ``kind``, such as ``open`` or ``label``, for its

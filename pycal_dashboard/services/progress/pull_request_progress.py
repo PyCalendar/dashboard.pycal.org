@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from django.utils.text import capfirst
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.step_template import expand, values_of
 
 from .step_progress import StepProgress
@@ -25,13 +26,16 @@ class PullRequestProgress:
     is in the left-most step with a task to do. A step without a task to do is complete.
     """
 
-    def __init__(self, issue: Issue, project: Project):
+    def __init__(self, issue: Issue, project: Project, scope: Scope | None = None):
         """Find the tasks of every step of the project for a pull request.
 
         Parameters:
             issue: The pull request.
             project: The project whose steps it goes through.
+            scope: The repositories of the project that the person sees, in which the states
+                of the author are counted; all of the project when None.
         """
+        scope = scope or Scope.of(project)
         self.issue = issue
         self.steps: list[StepProgress] = []
         for number, step in enumerate(project.steps.select_related("filter"), 1):
@@ -41,7 +45,7 @@ class PullRequestProgress:
                 column = Column.decode(value)
                 if column.filter == "all":  # off: no part of the filter
                     continue
-                result = column.applies(issue)
+                result = column.applies(issue, scope)
                 notes = (step.conditions or {}).get(value, {})
                 progress.tasks.append(
                     Task(

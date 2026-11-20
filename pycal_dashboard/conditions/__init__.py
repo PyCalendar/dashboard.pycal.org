@@ -1,14 +1,17 @@
-"""The conditions that are checked on pull requests, with their inputs and the data they need.
+"""The conditions and states of pull requests, with their inputs and the data they need.
 
-Each condition (:class:`~.condition.base.Condition`) has an id, the inputs that configure it
+A state (:class:`~.state.base.State`) has an id, the inputs that configure it
 (:class:`~.input.base.InputSpec`), the data that the background reads for it
-(:class:`~.spec.base.DataSpec`), and its page in the documentation,
-``docs/reference/conditions/<id>.rst``. They are not shown on the pages yet.
+(:class:`~.spec.base.DataSpec`), and its page in the documentation. A condition
+(:class:`~.condition.base.Condition`, ``docs/reference/conditions/<id>.rst``) is a state of a
+pull request that is true or false; a state of a person (:class:`~.state.person.PersonState`,
+``docs/reference/states/<id>.rst``) is a number counted in the repositories of a project
+(:class:`~.state.scope.Scope`), such as the reviews the author gave.
 
-``CONDITIONS`` has them by id; :func:`~pycal_dashboard.conditions.find` finds one, and
-``DATA_SPECS`` are the data that the update of a repository reads. The modules are grouped:
-``condition/`` the conditions, ``input/`` the kinds of inputs and ``spec/`` the data, each on
-its ``base.py``.
+``CONDITIONS`` and ``STATES`` have them by id; :func:`~pycal_dashboard.conditions.find` finds a
+condition, and ``DATA_SPECS`` are the data that the update of a repository reads. The modules
+are grouped: ``condition/`` the conditions, ``state/`` the states, ``input/`` the kinds of
+inputs and ``spec/`` the data, each on its ``base.py``.
 """
 
 from pycal_dashboard.conditions.condition.auto_merge_enabled import AutoMergeEnabled
@@ -24,10 +27,18 @@ from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
 from pycal_dashboard.conditions.condition.merged import Merged
 from pycal_dashboard.conditions.condition.open import Open
+from pycal_dashboard.conditions.condition.review_ratio_above import ReviewRatioAbove
+from pycal_dashboard.conditions.condition.reviews_at_least import ReviewsAtLeast
 from pycal_dashboard.conditions.spec.checks import ChecksData
 from pycal_dashboard.conditions.spec.issue import IssueData
 from pycal_dashboard.conditions.spec.labels import LabelsData
 from pycal_dashboard.conditions.spec.pull_request import PullRequestData
+from pycal_dashboard.conditions.spec.reviews import ReviewsData
+from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
+from pycal_dashboard.conditions.state.person import PersonState
+from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
+from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
+from pycal_dashboard.conditions.state.reviews_given import ReviewsGiven
 from pycal_dashboard.errors import UnknownCondition
 
 CONDITIONS: dict[str, type[Condition]] = {
@@ -45,10 +56,17 @@ CONDITIONS: dict[str, type[Condition]] = {
         Open,
         Merged,
         Closed,
+        ReviewsAtLeast,
+        ReviewRatioAbove,
     )
 }
+# the states of people, numbers counted in the repositories of a project
+STATES: dict[str, type[PersonState]] = {
+    state.id: state
+    for state in (PullRequestsOpened, OwnPullRequestsClosed, ReviewsGiven, ReviewRatio)
+}
 # in the order the background reads them: the checks need the state of the pull request
-DATA_SPECS = (IssueData(), LabelsData(), PullRequestData(), ChecksData())
+DATA_SPECS = (IssueData(), LabelsData(), PullRequestData(), ChecksData(), ReviewsData())
 
 
 def find(id: str) -> type[Condition]:
