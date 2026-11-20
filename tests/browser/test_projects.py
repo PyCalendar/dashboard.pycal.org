@@ -403,6 +403,12 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     editor.get_by_role("menuitem", name="{author}").click()  # inserted at once, no button
     expect(description).to_have_value("Ask @{author}")
     expect(editor.locator("[data-variables-menu]")).not_to_have_attribute("open", "")
-    detail.get_by_role("button", name="Save the step").click()
+    # it saves itself: no button, a status that says so
+    expect(detail.get_by_role("button", name="Save the step")).to_be_hidden()
+    expect(detail.locator("[data-save-status]")).to_have_text("✓ Saved", timeout=10000)
     expect(page.locator("[data-step-bar]")).to_contain_text("Waiting for a review")
+    page.reload()
     expect(page.locator(".condition-description")).to_contain_text("Ask @octocat")
+    expect(page.locator("[data-step-detail]").get_by_label("Name", exact=True)).to_have_value(
+        "Waiting for a review"
+    )

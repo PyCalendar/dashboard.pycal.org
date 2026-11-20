@@ -216,7 +216,7 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
         number: The step.
 
     Returns:
-        A redirect to the step.
+        A redirect to the step, or its name for the script that saves while people edit.
     """
     access, _moved = opened(request, slug, "steps/")
     access.require_write()
@@ -234,6 +234,8 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
         }
     step.conditions = notes
     step.save()
+    if wants_json(request):  # saved while editing, by the script of the page
+        return JsonResponse({"step": step.pk, "name": step.name})
     return redirect(access.project.path("steps/") + f"?step={step.pk}")
 
 

@@ -69,6 +69,61 @@
     });
   }
 
+  // a step saves itself while it is edited: a moment after typing, and when a field is left
+  var form = document.querySelector("[data-edit-step]");
+  if (form) {
+    var button = form.querySelector("[data-save-step]");
+    var status = form.querySelector("[data-save-status]");
+    var timer = null;
+    var saving = false;
+    var again = false;
+    var pending = false;  // a change waits to be saved
+    var name = document.querySelector("[data-step-bar] .current .step-name");
+    button.hidden = true;
+    status.hidden = false;
+    function show(state) {
+      status.dataset.state = state;
+      status.textContent = state === "saving" ? status.dataset.saving
+        : state === "saved" ? "✓ " + status.dataset.saved : status.dataset.failed;
+    }
+    function save() {
+      clearTimeout(timer);
+      if (saving) { again = true; return; }
+      saving = true;
+      pending = false;
+      show("saving");
+      var body = new FormData(form);
+      fetch(form.action, {
+        method: "POST", body: body, credentials: "same-origin", keepalive: true,
+        headers: {"X-CSRFToken": token(), "Accept": "application/json"}
+      })
+        .then(function (answer) { return answer.ok ? answer.json() : Promise.reject(answer); })
+        .then(function (step) {
+          if (name) { name.textContent = step.name; }
+          if (!pending && !again) { show("saved"); }  // a newer change is not saved yet
+        })
+        .catch(function () { show("failed"); timer = setTimeout(save, 5000); })
+        .finally(function () {
+          saving = false;
+          if (again) { again = false; save(); }
+        });
+    }
+    function later() {  // a change waits a moment for more; it is not saved until then
+      show("saving");
+      pending = true;
+      clearTimeout(timer);
+      timer = setTimeout(save, 800);
+    }
+    form.addEventListener("input", later);
+    form.addEventListener("change", save);
+    form.addEventListener("click", function (event) {
+      // the bar of the editor changes the text without an event of input
+      if (event.target.closest("markdown-toolbar")) { later(); }
+    });
+    form.addEventListener("submit", function (event) { event.preventDefault(); save(); });
+    window.addEventListener("pagehide", function () { if (pending) { save(); } });
+  }
+
   // the tab Filters: a filter becomes a step without a new page
   document.querySelectorAll("form[data-make-step]").forEach(function (form) {
     form.addEventListener("submit", function (event) {

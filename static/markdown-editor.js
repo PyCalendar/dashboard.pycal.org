@@ -44,6 +44,7 @@
           area.value = area.value.slice(0, start) + text + area.value.slice(end);
           menu.open = false;
           mode(false);
+          area.dispatchEvent(new Event("input", {bubbles: true}));  // as if typed
           area.focus();
           area.selectionStart = area.selectionEnd = start + text.length;
         });

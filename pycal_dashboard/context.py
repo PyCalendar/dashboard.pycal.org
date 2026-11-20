@@ -79,6 +79,7 @@ def site(request: HttpRequest) -> dict:
             "log_help": f"{docs}tutorial/account.html#administrators",
             "notifications_help": f"{docs}tutorial/account.html#notifications",
             "new_permissions": f"{docs}how-to/install-app.html#new-permissions",
+            "step_variables": f"{docs}tutorial/projects.html#step-variables",
             "delete_account": f"{docs}tutorial/account.html#delete-account",
             "json": f"{docs}reference/json.html",
             "projects": f"{docs}tutorial/projects.html",

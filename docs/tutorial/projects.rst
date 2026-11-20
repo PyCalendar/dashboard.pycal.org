@@ -256,11 +256,42 @@ condition of the filter edits its summary, a line of text, and its description,
 which guides people to remove the condition, such as with a link to the
 documentation. Both are written in the editor of Markdown, the description too.
 They take variables: the menu **Variables** in the bar of the editor inserts the
-one you click where the cursor is: ``{author}``, ``{title}``, ``{number}``, ``{url}``,
-``{repository}``, ``{full_name}``, ``{owner}``, ``{project}`` and ``{step}``. Their
-values are text: a title such as ``[click](https://example.org)`` stays text, and
-nothing else of a template is evaluated. The page shows them with an example
-pull request.
+one you click where the cursor is, see :ref:`step-variables`. The page shows them
+with an example pull request. A step saves itself while you edit it.
+
+.. _step-variables:
+
+Variables of the templates
+--------------------------
+
+.. list-table::
+   :header-rows: 1
+
+   * - Variable
+     - Its value
+   * - ``{author}``
+     - the GitHub name of who opened the pull request
+   * - ``{title}``
+     - the title of the pull request
+   * - ``{number}``
+     - the number of the pull request
+   * - ``{url}``
+     - the address of the pull request on GitHub
+   * - ``{repository}``
+     - the name of the repository
+   * - ``{full_name}``
+     - the account and the name of the repository, such as
+       ``collective/icalendar``
+   * - ``{owner}``
+     - the account of the repository
+   * - ``{project}``
+     - the name of the project
+   * - ``{step}``
+     - the name of the step
+
+The values are text: a title such as ``[click](https://example.org)`` stays
+text, and nothing else of a template is evaluated; a name in braces that is not
+a variable stays as it is.
 
 .. _project-roles:
 

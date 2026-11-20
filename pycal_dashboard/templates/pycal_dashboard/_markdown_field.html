@@ -1,4 +1,4 @@
-{% load i18n static %}<div class="markdown-field" data-markdown-field>
+{% load i18n static help %}<div class="markdown-field" data-markdown-field>
   <label for="{{ id }}">{{ label }}</label>
   <div class="markdown-bar" role="toolbar" aria-label="{% translate "Format" %}" hidden data-markdown-bar>
     <markdown-toolbar for="{{ id }}">
@@ -12,11 +12,11 @@
     </markdown-toolbar>
     {% if variables %}<details class="variables-menu" data-variables-menu><summary class="button button-quiet button-small">{% translate "Variables" %}</summary>
       <ul class="variables-list" role="menu">{% for variable, meaning in variables.items %}<li role="none"><button type="button" role="menuitem" data-variable="{{ '{' }}{{ variable }}{{ '}' }}"><code>{{ '{' }}{{ variable }}{{ '}' }}</code> <span class="muted">{{ meaning }}</span></button></li>{% endfor %}</ul>
-    </details>{% endif %}
+    </details>{% translate "The variables of the templates" as variables_help %}{% help_link links.step_variables variables_help %}{% endif %}
     <span class="markdown-tabs"><button type="button" class="button button-quiet button-small" aria-pressed="true" data-markdown-write>{% translate "Write" %}</button><button type="button" class="button button-quiet button-small" aria-pressed="false" data-markdown-preview="{% url 'markdown_preview' %}">{% translate "Preview" %}</button></span>
   </div>
   <textarea id="{{ id }}" name="{{ name }}" rows="{{ rows|default:6 }}">{{ value }}</textarea>
   <div class="markdown markdown-preview" hidden data-markdown-shown aria-live="polite"></div>
   <small class="muted">{% translate "Markdown: **bold**, *italic*, [a link](https://…), lists with - or 1." %}</small>
-  {% if variables %}<noscript><small class="muted">{% translate "Variables" %}: {% for variable, meaning in variables.items %}<code>{{ '{' }}{{ variable }}{{ '}' }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}</small></noscript>{% endif %}
+  {% if variables %}<noscript>{% translate "The variables of the templates" as variables_help %}{% help_link links.step_variables variables_help %}</noscript>{% endif %}
 </div>

@@ -389,6 +389,9 @@ community: where to start, what waits for a review, who contributes.
 - [x] Variables: a menu in the bar of the editor of Markdown, a click inserts; no button Insert;
       the descriptions of conditions in the editor of Markdown too
 
+- [x] A step saves itself while it is edited (Saving… with a spinner, ✓ Saved); no button
+- [x] The variables: a book that links their documentation, no list in a details
+
 ## Later (decided by the person: quick feedback first)
 
 - [ ] Speed of the pull requests and the filters: measure on icalendar (1355 pull requests) where

@@ -406,3 +406,11 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 .variables-list { position: absolute; z-index: 15; left: 0; top: calc(100% + .25rem); min-width: 18rem; max-width: calc(100vw - 2rem); margin: 0; padding: .3rem; list-style: none; background: var(--surface); border: 1px solid var(--border); border-radius: .4rem; box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, .2); }
 .variables-list button { display: block; width: 100%; padding: .35rem .5rem; border: 0; border-radius: .3rem; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
 .variables-list button:hover, .variables-list button:focus-visible { background: var(--surface-tint); }
+
+/* the step saves itself: the status at the bottom of the form */
+.save-status { display: inline-flex; align-items: center; gap: .4rem; color: var(--text-muted); }
+.save-status[data-state="saving"]::before { content: ""; width: 1em; height: 1em; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+.save-status[data-state="saved"] { color: var(--success); }
+.save-status[data-state="failed"] { color: var(--danger); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .save-status[data-state="saving"]::before { animation: none; } }

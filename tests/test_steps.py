@@ -111,6 +111,8 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     assert "It has the label needs review" in detail
     assert "It is open" not in detail  # off: no part of the filter
     assert "✎" in detail and detail.count("data-variables-menu") == 2  # summary, condition
+    assert "tutorial/projects.html#step-variables" in detail  # the documentation, no list
+    assert "variables-help" not in detail
     assert 'role="menuitem" data-variable="{author}"' in detail and "Insert</button>" not in detail
     assert '<textarea id="description-0" name="description-0"' in detail  # the editor
     client.post(
@@ -168,3 +170,14 @@ def test_templates_are_safe_for_the_input_of_others():
     assert "<a " not in html and "<img" not in html and "<b>" not in html
     assert "{unknown}" in html and "{title.upper}" in html  # nothing else is evaluated
     assert escape("a\nb") == "a b"
+
+
+def test_a_step_saves_itself_for_the_script(client, project, filters, bob):
+    _conflict, review = filters
+    client.force_login(bob)
+    make_step(client, review)
+    step = PullRequestStep.objects.get()
+    answer = client.post(f"/projects/icalendar/steps/{step.pk}/edit/", {"name": "Wait"}, **JSON)
+    assert answer.status_code == 200 and answer.json() == {"step": step.pk, "name": "Wait"}
+    page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
+    assert "data-save-status" in page and 'data-saving="Saving…"' in page
