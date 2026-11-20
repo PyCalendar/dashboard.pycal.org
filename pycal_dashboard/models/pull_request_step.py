@@ -25,6 +25,9 @@ class PullRequestStep(models.Model):
     position = models.PositiveIntegerField(default=0)
     # not shown in the bar of the page of a pull request, unless the pull request is in it
     hidden = models.BooleanField(default=False)
+    # what the site does when a pull request completes the step, such as
+    # [{"kind": "add_label", "label": "reviewed"}] (StepCompletion)
+    actions = models.JSONField(default=list, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

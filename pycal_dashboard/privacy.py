@@ -132,10 +132,12 @@ MODELS = {
             "conditions",
             "position",
             "hidden",
+            "actions",
             "created",
             "updated",
         },
     ),
+    "pycal_dashboard.PullRequestPlace": (None, {"id", "project", "issue", "step", "updated"}),
     "pycal_dashboard.PullRequestFilter": (
         "projects",
         {"id", "project", "name", "description", "columns", "created_by", "created", "updated"},
@@ -295,6 +297,8 @@ PARTIES = [
         "gets": _(
             "When you sign in, GitHub tells the site who you are; the site asks GitHub for "
             "repositories, issues and pull requests with your token or that of the GitHub App. "
+            "The GitHub App adds labels to pull requests that complete a step of a project, as "
+            "the writers of the project set them. "
             "Your browser loads the avatars of people from GitHub "
             "(avatars.githubusercontent.com), which sees the address of your browser, but not "
             "the page: the site sends no referrer. Links to GitHub lead there."

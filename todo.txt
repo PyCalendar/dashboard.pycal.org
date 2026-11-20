@@ -419,10 +419,12 @@ community: where to start, what waits for a review, who contributes.
 - [x] Columns of the table for them: Reviews (at least a number) and Author (a state above a
       number), counted in the repositories of the project that the person sees
 - [x] Variable pr_steps_url: the address of the page of the pull request with its steps
-- [ ] Actions when a step is complete, in the editor of the step: add a label (one of the
-      existing ones, or a new one)
-- [ ] The person: running the actions writes to GitHub: the GitHub App then needs to write
-      (Issues or Pull requests: Read and write), which is the decision of the person
+- [x] Actions when a step is complete, in the editor of the step: add a label (one of the
+      existing ones, or a new one); run once when an open pull request leaves the step with its
+      tasks done; the first sight only records the place
+- [x] Running the actions writes to GitHub: the app asks for Pull requests: Read and write
+      already, which adds labels to pull requests
+- [ ] The person: AGENTS.md still says that the site writes nothing to GitHub yet
 
 - [x] The badge of a pull request (badge.svg, badge.png at the address of its page), such as
       Triage 3/4, with anybadge as community-insights; cached until something changes; the
@@ -435,6 +437,13 @@ community: where to start, what waits for a review, who contributes.
 - [x] No task of any step applies: all steps gray, a note that the pull request is outside of
       the usual steps; the badge says outside
 - [x] Check next to + on the tab Steps: the pull requests outside of the steps (open, or all)
+
+- [x] The page while the site restarts: with JavaScript it asks /health/ and opens the page again
+      with GET; a form sent during the start (POST) is never sent again, a page that only takes
+      a form (405) leads back to the page of the form
+- [x] The bar of the steps: the arrow to move left left of the name, the one to move right right
+      of it, disabled at the ends; the arrows of the order between the boxes
+- [x] The switch of a hidden step has the size of every switch (also in forms of fields)
 
 ## Later (decided by the person: quick feedback first)
 

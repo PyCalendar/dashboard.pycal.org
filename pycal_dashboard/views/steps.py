@@ -18,7 +18,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
-from pycal_dashboard.models import Issue, Project, PullRequestFilter, PullRequestStep
+from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.step_assignment import StepAssignment
 from pycal_dashboard.step_template import GROUPS, example, expand
 
@@ -117,6 +117,15 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             if shown
             else "",
             "free_filters": access.project.filters.filter(step__isnull=True),
+            "action_labels": [a.get("label", "") for a in (shown.actions if shown else [])]
+            + [""],  # and one more, empty
+            "label_names": sorted(
+                set(
+                    Label.objects.filter(
+                        repository__in=access.project.repositories.all()
+                    ).values_list("name", flat=True)
+                )
+            ),
             "variables": GROUPS,
             "tab": "steps",
         },
@@ -214,8 +223,9 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
 
     Parameters:
         request: The request, with ``name``, ``summary``, ``hidden`` (``on`` to hide it in
-            the page of a pull request) and for each condition ``value-<i>``, ``summary-<i>``
-            and ``description-<i>``.
+            the page of a pull request), ``action_label`` (the labels to add when a pull
+            request completes the step, with ``actions_form``) and for each condition
+            ``value-<i>``, ``summary-<i>`` and ``description-<i>``.
         slug: The project.
         number: The step.
 
@@ -228,6 +238,11 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     step.name = " ".join(request.POST.get("name", "").split())[:100] or step.filter.name
     step.summary = request.POST.get("summary", "")
     step.hidden = request.POST.get("hidden") == "on"
+    if request.POST.get("actions_form"):  # the form shows the actions: an empty one removes it
+        labels = [" ".join(label.split())[:100] for label in request.POST.getlist("action_label")]
+        step.actions = [
+            {"kind": "add_label", "label": label} for label in dict.fromkeys(labels) if label
+        ]
     notes = dict(step.conditions or {})
     for value in step.filter.columns:
         index = step.filter.columns.index(value)

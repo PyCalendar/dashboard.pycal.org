@@ -116,6 +116,21 @@
     }
     form.addEventListener("input", later);
     form.addEventListener("change", save);
+    // the labels to add when a step is complete: a new empty field after the last one filled
+    form.addEventListener("input", function (event) {
+      var field = event.target.closest("[data-action-label]");
+      var list = field && field.closest("[data-step-actions]");
+      if (!list || !field.value) { return; }
+      var fields = list.querySelectorAll("[data-action-label]");
+      var last = fields[fields.length - 1];
+      if (last !== field) { return; }
+      var item = field.closest("li").cloneNode(true);
+      var copy = item.querySelector("[data-action-label]");
+      copy.value = "";
+      copy.id = "action-label-" + fields.length;
+      item.querySelector("label").htmlFor = copy.id;
+      list.appendChild(item);
+    });
     form.addEventListener("click", function (event) {
       // the bar of the editor changes the text without an event of input
       if (event.target.closest("markdown-toolbar")) { later(); }

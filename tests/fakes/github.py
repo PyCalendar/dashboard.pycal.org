@@ -429,6 +429,15 @@ class FakeGitHub:
             if not token.startswith("ey"):
                 return httpx.Response(401, json={"message": "A JSON web token is needed"})
             return httpx.Response(201, json={"token": f"installation-{match[1]}"})
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/labels", path)
+        if request.method == "POST" and match and token.startswith("installation-"):
+            repository = self.repositories[match[1].lower()]
+            issue = repository["issues"][int(match[2]) - 1]
+            for name in json.loads(request.content)["labels"]:  # a new one is created
+                label = self.add_label(match[1], name)
+                if label not in issue["labels"]:
+                    issue["labels"].append(label)
+            return httpx.Response(200, json=issue["labels"])
         if request.method != "GET":
             return None
         person = token == self.PERSON_TOKEN

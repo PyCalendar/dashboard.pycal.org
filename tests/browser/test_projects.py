@@ -395,6 +395,14 @@ def test_steps_of_pull_requests(signed_in, site, github, bob):
     bar.locator("[data-step]").nth(1).get_by_role("button", name="Move left: earlier").click()
     expect(bar.locator("[data-step]").first).to_contain_text("Review")
     expect(bar.locator("[data-step]").first.locator(".step-number")).to_have_text("Step 1")
+    # the arrows to move: left of the name and right of it; disabled at the ends
+    first = bar.locator("[data-step]").first
+    expect(first.get_by_role("button", name="Move left: earlier")).to_be_disabled()
+    expect(
+        bar.locator("[data-step]").last.get_by_role("button", name="Move right: later")
+    ).to_be_disabled()
+    left = first.get_by_role("button", name="Move left: earlier").bounding_box()
+    assert left["x"] < first.locator(".step-name").bounding_box()["x"]
     page.reload()
     expect(page.locator("[data-step-bar] [data-step]").first).to_contain_text("Review")
     heads = page.locator("[data-step-bar] [data-step]")
@@ -507,13 +515,44 @@ def test_hide_a_step_and_check_the_pull_requests_outside(signed_in, site, github
     step = PullRequestStep.objects.create(project=project, filter=saved, name="Conflicts")
     page = signed_in
     page.goto(f"{site}/projects/icalendar/steps/")
+    switch = page.locator("[data-step-hidden] input[role=switch]").bounding_box()
+    assert switch["width"] < 60  # the switch as everywhere, not as wide as the fields
     page.locator("[data-step-hidden] label.switch").click()
     expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
     step.refresh_from_db()
     assert step.hidden
+    labels = page.locator("[data-action-label]")
+    labels.first.fill("conflict solved")  # a new label; a new empty field follows
+    expect(labels).to_have_count(2)
+    expect(page.locator("[data-save-status]")).to_have_attribute("data-state", "saved")
+    step.refresh_from_db()
+    assert step.actions == [{"kind": "add_label", "label": "conflict solved"}]
     page.get_by_role("link", name="Check").click()
     expect(page.get_by_role("heading", name="Outside of the steps")).to_be_visible()
     expect(page.locator("[data-outside-pull]")).to_have_count(2)  # Ready and Behind
     page.locator("[data-outside-pull='collective/icalendar#1'] a").first.click()
     expect(page.locator("[data-outside-note]")).to_be_visible()
     expect(page.locator("[data-progress] [data-step]")).to_have_count(0)  # hidden
+
+
+def test_a_form_sent_while_the_site_starts_comes_back(signed_in, site, github, bob):
+    """The page of the start waits for /health/ and then opens a page, never 405."""
+    from pathlib import Path
+
+    pull_request_project(github, bob)
+    starting = (Path(__file__).parents[2] / "docker" / "starting.html").read_text()
+    page = signed_in
+
+    def restarting(route):  # nginx answers the form with the page of the start
+        if route.request.method == "POST":
+            route.fulfill(status=503, body=starting, content_type="text/html")
+        else:
+            route.continue_()
+
+    page.route(re.compile(r"/projects/icalendar/update/$"), restarting)
+    page.goto(f"{site}/projects/icalendar/")
+    page.get_by_role("button", name="Update").click()
+    expect(page.get_by_role("heading", name="The site is starting")).to_be_visible()
+    # the update takes only POST: back to the page of the form, not 405
+    expect(page).to_have_url(f"{site}/projects/icalendar/", timeout=10000)
+    expect(page.get_by_role("heading", name="iCalendar")).to_be_visible()

@@ -276,6 +276,15 @@ switch *Hidden in the page of a pull request* leaves the step out of the bar
 of that page, unless the pull request is in it; the bar of the tab *Steps*
 marks it *hidden*.
 
+Below the tasks, *When a pull request completes the step* lists the labels
+that the GitHub App adds to a pull request that completes the step: one of the
+repositories, or a new one, which GitHub then creates. A pull request completes
+a step when an update finds it no longer in the step, with all tasks of the
+step done, while it is open. The site remembers the step of each open pull
+request at every update; the first time it sees a pull request, it only
+remembers where it is, so nothing happens for steps completed before. The log
+of the site records every label added. Leave a field empty to remove its label.
+
 **Check** next to the button **+** lists the pull requests outside of the
 steps: no task of any step applies to them, so a filter of a step may lack a
 condition for them. It lists the open pull requests, or all of them, also the

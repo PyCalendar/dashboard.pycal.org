@@ -1,0 +1,1 @@
+In the bar of the steps, the arrow to move a step left is left of its name and the arrow to move it right is right of it; the arrows of the order of the steps are between the boxes. The switch that hides a step has the size of every switch.

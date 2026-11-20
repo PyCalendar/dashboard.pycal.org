@@ -17,6 +17,7 @@ from .project import Project
 from .project_member import ProjectMember
 from .project_slug import ProjectSlug
 from .pull_request_filter import PullRequestFilter
+from .pull_request_place import PullRequestPlace
 from .pull_request_state import PullRequestState
 from .pull_request_step import PullRequestStep
 from .repository import Repository
@@ -38,6 +39,7 @@ __all__ = [
     "ProjectMember",
     "ProjectSlug",
     "PullRequestFilter",
+    "PullRequestPlace",
     "PullRequestState",
     "PullRequestStep",
     "Repository",

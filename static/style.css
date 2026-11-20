@@ -320,6 +320,9 @@ label.switch input::after { content: ""; position: absolute; top: calc(50% - .6r
 label.switch input:checked { background: var(--success); border-color: var(--text); }
 label.switch input:checked::after { left: calc(100% - 1.35rem); background: var(--surface); }
 label.switch input:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+/* also in a form of fields one below the other, whose labels and fields are wider */
+form.stacked label.switch { display: flex; font-weight: 600; margin: .45rem 0; }
+form.stacked label.switch input { width: 3.2rem; max-width: none; }
 .result { display: inline-block; min-width: 1.2em; font-weight: 700; text-align: center; }
 .result-yes { color: var(--success); }
 .result-no { color: var(--danger); }
@@ -390,15 +393,19 @@ label.switch input:focus-visible { outline: 3px solid var(--primary); outline-of
 
 /* the steps of a project: the bar of steps from left to right, and the step below it */
 .step-bar { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: .75rem 0; padding: 0; counter-reset: step; }
-.step-item { display: flex; align-items: center; gap: .3rem; padding: .4rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); }
-.step-item[draggable="true"] { cursor: grab; }
-.step-item.current { border-color: var(--primary); background: var(--surface-tint); }
+.step-item { display: flex; align-items: center; gap: .4rem; }
+.step-box { display: flex; align-items: center; gap: .3rem; margin: 0; padding: .4rem .5rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); }
+.step-item[draggable="true"] .step-box { cursor: grab; }
+.step-item.current .step-box { border-color: var(--primary); background: var(--surface-tint); }
+.step-move:disabled { opacity: .35; cursor: not-allowed; }
 .steps-tools { display: inline-flex; align-items: center; gap: .4rem; margin-left: auto; }
-.step-item.dragged-over { outline: 2px dashed var(--primary); }
+.step-actions { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+.step-actions li { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.step-actions input { flex: 1 1 12rem; }
+.step-item.dragged-over .step-box { outline: 2px dashed var(--primary); }
 .step-item + .step-item::before { content: "→"; margin-right: .3rem; color: var(--text-muted); }
 .step-item a { text-decoration: none; display: inline-flex; flex-direction: column; line-height: 1.2; }
 .step-item .step-name { font-weight: 600; }
-.step-moves { display: inline-flex; }
 .step-conditions { list-style: none; padding: 0; margin: 0 0 1rem; }
 .step-conditions > li { padding: .5rem 0; border-bottom: 1px solid var(--border); }
 .condition-edit > summary { font-weight: 400; }

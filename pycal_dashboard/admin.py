@@ -16,6 +16,7 @@ from .models import (
     ProjectMember,
     ProjectSlug,
     PullRequestFilter,
+    PullRequestPlace,
     PullRequestState,
     PullRequestStep,
     Repository,
@@ -63,6 +64,9 @@ admin.site.register(
 )
 admin.site.register(
     PullRequestStep, list_display=["name", "project", "filter", "position", "hidden"]
+)
+admin.site.register(
+    PullRequestPlace, list_display=["issue", "project", "step", "updated"], raw_id_fields=["issue"]
 )
 admin.site.register(
     Review, list_display=["issue", "author", "state", "submitted"], raw_id_fields=["issue"]
