@@ -117,15 +117,21 @@ class MessageComments:
     def task_line(task: Task, done: bool) -> str:
         """A task as an item of a list of tasks of GitHub, checked when it is done.
 
+        Its description follows on the next lines, indented by two spaces, so that it belongs
+        to the item; its empty lines stay empty.
+
         Parameters:
             task: The task.
             done: Whether it is done.
 
         Returns:
-            Such as ``- [x] Review it``.
+            Such as ``- [x] Review it`` and ``  Ask in the chat.`` below it.
         """
         text = " ".join((task.summary or capfirst(str(task.column.sentence))).split())
-        return f"- [{'x' if done else ' '}] {text}"
+        lines = [f"- [{'x' if done else ' '}] {text}"]
+        for line in (task.description or "").strip().splitlines():
+            lines.append(f"  {line}".rstrip())
+        return "\n".join(lines)
 
     def values(self, issue: Issue) -> dict[str, str]:
         """The values of the variables for a pull request: those of steps and of the message.

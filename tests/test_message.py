@@ -249,3 +249,27 @@ def test_each_example_is_in_another_state(project):
         ("Ready", 1, "Review"),  # the label to do, no conflict: another state
         ("Merged", 2, ""),  # outside of the steps
     ]
+
+
+def test_a_task_has_its_description_below_it(project):
+    """The description of a task is on the lines below its item, indented to belong to it."""
+    from pycal_dashboard.markdown_text import render
+    from pycal_dashboard.models import Issue
+
+    step = PullRequestStep.objects.get()
+    step.conditions = {
+        "labels~applies~present~needs review": {
+            "summary": "A person reviews it",
+            "description": "Ask {author_mention} in the chat.\n\n- the guide\n- the FAQ",
+        }
+    }
+    step.save()
+    values = MessageComments(project).values(Issue.objects.get(title="Ready"))
+    assert values["tasks_todo"] == (
+        "- [ ] A person reviews it\n  Ask @octocat in the chat.\n\n  - the guide\n  - the FAQ"
+    )
+    html = render(values["tasks_all"])  # the description and its list are in the item
+    assert html == (
+        "<ul>\n<li>\n<p>[ ] A person reviews it\nAsk @octocat in the chat.</p>\n"
+        "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ul>"
+    )

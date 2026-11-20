@@ -546,3 +546,4 @@ community: where to start, what waits for a review, who contributes.
       timeout; 10.7 requests per second with WORKERS=1 (240 MB), 16.6 with WORKERS=2 (390 MB)
 - [x] The worker ran into a loop of restarts without a GitHub App (check_installations): fixed
 - [x] The person: WORKERS=2 on the server (set 2026-11-20; two workers and the fetch worker run, 494 MB of 951 MB used)
+- [x] The tasks of the message have their descriptions below each item, indented

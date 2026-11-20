@@ -486,7 +486,8 @@ number.
      - ``Thanks, @niccokunzmann! A person reviews it soon.``
    * - ``{tasks_all}``
      - All tasks of the step, as a list of tasks of GitHub: those to do first,
-       those done at the bottom, checked
+       those done at the bottom, checked; the description of each task on the
+       lines below it, indented, so that it belongs to its item
      - | ``- [ ] Solve the conflict``
        | ``- [x] Review it``
    * - ``{tasks_todo}``
