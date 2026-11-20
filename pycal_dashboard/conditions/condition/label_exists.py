@@ -36,4 +36,5 @@ class LabelExists(Condition):
         Returns:
             True if it has the label.
         """
-        return issue.labels.filter(name__iexact=values["label"]).exists()
+        wanted = values["label"].lower()  # the labels prefetched with the pull request, if so
+        return any(label.name.lower() == wanted for label in issue.labels.all())

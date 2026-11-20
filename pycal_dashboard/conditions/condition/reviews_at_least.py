@@ -37,4 +37,6 @@ class ReviewsAtLeast(Condition):
         Returns:
             True if it has at least that many.
         """
-        return issue.reviews.filter(state__in=COUNTED).count() >= values["reviews"]
+        # the reviews prefetched with the pull request, if so
+        counted = sum(review.state in COUNTED for review in issue.reviews.all())
+        return counted >= values["reviews"]
