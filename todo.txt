@@ -545,4 +545,4 @@ community: where to start, what waits for a review, who contributes.
       webhook every half second for 60 s, the work after updates meanwhile: no error, no
       timeout; 10.7 requests per second with WORKERS=1 (240 MB), 16.6 with WORKERS=2 (390 MB)
 - [x] The worker ran into a loop of restarts without a GitHub App (check_installations): fixed
-- [ ] The person: WORKERS=2 on the server doubles the requests per second for 150 MB more
+- [x] The person: WORKERS=2 on the server (set 2026-11-20; two workers and the fetch worker run, 494 MB of 951 MB used)
