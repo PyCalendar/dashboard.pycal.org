@@ -529,3 +529,11 @@ community: where to start, what waits for a review, who contributes.
       example pull requests (one more task done with each ->) or a pull request by its number,
       with Edit this step and a way back, 4. the scope with Update X pull requests and Cancel
 - [x] The examples of the review differ from all others in their step or the state of a task
+- [x] The log of the live site (12:59-13:02): the start was normal (prepare 37 s, then gunicorn);
+      after a burst of webhooks and two updates the worker was busy over 30 s: WORKER TIMEOUT and
+      SIGKILL (not out of memory). TIMEOUT 120 s (setting), the receivers log their time when
+      slow, nginx keeps webhooks in memory, one access log. Locally the receivers take 0.6 s
+      with 1500 pull requests; Sencho's own probes of the workloads time out: the server is short
+- [ ] The person: look at the memory and CPU of the server (free -m, docker stats); decide whether
+      the updates run in a process of their own instead of a thread of gunicorn (more idle
+      memory, but pages never wait for them)

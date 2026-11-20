@@ -93,6 +93,10 @@ The container
    The processes and threads of gunicorn. Default: ``1`` and ``4``. Each process
    keeps the site in memory, threads share it: raise ``WORKERS`` only for many
    visitors, see :ref:`memory`.
+``TIMEOUT``
+   The seconds a process of gunicorn may be busy before gunicorn replaces it.
+   Default: ``120``. The updates from GitHub run in a thread of the process;
+   the log says how long the work after each update takes.
 
 Email
 =====

@@ -121,3 +121,19 @@ def test_a_project_is_as_fresh_as_its_oldest_repository(project, github, bob):
     RepositoryUpdate(plann).run()
     project.refresh_from_db()
     assert project.updated == Repository.objects.get(full_name=REPOSITORY).updated
+
+
+def test_a_slow_receiver_says_so_in_the_log(caplog, monkeypatch):
+    """The work after an update names what took long, such as on a small server."""
+    from pycal_dashboard import receivers
+
+    ticks = iter([0.0, 2.5])
+    monkeypatch.setattr(receivers.time, "perf_counter", lambda: next(ticks))
+
+    def prepare(sender, repository):
+        """A receiver."""
+
+    slow = receivers.timed(prepare)
+    with caplog.at_level("INFO", logger="pycal_dashboard.receivers"):
+        slow(sender=None, repository="collective/icalendar")
+    assert "prepare for collective/icalendar took 2.5 s" in caplog.text

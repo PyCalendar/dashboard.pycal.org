@@ -1,0 +1,1 @@
+A long update no longer gets the process of gunicorn killed: it may be busy for TIMEOUT seconds (120 by default) instead of 30. Webhooks stay in the memory of nginx, the requests are logged once, and the log says how long the work after an update takes when it takes over a second.

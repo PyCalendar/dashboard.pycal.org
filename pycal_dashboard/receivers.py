@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import functools
+import logging
+import time
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from django.dispatch import receiver
@@ -13,8 +17,39 @@ from .update_signals import project_updated, repository_updated
 if TYPE_CHECKING:
     from pycal_dashboard.models import Repository
 
+log = logging.getLogger(__name__)
+SLOW = 1.0  # seconds: a receiver that takes longer says so in the log
+
+
+def timed(function: Callable) -> Callable:
+    """Log how long a receiver took when it took longer than :data:`SLOW` seconds.
+
+    The work after an update runs in the thread of the updates of the web process: the log
+    names what took long, such as on a small server.
+
+    Parameters:
+        function: The receiver.
+
+    Returns:
+        The receiver, which logs its time.
+    """
+
+    @functools.wraps(function)
+    def run(*args: Any, **kwargs: Any) -> Any:  # noqa: ANN401
+        start = time.perf_counter()
+        try:
+            return function(*args, **kwargs)
+        finally:
+            seconds = time.perf_counter() - start
+            if seconds > SLOW:
+                about = kwargs.get("repository") or kwargs.get("project")
+                log.info("%s for %s took %.1f s", function.__name__, about, seconds)
+
+    return run
+
 
 @receiver(repository_updated)
+@timed
 def mark_projects(sender: type, repository: Repository, **kwargs: Any):
     """Keep the time of the last update of the projects of a repository.
 
@@ -36,6 +71,7 @@ def mark_projects(sender: type, repository: Repository, **kwargs: Any):
 
 
 @receiver(repository_updated)
+@timed
 def complete_steps(sender: type, repository: Repository, **kwargs: Any):
     """Act on the steps that the open pull requests of a repository completed.
 
@@ -55,6 +91,7 @@ def complete_steps(sender: type, repository: Repository, **kwargs: Any):
 
 
 @receiver(repository_updated)
+@timed
 def prepare_results(sender: type, repository: Repository, **kwargs: Any):
     """Evaluate the columns of the saved filters and steps after an update, for fast pages.
 
@@ -84,6 +121,7 @@ def prepare_results(sender: type, repository: Repository, **kwargs: Any):
 
 
 @receiver(repository_updated)
+@timed
 def write_messages(sender: type, repository: Repository, **kwargs: Any):
     """Write or update the message of each project as a comment on the pull requests in scope.
 

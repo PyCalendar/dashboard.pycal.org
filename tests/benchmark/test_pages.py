@@ -126,3 +126,24 @@ def test_bench(client, big):
     for name, address in rows:
         seconds, count = measure(client, address)
         print(f"{name:40} {seconds * 1000:8.0f} ms {count:6} queries")
+
+
+def test_bench_after_an_update(big, caplog):
+    """The receivers after an update of a repository: what the update thread does."""
+    import logging
+
+    from pycal_dashboard import receivers
+    from pycal_dashboard.models import PullRequestMessage
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+    from pycal_dashboard.update_signals import repository_updated
+
+    PullRequestMessage.objects.create(project=big, template="{tasks_all}", to_open=True)
+    receivers.SLOW = 0.0  # every receiver says how long it took
+    repository = big.repositories.get()
+    with caplog.at_level(logging.INFO, logger="pycal_dashboard.receivers"):
+        start = time.perf_counter()
+        repository_updated.send(sender=RepositoryUpdate, repository=repository)
+        total = time.perf_counter() - start
+    for record in caplog.records:
+        print(record.getMessage())
+    print(f"all receivers: {total * 1000:.0f} ms")
