@@ -1,0 +1,16 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n static help %}
+{% block title %}{% translate "Edit the message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script>{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card message-page" data-message-edit>
+<div class="table-head"><h2>{% translate "Edit the message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+{% include "pycal_dashboard/message/_flow.html" %}
+<form method="post" class="stacked">{% csrf_token %}
+  {% url 'project_message_preview' project.slug as preview_url %}{% translate "The message" as template_label %}{% include "pycal_dashboard/_markdown_field.html" with id="template" name="template" label=template_label value=template rows=10 variables=variables preview_url=preview_url %}
+  <p class="muted">{% translate "The next page shows it with example pull requests in every state of the steps. Nothing is written to GitHub before the last page." %}</p>
+  <p class="save-buttons"><a class="button button-quiet" href="{% url 'project_message' project.slug %}">{% translate "← Back" %}</a> <button class="button" data-next>{% translate "Next: review →" %}</button></p>
+</form>
+</section>
+{% endblock %}

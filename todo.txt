@@ -525,3 +525,6 @@ community: where to start, what waits for a review, who contributes.
       now says to sign out and sign in again (GitHubSignInExpired)
 - [x] The export of a project also has its repositories
 - [x] The backup gets the configuration of the message when the tab PR Message exists
+- [x] The message is edited in a flow: 1. the message or none, 2. the editor, 3. the review with
+      example pull requests (one more task done with each ->) or a pull request by its number,
+      with Edit this step and a way back, 4. the scope with Update X pull requests and Cancel

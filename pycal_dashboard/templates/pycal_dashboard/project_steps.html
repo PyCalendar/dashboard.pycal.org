@@ -22,8 +22,9 @@
 {% else %}<p data-no-steps>{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}No steps yet. Make a saved filter a step on the tab <a href="{{ filters_url }}">Filters</a>, or add one with the button +.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">
+{% if back %}<p><a class="button button-quiet button-small" href="{{ back }}" data-back-to-review>{% translate "← Back to the review of the message" %}</a></p>{% endif %}
 {% if access.can_write %}{% url 'project_step_preview' project.slug shown.pk as step_preview %}<div class="table-head step-head"><h2>{{ shown.name }}</h2><a class="button button-quiet button-small" href="{{ filter_edit }}" data-edit-filter>{% translate "Edit the filter" %}</a></div>
-<form method="post" action="{% url 'project_step_edit' project.slug shown.pk %}" class="stacked" data-edit-step>{% csrf_token %}
+<form method="post" action="{% url 'project_step_edit' project.slug shown.pk %}" class="stacked" data-edit-step>{% csrf_token %}{% if back %}<input type="hidden" name="back" value="{{ back }}">{% endif %}
   <p><label for="step-name">{% translate "Name" %}</label><input id="step-name" name="name" maxlength="100" value="{{ shown.name }}" placeholder="{{ shown.filter.name }}"></p>
   <fieldset class="step-colors" data-step-colors><legend>{% translate "Color" %}</legend>{% for color in colors %}<label class="color-choice" title="{% if color %}{{ color }}{% else %}{% translate "No color" %}{% endif %}"><input type="radio" name="color" value="{{ color }}"{% if color == shown.color %} checked{% endif %}><span class="swatch{% if not color %} swatch-none{% endif %}"{% if color %} style="--swatch: {{ color }}"{% endif %}><span class="visually-hidden">{% if color %}{{ color }}{% else %}{% translate "No color" %}{% endif %}</span></span></label>{% endfor %}</fieldset>
   <input type="hidden" name="visible_form" value="1">

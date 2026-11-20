@@ -46,27 +46,92 @@ def update(project):
     assert RepositoryUpdate(project.repositories.get()).run()
 
 
-def save(client, **fields):
-    data = {"template": "Hi {author_handle}: {step_name}\n\n{tasks_all}", "listed": ""} | fields
-    return client.post("/projects/icalendar/message/", data)
+def save(client, template="Hi {author_handle}: {step_name}\n\n{tasks_all}", **fields):
+    """The flow of editing: the template, then the scope, which saves it."""
+    answer = client.post("/projects/icalendar/message/edit/", {"template": template})
+    if answer.status_code != 302:
+        return answer
+    assert answer["Location"] == "/projects/icalendar/message/review/"
+    return client.post("/projects/icalendar/message/scope/", {"listed": "", "save": "yes"} | fields)
 
 
 def test_the_tab_is_public_and_off_by_default(client, project):
     page = client.get("/projects/icalendar/message/").content.decode()
     tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
     assert tabs.index("Steps") < tabs.index("PR Message")
-    assert "data-message-form" not in page  # visitors do not edit
-    assert "data-message-rendered" in page
+    assert "data-no-message" in page and "data-edit-message" not in page  # visitors
+    assert "data-message-flow" not in page
     assert not PullRequestMessage.objects.exists()
+    assert client.get("/projects/icalendar/message/edit/").status_code in (302, 403, 404)
 
 
-def test_the_page_of_a_writer(client, project, bob):
+def test_the_flow_of_editing(client, github, project, bob):
+    """1. none 2. edit 3. review 4. scope; the draft is in the session until saved."""
     client.force_login(bob)
     page = client.get("/projects/icalendar/message/").content.decode()
-    assert "data-message-form" in page and ">Update 0 pull requests<" in page  # no scope yet
-    assert 'name="to_listed" value="on" checked' in page  # on by default, without numbers
-    assert 'name="to_open" value="on">' in page and 'name="to_closed" value="on">' in page
-    assert 'data-variable="{tasks_todo}"' in page and "Cancel" in page
+    assert (
+        "data-no-message" in page
+        and 'aria-current="step"><a href="/projects/icalendar/message/">1.' in page
+    )
+    edit = client.get("/projects/icalendar/message/edit/").content.decode()
+    assert "{tasks_all}" in edit and 'data-variable="{tasks_todo}"' in edit  # the default
+    assert 'data-markdown-preview="/projects/icalendar/message/preview/"' in edit
+    client.post("/projects/icalendar/message/edit/", {"template": "**{pr_title}** {tasks_todo}"})
+    review = client.get("/projects/icalendar/message/review/").content.decode()
+    assert "<strong>" in review and "data-example-label" in review
+    assert 'href="/projects/icalendar/message/scope/" data-next' in review
+    scope = client.get("/projects/icalendar/message/scope/").content.decode()
+    assert ">Update 0 pull requests<" in scope and 'name="to_listed" value="on" checked' in scope
+    assert not PullRequestMessage.objects.exists()  # nothing saved before the scope
+    assert github.comments == {}
+    client.post(
+        "/projects/icalendar/message/scope/", {"listed": "", "to_open": "on", "save": "yes"}
+    )
+    assert PullRequestMessage.objects.get().template == "**{pr_title}** {tasks_todo}"
+    page = client.get("/projects/icalendar/message/").content.decode()
+    assert "<strong>" in page and "All open pull requests" in page
+    assert "2 pull requests get it." in page
+
+
+def test_cancel_forgets_the_draft(client, project, bob):
+    client.force_login(bob)
+    save(client, template="Saved", to_open="on")
+    client.post("/projects/icalendar/message/edit/", {"template": "Draft"})
+    answer = client.post("/projects/icalendar/message/scope/", {"cancel": "yes"})
+    assert answer["Location"] == "/projects/icalendar/message/"
+    assert PullRequestMessage.objects.get().template == "Saved"
+    edit = client.get("/projects/icalendar/message/edit/").content.decode()
+    assert ">Saved</textarea>" in edit  # the draft is gone
+
+
+def test_the_review_steps_through_the_examples(client, project, bob):
+    """From no task done to all of them; a pull request by its number; edit its step."""
+    client.force_login(bob)
+    client.post("/projects/icalendar/message/edit/", {"template": "{pr_title}: {tasks_todo}"})
+    first = client.get("/projects/icalendar/message/review/").content.decode()
+    assert "Example 1 of 2: 0 of 1 tasks done" in first  # Ready: to review
+    assert "Ready: " in first and "data-edit-step-of-example" in first
+    second = client.get("/projects/icalendar/message/review/?example=1").content.decode()
+    assert "Example 2 of 2: 1 of 1 tasks done" in second and "Nothing to do." in second
+    assert 'href="?example=2" data-example-step="1" ' in second and 'aria-disabled="true"' in second
+    chosen = client.get("/projects/icalendar/message/review/?pull=2").content.decode()
+    assert "Conflict: " in chosen
+    missing = client.get("/projects/icalendar/message/review/?pull=99").content.decode()
+    assert "The project has no pull request 99." in missing
+    markdown = client.get("/projects/icalendar/message/review/?view=markdown").content.decode()
+    assert "data-message-markdown" in markdown
+    step = PullRequestStep.objects.get()
+    edit_step = first.split("data-edit-step-of-example")[0].rsplit('href="', 1)[1]
+    assert edit_step.startswith(f"/projects/icalendar/steps/?step={step.pk}&amp;back=")
+    page = client.get(edit_step.replace("&amp;", "&")).content.decode()
+    assert "data-back-to-review" in page and 'href="/projects/icalendar/message/review/?' in page
+
+
+def test_the_steps_go_back_to_this_site_only(client, project, bob):
+    client.force_login(bob)
+    step = PullRequestStep.objects.get()
+    page = client.get(f"/projects/icalendar/steps/?step={step.pk}&back=https://evil.example/")
+    assert "data-back-to-review" not in page.content.decode()
 
 
 def test_save_writes_the_message_on_the_listed_pull_requests(client, github, project, bob):
@@ -145,13 +210,16 @@ def test_the_tasks_of_the_message(project):
     assert outside["step_name"] == ""
 
 
-def test_the_live_preview(client, project, bob):
+def test_the_count_and_the_preview_of_the_editor(client, project, bob):
     client.force_login(bob)
-    data = {"template": "**{pr_title}** {tasks_todo}", "to_open": "on", "listed": ""}
-    found = client.post("/projects/icalendar/message/preview/", data).json()
-    assert found["count"] == 2 and found["button"] == "Update 2 pull requests"
-    assert found["pull"].startswith(f"{REPO}#")
-    assert found["html"].startswith("<p><strong>")
+    found = client.post(
+        "/projects/icalendar/message/preview/", {"to_open": "on", "listed": ""}
+    ).json()
+    assert found == {"count": 2, "button": "Update 2 pull requests"}
+    html = client.post("/projects/icalendar/message/preview/", {"text": "**{pr_title}**"})
+    assert html.content.decode().startswith("<p><strong>")
+    counted = client.get("/projects/icalendar/message/scope/?count=1&to_open=on&listed=")
+    assert ">Update 2 pull requests<" in counted.content.decode()  # without JavaScript
     assert not PullRequestMessage.objects.exists()  # nothing is saved
 
 

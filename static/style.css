@@ -518,3 +518,15 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 .scope-listed input[name="listed"] { flex: 1 1 14rem; width: auto; }
 .scope-not-preferred { padding: .2rem .5rem; border-radius: .4rem; background: color-mix(in srgb, var(--danger) 12%, var(--surface)); }
 .scope-not-preferred small { display: block; color: var(--text-muted); }
+.message-review { margin: 0 0 .75rem; }
+.message-review > summary { list-style: none; display: inline-flex; }
+.message-review > summary::-webkit-details-marker { display: none; }
+.message-review[open] { padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .4rem; background: var(--surface); }
+.example-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.example-nav [aria-disabled="true"] { opacity: .35; pointer-events: none; }
+.message-missing { color: var(--danger); }
+/* the pages of editing the message, in their order */
+.message-flow { display: flex; flex-wrap: wrap; gap: .3rem; list-style: none; margin: 0 0 1rem; padding: 0; counter-reset: none; }
+.message-flow li { padding: .25rem .6rem; border: 1px solid var(--border); border-radius: 1rem; color: var(--text-muted); }
+.message-flow li[aria-current="step"] { border-color: var(--primary); background: var(--surface-tint); color: var(--text); font-weight: 600; }
+.message-flow a { text-decoration: none; }

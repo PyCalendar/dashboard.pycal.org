@@ -1,0 +1,6 @@
+{% load i18n %}{% if access.can_write %}<ol class="message-flow" data-message-flow>
+  <li{% if page == "message" %} aria-current="step"{% endif %}><a href="{% url 'project_message' project.slug %}">{% translate "1. Message" %}</a></li>
+  <li{% if page == "edit" %} aria-current="step"{% endif %}><a href="{% url 'project_message_edit' project.slug %}">{% translate "2. Edit" %}</a></li>
+  <li{% if page == "review" %} aria-current="step"{% endif %}>{% if editing %}<a href="{% url 'project_message_review' project.slug %}">{% translate "3. Review" %}</a>{% else %}<span>{% translate "3. Review" %}</span>{% endif %}</li>
+  <li{% if page == "scope" %} aria-current="step"{% endif %}>{% if editing %}<a href="{% url 'project_message_scope' project.slug %}">{% translate "4. Scope" %}</a>{% else %}<span>{% translate "4. Scope" %}</span>{% endif %}</li>
+</ol>{% endif %}

@@ -1,0 +1,18 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "PR Message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card message-page" data-message>
+<div class="table-head"><h2>{% translate "PR Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+{% include "pycal_dashboard/message/_flow.html" %}
+<p class="muted">{% translate "The GitHub App writes this message as a comment on the pull requests of its scope, and updates it whenever the message or the values of its variables change." %}</p>
+{% if message %}{% include "pycal_dashboard/message/_shown.html" with query="" %}
+<h3>{% translate "Which pull requests get it" %}</h3>
+<ul class="list" data-message-scope-summary>{% if message.to_listed and message.listed %}<li>{% translate "These pull requests:" %} {{ message.listed|join:", " }}</li>{% endif %}{% if message.to_new %}<li>{% translate "All new pull requests" %}</li>{% endif %}{% if message.to_open %}<li>{% translate "All open pull requests" %}</li>{% endif %}{% if message.to_closed %}<li>{% translate "Closed and merged pull requests" %}</li>{% endif %}</ul>
+<p data-message-count>{% blocktranslate count counter=preview.count %}{{ counter }} pull request gets it.{% plural %}{{ counter }} pull requests get it.{% endblocktranslate %}</p>
+{% if access.can_write %}<p><a class="button" href="{% url 'project_message_edit' project.slug %}" data-edit-message>{% translate "Edit the message" %}</a></p>{% endif %}
+{% else %}<p data-no-message>{% translate "There is no message yet: no pull request gets a comment." %}</p>
+{% if access.can_write %}<p><a class="button" href="{% url 'project_message_edit' project.slug %}" data-edit-message>{% translate "Create the message" %}</a></p>{% endif %}{% endif %}
+</section>
+{% endblock %}

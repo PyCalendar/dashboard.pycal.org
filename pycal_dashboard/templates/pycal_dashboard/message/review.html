@@ -1,0 +1,19 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Review the message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<section class="card message-page" data-message-review>
+<div class="table-head"><h2>{% translate "Review the message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+{% include "pycal_dashboard/message/_flow.html" %}
+<p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>
+{% if preview.examples %}<p class="example-nav" data-example-nav><a class="button button-quiet button-small" href="?example={{ preview.example|add:-1 }}" data-example-step="-1" title="{% translate "The example before: one task less done" %}" aria-label="{% translate "The example before: one task less done" %}"{% if preview.example == 0 or pull_text %} aria-disabled="true"{% endif %}>←</a>
+  <span data-example-label>{% if pull_text %}{{ preview.pull }}{% else %}{{ preview.label }}{% endif %}</span>
+  <a class="button button-quiet button-small" href="?example={{ preview.example|add:1 }}" data-example-step="1" title="{% translate "The next example: one more task done" %}" aria-label="{% translate "The next example: one more task done" %}"{% if preview.example|add:1 == preview.examples and not pull_text %} aria-disabled="true"{% endif %}>→</a></p>{% endif %}
+<form method="get" class="inline-form" data-show-pull><label for="show-pull">{% translate "The message of the pull request" %}</label><input id="show-pull" name="pull" value="{{ pull_text }}" placeholder="2166" autocomplete="off"><button class="button button-small">{% translate "Show" %}</button></form>
+{% if preview.missing %}<p class="message-missing" data-pull-missing>{{ preview.missing }}</p>{% endif %}
+{% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode %}
+{% if preview.step_id %}<p data-step-of-example>{% blocktranslate with name=preview.step_name %}It is in the step {{ name }}.{% endblocktranslate %} <a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ preview.step_id }}&amp;back={{ back|urlencode }}" data-edit-step-of-example>{% translate "Edit this step" %}</a></p>{% endif %}
+<p class="save-buttons"><a class="button button-quiet" href="{% url 'project_message_edit' project.slug %}">{% translate "← Edit" %}</a> <a class="button" href="{% url 'project_message_scope' project.slug %}" data-next>{% translate "Next: scope →" %}</a></p>
+</section>
+{% endblock %}

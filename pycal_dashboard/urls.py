@@ -65,6 +65,21 @@ urlpatterns = [
     path("projects/<project_slug:slug>/steps/", steps.project_steps, name="project_steps"),
     path("projects/<project_slug:slug>/message/", message.project_message, name="project_message"),
     path(
+        "projects/<project_slug:slug>/message/edit/",
+        message.project_message_edit,
+        name="project_message_edit",
+    ),
+    path(
+        "projects/<project_slug:slug>/message/review/",
+        message.project_message_review,
+        name="project_message_review",
+    ),
+    path(
+        "projects/<project_slug:slug>/message/scope/",
+        message.project_message_scope,
+        name="project_message_scope",
+    ),
+    path(
         "projects/<project_slug:slug>/message/preview/",
         message.project_message_preview,
         name="project_message_preview",

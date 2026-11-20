@@ -511,12 +511,23 @@ whenever the message or the values of its variables change, such as when a pull
 request enters the next step. It is off until its scope says which pull
 requests get it.
 
-At the top, the message shows as a pull request gets it: the newest pull request
-of the scope, else the newest open one; **Markdown** shows its text. Writers and
-owners edit it below in the editor of Markdown, with the menu **Variables**:
-those of the steps, see :ref:`step-variables`, and those of the group *Message*,
-such as the tasks of the step as a list of tasks of GitHub. The message above
-follows what they type.
+Writers and owners edit it in four pages, which a bar at the top names:
+
+1. **Message**: the message as a pull request gets it, with its Markdown on the
+   tab **Markdown**, and which pull requests get it; or that there is none yet.
+   **Edit the message**, or **Create the message**, starts editing.
+2. **Edit**: the template in the editor of Markdown, with the menu
+   **Variables**: those of the steps, see :ref:`step-variables`, and those of
+   the group *Message*, such as the tasks of the step as a list of tasks of
+   GitHub. **Preview** shows it with a pull request. **Next: review** keeps it
+   as a draft of yours: nothing is written to GitHub before the last page.
+3. **Review**: the draft as example pull requests get it. The examples go from
+   no task done to all of them: **→** shows a pull request with one more task
+   done, **←** one with one less, such as *Example 2 of 6: 1 of 5 tasks done*.
+   **Show** shows the message of a pull request by its number instead. **Edit
+   this step** opens the step that the pull request is in, with **Back to the
+   review of the message** at the top.
+4. **Scope**: which pull requests get it, below.
 
 The scope, at the bottom:
 
@@ -530,8 +541,9 @@ The scope, at the bottom:
 
 **Update X pull requests** saves the message and the scope: the comments are
 written or updated in the background, after an update of the project, and every
-update after it updates those whose text changed. **Cancel** leaves the page
-without saving. The log of the site records every comment written or updated;
+update after it updates those whose text changed. The number follows the
+switches; without JavaScript, **Count** counts them. **Cancel** forgets the
+draft and goes back to the message as it was. The log of the site records every comment written or updated;
 the comment ends with a hidden line that says that the site wrote it.
 
 .. _project-backup:

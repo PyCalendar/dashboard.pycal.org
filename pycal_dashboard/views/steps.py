@@ -7,6 +7,8 @@ Moving and adding steps work as forms, and with JavaScript without loading the p
 
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -98,6 +100,27 @@ def conditions_of(step: PullRequestStep) -> list[dict]:
     return found
 
 
+def back_to(project: Project, address: str) -> str:
+    """An address of the project to go back to, such as the review of the message.
+
+    Parameters:
+        project: The project.
+        address: The address from the request.
+
+    Returns:
+        The address if it is a page of the project, else "": no other site.
+
+    Examples:
+        >>> from pycal_dashboard.models import Project
+        >>> back_to(Project(slug="icalendar"), "https://evil.example/")
+        ''
+    """
+    start = project.path()
+    if address.startswith(start) and "//" not in address and "\\" not in address:
+        return address
+    return ""
+
+
 # the colors of the background of steps, light enough for dark text; "" for none
 STEP_COLORS = (
     "",
@@ -142,6 +165,7 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             if shown
             else "",
             "free_filters": access.project.filters.filter(step__isnull=True),
+            "back": back_to(access.project, request.GET.get("back", "")),
             "colors": STEP_COLORS,
             "filter_edit": access.project.path("filters/save/")
             + table_address(
@@ -295,7 +319,9 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     step.save()
     if wants_json(request):  # saved while editing, by the script of the page
         return JsonResponse({"step": step.pk, "name": step.name, "color": step.color})
-    return redirect(access.project.path("steps/") + f"?step={step.pk}")
+    address = access.project.path("steps/") + f"?step={step.pk}"
+    back = back_to(access.project, request.POST.get("back", ""))
+    return redirect(address + (f"&{urlencode({'back': back})}" if back else ""))
 
 
 @login_required

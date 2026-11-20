@@ -1,0 +1,1 @@
+The message of the pull requests is edited in four pages: the message, the editor, the review with example pull requests from no task done to all of them or any pull request by its number, with a link to edit the step it is in, and the scope.

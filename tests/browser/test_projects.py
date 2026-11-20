@@ -586,24 +586,38 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
 
 
 def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
-    """The tab PR Message: the preview follows the editor, the button counts the pull requests."""
-    from pycal_dashboard.models import PullRequestMessage
+    """The flow of the message: none yet, edit, review the examples, the scope, saved."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestMessage, PullRequestStep
 
-    pull_request_project(github, bob)
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Review")
     page = signed_in
     page.goto(f"{site}/projects/icalendar/pull-requests/")
     page.get_by_role("link", name="PR Message").click()
+    expect(page.locator("[data-no-message]")).to_be_visible()
+    page.get_by_role("link", name="Create the message").click()  # 2. edit
+    page.get_by_role("textbox", name="The message").fill("**{pr_title}**: {tasks_todo}")
+    page.get_by_role("button", name="Next: review →").click()  # 3. review
+    label = page.locator("[data-example-label]")
+    expect(label).to_have_text("Example 1 of 2: 0 of 1 tasks done")
+    expect(page.locator("[data-message-rendered] strong")).to_be_visible()
+    page.get_by_role("link", name="The next example: one more task done").click()
+    expect(label).to_have_text("Example 2 of 2: 1 of 1 tasks done")
+    expect(page.locator("[data-message-rendered]")).to_contain_text("Nothing to do.")
+    page.get_by_role("textbox", name="The message of the pull request").fill("1")
+    page.get_by_role("button", name="Show").click()
+    expect(page.locator("[data-message-rendered]")).to_contain_text("Ready")
+    page.get_by_role("link", name="Edit this step").click()  # the step, and back
+    page.get_by_role("link", name="← Back to the review of the message").click()
+    expect(page.locator("[data-message-rendered]")).to_contain_text("Ready")
+    page.get_by_role("link", name="Next: scope →").click()  # 4. scope
     save = page.locator("[data-save-message]")
     expect(save).to_have_text("Update 0 pull requests")  # off by default
-    editor = page.get_by_role("textbox", name="The message")
-    editor.fill("**{pr_title}** by {author_handle}")
     page.locator("[data-message-scope]").get_by_text("Add to all open pull requests").click()
     expect(save).to_have_text("Update 3 pull requests")
-    rendered = page.locator("[data-message-rendered]")
-    expect(rendered.locator("strong")).to_be_visible()
-    expect(rendered).to_contain_text("by octocat")
-    page.get_by_role("tab", name="Markdown").click()
-    expect(page.locator("[data-message-markdown]")).to_contain_text("**")
     page.set_viewport_size({"width": 390, "height": 900})
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")  # fits a phone
     save.click()

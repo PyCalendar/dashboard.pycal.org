@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 09:02+0000\n"
+"POT-Creation-Date: 2026-11-20 12:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1787,6 +1787,154 @@ msgstr "Älter"
 msgid "Nothing yet."
 msgstr "Noch nichts."
 
+msgid "1. Message"
+msgstr "1. Nachricht"
+
+msgid "2. Edit"
+msgstr "2. Bearbeiten"
+
+msgid "3. Review"
+msgstr "3. Prüfen"
+
+msgid "4. Scope"
+msgstr "4. Bereich"
+
+msgid "Markdown"
+msgstr "Markdown"
+
+#, python-format
+msgid "As the pull request %(pull)s gets it."
+msgstr "So, wie der Pull Request %(pull)s sie bekommt."
+
+msgid "With an example pull request."
+msgstr "Mit einem Beispiel-Pull-Request."
+
+msgid "Edit the message"
+msgstr "Die Nachricht bearbeiten"
+
+msgid "The message of the pull requests"
+msgstr "Die Nachricht der Pull Requests"
+
+msgid "The message"
+msgstr "Die Nachricht"
+
+msgid ""
+"The next page shows it with example pull requests in every state of the "
+"steps. Nothing is written to GitHub before the last page."
+msgstr ""
+"Die nächste Seite zeigt sie mit Beispiel-Pull-Requests in jedem Zustand der "
+"Schritte. Vor der letzten Seite wird nichts auf GitHub geschrieben."
+
+msgid "← Back"
+msgstr "← Zurück"
+
+msgid "Next: review →"
+msgstr "Weiter: prüfen →"
+
+msgid "Review the message"
+msgstr "Die Nachricht prüfen"
+
+msgid ""
+"Step through example pull requests, from no task done to all of them, or see "
+"the message of a pull request."
+msgstr ""
+"Geh Beispiel-Pull-Requests durch, von keiner erledigten Aufgabe bis zu "
+"allen, oder sieh dir die Nachricht eines Pull Requests an."
+
+msgid "The example before: one task less done"
+msgstr "Das Beispiel davor: eine Aufgabe weniger erledigt"
+
+msgid "The next example: one more task done"
+msgstr "Das nächste Beispiel: eine Aufgabe mehr erledigt"
+
+msgid "The message of the pull request"
+msgstr "Die Nachricht des Pull Requests"
+
+msgid "Show"
+msgstr "Zeigen"
+
+#, python-format
+msgid "It is in the step %(name)s."
+msgstr "Er ist im Schritt %(name)s."
+
+msgid "Edit this step"
+msgstr "Diesen Schritt bearbeiten"
+
+msgid "← Edit"
+msgstr "← Bearbeiten"
+
+msgid "Next: scope →"
+msgstr "Weiter: Bereich →"
+
+msgid "The scope of the message"
+msgstr "Der Bereich der Nachricht"
+
+msgid "Which pull requests get it"
+msgstr "Welche Pull Requests sie bekommen"
+
+msgid "Add to these pull requests:"
+msgstr "Zu diesen Pull Requests hinzufügen:"
+
+msgid "The numbers of the pull requests"
+msgstr "Die Nummern der Pull Requests"
+
+msgid "Add to all new pull requests"
+msgstr "Zu allen neuen Pull Requests hinzufügen"
+
+msgid "Add to all open pull requests"
+msgstr "Zu allen offenen Pull Requests hinzufügen"
+
+msgid "Add to closed and merged pull requests"
+msgstr "Zu geschlossenen und gemergten Pull Requests hinzufügen"
+
+msgid "Not preferred: they are done, and their people get a notification."
+msgstr ""
+"Nicht empfohlen: sie sind erledigt, und ihre Personen bekommen eine "
+"Benachrichtigung."
+
+msgid "← Review"
+msgstr "← Prüfen"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Count"
+msgstr "Zählen"
+
+msgid ""
+"The GitHub App writes this message as a comment on the pull requests of its "
+"scope, and updates it whenever the message or the values of its variables "
+"change."
+msgstr ""
+"Die GitHub App schreibt diese Nachricht als Kommentar auf die Pull Requests "
+"ihres Bereichs und aktualisiert ihn, wann immer sich die Nachricht oder die "
+"Werte ihrer Variablen ändern."
+
+msgid "These pull requests:"
+msgstr "Diese Pull Requests:"
+
+msgid "All new pull requests"
+msgstr "Alle neuen Pull Requests"
+
+msgid "All open pull requests"
+msgstr "Alle offenen Pull Requests"
+
+msgid "Closed and merged pull requests"
+msgstr "Geschlossene und gemergte Pull Requests"
+
+#, python-format
+msgid "%(counter)s pull request gets it."
+msgid_plural "%(counter)s pull requests get it."
+msgstr[0] "%(counter)s Pull Request bekommt sie."
+msgstr[1] "%(counter)s Pull Requests bekommen sie."
+
+msgid "There is no message yet: no pull request gets a comment."
+msgstr ""
+"Es gibt noch keine Nachricht: kein Pull Request bekommt einen Kommentar."
+
+msgid "Create the message"
+msgstr "Die Nachricht erstellen"
+
 msgid "Mark all as read"
 msgstr "Alle als gelesen markieren"
 
@@ -2285,58 +2433,6 @@ msgstr "Seine Repositorys bleiben auf GitHub und in anderen Projekten."
 msgid "Yes, delete this project"
 msgstr "Ja, dieses Projekt löschen"
 
-msgid "The message of the pull requests"
-msgstr "Die Nachricht der Pull Requests"
-
-msgid ""
-"The GitHub App writes this message as a comment on the pull requests of the "
-"scope below, and updates it whenever the message or the values of its "
-"variables change. No pull request gets it until the scope says so."
-msgstr ""
-"Die GitHub App schreibt diese Nachricht als Kommentar auf die Pull Requests "
-"des Bereichs unten und aktualisiert ihn, wann immer sich die Nachricht oder "
-"die Werte ihrer Variablen ändern. Kein Pull Request bekommt sie, bevor der "
-"Bereich es sagt."
-
-msgid "Markdown"
-msgstr "Markdown"
-
-#, python-format
-msgid "As the pull request %(pull)s gets it."
-msgstr "So, wie der Pull Request %(pull)s sie bekommt."
-
-msgid "With an example pull request."
-msgstr "Mit einem Beispiel-Pull-Request."
-
-msgid "The message"
-msgstr "Die Nachricht"
-
-msgid "Which pull requests get it"
-msgstr "Welche Pull Requests sie bekommen"
-
-msgid "Add to these pull requests:"
-msgstr "Zu diesen Pull Requests hinzufügen:"
-
-msgid "The numbers of the pull requests"
-msgstr "Die Nummern der Pull Requests"
-
-msgid "Add to all new pull requests"
-msgstr "Zu allen neuen Pull Requests hinzufügen"
-
-msgid "Add to all open pull requests"
-msgstr "Zu allen offenen Pull Requests hinzufügen"
-
-msgid "Add to closed and merged pull requests"
-msgstr "Zu geschlossenen und gemergten Pull Requests hinzufügen"
-
-msgid "Not preferred: they are done, and their people get a notification."
-msgstr ""
-"Nicht empfohlen: sie sind erledigt, und ihre Personen bekommen eine "
-"Benachrichtigung."
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
 #, python-format
 msgid "Pull requests #%(number)s"
 msgstr "Pull Requests #%(number)s"
@@ -2397,9 +2493,6 @@ msgstr[1] "%(counter)s Pull Requests"
 
 msgid "Per page"
 msgstr "Pro Seite"
-
-msgid "Show"
-msgstr "Zeigen"
 
 msgid "Display"
 msgstr "Anzeigen"
@@ -2618,6 +2711,9 @@ msgstr ""
 "Noch keine Schritte. Mach im Tab <a href=\"%(filters_url)s\">Filter</a> "
 "einen gespeicherten Filter zu einem Schritt, oder füge einen mit dem Knopf + "
 "hinzu."
+
+msgid "← Back to the review of the message"
+msgstr "← Zurück zur Prüfung der Nachricht"
 
 msgid "Edit the filter"
 msgstr "Den Filter bearbeiten"
@@ -3033,6 +3129,15 @@ msgstr ""
 #, python-format
 msgid "The filter %(name)s is saved."
 msgstr "Der Filter %(name)s ist gespeichert."
+
+#, python-format
+msgid "The project has no pull request %(pull)s."
+msgstr "Das Projekt hat keinen Pull Request %(pull)s."
+
+#, python-format
+msgid "Example %(number)s of %(count)s: %(done)s of %(total)s tasks done"
+msgstr ""
+"Beispiel %(number)s von %(count)s: %(done)s von %(total)s Aufgaben erledigt"
 
 #, python-format
 msgid "Update %(count)s pull request"
