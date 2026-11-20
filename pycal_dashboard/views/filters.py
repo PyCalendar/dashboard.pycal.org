@@ -18,6 +18,7 @@ from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import FilterNameMissing, FilterNameTaken
 from pycal_dashboard.models import Label, PullRequestFilter
 from pycal_dashboard.services.column_results import ColumnResults
+from pycal_dashboard.services.project_access import ProjectAccess
 
 from .json_page import page
 from .projects import (
@@ -262,6 +263,14 @@ def project_filter_save(request: HttpRequest, slug: str):
         on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
         columns = switched(columns, on)
         target = saved if saved and request.POST.get("save") == "this" else None
+        other = access.project.filters.filter(name=name).exclude(pk=target.pk if target else None)
+        other = other.first()
+        if other is not None and request.POST.get("replace") != str(other.pk):
+            return save_page(  # another filter has the name: replace it?
+                request, access, columns, saved, enabled=False, conflict=other, name=name
+            )
+        if other is not None:  # replace it: its conditions and description, its steps stay
+            target = other
         try:
             with transaction.atomic():
                 if target is None:
@@ -274,6 +283,33 @@ def project_filter_save(request: HttpRequest, slug: str):
             raise FilterNameTaken(name) from None
         messages.success(request, _("The filter %(name)s is saved.") % {"name": name})
         return redirect(access.project.path("filters/"))
+    return save_page(request, access, columns, saved, enabled=saved is None)
+
+
+def save_page(
+    request: HttpRequest,
+    access: ProjectAccess,
+    columns: list[Column],
+    saved: PullRequestFilter | None,
+    enabled: bool,
+    conflict: PullRequestFilter | None = None,
+    name: str | None = None,
+):
+    """The page of saving a filter, also again with the question whether to replace another one.
+
+    Parameters:
+        request: The request.
+        access: The project with the rights of the person.
+        columns: The columns of conditions.
+        saved: The filter that the table showed, if any.
+        enabled: Whether every condition is switched on, as for a new filter.
+        conflict: Another filter of the name that the person typed: the page asks whether to
+            replace it.
+        name: The name typed; None for that of the filter.
+
+    Returns:
+        The page.
+    """
     repositories = shown_repositories(access)
     labels = Label.objects.filter(repository__in=repositories)
     return render(
@@ -283,8 +319,11 @@ def project_filter_save(request: HttpRequest, slug: str):
             "project": access.project,
             "access": access,
             "columns": columns,
-            "summary": summary(columns, enabled=saved is None),  # new: every condition on
+            "summary": summary(columns, enabled=enabled),
             "saved": saved,
+            "conflict": conflict,
+            "name": saved.name if name is None and saved else (name or ""),
+            "description": request.POST.get("description", saved.description if saved else ""),
             "count": len(ColumnResults(repositories).matching(columns)),
             "back": access.project.path("pull-requests/")
             + table_address(columns, PER_PAGE, saved.pk if saved else None),

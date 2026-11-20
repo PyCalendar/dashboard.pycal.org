@@ -9,7 +9,7 @@
   <div class="table-title"><h2>{% if saved %}{{ saved.name }}: {% endif %}{% blocktranslate count counter=rows.paginator.count %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %}</h2>
     {% if access.can_write %}<a class="button button-small" href="{% url 'project_filter_save' project.slug %}{{ address }}" data-save>{% translate "Save" %}</a>{% endif %}</div>
   <form method="get" class="per-page" data-per-page>
-    {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
+    {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}{% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}
     <label for="per-page">{% translate "Per page" %}</label>
     <select id="per-page" name="per_page">{% for size in per_page_choices %}<option value="{{ size }}"{% if size == per_page %} selected{% endif %}>{{ size }}</option>{% endfor %}</select>
     <button class="button button-quiet button-small" data-per-page-submit>{% translate "Show" %}</button>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 20:27+0000\n"
+"POT-Creation-Date: 2026-11-20 21:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,7 +322,7 @@ msgid "Settings"
 msgstr "Ajustes"
 
 msgid "Unknown mode of the background work"
-msgstr ""
+msgstr "Modo desconocido del trabajo en segundo plano"
 
 msgid "Unknown color"
 msgstr "Color desconocido"
@@ -2239,6 +2239,21 @@ msgstr "Guardar el filtro %(name)s"
 
 msgid "Name"
 msgstr "Nombre"
+
+#, python-format
+msgid ""
+"The project has a filter %(name)s already. Replace its conditions and its "
+"description with these? Its step stays."
+msgstr ""
+"El proyecto ya tiene un filtro %(name)s. ¿Reemplazar sus condiciones y su "
+"descripción por estas? Su paso se queda."
+
+#, python-format
+msgid "Replace %(name)s"
+msgstr "Reemplazar %(name)s"
+
+msgid "Or change the name above and save again."
+msgstr "O cambia el nombre de arriba y guarda de nuevo."
 
 msgid "Description"
 msgstr "Descripción"

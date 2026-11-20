@@ -9,8 +9,11 @@
   <h2>{% if saved %}{% blocktranslate with name=saved.name %}Save the filter {{ name }}{% endblocktranslate %}{% else %}{% translate "Save the filter" %}{% endif %}</h2>
   {% for column in columns %}<input type="hidden" name="col" value="{{ column.encode }}">{% endfor %}
   {% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}
-  <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ saved.name }}"></p>
-  {% translate "Description" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id="description" name="description" label=description_label value=saved.description rows=4 %}
+  <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ name }}"></p>
+  {% if conflict %}<div class="message message-warning" data-conflict="{{ conflict.pk }}" role="alert"><p>{% blocktranslate with name=conflict.name %}The project has a filter {{ name }} already. Replace its conditions and its description with these? Its step stays.{% endblocktranslate %}</p>
+    <p><button class="button button-danger" name="replace" value="{{ conflict.pk }}" data-replace>{% blocktranslate with name=conflict.name %}Replace {{ name }}{% endblocktranslate %}</button> <span class="muted">{% translate "Or change the name above and save again." %}</span></p>
+    <input type="hidden" name="save" value="{% if saved %}this{% else %}new{% endif %}"></div>{% endif %}
+  {% translate "Description" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id="description" name="description" label=description_label value=description rows=4 %}
   <h3>{% blocktranslate count counter=count %}The filter shows {{ counter }} pull request now:{% plural %}The filter shows {{ counter }} pull requests now:{% endblocktranslate %}</h3>
   {% include "pycal_dashboard/conditions/_summary.html" with rows=summary editable=True %}
   <p class="muted">{% translate "The order of the columns and what each shows are saved." %}</p>

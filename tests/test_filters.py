@@ -170,14 +170,63 @@ def test_save_it_again_or_as_a_new_one(client, project, bob):
     assert sorted(PullRequestFilter.objects.values_list("name", flat=True)) == ["Merged", "Open"]
 
 
-def test_names_are_unique_in_a_project(client, project, bob):
+def test_a_name_of_another_filter_asks_to_replace_it(client, project, bob):
+    """Names are unique in a project: saving under the name of another asks first."""
     client.force_login(bob)
-    PullRequestFilter.objects.create(project=project, name="Open")
-    answer = client.post("/projects/icalendar/filters/save/", {"name": "Open", "save": "new"})
-    assert (
-        answer.status_code == 409
-        and "The project has a filter of this name" in answer.content.decode()
+    other = PullRequestFilter.objects.create(
+        project=project, name="Open", description="Before", columns=["status~applies~open"]
     )
+    data = {"col": ["status~applies~merged"], "on": "0", "name": "Open", "save": "new"}
+    data["description"] = "After"
+    answer = client.post("/projects/icalendar/filters/save/", data)
+    page = answer.content.decode()
+    assert answer.status_code == 200 and f'data-conflict="{other.pk}"' in page
+    assert "The project has a filter Open already." in page
+    assert 'value="Open"' in page and ">After</textarea>" in page  # nothing typed is lost
+    other.refresh_from_db()
+    assert other.columns == ["status~applies~open"]  # not yet
+    answer = client.post("/projects/icalendar/filters/save/", data | {"replace": str(other.pk)})
+    assert answer["Location"] == "/projects/icalendar/filters/"
+    other.refresh_from_db()
+    assert (other.columns, other.description) == (["status~applies~merged"], "After")
+    assert PullRequestFilter.objects.count() == 1
+
+
+def test_renaming_a_filter_to_another_asks_too(client, project, bob):
+    client.force_login(bob)
+    first = PullRequestFilter.objects.create(project=project, name="A", columns=[])
+    second = PullRequestFilter.objects.create(project=project, name="B", columns=[])
+    data = {"col": ["status~applies~open"], "on": "0", "name": "B", "save": "this"}
+    data["saved"] = str(first.pk)
+    answer = client.post("/projects/icalendar/filters/save/", data)
+    assert f'data-conflict="{second.pk}"' in answer.content.decode()
+    client.post("/projects/icalendar/filters/save/", data | {"replace": str(second.pk)})
+    second.refresh_from_db()
+    first.refresh_from_db()
+    assert second.columns == ["status~applies~open"] and first.name == "A"
+
+
+def test_the_table_keeps_the_saved_filter(client, project, bob):
+    """From the step to the save page, the table and back: the filter stays the same one."""
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["status~applies~open"]
+    )
+    client.force_login(bob)
+    table = client.get(f"/projects/icalendar/pull-requests/?saved={saved.pk}").content.decode()
+    for form in table.split("<form")[1:]:  # the menus of the columns and Per page
+        if 'method="get"' in form.split(">")[0]:
+            assert f'name="saved" value="{saved.pk}"' in form.split("</form>")[0]
+    changed = client.get(
+        "/projects/icalendar/pull-requests/?col=status~applies~merged&per_page=25"
+        f"&saved={saved.pk}&edit=0&group=status&status=closed&filter=applies"
+    )
+    assert f"saved={saved.pk}" in changed["Location"]
+    page = client.get(changed["Location"].replace("pull-requests/", "filters/save/"))
+    assert 'value="Review"' in page.content.decode()  # the name comes along
+
+
+def test_names_are_needed(client, project, bob):
+    client.force_login(bob)
     answer = client.post("/projects/icalendar/filters/save/", {"name": "  ", "save": "new"})
     assert answer.status_code == 400 and "The filter needs a name" in answer.content.decode()
 

@@ -249,7 +249,12 @@ conditions applies to. It shows only the conditions in force: those that are
 off are no part of the filter and appear only in the table of pull requests and
 when the filter is edited. **Pull requests** opens them with the filter, and
 **Edit** opens the page of saving. There it can be changed, and saved
-under its name or as a new filter. Writers and owners save filters.
+under its name or as a new filter. The table of pull requests remembers which
+filter it shows while its columns change, so that **Save** saves that filter
+again, also on the way from a step and back. A name of another filter of the
+project asks whether to replace that filter: **Replace** gives it these
+conditions and this description, and its step stays. Writers and owners save
+filters.
 
 A filter names its labels; a label of that name in any repository of the
 project counts, in any case. When a label is renamed on GitHub, it keeps its

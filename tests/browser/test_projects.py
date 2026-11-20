@@ -624,3 +624,35 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     expect(page.get_by_text("The message is saved: 3 pull requests get it")).to_be_visible()
     message = PullRequestMessage.objects.get()
     assert message.to_open and message.template.startswith("**{pr_title}**")
+
+
+def test_a_filter_keeps_its_name_from_the_step_to_the_table_and_back(signed_in, site, github, bob):
+    """Step -> Edit the filter -> the table -> change a condition -> Save: still the filter."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Review")
+    PullRequestFilter.objects.create(project=project, name="Other", columns=[])
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/steps/")
+    page.get_by_role("link", name="Edit the filter").click()
+    expect(page.get_by_label("Name", exact=True)).to_have_value("Review")
+    page.get_by_role("link", name="← Back to the pull requests").click()
+    page.locator("th.col-condition .column-menu summary").first.click()  # the gear
+    menu = page.locator("th.col-condition [data-condition-form]").first
+    menu.get_by_label("Name of the label").fill("needs docs")
+    menu.get_by_role("button", name="Change the column").click()
+    expect(page.get_by_role("heading", name=re.compile("^Review: "))).to_be_visible()
+    page.get_by_role("link", name="Save", exact=True).click()
+    expect(page.get_by_label("Name", exact=True)).to_have_value("Review")  # not empty
+    page.get_by_label("Name", exact=True).fill("Other")  # the name of another filter
+    page.get_by_role("button", name="Save as a new filter").click()
+    expect(page.locator("[data-conflict]")).to_contain_text("The project has a filter Other")
+    page.get_by_role("button", name="Replace Other").click()
+    expect(page.get_by_text("The filter Other is saved.")).to_be_visible()
+    assert PullRequestFilter.objects.get(name="Other").columns == [
+        "labels~applies~present~needs docs"
+    ]

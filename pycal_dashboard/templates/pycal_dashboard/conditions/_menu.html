@@ -1,6 +1,6 @@
 {% load i18n %}<form method="get" class="condition-form" data-condition-form>
   {% for kept in condition_columns %}<input type="hidden" name="col" value="{{ kept.encode }}">{% endfor %}
-  <input type="hidden" name="per_page" value="{{ per_page }}">
+  <input type="hidden" name="per_page" value="{{ per_page }}">{% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}
   {% if column %}<input type="hidden" name="edit" value="{{ index }}">{% else %}<input type="hidden" name="add" value="1">{% endif %}
   <p><label for="group-{{ index }}">{% translate "Condition" %}</label>
   <select id="group-{{ index }}" name="group" class="group-select" required>{% for id, group in groups.items %}<option value="{{ id }}"{% if column.group.id == id %} selected{% endif %}>{% translate group.title %}</option>{% endfor %}</select></p>
