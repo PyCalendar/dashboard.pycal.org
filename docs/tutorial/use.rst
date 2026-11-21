@@ -25,10 +25,22 @@ The start page
 Open `dashboard.pycal.org <https://dashboard.pycal.org>`_. The start page
 welcomes you; the menu at the top leads to the projects, to signing in and to
 your account, where you install the GitHub App. *About*, at
-the bottom of every page, shows the permissions of the app, the version that
-runs, and links the documentation and the code: the footer repeats none of it.
-Its tabs are *Privacy*, the privacy policy, which says which data of people the
-site keeps and who else gets which, and *Licenses*.
+the bottom of every page, has the tabs:
+
+*Contact*
+   Tiles to the documentation, to report a problem or leave feedback on GitHub,
+   and to the changelog.
+*Privacy*
+   The privacy policy: which data of people dashboard.pycal.org keeps and who
+   else gets which.
+*Licenses*
+   The licenses of the code and of the packages it uses.
+*Version*
+   The version that runs, its commit, its build and the code.
+*GitHub App*
+   What the GitHub App reads and writes, its permissions and its events.
+
+The footer repeats none of it.
 
 The pages load nothing from other sites, such as fonts, except the avatars of
 people from GitHub.

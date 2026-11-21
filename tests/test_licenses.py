@@ -14,7 +14,9 @@ def test_the_about_page_links_the_licenses_not_the_footer(client):
     footer = client.get("/").content.decode().split('<footer class="footer">')[1]
     assert 'href="/licenses/"' not in footer and "AGPL" not in footer
     about = client.get("/about/").content.decode().split("<main")[1].split("</main>")[0]
-    assert '<a href="/licenses/">AGPL-3.0-or-later</a>' in about
+    assert 'href="/licenses/"' in about  # the tab Licenses
+    version = client.get("/about/version/").content.decode()
+    assert "AGPL-3.0-or-later" not in version and "data-all-licenses" not in version
 
 
 def test_the_page_lists_the_licenses(client):

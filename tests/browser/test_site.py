@@ -12,7 +12,7 @@ def test_start_page(page, site):
     expect(page.locator("[data-no-app]")).to_have_count(0)
     page.get_by_role("link", name="About the site").click()
     expect(page).to_have_url(f"{site}/about/")
-    expect(page.get_by_text("writes nothing to GitHub")).to_be_visible()
+    expect(page.locator("[data-contact-tiles]")).to_be_visible()
 
 
 def test_switch_to_dark_colors(page, site):
@@ -120,7 +120,7 @@ def test_switch_the_language(page, site):
     page.get_by_role("button", name="Deutsch").click()
     expect(page).to_have_url(f"{site}/about/")
     expect(page.locator("html")).to_have_attribute("lang", "de")
-    expect(page.get_by_role("heading", name="Datenschutz")).to_be_visible()
+    expect(page.get_by_role("link", name="Kontakt")).to_be_visible()  # the tab, in German
     page.get_by_label("Sprache").click()
     page.get_by_role("button", name="English").click()
     expect(page.locator("html")).to_have_attribute("lang", "en")
@@ -180,3 +180,16 @@ def test_the_markdown_fields_are_as_wide_as_possible(signed_in, site):
     form = page.locator("form.stacked").first
     width = field.bounding_box()["width"]
     assert width >= form.bounding_box()["width"] - 60, width  # all but the padding of the card
+
+
+def test_the_tabs_of_about(page, site):
+    """Contact with its tiles, then Version and GitHub App, which are tabs now."""
+    page.goto(f"{site}/about/")
+    tiles = page.locator("[data-contact-tiles] a")
+    expect(tiles).to_have_count(3)
+    expect(tiles.nth(1)).to_contain_text("Report a problem or leave feedback")
+    tabs = page.get_by_role("navigation", name="About")
+    tabs.get_by_role("link", name="Version").click()
+    expect(page.locator("[data-version]")).to_be_visible()
+    page.get_by_role("navigation", name="About").get_by_role("link", name="GitHub App").click()
+    expect(page.locator("[data-github-app]")).to_contain_text("Status Message")

@@ -21,7 +21,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import cache_control
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 from django.views.i18n import set_language
 
 from pycal_dashboard import build_info, licenses
@@ -68,7 +68,10 @@ def home(request: HttpRequest):
 
 
 def about(request: HttpRequest):
-    """The version that runs and the GitHub App; ``/about.json``.
+    """The tab Contact of About: the documentation, problems and feedback, the changelog.
+
+    Its JSON, ``/about.json``, has the version that runs and the GitHub App, of the tabs
+    Version and GitHub App.
 
     Parameters:
         request: The request.
@@ -80,12 +83,7 @@ def about(request: HttpRequest):
     return page(
         request,
         "pycal_dashboard/about.html",
-        {
-            "build": build,
-            "permissions": REQUIRED,
-            "events": EVENTS,
-            "organizations": settings.GITHUB_ORGANIZATIONS,
-        },
+        {"tab": "about"},
         lambda: {
             "build": {key: str(value) if value else value for key, value in build.items()},
             "github_app": {
@@ -94,6 +92,40 @@ def about(request: HttpRequest):
                 "organizations": settings.GITHUB_ORGANIZATIONS,
             },
         },
+    )
+
+
+@require_http_methods(["GET", "HEAD"])
+def about_version(request: HttpRequest):
+    """The tab Version of About: the version that runs, its commit and its build.
+
+    Parameters:
+        request: The request.
+
+    Returns:
+        The page.
+    """
+    return render(
+        request,
+        "pycal_dashboard/about_version.html",
+        {"tab": "version", "build": build_info.get(settings.SOURCE_URL)},
+    )
+
+
+@require_http_methods(["GET", "HEAD"])
+def about_github_app(request: HttpRequest):
+    """The tab GitHub App of About: the permissions and events that it asks for.
+
+    Parameters:
+        request: The request.
+
+    Returns:
+        The page.
+    """
+    return render(
+        request,
+        "pycal_dashboard/about_github_app.html",
+        {"tab": "github-app", "permissions": REQUIRED, "events": EVENTS},
     )
 
 

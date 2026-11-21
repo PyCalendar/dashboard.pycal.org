@@ -621,10 +621,12 @@ community: where to start, what waits for a review, who contributes.
       message; "As the pull request ... gets it" below the message); Edit and Preview (was Review) next to each other,
       both with Apply at the bottom: it makes the edited message the current one; Applied, green with a check mark,
       when they are the same; Scope becomes a tab right of Status Label, as it applies to the labels too
-- [ ] About: the tab About becomes Contact, without Privacy in it and without the line "A dashboard for ...
+- [x] About: the tab About becomes Contact, without Privacy in it and without the line "A dashboard for ...
       Documentation."; instead the tiles Documentation, Report a problem or leave feedback, and Changelog; Version
       and GitHub App become tabs like Privacy and Licenses; Licenses without "AGPL-3.0-or-later · All licenses"
 - [x] The Markdown fields are always as wide as possible
 - [x] Step labels: Save -> Apply; without the column What saving it does; choosing another option shows above Apply
       what it does: "Create the labels <names> and label <n> pull requests", or for Off "Delete the labels <names>
       from <repositories>" (the person gave it); With PR Sync -> Synchronize
+- [ ] The actions of a step: "When a pull request completes the step" -> "When a pull request leaves the step"; they
+      also follow when the step is skipped while the pull request is in it

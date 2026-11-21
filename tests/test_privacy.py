@@ -128,9 +128,11 @@ def test_without_a_mail_server_the_policy_says_so(client, settings):
 @pytest.mark.django_db
 def test_the_about_pages_have_tabs(client):
     for path, current in [
-        ("/about/", "About"),
+        ("/about/", "Contact"),
         ("/about/privacy/", "Privacy"),
         ("/licenses/", "Licenses"),
+        ("/about/version/", "Version"),
+        ("/about/github-app/", "GitHub App"),
     ]:
         tabs = client.get(path).content.decode().split('<ul class="tabs">')[1].split("</ul>")[0]
         assert re.search(rf'aria-current="page">{current}<', tabs), path

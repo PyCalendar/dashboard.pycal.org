@@ -604,3 +604,10 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 .step-labels-effect { display: none; }
 form:has(input[name="step_labels"][value="sync"]:checked:not([data-current])) [data-effect="sync"],
 form:has(input[name="step_labels"][value="off"]:checked:not([data-current])) [data-effect="off"] { display: block; }
+
+/* the tab Contact of About: a tile for each way to go on */
+.contact-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; list-style: none; padding: 0; margin: 0 0 1.5rem; }
+.contact-tiles a { display: flex; flex-direction: column; gap: .4rem; height: 100%; box-sizing: border-box; padding: 1rem 1.25rem; background: var(--surface-tint); border: 1px solid var(--border); border-top: .3rem solid var(--brand); border-radius: .5rem; color: var(--text); text-decoration: none; }
+.contact-tiles a:hover, .contact-tiles a:focus-visible { border-color: var(--primary); }
+.contact-tiles strong { font-size: 1.1rem; color: var(--primary); }
+.contact-tiles span { color: var(--text-muted); }

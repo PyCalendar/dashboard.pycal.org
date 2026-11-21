@@ -1,0 +1,12 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n times github %}
+{% block title %}{% translate "Version" %} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_about_tabs.html" with tab="version" %}
+<section class="card" data-version>
+<dl class="facts-list"><dt>{% translate "Version" %}</dt><dd>{{ build.version }}</dd>
+{% if build.commit %}<dt>{% translate "Commit" %}</dt><dd><a href="{{ build.commit_url }}">{{ build.commit }}</a> {{ build.message }}</dd>{% endif %}
+{% if build.built_at %}<dt>{% translate "Built" %}</dt><dd>{% when build.built_at %}{% if build.build_url %} · <a href="{{ build.build_url }}">{% translate "build" %}</a>{% endif %}</dd>{% endif %}
+<dt>{% translate "Code" %}</dt><dd>{% github_link build.code_url links.source links.source %}</dd></dl>
+</section>
+{% endblock %}

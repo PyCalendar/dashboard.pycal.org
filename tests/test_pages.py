@@ -127,5 +127,15 @@ def test_health(client, db):
     assert client.get("/health/").json() == {"status": "ok", "github_app": True}
 
 
-def test_about_says_the_app_only_reads(client, db):
-    assert "writes nothing to GitHub" in client.get("/about/").content.decode()
+def test_about_has_the_tiles_and_the_tabs_of_the_version_and_the_app(client, db, settings):
+    """Contact: the documentation, problems and feedback, the changelog; nothing else."""
+    main = client.get("/about/").content.decode().split("<main")[1].split("</main>")[0]
+    for tile in ("documentation", "feedback", "changelog"):
+        assert f'data-tile="{tile}"' in main
+    assert "Report a problem or leave feedback" in main
+    assert "data-privacy-summary" not in main and "where to start" not in main
+    version = client.get("/about/version/").content.decode()
+    assert "data-version" in version and "Commit" in version or "Version" in version
+    app = client.get("/about/github-app/").content.decode()
+    assert "data-github-app" in app and "pull_requests" in app
+    assert "writes nothing to GitHub" not in app and "the labels of steps" in app

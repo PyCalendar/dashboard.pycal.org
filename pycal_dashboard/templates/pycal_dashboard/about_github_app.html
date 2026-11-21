@@ -1,0 +1,12 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "GitHub App" %} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_about_tabs.html" with tab="github-app" %}
+<section class="card" data-github-app>
+<p>{% blocktranslate %}The GitHub App of {{ site_name }} reads the repositories of the projects. Where a project switches them on, it writes the Status Message as a comment on pull requests, the labels of steps, and the labels of the actions of steps.{% endblocktranslate %}</p>
+<h2>{% translate "Permissions" %}</h2>
+<dl class="facts-list">{% for name, level in permissions.items %}<dt>{{ name }}</dt><dd>{{ level }}</dd>{% endfor %}</dl>
+<p>{% translate "Events" %}: {{ events|join:", " }}</p>
+</section>
+{% endblock %}

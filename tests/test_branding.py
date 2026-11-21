@@ -32,7 +32,8 @@ def test_the_footer_repeats_nothing_of_the_page_about(client, db, settings):
     for shown in re.findall(r'href="([^"]+)"', main):
         assert shown not in links or shown == "/about/"  # the tab of the page itself
     version = build_info.get(settings.SOURCE_URL)["version"]
-    assert version in main and version not in footer
+    assert version not in footer
+    assert version in client.get("/about/version/").content.decode()  # on its tab
 
 
 @pytest.mark.parametrize("value", ["no-address", "=https://a.example", "A=ftp://a.example"])

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 20:38+0000\n"
+"POT-Creation-Date: 2026-11-21 20:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1139,11 +1139,20 @@ msgstr "Über %(site_name)s"
 msgid "About"
 msgstr "Über"
 
+msgid "Contact"
+msgstr "Kontakt"
+
 msgid "Privacy"
 msgstr "Datenschutz"
 
 msgid "Licenses"
 msgstr "Lizenzen"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "GitHub App"
+msgstr "GitHub App"
 
 #, python-format
 msgid "%(counter)s unread notification"
@@ -1297,43 +1306,39 @@ msgstr ""
 "Markiere den Text und kopiere ihn in einen Fehlerbericht oder eine Frage. Er "
 "enthält keine Tokens und keine Daten von Personen."
 
-msgid "A dashboard for the contributor community of"
-msgstr "Ein Dashboard für die Gemeinschaft der Mitwirkenden von"
+#, python-format
+msgid "How %(site_name)s works and how to use it."
+msgstr "Wie %(site_name)s funktioniert und wie man es benutzt."
 
-msgid "where to start, what waits for a review, and who contributes."
-msgstr "wo man anfängt, was auf ein Review wartet und wer mitwirkt."
+msgid "Report a problem or leave feedback"
+msgstr "Ein Problem melden oder Rückmeldung geben"
 
+msgid "On GitHub: what does not work, or what would help you."
+msgstr "Auf GitHub: was nicht funktioniert, oder was dir helfen würde."
+
+msgid "Changelog"
+msgstr "Änderungen"
+
+msgid "What changed in each release."
+msgstr "Was sich in jeder Version geändert hat."
+
+#, python-format
 msgid ""
-"Every page is public, except your account, preferences, email addresses and "
-"private projects: those only you and the collaborators of the project see. "
-"No analytics, no advertising, and nothing from other sites but the avatars "
-"of GitHub."
+"The GitHub App of %(site_name)s reads the repositories of the projects. "
+"Where a project switches them on, it writes the Status Message as a comment "
+"on pull requests, the labels of steps, and the labels of the actions of "
+"steps."
 msgstr ""
-"Jede Seite ist öffentlich, außer deinem Konto, deinen Einstellungen, deinen "
-"E-Mail-Adressen und privaten Projekten: Diese siehst nur du und die "
-"Mitwirkenden des Projekts. Keine Analyse, keine Werbung und nichts von "
-"anderen Seiten außer den Avataren von GitHub."
+"Die GitHub App von %(site_name)s liest die Repositorys der Projekte. Wo ein "
+"Projekt sie einschaltet, schreibt sie die Statusnachricht als Kommentar auf "
+"Pull Requests, die Labels der Schritte und die Labels der Aktionen der "
+"Schritte."
 
-msgid "The privacy policy: which data goes to whom"
-msgstr "Die Datenschutzerklärung: welche Daten an wen gehen"
-
-msgid "The GitHub App"
-msgstr "Die GitHub App"
+msgid "Permissions"
+msgstr "Berechtigungen"
 
 msgid "Events"
 msgstr "Ereignisse"
-
-msgid ""
-"The app reads the repositories of the projects. It may write labels and a "
-"comment on pull requests for the automation, which comes later; it writes "
-"nothing to GitHub yet."
-msgstr ""
-"Die App liest die Repositorys der Projekte. Sie darf Labels und einen "
-"Kommentar an Pull Requests schreiben, für die Automatisierung, die später "
-"kommt; noch schreibt sie nichts auf GitHub."
-
-msgid "Version"
-msgstr "Version"
 
 msgid "Commit"
 msgstr "Commit"
@@ -1343,15 +1348,6 @@ msgstr "Gebaut"
 
 msgid "build"
 msgstr "Build"
-
-msgid "All licenses"
-msgstr "Alle Lizenzen"
-
-msgid "Report a bug"
-msgstr "Einen Fehler melden"
-
-msgid "Changelog"
-msgstr "Änderungen"
 
 msgid "Account"
 msgstr "Konto"
@@ -3170,6 +3166,9 @@ msgstr "Auf GitHub ändern"
 
 msgid "The GitHub App on GitHub"
 msgstr "Die GitHub App auf GitHub"
+
+msgid "The GitHub App"
+msgstr "Die GitHub App"
 
 msgid "Install it"
 msgstr "Installieren"
