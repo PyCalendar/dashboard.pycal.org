@@ -765,6 +765,17 @@ def test_the_evidence_of_a_task_and_the_page_of_its_author(page, site, github, b
     expect(page.locator("[data-tasks]")).to_be_visible()
 
 
+def row_tops(page, part: str) -> list[float]:
+    """Where a row of the boxes of the steps starts in each box, measured at once, when the
+    page with its styles is loaded: before, the boxes are not a grid yet."""
+    page.wait_for_load_state("load")
+    return page.evaluate(
+        "part => [...document.querySelectorAll('[data-progress] [data-step]')].map("
+        "box => box.querySelector(part).getBoundingClientRect().top)",
+        part,
+    )
+
+
 def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     """A writer skips the step a pull request is in, with a reason; the rows stay aligned."""
     from pycal_dashboard.models import PullRequestFilter, PullRequestStep
@@ -785,8 +796,8 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     first, second = bar.locator("[data-step]").nth(0), bar.locator("[data-step]").nth(1)
     expect(first).to_have_attribute("data-current", "")
     # the rows line up as in a table: the tasks of both steps at the same height
-    tops = [box.locator(".progress-tasks").bounding_box()["y"] for box in (first, second)]
-    assert abs(tops[0] - tops[1]) < 1
+    tops = row_tops(page, ".progress-tasks")
+    assert abs(tops[0] - tops[1]) < 1, tops
     first.locator("[data-skip-step] summary").click()
     first.get_by_label("Why it skips the step").fill("Reviewed at the meeting")
     first.get_by_role("button", name="Skip Peer review of the pull request").click()
@@ -799,8 +810,8 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     )
     second = page.locator("[data-progress] [data-step]").nth(1)
     expect(second.locator(".progress-here")).to_have_text("The pull request is here")
-    heres = [box.locator(".progress-here").bounding_box()["y"] for box in (first, second)]
-    assert abs(heres[0] - heres[1]) < 1
+    heres = row_tops(page, ".progress-here")
+    assert abs(heres[0] - heres[1]) < 1, heres
     first.get_by_role("button", name="Remove the skip").click()
     expect(page.locator("[data-progress] [data-step]").nth(0)).to_have_attribute("data-current", "")
 
