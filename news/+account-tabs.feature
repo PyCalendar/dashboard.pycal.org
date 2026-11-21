@@ -1,1 +1,0 @@
-The page Account has tabs: Email addresses, with everything of /accounts/email/ (add, verify, make primary, remove), Preferences, The GitHub App and Delete the account. The menu of the account no longer has Email addresses.
