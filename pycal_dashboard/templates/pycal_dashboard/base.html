@@ -34,7 +34,7 @@
   {% if messages %}<div class="messages">{% for message in messages %}
     <p class="message message-{{ message.level_tag }}" role="status">{{ message }}</p>
   {% endfor %}</div>{% endif %}
-  {% if not github_app_configured and nav != 'register_app' %}<div class="messages">{% url 'register_app' as register_url %}<p class="message message-warning" data-no-app>{% blocktranslate %}This site has no GitHub App yet. The people who run it <a href="{{ register_url }}">register the GitHub App</a> with the setup code from the log.{% endblocktranslate %}</p></div>{% endif %}
+  {% if not github_app_configured and nav != 'register_app' %}<div class="messages">{% url 'register_app' as register_url %}<p class="message message-warning" data-no-app>{% blocktranslate %}{{ site_name }} has no GitHub App yet. The people who run it <a href="{{ register_url }}">register the GitHub App</a> with the setup code from the log.{% endblocktranslate %}</p></div>{% endif %}
   {% block main %}{% endblock %}
 </main>
 <footer class="footer">

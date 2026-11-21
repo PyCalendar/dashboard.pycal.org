@@ -3,7 +3,7 @@
 {% block title %}{% translate "Log" %} · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>{% translate "Log" %} {% translate "The log" as help %}{% help_link links.log_help help %}</h1>
-<p class="muted">{% translate "What happened to the site and what followed from it: webhooks, sign-ins, the rights of the administrators and the setup. Only the administrators of the site see it." %}</p>
+<p class="muted">{% blocktranslate %}What happened to {{ site_name }} and what followed from it: webhooks, sign-ins, the rights of the administrators and the setup. Only the administrators of {{ site_name }} see it.{% endblocktranslate %}</p>
 {% if page.object_list %}<ol class="log" data-log>{% for trigger in page.object_list %}
 <li class="card" data-trigger="{{ trigger.kind }}"><p><span class="badge">{{ trigger.kind }}</span> <strong>{{ trigger.summary }}</strong> <span class="muted">{% when trigger.created %}{% if trigger.actor_login %} · @{{ trigger.actor_login }}{% endif %}{% if trigger.repository %} · {{ trigger.repository }}{% endif %}{% if trigger.delivery %} · {% translate "delivery" %} <code>{{ trigger.delivery }}</code>{% endif %}</span></p>
 {% if trigger.actions.all %}<ul>{% for action in trigger.actions.all %}<li data-action="{{ action.kind }}">{{ action.text }}</li>{% endfor %}</ul>{% endif %}</li>{% endfor %}</ol>

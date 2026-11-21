@@ -2,7 +2,7 @@
   <button type="button" class="notice-close button button-quiet button-small" hidden data-dismiss aria-label="{% translate "Hide this notice" %}" title="{% translate "Hide this notice" %}">×</button>
   <h2>{% blocktranslate count counter=update_errors|length %}{{ counter }} repository could not be updated{% plural %}{{ counter }} repositories could not be updated{% endblocktranslate %}</h2>
   <ul class="list">{% for failure in update_errors %}<li data-update-error="{{ failure.repository.full_name }}"><strong>{{ failure.repository.full_name }}</strong>: {% if failure.error %}<a href="{{ failure.error.docs_url }}">{{ failure.error.title }}</a>{% else %}{{ failure.repository.error_code }}{% endif %}{% if failure.repository.error_at %} · {% when failure.repository.error_at %}{% endif %}</li>{% endfor %}</ul>
-  <p class="muted">{% translate "The site keeps showing what it read before and tries again at the next update." %}</p>
+  <p class="muted">{% blocktranslate %}{{ site_name }} keeps showing what it read before and tries again at the next update.{% endblocktranslate %}</p>
   <details class="copy-details">
     <summary>{% translate "Details to copy" %}</summary>
     <label class="muted" for="update-error-details">{% translate "Select the text and copy it into a bug report or a question. It holds no tokens or data of people." %}</label>

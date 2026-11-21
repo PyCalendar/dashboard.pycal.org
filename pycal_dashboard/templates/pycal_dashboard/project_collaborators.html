@@ -22,6 +22,6 @@
   <label for="role">{% translate "Role" %}</label><select id="role" name="role">{% for value, title in roles %}<option value="{{ value }}">{{ title }}</option>{% endfor %}</select>{% translate "What each role may do" as roles_help %}{% help_link links.project_roles roles_help %}
   <button class="button">{% translate "Share" %}</button>
 </form>
-<p class="muted">{% translate "The person signs in to the site with GitHub once before. Read: sees the project, also a private one. Change: also changes and updates it. Own: also shares it, makes it public or private and deletes it." %}</p>
+<p class="muted">{% blocktranslate %}The person signs in to {{ site_name }} with GitHub once before. Read: sees the project, also a private one. Change: also changes and updates it. Own: also shares it, makes it public or private and deletes it.{% endblocktranslate %}</p>
 </section>{% else %}<p class="muted">{% translate "The owners of the project share it." %}</p>{% endif %}
 {% endblock %}

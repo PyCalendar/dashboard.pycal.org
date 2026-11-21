@@ -9,7 +9,7 @@
   <li><a href="?tab={{ name }}"{% if tab == name %} aria-current="page"{% endif %} data-account-tab="{{ name }}">{{ title }}</a></li>{% endfor %}
 </ul></nav>
 {% if tab == "emails" %}<section class="card" id="emails" data-emails-tab>
-  <p class="lead">{% translate "The site sends emails only to verified addresses, and only what you choose in the preferences. Verify an address with the link that the site sends to it." %}</p>
+  <p class="lead">{% blocktranslate %}{{ site_name }} sends emails only to verified addresses, and only what you choose in the preferences. Verify an address with the link that {{ site_name }} sends to it.{% endblocktranslate %}</p>
   {% if emails %}<ul class="list addresses" data-emails>{% for address in emails %}<li data-address="{{ address.email }}"><span class="address">{{ address.email }}</span>
     {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>{% endif %}
     {% if address.primary %}<span class="badge">{% translate "primary" %}</span>{% endif %}
@@ -37,7 +37,7 @@
   <p class="muted">{% translate "Your choice applies on every device where you sign in. The menus at the top change it, too." %}</p>
   <fieldset><legend>{% translate "Emails" %}</legend>
     <label class="check"><input type="checkbox" name="email_permissions" value="yes"{% if preferences.email_permissions %} checked{% endif %}> {% translate "Email me when an installation of the GitHub App needs more permissions: one that I installed or changed, or one on a repository of a project that I change" %}</label>
-    <small>{% translate "The site sends them to your primary address if it is verified, else to your newest verified one." %}</small></fieldset>
+    <small>{% blocktranslate %}{{ site_name }} sends them to your primary address if it is verified, else to your newest verified one.{% endblocktranslate %}</small></fieldset>
   <p><button class="button">{% translate "Save the preferences" %}</button></p>
 </form>
 </section>
@@ -49,11 +49,11 @@
     {% else %}<span class="badge badge-success">{% translate "has every permission" %}</span> <a href="{{ installation.settings_url }}">{% translate "Configure it on GitHub" %}</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
   {% if install_url %}<p>{% translate "Install the app on the repositories of an organization: on all of them or on the ones you choose. Owners of the organization install it; other members ask an owner on GitHub." %}</p>
   <p><a class="button" href="{{ install_url }}">{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>
-  {% else %}{% url 'register_app' as register_url %}<p>{% blocktranslate %}The site has no GitHub App yet. The people who run the site <a href="{{ register_url }}">register it</a> first.{% endblocktranslate %}</p>{% endif %}
+  {% else %}{% url 'register_app' as register_url %}<p>{% blocktranslate %}{{ site_name }} has no GitHub App yet. The people who run {{ site_name }} <a href="{{ register_url }}">register it</a> first.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% else %}{% with own=removal.own_projects shared=removal.shared_projects %}<section class="card danger-zone" id="delete" data-delete-account>
   <h2>{% translate "Delete the account" %} {% translate "Delete your account" as help %}{% help_link links.delete_account help %}</h2>
-  <p>{% translate "This deletes your account on this site: your GitHub handle and token, your email addresses, your preferences and your roles in projects. It cannot be undone. Issues and pull requests stay on GitHub, as before." %}</p>
+  <p>{% blocktranslate %}This deletes your account on {{ site_name }}: your GitHub handle and token, your email addresses, your preferences and your roles in projects. It cannot be undone. Issues and pull requests stay on GitHub, as before.{% endblocktranslate %}</p>
   {% if shared %}<p class="message message-error" data-shared-projects>{% translate "You are the only owner of projects that others share. Give another person the role own, or delete the project, first:" %}
     {% for project in shared %}<a href="{% url 'project_collaborators' project.slug %}">{{ project.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
   {% else %}{% if own %}<p data-own-projects>{% translate "These projects have nobody else and are deleted with it:" %} {% for project in own %}<a href="{{ project.path }}">{{ project.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}

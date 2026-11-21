@@ -6,7 +6,7 @@
   <h1>{% translate "Verify your email address" %}</h1>
   {% if confirmation %}{% with address=confirmation.email_address.email %}
   {% if can_confirm %}
-  <p>{% blocktranslate %}Is <strong>{{ address }}</strong> your email address? Verify it to receive emails of this site at it.{% endblocktranslate %}</p>
+  <p>{% blocktranslate %}Is <strong>{{ address }}</strong> your email address? Verify it to receive emails of {{ site_name }} at it.{% endblocktranslate %}</p>
   <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">{% csrf_token %}{{ redirect_field }}
     <button class="button" type="submit">{% translate "Verify" %}</button>
   </form>

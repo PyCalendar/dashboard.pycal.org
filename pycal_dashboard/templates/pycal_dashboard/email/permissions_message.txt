@@ -4,7 +4,7 @@
 
 {% for name, level in missing %}- {{ name }}: {{ level }}
 {% endfor %}
-{% blocktranslate with url=installation.settings_url %}Until they are accepted, the site misses what GitHub would tell it with them. An owner of the account accepts them on GitHub:
+{% blocktranslate with url=installation.settings_url %}Until they are accepted, {{ site_name }} misses what GitHub would tell it with them. An owner of the account accepts them on GitHub:
 {{ url }}{% endblocktranslate %}
 
 {% blocktranslate %}What the permissions are for:{% endblocktranslate %}

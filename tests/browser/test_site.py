@@ -10,7 +10,7 @@ def test_start_page(page, site):
     ).to_be_visible()
     expect(page.locator("[data-github-app]")).to_have_count(0)
     expect(page.locator("[data-no-app]")).to_have_count(0)
-    page.get_by_role("link", name="About the site").click()
+    page.get_by_role("link", name="About dashboard.pycal.org").click()
     expect(page).to_have_url(f"{site}/about/")
     expect(page.locator("[data-contact-tiles]")).to_be_visible()
 

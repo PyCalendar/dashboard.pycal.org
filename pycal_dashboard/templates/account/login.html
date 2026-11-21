@@ -5,15 +5,15 @@
 <div class="card narrow">
   <h1>{% translate "Sign in with GitHub" %}</h1>
   {% if sign_in_configured %}
-  <p>{% translate "GitHub tells this site who you are, your email addresses and your organizations; it only reads. There are no passwords on this site. Signing in adds your account, your preferences and your projects." %}</p>
+  <p>{% blocktranslate %}GitHub tells {{ site_name }} who you are, your email addresses and your organizations; it only reads. There are no passwords on {{ site_name }}. Signing in adds your account, your preferences and your projects.{% endblocktranslate %}</p>
   <form method="post" action="{% provider_login_url 'github' %}">
     {% csrf_token %}
     {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}
     <button class="button" type="submit">{% translate "Sign in with GitHub" %}</button>
   </form>
   {% else %}
-  <p class="message message-warning" data-no-sign-in>{% translate "Signing in is not set up yet: the site has no OAuth app." %}</p>
-  <p>{% translate "The people who run the site create an OAuth app on GitHub and enter it here, with the setup code of the log. It only tells the site who people are and their email addresses." %}</p>
+  <p class="message message-warning" data-no-sign-in>{% blocktranslate %}Signing in is not set up yet: {{ site_name }} has no OAuth app.{% endblocktranslate %}</p>
+  <p>{% blocktranslate %}The people who run {{ site_name }} create an OAuth app on GitHub and enter it here, with the setup code of the log. It only tells {{ site_name }} who people are and their email addresses.{% endblocktranslate %}</p>
   <p><a class="button" href="{% url 'oauth_app' %}">{% translate "Set up signing in" %}</a> {% translate "The OAuth app for signing in" as help %}{% help_link links.oauth_app help %}</p>
   {% endif %}
 </div>

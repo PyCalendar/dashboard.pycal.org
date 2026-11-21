@@ -355,3 +355,18 @@ def test_a_step_by_its_id_and_one_that_was_removed(client, project, filters, bob
     assert f'data-step-detail="{first.pk}"' in page  # the steps it has
     answer = client.get("/projects/icalendar/steps/?step_id=nothing")
     assert answer.status_code == 404 and "data-missing-step" in answer.content.decode()
+
+
+def test_readers_see_which_authors_a_step_skips(client, project, filters, bob):
+    conflict, _review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    step = PullRequestStep.objects.get()
+    step.skip_authors = ["niccokunzmann"]
+    step.save()
+    client.logout()
+    page = client.get(f"/projects/icalendar/steps/?step_id={step.pk}").content.decode()
+    shown = page.split("data-skip-authors")[1].split("</p>")[0]
+    assert (
+        "Skipped for the pull requests of" in shown and 'data-github-user="niccokunzmann"' in shown
+    )

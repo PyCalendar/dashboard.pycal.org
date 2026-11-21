@@ -6,7 +6,7 @@ The JSON is at the address of a page with `.json` instead of the last `/`. It ho
 
 How to navigate: start at {{ site_url }}/projects.json, take the `slug` of a project, then read {{ site_url }}/projects/<slug>.json and {{ site_url }}/projects/<slug>/pull-requests.json. A project lists its repositories; the pull requests link to GitHub (`url`).
 
-Be kind to the site: it is small. Read a page once, follow the pages of a list (`page`, `pages`) one after the other, and do not open the pages of robots.txt that are not allowed. The data is as fresh as the last update of the project (`updated`).
+Be kind to {{ site_name }}: it is small. Read a page once, follow the pages of a list (`page`, `pages`) one after the other, and do not open the pages of robots.txt that are not allowed. The data is as fresh as the last update of the project (`updated`).
 
 ## The JSON of the pages
 {% for page in api %}
@@ -16,7 +16,7 @@ Be kind to the site: it is small. Read a page once, follow the pages of a list (
 
 - [The JSON of the pages]({{ links.json }}): every field
 - [Projects]({{ links.projects }}): projects, their pages and roles
-- [Privacy]({{ site_url }}/about/privacy/): which data of people the site keeps and who gets it
+- [Privacy]({{ site_url }}/about/privacy/): which data of people {{ site_name }} keeps and who gets it
 
 ## Optional
 

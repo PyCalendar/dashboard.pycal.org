@@ -6,7 +6,7 @@
   <p class="lead">{% translate "This dashboard will guide the contributor community of" %}
   {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
   {% translate "Projects show the open issues and pull requests of their repositories; the automation is designed next." %}</p>
-  <p><a class="button" href="{{ links.documentation }}">{% translate "Read the documentation" %}</a> <a class="button button-quiet" href="{% url 'about' %}">{% translate "About the site" %}</a></p>
+  <p><a class="button" href="{{ links.documentation }}">{% translate "Read the documentation" %}</a> <a class="button button-quiet" href="{% url 'about' %}">{% blocktranslate %}About {{ site_name }}{% endblocktranslate %}</a></p>
 </section>
-{% if not sign_in_configured %}<p class="message message-warning" data-no-sign-in>{% translate "Nobody can sign in yet: the site has no OAuth app." %}</p>{% endif %}
+{% if not sign_in_configured %}<p class="message message-warning" data-no-sign-in>{% blocktranslate %}Nobody can sign in yet: {{ site_name }} has no OAuth app.{% endblocktranslate %}</p>{% endif %}
 {% endblock %}

@@ -4,9 +4,9 @@
 {% block main %}
 <section class="hero" data-registered-app="{{ app.slug }}">
   <h1>{% translate "The GitHub App is registered" %} {% translate "Install the GitHub App" as help %}{% help_link links.install_help help %}</h1>
-  <p class="lead">{% blocktranslate with name=app.name owner=app.owner.login %}<strong>{{ name }}</strong> belongs to <strong>{{ owner }}</strong> on GitHub. The site uses it now.{% endblocktranslate %}</p>
+  <p class="lead">{% blocktranslate with name=app.name owner=app.owner.login %}<strong>{{ name }}</strong> belongs to <strong>{{ owner }}</strong> on GitHub. {{ site_name }} uses it now.{% endblocktranslate %}</p>
 </section>
-{% if local %}<p class="message message-warning">{% blocktranslate %}The app has no webhook, because GitHub cannot reach this site. When the site has a public address, add the webhook in the settings of the app on GitHub: the address of the site plus <code>/github/webhook/</code>, and a secret that you also set as <code>GITHUB_WEBHOOK_SECRET</code>.{% endblocktranslate %}</p>{% endif %}
+{% if local %}<p class="message message-warning">{% blocktranslate %}The app has no webhook, because GitHub cannot reach {{ site_name }}. When {{ site_name }} has a public address, add the webhook in the settings of the app on GitHub: the address of {{ site_name }} plus <code>/github/webhook/</code>, and a secret that you also set as <code>GITHUB_WEBHOOK_SECRET</code>.{% endblocktranslate %}</p>{% endif %}
 <div class="columns">
   <section class="card">
     <h2>{% translate "Next" %}</h2>
@@ -19,7 +19,7 @@
   <section class="card">
     <h2>{% translate "Where the credentials are" %}</h2>
     <p>{% blocktranslate %}The settings are in <code>{{ env_file }}</code>, the private key in <code>{{ key_file }}</code>. Back up the volume; keep both secret.{% endblocktranslate %}</p>
-    <p>{% if reloaded %}{% translate "The processes of the site restart to read them; this takes a few seconds." %}{% else %}{% translate "The site reads them at every start; settings of the environment take precedence." %}{% endif %}</p>
+    <p>{% if reloaded %}{% blocktranslate %}The processes of {{ site_name }} restart to read them; this takes a few seconds.{% endblocktranslate %}{% else %}{% blocktranslate %}{{ site_name }} reads them at every start; settings of the environment take precedence.{% endblocktranslate %}{% endif %}</p>
   </section>
 </div>
 {% endblock %}

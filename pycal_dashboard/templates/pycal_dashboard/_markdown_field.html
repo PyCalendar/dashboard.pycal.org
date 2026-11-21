@@ -1,4 +1,4 @@
-{% load i18n static help %}<div class="markdown-field" data-markdown-field>
+{% load site i18n static help %}<div class="markdown-field" data-markdown-field>
   <label for="{{ id }}">{{ label }}</label>
   <div class="markdown-bar" role="toolbar" aria-label="{% translate "Format" %}" hidden data-markdown-bar>
     <markdown-toolbar for="{{ id }}">
@@ -11,7 +11,7 @@
       <md-code><button type="button" class="button button-quiet button-small" title="{% translate "Code" %}" aria-label="{% translate "Code" %}"><code>&lt;/&gt;</code></button></md-code>
     </markdown-toolbar>
     {% if variables %}<details class="variables-menu" data-variables-menu><summary class="button button-quiet button-small">{% translate "Variables" %}</summary>
-      <ul class="variables-list" role="menu">{% for key, group in variables.items %}<li role="none" class="variables-group">{{ group.0 }}</li>{% for variable, about in group.1.items %}<li role="none"><button type="button" role="menuitem" data-variable="{{ '{' }}{{ variable }}{{ '}' }}"><code>{{ '{' }}{{ variable }}{{ '}' }}</code> <span class="muted">{{ about.0 }}</span></button></li>{% endfor %}{% endfor %}</ul>
+      <ul class="variables-list" role="menu">{% for key, group in variables.items %}<li role="none" class="variables-group">{{ group.0 }}</li>{% for variable, about in group.1.items %}<li role="none"><button type="button" role="menuitem" data-variable="{{ '{' }}{{ variable }}{{ '}' }}"><code>{{ '{' }}{{ variable }}{{ '}' }}</code> <span class="muted">{{ about.0|named }}</span></button></li>{% endfor %}{% endfor %}</ul>
     </details>{% translate "The variables of the templates" as variables_help %}{% help_link links.step_variables variables_help %}{% endif %}
     <span class="markdown-tabs"><button type="button" class="button button-quiet button-small" aria-pressed="true" data-markdown-write>{% translate "Write" %}</button><button type="button" class="button button-quiet button-small" aria-pressed="false" data-markdown-preview="{% if preview_url %}{{ preview_url }}{% else %}{% url 'markdown_preview' %}{% endif %}">{% translate "Preview" %}</button></span>
   </div>

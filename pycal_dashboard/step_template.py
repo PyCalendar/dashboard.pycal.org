@@ -46,7 +46,7 @@ GROUPS = {
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar",
             ),
             "pr_steps_url": (
-                _("the address of the page of the pull request with its steps on this site"),
+                _("the address of the page of the pull request with its steps on %(site_name)s"),
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar",
             ),
         },

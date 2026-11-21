@@ -5,7 +5,7 @@ someone, probably you, added this email address to the account @{{ user }} on {{
 To verify it, open this link and press "Verify":
 {{ activate_url }}
 
-If it was not you, ignore this email: the address stays unverified and the site sends it nothing.{% endblocktranslate %}
+If it was not you, ignore this email: the address stays unverified and {{ site_name }} sends it nothing.{% endblocktranslate %}
 
 --
 {{ site_name }}{% endautoescape %}

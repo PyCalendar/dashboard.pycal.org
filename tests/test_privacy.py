@@ -108,12 +108,15 @@ def test_the_privacy_page_shows_the_policy(client, settings):
     page = client.get("/about/privacy/").content.decode()
     for key in DATA:
         assert f'data-kept="{key}"' in page
+    from pycal_dashboard.templatetags.site import named
+
     for party in PARTIES:
-        assert str(party["name"]) in page
+        assert named(party["name"]) in page
+    assert "%(site_name)s" not in page and "this site" not in page
     for name, _purpose in COOKIES:
         assert f"<code>{name}</code>" in page
     assert "<code>avatars.githubusercontent.com</code>" in page
-    assert "The mail server of the site is mail.example.org." in page
+    assert "The mail server of dashboard.pycal.org is mail.example.org." in page
     assert 'data-github-user="admin"' in page
     about = client.get("/about/").content.decode()
     assert 'href="/about/privacy/"' in about.split('<ul class="tabs">')[1]
@@ -122,7 +125,7 @@ def test_the_privacy_page_shows_the_policy(client, settings):
 @pytest.mark.django_db
 def test_without_a_mail_server_the_policy_says_so(client, settings):
     settings.EMAIL_HOST = ""
-    assert "The site sends no emails" in client.get("/about/privacy/").content.decode()
+    assert "dashboard.pycal.org sends no emails" in client.get("/about/privacy/").content.decode()
 
 
 @pytest.mark.django_db

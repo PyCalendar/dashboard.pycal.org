@@ -55,7 +55,7 @@ def test_start_page_without_sign_in(client, db, settings):
     from pycal_dashboard.sign_in import SignIn
 
     settings.SIGN_IN = SignIn()
-    assert "the site has no OAuth app" in client.get("/").content.decode()
+    assert "dashboard.pycal.org has no OAuth app" in client.get("/").content.decode()
 
 
 def test_installed(client, db):

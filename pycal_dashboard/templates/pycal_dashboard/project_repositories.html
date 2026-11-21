@@ -12,11 +12,11 @@
 {% else %}<p data-no-repositories>{% translate "No repositories yet: add them below." %}</p>{% endif %}
 </section>
 {% if without_app or outdated %}<section class="card" id="install" data-install-step><h2>{% translate "Install the GitHub App" %} {% translate "Permissions of the GitHub App" as help %}{% help_link links.permissions help %}</h2>
-  <p>{% translate "The GitHub App, installed on the repositories, lets the site:" %}</p>
+  <p>{% blocktranslate %}The GitHub App, installed on the repositories, lets {{ site_name }}:{% endblocktranslate %}</p>
   <ul class="list">
     <li>{% translate "receive the webhooks of the changes in the repositories," %}</li>
     <li>{% translate "add and remove labels of pull requests," %}</li>
-    <li>{% translate "create and update a comment of the site on a pull request." %}</li>
+    <li>{% blocktranslate %}create and update a comment of {{ site_name }} on a pull request.{% endblocktranslate %}</li>
   </ul>
   <p><a href="{{ links.permissions }}">{% translate "The permissions it asks for and why" %}</a></p>
   {% if without_app %}<p>{% blocktranslate count counter=without_app|length %}{{ counter }} repository has no GitHub App yet.{% plural %}{{ counter }} repositories have no GitHub App yet.{% endblocktranslate %} {% translate "An owner of their account installs it." %}</p>
@@ -33,7 +33,7 @@
     <datalist id="repository-choices">{% for name in known %}<option value="{{ name }}">{% endfor %}</datalist>
     <button class="button">{% translate "Add" %}</button>
   </form>
-  <p class="muted">{% translate "Type owner/name or paste a link. While you type, the field proposes the repositories that the site knows and those of GitHub." %}</p>
+  <p class="muted">{% blocktranslate %}Type owner/name or paste a link. While you type, the field proposes the repositories that {{ site_name }} knows and those of GitHub.{% endblocktranslate %}</p>
   <h3>{% translate "From an account" %}</h3>
   <form method="get" action="#add" class="inline-form" data-choose-owner>
     <label for="owner">{% translate "Organization or account" %}</label>

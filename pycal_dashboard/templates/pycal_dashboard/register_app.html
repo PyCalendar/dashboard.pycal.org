@@ -4,16 +4,16 @@
 {% block main %}
 <section class="hero">
   <h1>{% translate "Register the GitHub App" %} {% translate "Register the GitHub App" as help %}{% help_link links.app_setup help %}</h1>
-  <p class="lead">{% translate "The dashboard receives the webhooks of the repositories with its own GitHub App; it only reads. The site registers the app on GitHub itself and keeps the credentials in its volume." %}</p>
+  <p class="lead">{% blocktranslate %}The dashboard receives the webhooks of the repositories with its own GitHub App; it only reads. {{ site_name }} registers the app on GitHub itself and keeps the credentials in its volume.{% endblocktranslate %}</p>
 </section>
 
 {% if source %}
 <div class="card" data-registered="{{ source }}">
-  <h2>{% translate "This site has a GitHub App" %}</h2>
-  <p>{% if source == "environment" %}{% blocktranslate %}Its credentials come from the environment, such as <code>.env</code>. They take precedence over the volume.{% endblocktranslate %}{% else %}{% blocktranslate %}It was registered on this site; its credentials are in the volume (<code>DATA_DIR/.env</code>).{% endblocktranslate %}{% endif %}</p>
+  <h2>{% blocktranslate %}{{ site_name }} has a GitHub App{% endblocktranslate %}</h2>
+  <p>{% if source == "environment" %}{% blocktranslate %}Its credentials come from the environment, such as <code>.env</code>. They take precedence over the volume.{% endblocktranslate %}{% else %}{% blocktranslate %}It was registered on {{ site_name }}; its credentials are in the volume (<code>DATA_DIR/.env</code>).{% endblocktranslate %}{% endif %}</p>
   <p>{% translate "A site has one GitHub App, so no other can be registered here." %}</p>
-  {% if app_check %}{% if app_check.complete %}<p class="message message-success" data-app-complete>{% translate "The app has every permission and event the site needs." %}</p>
-  {% else %}<div class="message message-warning" data-app-lacks><p>{% translate "The app lacks what the site needs. Its owner changes it in the settings of the app on GitHub, then the owners of the installations accept the new permissions." %}</p>
+  {% if app_check %}{% if app_check.complete %}<p class="message message-success" data-app-complete>{% blocktranslate %}The app has every permission and event {{ site_name }} needs.{% endblocktranslate %}</p>
+  {% else %}<div class="message message-warning" data-app-lacks><p>{% blocktranslate %}The app lacks what {{ site_name }} needs. Its owner changes it in the settings of the app on GitHub, then the owners of the installations accept the new permissions.{% endblocktranslate %}</p>
   <ul>{% for name, level in app_check.missing_permissions.items %}<li>{% translate "Permission" %} <code>{{ name }}</code>: {{ level }}</li>{% endfor %}{% for event in app_check.missing_events %}<li>{% translate "Event" %} <code>{{ event }}</code></li>{% endfor %}</ul>
   <p>{% translate "The permissions and events of the app on GitHub" as label %}{% translate "Change them on GitHub" as text %}{% github_link app_check.settings_url label text "button" %}</p></div>{% endif %}{% endif %}
   {% if slug %}<p>{% translate "The GitHub App on GitHub" as label %}{% translate "The GitHub App" as text %}{% github_link "https://github.com/apps/"|add:slug label text "button" %} <a class="button button-quiet" href="https://github.com/apps/{{ slug }}/installations/new">{% translate "Install it" %}</a></p>{% endif %}
@@ -22,7 +22,7 @@
 {% elif started %}
 <div class="card" data-step="github">
   <h2>{% translate "2. Create the app on GitHub" %}</h2>
-  <p>{% if started.organization %}{% blocktranslate with organization=started.organization %}GitHub opens the form for a new app of the organization <strong>{{ organization }}</strong>, filled in with the manifest below.{% endblocktranslate %}{% else %}{% translate "GitHub opens the form for a new app of your account, filled in with the manifest below." %}{% endif %} {% blocktranslate %}Check the name and press <em>Create GitHub App</em> there. GitHub then returns to this site, which saves the credentials.{% endblocktranslate %}</p>
+  <p>{% if started.organization %}{% blocktranslate with organization=started.organization %}GitHub opens the form for a new app of the organization <strong>{{ organization }}</strong>, filled in with the manifest below.{% endblocktranslate %}{% else %}{% translate "GitHub opens the form for a new app of your account, filled in with the manifest below." %}{% endif %} {% blocktranslate %}Check the name and press <em>Create GitHub App</em> there. GitHub then returns to {{ site_name }}, which saves the credentials.{% endblocktranslate %}</p>
   <form method="post" action="{{ started.action }}">
     <input type="hidden" name="manifest" value="{{ manifest_json }}">
     <button class="button button-accent" type="submit">{% translate "Continue to GitHub" %}</button>
@@ -38,7 +38,7 @@
 </div>
 
 {% else %}
-{% if local %}<p class="message message-warning" data-local>{% blocktranslate %}This site runs at <code>{{ site_url }}</code>, which GitHub cannot reach. Signing in works, but webhooks cannot be delivered: the app is registered without a webhook. Give the site a public address and set <code>SITE_URL</code> to it to test everything.{% endblocktranslate %}</p>{% endif %}
+{% if local %}<p class="message message-warning" data-local>{% blocktranslate %}{{ site_name }} runs at <code>{{ site_url }}</code>, which GitHub cannot reach. Signing in works, but webhooks cannot be delivered: the app is registered without a webhook. Give {{ site_name }} a public address and set <code>SITE_URL</code> to it to test everything.{% endblocktranslate %}</p>{% endif %}
 {% if error %}<div class="message message-error" role="alert" data-error="{{ error.code }}"><strong>{{ error.title }}</strong>{% if error.detail %}: <code>{{ error.detail }}</code>{% endif %} <a href="{{ error.docs_url }}">{% translate "What this means" %}</a></div>{% endif %}
 <div class="card" data-step="details">
   <h2>{% translate "1. Name the app" %}</h2>
@@ -51,10 +51,10 @@
       <small>{% translate "The login of the organization that owns the app, such as PyCalendar. Empty: your own account." %}</small></p>
     {% if needs_code %}<p><label for="setup_code">{% translate "Setup code" %}</label>
       <input id="setup_code" name="setup_code" required autocomplete="off" spellcheck="false">
-      <small>{% blocktranslate %}Only the people who run the site may register its app. The site writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.{% endblocktranslate %}</small></p>{% endif %}
+      <small>{% blocktranslate %}Only the people who run {{ site_name }} may register its app. {{ site_name }} writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.{% endblocktranslate %}</small></p>{% endif %}
     <p><button class="button" type="submit">{% translate "Register the GitHub App" %}</button></p>
   </form>
-  {% url 'about' as about_url %}<p class="muted">{% blocktranslate %}The app gets the permissions and events the dashboard needs (<a href="{{ about_url }}">About</a>) and the addresses of this site: <code>{{ site_url }}</code>.{% endblocktranslate %}</p>
+  {% url 'about' as about_url %}<p class="muted">{% blocktranslate %}The app gets the permissions and events the dashboard needs (<a href="{{ about_url }}">About</a>) and the addresses of {{ site_name }}: <code>{{ site_url }}</code>.{% endblocktranslate %}</p>
 </div>
 {% endif %}
 {% endblock %}

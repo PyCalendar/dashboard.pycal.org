@@ -1,5 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n static markdown %}
+{% load i18n static markdown github %}
 {% block title %}{% translate "Steps" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'steps.js' %}" defer></script><script src="{% static 'person-complete.js' %}" defer></script>{% endblock %}
 {% block main %}
@@ -62,6 +62,7 @@
 <form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
 {% else %}<div class="table-head step-head"><h2>{{ shown.name }}</h2><a class="button button-quiet button-small" href="{{ filter_pulls }}" data-filter-link>{% blocktranslate with name=shown.filter.name %}Filter: {{ name }}{% endblocktranslate %}</a></div>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
+{% if shown.skip_authors %}<p class="muted" data-skip-authors>{% translate "Skipped for the pull requests of" %} {% for handle in shown.skip_authors %}{% github_user handle size=16 %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
 <dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request leaves the step" %}{% endif %}</dt>
   {% if kinds.add %}<dd>{% translate "the GitHub App adds the labels" %} {% for label in kinds.add %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}
   {% if kinds.remove %}<dd>{% translate "the GitHub App removes the labels" %} {% for label in kinds.remove %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}{% endif %}{% endfor %}</dl>

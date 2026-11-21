@@ -502,8 +502,8 @@ in their groups. The examples are those of a pull request of
        :ref:`pull-request-badge`
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar``
    * - ``{pr_steps_url}``
-     - The address of the page of the pull request with its steps on this
-       site, see :ref:`pull-request-page`
+     - The address of the page of the pull request with its steps on
+       dashboard.pycal.org, see :ref:`pull-request-page`
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar``
 
 The addresses always name the repository of the pull request, so they stay the

@@ -3,7 +3,7 @@
 {% block title %}{% translate "The OAuth app for signing in" %} · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>{% translate "The OAuth app for signing in" %} {% translate "The OAuth app for signing in" as help %}{% help_link links.oauth_app help %}</h1>
-<p class="lead">{% translate "People sign in with an OAuth app. GitHub tells the site only who they are and their email addresses, read only. It never asks to let the site act on their behalf." %}</p>
+<p class="lead">{% blocktranslate %}People sign in with an OAuth app. GitHub tells {{ site_name }} only who they are and their email addresses, read only. It never asks to let {{ site_name }} act on their behalf.{% endblocktranslate %}</p>
 {% if configured %}<p class="message message-success" data-oauth-configured>{% translate "People sign in with an OAuth app." %}</p>
 {% else %}<p class="message message-warning" data-oauth-missing>{% translate "Until the OAuth app is entered, nobody can sign in." %}</p>{% endif %}
 {% if from_environment %}<p class="message message-warning" data-oauth-environment>{% blocktranslate %}The OAuth app is set in the environment (<code>GITHUB_OAUTH_CLIENT_ID</code>); change it there.{% endblocktranslate %}</p>
@@ -25,10 +25,10 @@
     <p><label for="client_id">{% translate "Client ID" %}</label><input id="client_id" name="client_id" required autocomplete="off" spellcheck="false"></p>
     <p><label for="secret">{% translate "Client secret" %}</label><input id="secret" name="secret" type="password" required autocomplete="off"></p>
     {% if needs_code %}<p><label for="setup_code">{% translate "Setup code" %}</label><input id="setup_code" name="setup_code" required autocomplete="off" spellcheck="false">
-      <small>{% blocktranslate %}Only the people who run the site may enter the OAuth app. The site writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.{% endblocktranslate %}</small></p>{% endif %}
+      <small>{% blocktranslate %}Only the people who run {{ site_name }} may enter the OAuth app. {{ site_name }} writes the code into its log at every start, and <code>manage.py github_app_setup_code</code> shows it.{% endblocktranslate %}</small></p>{% endif %}
     <p><button class="button" type="submit">{% translate "Save the OAuth app" %}</button></p>
   </form>
-  <p class="muted">{% blocktranslate %}They are kept in the volume of the site (<code>DATA_DIR/.env</code>); settings of the environment take precedence.{% endblocktranslate %}</p>
+  <p class="muted">{% blocktranslate %}They are kept in the volume of {{ site_name }} (<code>DATA_DIR/.env</code>); settings of the environment take precedence.{% endblocktranslate %}</p>
 </section>
 {% endif %}
 {% endblock %}

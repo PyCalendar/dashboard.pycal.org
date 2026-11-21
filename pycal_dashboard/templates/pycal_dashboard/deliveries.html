@@ -3,7 +3,7 @@
 {% block title %}{% translate "Webhook deliveries" %} · {{ site_name }}{% endblock %}
 {% block main %}
 <h1>{% translate "Webhook deliveries" %}</h1>
-<p class="muted">{% translate "The latest 100 webhooks of GitHub and what the site did. Only the administrators of the site see them: they may name private repositories." %}</p>
+<p class="muted">{% blocktranslate %}The latest 100 webhooks of GitHub and what {{ site_name }} did. Only the administrators of {{ site_name }} see them: they may name private repositories.{% endblocktranslate %}</p>
 {% if deliveries %}<div class="table-wrap"><table class="table"><thead><tr><th>{% translate "Received" %}</th><th>{% translate "Event" %}</th><th>{% translate "Repository" %}</th><th>{% translate "Outcome" %}</th></tr></thead><tbody>
 {% for delivery in deliveries %}<tr><td>{% when delivery.received %}</td><td>{{ delivery.event }}{% if delivery.action %}.{{ delivery.action }}{% endif %}</td><td>{{ delivery.repository }}</td><td><span class="badge badge-{{ delivery.outcome }}">{{ delivery.outcome }}</span> {% if delivery.error %}<code>{{ delivery.error }}</code> {% endif %}{{ delivery.detail }}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p class="muted empty">{% translate "No webhook yet." %}</p>{% endif %}

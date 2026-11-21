@@ -354,7 +354,7 @@ def test_the_install_step_names_the_repositories_without_the_app(
     assert "1 repository has no GitHub App yet." in page and "app not installed" in page
     assert "https://github.com/apps/dashboard-test/installations/new" in page
     assert "https://docs.example.org/reference/permissions.html" in page
-    assert "create and update a comment of the site on a pull request" in page
+    assert "create and update a comment of dashboard.pycal.org on a pull request" in page
 
 
 def test_the_install_step_is_shown_only_when_the_app_is_missing_or_out_of_date(

@@ -4,7 +4,7 @@
 {% block main %}
 <section class="hero" data-installation="{{ installation_id }}">
   <h1>{% if action == "update" %}{% translate "The installation of the GitHub App is updated" %}{% else %}{% translate "The GitHub App is installed" %}{% endif %}</h1>
-  <p class="lead">{% translate "The app receives the webhooks of the repositories you chose. The site logs them, but does nothing with them yet: it keeps no data of GitHub and writes nothing to GitHub." %}</p>
+  <p class="lead">{% blocktranslate %}The app receives the webhooks of the repositories you chose. {{ site_name }} logs them, but does nothing with them yet: it keeps no data of GitHub and writes nothing to GitHub.{% endblocktranslate %}</p>
   <p><a class="button" href="{% url 'home' %}">{% translate "Back to the start" %}</a></p>
 </section>
 {% endblock %}

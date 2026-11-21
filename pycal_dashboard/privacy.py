@@ -17,16 +17,17 @@ DATA = {
             "your verified email addresses; the time you signed in."
         ),
         "whose": _("People who sign in"),
-        "seen_by": _("You and the people who run the site"),
+        "seen_by": _("You and the people who run %(site_name)s"),
         "why": _("To know who you are, and to send you the emails you choose."),
     },
     "token": {
         "what": _(
-            "The token that GitHub gives the site when you sign in, with the scopes user:email "
+            "The token that GitHub gives %(site_name)s when you sign in, with the scopes "
+            "user:email "
             "and read:org."
         ),
         "whose": _("People who sign in"),
-        "seen_by": _("Nobody: the site uses it for you"),
+        "seen_by": _("Nobody: %(site_name)s uses it for you"),
         "why": _(
             "To list your organizations and the repositories you may add to a project, and to "
             "check that you may read a private repository."
@@ -35,8 +36,8 @@ DATA = {
     "preferences": {
         "what": _("Your language, your colors and the emails you want."),
         "whose": _("People who sign in"),
-        "seen_by": _("You and the people who run the site"),
-        "why": _("To show the site as you like on every device."),
+        "seen_by": _("You and the people who run %(site_name)s"),
+        "why": _("To show %(site_name)s as you like on every device."),
     },
     "projects": {
         "what": _(
@@ -57,11 +58,11 @@ DATA = {
             "The issues and pull requests of the repositories of the projects: their title, "
             "description and times, who created and who closed them, and the reviews of the pull "
             "requests: who gave them, when, and whether they approved; of these people their "
-            "GitHub handle, id, GitHub name and the address of their avatar. The site counts "
+            "GitHub handle, id, GitHub name and the address of their avatar. %(site_name)s counts "
             "with them how many pull requests a person opened and reviewed in a project, and "
             "shows them on the page of the person in the project."
         ),
-        "whose": _("People on GitHub, also those who never use this site"),
+        "whose": _("People on GitHub, also those who never use %(site_name)s"),
         "seen_by": _(
             "Everybody, for public repositories, as on GitHub; for private repositories, only "
             "the collaborators of their private projects."
@@ -74,7 +75,7 @@ DATA = {
             "ids of the people who installed or changed it."
         ),
         "whose": _("People who install the GitHub App"),
-        "seen_by": _("The people who run the site"),
+        "seen_by": _("The people who run %(site_name)s"),
         "why": _("To email them when the app needs more permissions."),
     },
     "notifications": {
@@ -83,16 +84,16 @@ DATA = {
             "permissions, and when you read them."
         ),
         "whose": _("People who sign in"),
-        "seen_by": _("You and the people who run the site"),
+        "seen_by": _("You and the people who run %(site_name)s"),
         "why": _("To tell you what to do, until it is done."),
     },
     "log": {
         "what": _(
-            "The log of the site and the webhooks GitHub sent: what happened, when, and the "
+            "The log of %(site_name)s and the webhooks GitHub sent: what happened, when, and the "
             "GitHub handle of who caused it."
         ),
         "whose": _("People who sign in or act on the repositories"),
-        "seen_by": _("The people who run the site"),
+        "seen_by": _("The people who run %(site_name)s"),
         "why": _("To find and solve errors."),
     },
     "requests": {
@@ -100,9 +101,9 @@ DATA = {
             "Every request in the log of the server: the address it came from, the time, the "
             "page and the browser."
         ),
-        "whose": _("Everybody who visits the site"),
-        "seen_by": _("The people who run the site and its server"),
-        "why": _("To keep the site running and safe."),
+        "whose": _("Everybody who visits %(site_name)s"),
+        "seen_by": _("The people who run %(site_name)s and its server"),
+        "why": _("To keep %(site_name)s running and safe."),
     },
 }
 
@@ -342,29 +343,30 @@ PARTIES = [
     {
         "name": _("GitHub"),
         "gets": _(
-            "When you sign in, GitHub tells the site who you are; the site asks GitHub for "
+            "When you sign in, GitHub tells %(site_name)s who you are; %(site_name)s asks GitHub "
+            "for "
             "repositories, issues and pull requests with your token or that of the GitHub App. "
             "The GitHub App adds and removes labels on pull requests that enter or complete a "
             "step of a project, and writes the message of a project as a comment on its pull "
             "requests, as the writers of the project set them. "
             "Your browser loads the avatars of people from GitHub "
             "(avatars.githubusercontent.com), which sees the address of your browser, but not "
-            "the page: the site sends no referrer. Links to GitHub lead there."
+            "the page: %(site_name)s sends no referrer. Links to GitHub lead there."
         ),
         "policy": "https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement",
     },
     {
-        "name": _("The mail server of the site"),
+        "name": _("The mail server of %(site_name)s"),
         "gets": _(
-            "Your email address and the text of each email the site sends you, such as the "
+            "Your email address and the text of each email %(site_name)s sends you, such as the "
             "notice that an installation needs more permissions."
         ),
         "policy": "",
     },
     {
-        "name": _("The server and the people who run the site"),
+        "name": _("The server and the people who run %(site_name)s"),
         "gets": _(
-            "Everything the site keeps: they run the server and see the Django admin, the log "
+            "Everything %(site_name)s keeps: they run the server and see the Django admin, the log "
             "and the webhooks GitHub sent."
         ),
         "policy": "",

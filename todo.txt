@@ -615,7 +615,7 @@ community: where to start, what waits for a review, who contributes.
       "The pull request is here" in the same row as "Skipped by ..."
 - [x] A group Dashboard of conditions on data of the dashboard: PR Sync is on for a pull request, and a step is
       skipped for it
-- [ ] Sweep: every text that says this site / the site names the site by SITE_NAME ({{ site_name }}), with translations
+- [x] Sweep: every text that says this site / the site names the site by SITE_NAME ({{ site_name }}), with translations
 - [x] PR Sync, the message: two messages, the applied one in use and the edited one, saved while it is edited (also
       when the page is opened again); a notice when they differ that asks to continue editing
 - [x] The flow 1-4 becomes grouped tabs: "Current Message" (its page with the tabs Markdown and Edit above the
@@ -636,3 +636,4 @@ community: where to start, what waits for a review, who contributes.
       page Edit and a button Edit on the page Preview
 - [x] The badge of a pull request: the color of the step is the background of the name of the step
 - [x] Step labels without the prefix Step: — just the name of the step (the labels on GitHub are renamed at the next update)
+- [x] PR 2185 is still in Peer review: the handle niccokunzmann is in Skipped for these authors of the step Closed (id 7), not of Peer review (id 4); the steps page shows readers which authors a step skips now
