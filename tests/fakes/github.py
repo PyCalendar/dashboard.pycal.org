@@ -126,6 +126,7 @@ class FakeGitHub:
         mergeable_state: str = "clean",
         auto_merge: bool = False,
         closed_by: dict | None = None,
+        association: str = "CONTRIBUTOR",
     ) -> dict:
         """An issue or a pull request of a repository of the fake GitHub.
 
@@ -159,6 +160,7 @@ class FakeGitHub:
             "updated_at": updated,
             "closed_at": "2026-11-01T09:00:00Z" if state == "closed" else None,
             "labels": [self.add_label(full_name, name) for name in labels],
+            "author_association": association,
             "reviews": [],  # what GraphQL answers, see add_review()
             "closed_by": dict(closed_by or user or self.OCTOCAT) if state == "closed" else None,
         }

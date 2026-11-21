@@ -49,6 +49,8 @@ condition chooses the least of them
      - A pull request has a number of reviews, without those of comments only.
    * - :doc:`review_ratio`
      - The review to pull request ratio of the author compared with a number.
+   * - :doc:`author_type`
+     - The author of a pull request is an owner, a member, a collaborator, ...
    * - :doc:`text_matches`
      - The title or the description of a pull request matches a text or a regex.
    * - :doc:`pr_sync`
@@ -73,6 +75,7 @@ condition chooses the least of them
    closed
    reviews
    review_ratio
+   author_type
    text_matches
    pr_sync
    step_skipped

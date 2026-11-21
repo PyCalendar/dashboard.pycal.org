@@ -26,6 +26,9 @@ class Issue(models.Model):
         "GitHubUser", null=True, blank=True, on_delete=models.SET_NULL, related_name="issues"
     )
     description = models.TextField(blank=True)
+    # the association of the author with the repository, as GitHub names it, such as MEMBER or
+    # FIRST_TIME_CONTRIBUTOR; "" when not read yet (DATA_VERSION 4)
+    author_association = models.CharField(max_length=30, blank=True)
     labels = models.ManyToManyField("Label", blank=True, related_name="issues")
     state = models.CharField(max_length=10, choices=STATES, default=OPEN)
     created = models.DateTimeField()

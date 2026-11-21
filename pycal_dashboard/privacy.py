@@ -199,6 +199,7 @@ MODELS = {
             "title",
             "author",
             "description",
+            "author_association",
             "state",
             "created",
             "closed",

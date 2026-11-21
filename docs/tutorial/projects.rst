@@ -211,6 +211,14 @@ check mark, or not, with a red cross, and why:
    number of the author. The reviews given and the ratio have the same switches
    *Which reviews count* as the column *Reviews*. See
    :doc:`/reference/states/index`.
+**Type of author**
+   The author is an *owner* of the repository, a *member* of its organization,
+   a *collaborator*, a *contributor* with earlier contributions, or a
+   *first-timer*, whose first contribution it is; switch on the types that the
+   column is about. GitHub tells the type with each pull request. The types are
+   exclusive: an author has exactly one type for a pull request, the most
+   privileged, so inverting the column switches on the other types. The cell
+   shows the type. See :doc:`/reference/conditions/author_type`.
 **Text**
    The title or the description of the pull request *starts with*, *ends
    with*, *contains* a text, or *matches the regex*, such as ``^(fix|feat):``;

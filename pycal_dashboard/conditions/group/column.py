@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from urllib.parse import unquote
 
 from pycal_dashboard.conditions.group.author import AuthorGroup
+from pycal_dashboard.conditions.group.author_type import AuthorTypeGroup
 from pycal_dashboard.conditions.group.branch import BranchGroup
 from pycal_dashboard.conditions.group.ci import CiGroup
 from pycal_dashboard.conditions.group.dashboard import DashboardGroup
@@ -35,6 +36,7 @@ GROUPS: dict[str, type[ConditionGroup]] = {
         StatusGroup,
         ReviewsGroup,
         AuthorGroup,
+        AuthorTypeGroup,
         TextGroup,
         DashboardGroup,
     )

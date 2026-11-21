@@ -310,7 +310,8 @@ form.stacked fieldset { border: 1px solid var(--border); border-radius: .3rem; }
 .condition-form:has(.group-select option[value="reviews"]:checked) .fields-reviews,
 .condition-form:has(.group-select option[value="author"]:checked) .fields-author,
 .condition-form:has(.group-select option[value="text"]:checked) .fields-text,
-.condition-form:has(.group-select option[value="dashboard"]:checked) .fields-dashboard { display: block; }
+.condition-form:has(.group-select option[value="dashboard"]:checked) .fields-dashboard,
+.condition-form:has(.group-select option[value="author_type"]:checked) .fields-author_type { display: block; }
 .menu-close { float: right; margin: -.4rem -.4rem .4rem .5rem; font-size: 1.2rem; line-height: 1; }
 .menu-actions { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .5rem 0 0; padding-top: .5rem; border-top: 1px solid var(--border); }
 /* a checkbox that looks like a switch, on or off */

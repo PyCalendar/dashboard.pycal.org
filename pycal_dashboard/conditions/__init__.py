@@ -14,6 +14,7 @@ are grouped: ``condition/`` the conditions, ``state/`` the states, ``input/`` th
 inputs and ``spec/`` the data, each on its ``base.py``.
 """
 
+from pycal_dashboard.conditions.condition.author_type import AuthorType
 from pycal_dashboard.conditions.condition.auto_merge_enabled import AutoMergeEnabled
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.condition.branch_outdated import BranchOutdated
@@ -61,6 +62,7 @@ CONDITIONS: dict[str, type[Condition]] = {
         Closed,
         Reviews,
         ReviewRatioCompared,
+        AuthorType,
         TextMatches,
         PrSyncOn,
         StepSkipped,

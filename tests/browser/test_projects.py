@@ -981,6 +981,32 @@ def test_a_column_of_the_dashboard(page, site, github, bob):
     expect(other).to_have_attribute("data-result", "no")
 
 
+def test_a_column_of_the_type_of_author(page, site, github, bob):
+    """The menu + adds the column Type of author: the switches, their help, the first-timers."""
+    from pycal_dashboard.models import Issue
+
+    pull_request_project(github, bob)
+    Issue.objects.filter(number=2).update(author_association="FIRST_TIME_CONTRIBUTOR")
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    menu.get_by_label("Condition").select_option("author_type")
+    fields = menu.locator(".fields-author_type")
+    expect(fields.get_by_text("They are exclusive")).to_be_visible()
+    expect(fields.get_by_role("link", name="More in the documentation")).to_have_attribute(
+        "href", re.compile(r"reference/conditions/author_type\.html$")
+    )
+    fields.locator("label.switch", has_text="first-timer").click()
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=author_type~\w+~first_timer"))
+    first = page.locator("[data-pull-request='collective/icalendar#2'] .col-condition")
+    expect(first).to_have_attribute("data-result", "yes")
+    expect(first).to_contain_text("first-timer")
+    other = page.locator("[data-pull-request='collective/icalendar#1'] .col-condition")
+    expect(other).to_have_attribute("data-result", "no")
+    expect(other).to_contain_text("contributor")
+
+
 def test_the_kinds_of_reviews_on_the_page_of_a_person(page, site, github, bob):
     """The gear chooses which reviews count; a switch counts again at once."""
     project = pull_request_project(github, bob)

@@ -6,6 +6,7 @@ from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.models import (
     GitHubUser,
     Issue,
@@ -42,7 +43,11 @@ TABLE = "/projects/icalendar/pull-requests.json?per_page=100"
 def project(bob):
     now = timezone.now()
     repository = Repository.objects.create(
-        full_name="o/r", updated=now, issues_changed=now, reviews_changed=now, data_version=3
+        full_name="o/r",
+        updated=now,
+        issues_changed=now,
+        reviews_changed=now,
+        data_version=DATA_VERSION,
     )
     project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
     project.repositories.add(repository)

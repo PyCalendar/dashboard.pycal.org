@@ -47,6 +47,10 @@ Inputs
    :members:
    :show-inheritance:
 
+.. automodule:: pycal_dashboard.conditions.input.multiple_choice
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.input.boolean
    :members:
    :show-inheritance:
@@ -156,6 +160,12 @@ Conditions
 
 .. automodule:: pycal_dashboard.conditions.condition.text_matches
    :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.author_type
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.author_types
+   :members:
 
 .. automodule:: pycal_dashboard.conditions.text_match
    :members:

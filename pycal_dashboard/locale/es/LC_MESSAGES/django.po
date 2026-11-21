@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 22:32+0000\n"
+"POT-Creation-Date: 2026-11-21 22:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "owner"
+msgstr "propietario"
+
+msgid "member"
+msgstr "miembro"
+
+msgid "collaborator"
+msgstr "colaborador"
+
+msgid "contributor"
+msgstr "contribuidor"
+
+msgid "first-timer"
+msgstr "primerizo"
+
+msgid ""
+"The type of the author comes from GitHub, with each pull request: owner of "
+"the repository, member of its organization, collaborator, contributor with "
+"earlier contributions, or first-timer, whose first contribution it is. They "
+"are exclusive: an author has exactly one type for a pull request, the most "
+"privileged."
+msgstr ""
+"El tipo del autor viene de GitHub, con cada pull request: propietario del "
+"repositorio, miembro de su organización, colaborador, contribuidor con "
+"contribuciones anteriores o primerizo, cuya primera contribución es. Son "
+"excluyentes: un autor tiene exactamente un tipo para un pull request, el de "
+"más privilegios."
 
 msgid "Merged: the checks are read for open pull requests only"
 msgstr "Fusionado: los checks se leen solo para pull requests abiertos"
@@ -57,6 +85,32 @@ msgstr " (revisiones: %(kinds)s)"
 #, python-format
 msgid "Author: %(state)s %(comparison)s %(number)s"
 msgstr "Autor: %(state)s %(comparison)s %(number)s"
+
+msgid "Type of author"
+msgstr "Tipo de autor"
+
+#, python-format
+msgid "its author is %(states)s"
+msgstr "su autor es %(states)s"
+
+#, python-format
+msgid "its author is not %(states)s"
+msgstr "su autor no es %(states)s"
+
+msgid "an owner"
+msgstr "un propietario"
+
+msgid "a member"
+msgstr "un miembro"
+
+msgid "a collaborator"
+msgstr "un colaborador"
+
+msgid "a contributor"
+msgstr "un contribuidor"
+
+msgid "a first-timer"
+msgstr "un primerizo"
 
 msgid "not known yet: the data of the pull request is not read yet"
 msgstr "aún no se sabe: los datos del pull request aún no se han leído"
@@ -1756,6 +1810,9 @@ msgid ""
 msgstr ""
 "Los tipos de revisiones cuentan para las revisiones dadas y la proporción de "
 "revisiones por pull request."
+
+msgid "More in the documentation"
+msgstr "Más en la documentación"
 
 msgid "Change the column"
 msgstr "Cambiar la columna"

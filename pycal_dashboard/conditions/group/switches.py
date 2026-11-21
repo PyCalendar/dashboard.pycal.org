@@ -34,6 +34,8 @@ class SwitchesGroup(ConditionGroup):
     words: ClassVar[dict[str, str]] = {}
     # a short explanation of the switches below them in the menu of a column, "" for none
     help: ClassVar[str] = ""
+    # the page of the documentation that explains the switches, relative to it; "" for none
+    docs: ClassVar[str] = ""
 
     @classmethod
     def names(cls) -> list[str]:

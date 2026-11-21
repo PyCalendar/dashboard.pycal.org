@@ -642,6 +642,8 @@ community: where to start, what waits for a review, who contributes.
 - [x] A condition of Skip if that is switched off stays in Skip if (skip_off): each condition of a filter has active and its type, quality check or skip
 - [x] Conditions of texts: the title or the description of a pull request starts with, ends with, contains, or a regex;
       a switch for the case of letters
-- [ ] A condition of the type of contributor of the author: owner, member, collaborator, contributor, first-timer;
+- [x] A condition of the type of contributor of the author: owner, member, collaborator, contributor, first-timer;
       switches; exclusive (explained, linked to the docs): a person is in one only; "The author is a ..." / "is not a
       ..." (as the insights platform does, without its bot classification)
+      (author_type, the column Type of author; the association of GitHub, DATA_VERSION 4)
+- [x] Answer: on which pages the person sees that the permissions of the GitHub App need updating

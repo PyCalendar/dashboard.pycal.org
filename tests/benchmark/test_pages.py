@@ -13,6 +13,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
+from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.models import (
     GitHubUser,
     Issue,
@@ -49,7 +50,11 @@ COLUMNS = [
 def big(bob):
     now = timezone.now()
     repository = Repository.objects.create(
-        full_name="o/r", updated=now, issues_changed=now, reviews_changed=now, data_version=3
+        full_name="o/r",
+        updated=now,
+        issues_changed=now,
+        reviews_changed=now,
+        data_version=DATA_VERSION,
     )
     project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
     project.repositories.add(repository)

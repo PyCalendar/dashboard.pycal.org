@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 22:32+0000\n"
+"POT-Creation-Date: 2026-11-21 22:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "owner"
+msgstr "Eigentümer"
+
+msgid "member"
+msgstr "Mitglied"
+
+msgid "collaborator"
+msgstr "Mitarbeiter"
+
+msgid "contributor"
+msgstr "Beitragender"
+
+msgid "first-timer"
+msgstr "Neuling"
+
+msgid ""
+"The type of the author comes from GitHub, with each pull request: owner of "
+"the repository, member of its organization, collaborator, contributor with "
+"earlier contributions, or first-timer, whose first contribution it is. They "
+"are exclusive: an author has exactly one type for a pull request, the most "
+"privileged."
+msgstr ""
+"Die Art des Autors kommt von GitHub, mit jedem Pull Request: Eigentümer des "
+"Repositorys, Mitglied seiner Organisation, Mitarbeiter, Beitragender mit "
+"früheren Beiträgen oder Neuling, dessen erster Beitrag es ist. Sie schließen "
+"einander aus: Ein Autor hat für einen Pull Request genau eine Art, die mit "
+"den meisten Rechten."
 
 msgid "Merged: the checks are read for open pull requests only"
 msgstr "Gemergt: Die Checks werden nur für offene Pull Requests gelesen"
@@ -57,6 +85,32 @@ msgstr " (Reviews: %(kinds)s)"
 #, python-format
 msgid "Author: %(state)s %(comparison)s %(number)s"
 msgstr "Autor: %(state)s %(comparison)s %(number)s"
+
+msgid "Type of author"
+msgstr "Art des Autors"
+
+#, python-format
+msgid "its author is %(states)s"
+msgstr "sein Autor ist %(states)s"
+
+#, python-format
+msgid "its author is not %(states)s"
+msgstr "sein Autor ist nicht %(states)s"
+
+msgid "an owner"
+msgstr "Eigentümer"
+
+msgid "a member"
+msgstr "Mitglied"
+
+msgid "a collaborator"
+msgstr "Mitarbeiter"
+
+msgid "a contributor"
+msgstr "Beitragender"
+
+msgid "a first-timer"
+msgstr "Neuling"
 
 msgid "not known yet: the data of the pull request is not read yet"
 msgstr ""
@@ -1771,6 +1825,9 @@ msgid ""
 msgstr ""
 "Die Arten von Reviews zählen für die gegebenen Reviews und das Verhältnis "
 "von Reviews zu Pull Requests."
+
+msgid "More in the documentation"
+msgstr "Mehr in der Dokumentation"
 
 msgid "Change the column"
 msgstr "Die Spalte ändern"

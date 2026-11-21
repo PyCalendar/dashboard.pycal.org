@@ -32,6 +32,7 @@ IDS = [
     "closed",
     "reviews",
     "review_ratio",
+    "author_type",
     "text_matches",
     "pr_sync",
     "step_skipped",
