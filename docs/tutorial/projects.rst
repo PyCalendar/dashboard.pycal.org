@@ -254,10 +254,12 @@ off are no part of the filter and appear only in the table of pull requests and
 when the filter is edited. **Pull requests** opens them with the filter, and
 **Edit** opens the page of saving. A filter that is a step has **Step:** and the
 name of the step there, which opens it, for everyone who can read the project. The page of
-saving a saved filter has **Edit the conditions** at the top right, which opens the table of
-pull requests with them, and **Step:** when it is a step. A saved filter saves itself while
-you edit its name, its description and the switches, like a step; **Save as a new filter**
-leaves the saved one as it was. The table of pull requests remembers which
+a saved filter, *Edit the filter* and its name, has **Edit the conditions** at the top right,
+which opens the table of pull requests with them, and **Step:** when it is a step. A saved
+filter saves itself while you edit its name, its description and the switches, like a step.
+The button next to its title says *✓ Saved*, turns while it saves, and says *Save* when the
+conditions differ from those saved, such as after a change in the table: a click saves them.
+**Save as a new filter** leaves the saved one as it was. The table of pull requests remembers which
 filter it shows while its columns change, so that **Save** saves that filter
 again, also on the way from a step and back. A name of another filter of the
 project asks whether to replace that filter: **Replace** gives it these

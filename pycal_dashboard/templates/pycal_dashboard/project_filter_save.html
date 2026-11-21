@@ -1,12 +1,12 @@
 {% extends "pycal_dashboard/base.html" %}
 {% load i18n static %}
-{% block title %}{% translate "Save the filter" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block title %}{% if saved %}{% translate "Edit the filter" %}{% else %}{% translate "Save the filter" %}{% endif %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'filter-save.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 <p><a href="{{ back }}" data-back>← {% translate "Back to the pull requests" %}</a></p>
 <form method="post" class="stacked card" data-save-filter{% if saved and not conflict %} data-autosave{% endif %}>{% csrf_token %}
-  <div class="table-head"><h2>{% if saved %}{% blocktranslate with name=saved.name %}Save the filter {{ name }}{% endblocktranslate %}{% else %}{% translate "Save the filter" %}{% endif %}</h2>
+  <div class="table-head"><h2>{% if saved %}{% blocktranslate with name=saved.name %}Edit the filter {{ name }}{% endblocktranslate %} <button class="button button-small save-indicator" name="save" value="this" data-save-indicator data-state="{% if unsaved %}unsaved{% else %}saved{% endif %}" data-unsaved="{% translate "Save" %}" data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" data-taken="{% translate "Not saved: another filter has this name." %}" aria-live="polite">{% if unsaved %}{% translate "Save" %}{% else %}✓ {% translate "Saved" %}{% endif %}</button>{% else %}{% translate "Save the filter" %}{% endif %}</h2>
   <span class="filter-actions"><a class="button button-quiet button-small" href="{{ back }}" data-edit-conditions>{% translate "Edit the conditions" %}</a>
   {% if step %}<a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ step.pk }}" data-step-link>{% blocktranslate with name=step.name %}Step: {{ name }}{% endblocktranslate %}</a>{% endif %}</span></div>
   {% for column in columns %}<input type="hidden" name="col" value="{{ column.encode }}">{% endfor %}
@@ -19,9 +19,7 @@
   <h3>{% blocktranslate count counter=count %}The filter shows {{ counter }} pull request now:{% plural %}The filter shows {{ counter }} pull requests now:{% endblocktranslate %}</h3>
   {% include "pycal_dashboard/conditions/_summary.html" with rows=summary editable=True %}
   <p class="muted">{% translate "The order of the columns and what each shows are saved." %}</p>
-  <p class="save-buttons">{% if saved %}<button class="button" name="save" value="this">{% blocktranslate with name=saved.name %}Save {{ name }}{% endblocktranslate %}</button>
-    <button class="button button-quiet" name="save" value="new">{% translate "Save as a new filter" %}</button>
-    <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" data-taken="{% translate "Not saved: another filter has this name." %}" aria-live="polite"></span>
+  <p class="save-buttons">{% if saved %}<button class="button button-quiet" name="save" value="new">{% translate "Save as a new filter" %}</button>
     {% else %}<button class="button" name="save" value="new">{% translate "Save the filter" %}</button>{% endif %}</p>
 </form>
 {% if saved and not conflict %}<form method="post" hidden data-original-filter>{% csrf_token %}<input type="hidden" name="saved" value="{{ saved.pk }}"><input type="hidden" name="save" value="this"><input type="hidden" name="name" value="{{ saved.name }}"><input type="hidden" name="description" value="{{ saved.description }}">

@@ -432,6 +432,14 @@ form.stacked .step-actions fieldset { flex: 1 1 18rem; padding: .5rem .75rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .save-status[data-state="saving"]::before { animation: none; } }
 
+/* the filter saves itself: the button next to its title says whether it is saved, and saves */
+h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85rem; display: inline-flex; align-items: center; gap: .4rem; }
+.save-indicator[data-state="saved"] { background: transparent; color: var(--success); border-color: var(--success); }
+.save-indicator[data-state="saving"] { background: transparent; color: var(--text-muted); border-color: var(--border); }
+.save-indicator[data-state="saving"]::before { content: ""; width: .9em; height: .9em; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+.save-indicator[data-state="failed"], .save-indicator[data-state="taken"] { background: transparent; color: var(--danger); border-color: var(--danger); }
+@media (prefers-reduced-motion: reduce) { .save-indicator[data-state="saving"]::before { animation-duration: 3s; } }
+
 /* something loads, such as the numbers of a filter */
 .loading { display: inline-block; width: 1em; height: 1em; vertical-align: middle; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .loading { animation-duration: 3s; } }

@@ -5,8 +5,9 @@
   "use strict";
   var form = document.querySelector("form[data-save-filter][data-autosave]");
   if (!form) { return; }
-  var button = form.querySelector("button[name=save][value=this]");
-  var status = form.querySelector("[data-save-status]");
+  // the button next to the title saves, and says whether the filter is saved
+  var button = form.querySelector("[data-save-indicator]");
+  var status = button;
   var token = form.querySelector("input[name=csrfmiddlewaretoken]");
   var timer = null;
   var saving = false;
@@ -14,21 +15,21 @@
   var pending = false;  // a change waits to be saved
   var current = Promise.resolve();  // the last saving
   var leaving = false;  // saved as a new filter: nothing more is saved
-  if (button) { button.hidden = true; }
-  status.hidden = false;
   function show(state) {
     status.dataset.state = state;
     status.textContent = state === "saving" ? status.dataset.saving
       : state === "saved" ? "✓ " + status.dataset.saved
-        : state === "taken" ? status.dataset.taken : status.dataset.failed;
+        : state === "taken" ? status.dataset.taken
+          : state === "unsaved" ? status.dataset.unsaved : status.dataset.failed;
   }
-  function post(body) {
+  function post(body, leave) {
+    // keepalive only when the page is left: the saving outlives it
     return fetch(form.action || window.location.pathname, {
-      method: "POST", body: body, credentials: "same-origin", keepalive: true,
+      method: "POST", body: body, credentials: "same-origin", keepalive: Boolean(leave),
       headers: {"X-CSRFToken": token ? token.value : "", "Accept": "application/json"}
     });
   }
-  function save() {
+  function save(leave) {
     clearTimeout(timer);
     if (leaving) { return; }
     if (saving) { again = true; return; }
@@ -38,7 +39,7 @@
     var body = new FormData(form);
     body.set("save", "this");
     changed = true;
-    current = post(body)
+    current = post(body, leave === true)
       .then(function (answer) {
         if (answer.status === 409) { return {taken: true}; }
         return answer.ok ? answer.json() : Promise.reject(answer);
@@ -89,5 +90,6 @@
         });
     });
   }
-  window.addEventListener("pagehide", function () { if (pending) { save(); } });
+  window.addEventListener("pagehide", function () { if (pending) { save(true); } });
+  form.dataset.autosaving = "";  // it saves itself from now on
 }());

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 15:26+0000\n"
+"POT-Creation-Date: 2026-11-21 16:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2335,6 +2335,9 @@ msgstr "Ninguno en los repositorios del proyecto."
 msgid "Back to the filters"
 msgstr "Volver a los filtros"
 
+msgid "Edit the filter"
+msgstr "Editar el filtro"
+
 msgid "Save the filter"
 msgstr "Guardar el filtro"
 
@@ -2342,8 +2345,23 @@ msgid "Back to the pull requests"
 msgstr "Volver a los pull requests"
 
 #, python-format
-msgid "Save the filter %(name)s"
-msgstr "Guardar el filtro %(name)s"
+msgid "Edit the filter %(name)s"
+msgstr "Editar el filtro %(name)s"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Saving…"
+msgstr "Guardando…"
+
+msgid "Saved"
+msgstr "Guardado"
+
+msgid "Not saved: is the network away? It is tried again."
+msgstr "No guardado: ¿no hay red? Se vuelve a intentar."
+
+msgid "Not saved: another filter has this name."
+msgstr "No guardado: otro filtro tiene este nombre."
 
 msgid "Edit the conditions"
 msgstr "Editar las condiciones"
@@ -2382,24 +2400,8 @@ msgstr[1] "El filtro muestra ahora %(counter)s pull requests:"
 msgid "The order of the columns and what each shows are saved."
 msgstr "Se guardan el orden de las columnas y lo que muestra cada una."
 
-#, python-format
-msgid "Save %(name)s"
-msgstr "Guardar %(name)s"
-
 msgid "Save as a new filter"
 msgstr "Guardar como filtro nuevo"
-
-msgid "Saving…"
-msgstr "Guardando…"
-
-msgid "Saved"
-msgstr "Guardado"
-
-msgid "Not saved: is the network away? It is tried again."
-msgstr "No guardado: ¿no hay red? Se vuelve a intentar."
-
-msgid "Not saved: another filter has this name."
-msgstr "No guardado: otro filtro tiene este nombre."
 
 msgid ""
 "A new filter: add its conditions as columns of the table of pull requests"
@@ -2479,9 +2481,6 @@ msgstr "Solo los propietarios lo cambian."
 
 msgid "Create the project"
 msgstr "Crear el proyecto"
-
-msgid "Save"
-msgstr "Guardar"
 
 msgid "Address"
 msgstr "Dirección"
@@ -2829,9 +2828,6 @@ msgstr ""
 
 msgid "← Back to the review of the message"
 msgstr "← Volver a la revisión del mensaje"
-
-msgid "Edit the filter"
-msgstr "Editar el filtro"
 
 msgid "Color"
 msgstr "Color"

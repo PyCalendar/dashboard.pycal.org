@@ -568,3 +568,4 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: switch on Also count comment reviews in the filter of the step Peer review (the site may not write the live data)
 - [x] Only owners change roles and add or remove collaborators: it was so (share and unshare need an owner); tests for readers and writers, said in the table of roles
 - [x] AGENTS.md for the team, Codex and Claude Code: setup and checks, where the code is, working for a person (authorization per person, secrets, the live site read-only), the conventions so far; docs/contribute.rst points to it
+- [x] The page of a saved filter: Edit the filter <name> with the button ✓ Saved next to it, which turns while it saves and says Save for changes not saved yet

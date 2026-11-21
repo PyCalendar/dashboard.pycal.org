@@ -330,6 +330,12 @@ def save_page(
             "saved": saved,
             "conflict": conflict,
             "step": PullRequestStep.objects.filter(filter=saved).first() if saved else None,
+            # the conditions or the name differ from the filter as it is saved
+            "unsaved": saved is not None
+            and (
+                [column.encode() for column in columns] != list(saved.columns)
+                or (name is not None and name != saved.name)
+            ),
             "original": [  # the filter as it is saved, to restore it before saving a new one
                 (value, Column.decode(value).filter != "all") for value in saved.columns
             ]

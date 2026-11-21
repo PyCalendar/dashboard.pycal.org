@@ -144,7 +144,8 @@ def test_save_it_again_or_as_a_new_one(client, project, bob):
         project=project, name="Open", columns=["status~applies~open"]
     )
     page = save_page(client, "status~applies~merged", saved=saved.pk)
-    assert "Save Open" in page and "Save as a new filter" in page and 'value="Open"' in page
+    assert "Edit the filter Open" in page and "Save as a new filter" in page
+    assert 'value="Open"' in page and 'data-state="unsaved"' in page  # other conditions
     client.post(
         "/projects/icalendar/filters/save/",
         {
@@ -302,7 +303,9 @@ def test_edit_a_filter(client, project, bob):
     edit = page.split("data-edit-filter")[0].rsplit('href="', 1)[1].split('"')[0]
     assert edit.startswith("/projects/icalendar/filters/save/?col=status~applies~open")
     assert f"saved={saved.pk}" in edit
-    assert "Save Open" in client.get(edit.replace("&amp;", "&")).content.decode()
+    shown = client.get(edit.replace("&amp;", "&")).content.decode()
+    assert "Edit the filter Open" in shown and "Save the filter" not in shown
+    assert 'data-state="saved"' in shown and "✓ Saved</button>" in shown  # as it is saved
 
 
 def test_the_filters_are_cards_without_bullets():
@@ -331,7 +334,7 @@ def test_a_saved_filter_saves_itself_for_the_script(client, project, bob):
     )
     page = save_page(client, "status~applies~open", saved=saved.pk)
     assert "data-autosave" in page and "filter-save.js" in page
-    assert "data-original-filter" in page and "data-save-status" in page
+    assert "data-original-filter" in page and "data-save-indicator" in page
     data = {"col": ["status~applies~open"], "saved": saved.pk, "name": "Still open"}
     data |= {"on": "0", "save": "this", "description": "Now"}
     answer = client.post("/projects/icalendar/filters/save/", data, HTTP_ACCEPT="application/json")

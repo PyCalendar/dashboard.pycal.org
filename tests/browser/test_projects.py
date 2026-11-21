@@ -361,8 +361,8 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     item.get_by_role("link", name="Pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Save", exact=True).click()
-    expect(page.get_by_role("button", name="Save Waiting")).to_be_hidden()  # it saves itself
-    expect(page.locator("[data-save-status]")).not_to_have_attribute("hidden", "")
+    expect(page.get_by_role("heading", name=re.compile("^Edit the filter Waiting"))).to_be_visible()
+    expect(page.locator("[data-save-indicator]")).to_have_text("✓ Saved")  # it saves itself
     page.get_by_role("link", name="← Back to the pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Filters", exact=True).click()
@@ -679,9 +679,22 @@ def test_a_saved_filter_saves_itself(signed_in, site, github, bob):
     page = signed_in
     page.goto(f"{site}/projects/icalendar/filters/")
     page.locator("[data-filter='Review']").get_by_role("link", name="Edit").click()
-    expect(page.get_by_role("button", name="Save Review")).to_be_hidden()
+    status = page.locator("[data-save-indicator]")
+    expect(status).to_have_text("✓ Saved")
+    expect(page.locator("form[data-autosaving]")).to_have_count(1)  # the script is ready
+    held = []  # the saving waits until its animation is seen
+    page.route(re.compile(r"/filters/save/"), lambda route: held.append(route))
     page.get_by_label("Name", exact=True).fill("Maintainer review")
-    status = page.locator("[data-save-status]")
+    expect(status).to_have_attribute("data-state", "saving")
+    expect(status).to_have_text("Saving…")
+    assert status.evaluate("e => getComputedStyle(e, '::before').animationName") == "spin"
+    for _ in range(500):  # let each saving through, also one more when the field is left
+        while held:
+            held.pop().continue_()
+        if status.get_attribute("data-state") == "saved":
+            break
+        page.wait_for_timeout(20)
+    page.unroute(re.compile(r"/filters/save/"))
     expect(status).to_have_text("✓ Saved", timeout=10000)
     saved.refresh_from_db()
     assert saved.name == "Maintainer review"
@@ -702,6 +715,7 @@ def test_saving_as_a_new_filter_leaves_the_saved_one(signed_in, site, github, bo
     page = signed_in
     page.goto(f"{site}/projects/icalendar/filters/")
     page.locator("[data-filter='Review']").get_by_role("link", name="Edit").click()
+    expect(page.locator("form[data-autosaving]")).to_have_count(1)
     page.get_by_label("Name", exact=True).fill("Copy")
     page.get_by_role("button", name="Save as a new filter").click()
     expect(page.get_by_text("The filter Copy is saved.")).to_be_visible()
