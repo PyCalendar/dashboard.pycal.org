@@ -606,8 +606,8 @@ PR Sync
 
 The tab *PR Sync*, right of *Steps*, has the tabs *Current Message*, *Edit* and
 *Preview* side by side, as they belong together, *Status Label*, the step labels,
-see :ref:`status-labels`, and *Scope*. *Edit*, *Preview* and *Scope* are for
-writers and owners.
+see :ref:`status-labels`, and *Synchronization*. *Edit*, *Preview* and
+*Synchronization* are for writers and owners.
 
 The message of the project is the Status Message: the GitHub App writes it as a
 comment on pull requests, and updates the comment whenever the message or the
@@ -643,7 +643,8 @@ one, and the comments follow in the background. When the edited message is the
 current one, the button says **✓ Applied**, in green. While they differ, the
 other tabs say so, with **Continue editing**.
 
-**Scope** has which pull requests get the message, and with it the step labels:
+**Synchronization** has the *Pull request selection*: which pull requests get
+the message, and with it the step labels. Its *Options*:
 
 - *Add to these pull requests:* the pull requests of the numbers in the field,
   such as *2166, 2167*, or *collective/icalendar#42* where several repositories
@@ -653,7 +654,7 @@ other tabs say so, with **Continue editing**.
 - *Add to closed and merged pull requests*, in light red: not preferred, as they
   are done and their people get a notification.
 
-**Update X pull requests** saves the scope: the comments are written or updated
+**Keep X pull requests synchronized** saves the selection: the comments are written or updated
 in the background, after an update of the project, and every update after it
 updates those whose text changed. The number follows the switches; without
 JavaScript, **Count** counts them. The log records every comment written or

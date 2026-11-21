@@ -75,7 +75,7 @@ def test_the_tabs_of_editing(client, github, project, bob):
     page = client.get("/projects/icalendar/message/").content.decode()
     tabs = page.split("data-sync-tabs")[1].split("</ul>")[0]
     assert tabs.index("Current Message") < tabs.index("Edit") < tabs.index("Preview")
-    assert tabs.index("Preview") < tabs.index("Status Label") < tabs.index("Scope")
+    assert tabs.index("Preview") < tabs.index("Status Label") < tabs.index("Synchronization")
     assert 'data-tab-group="edit"' in tabs  # Edit and Preview belong together
     assert "data-no-message" in page
     edit = client.get(EDIT).content.decode()
@@ -101,7 +101,10 @@ def test_the_edited_message_is_saved_and_applied_later(client, github, project, 
     assert "<strong>" in review and "data-example-label" in review and "data-apply" in review
     scope = client.get("/projects/icalendar/message/scope/").content.decode()
     assert "data-not-applied" in scope and "Continue editing" in scope  # the notice
-    assert ">Update 0 pull requests<" in scope and 'name="to_listed" value="on" checked' in scope
+    assert (
+        ">Keep 0 pull requests synchronized<" in scope
+        and 'name="to_listed" value="on" checked' in scope
+    )
     assert "data-no-message" in client.get("/projects/icalendar/message/").content.decode()
     client.post(
         "/projects/icalendar/message/scope/", {"listed": "", "to_open": "on", "save": "yes"}
@@ -241,11 +244,11 @@ def test_the_count_and_the_preview_of_the_editor(client, project, bob):
     found = client.post(
         "/projects/icalendar/message/preview/", {"to_open": "on", "listed": ""}
     ).json()
-    assert found == {"count": 2, "button": "Update 2 pull requests"}
+    assert found == {"count": 2, "button": "Keep 2 pull requests synchronized"}
     html = client.post("/projects/icalendar/message/preview/", {"text": "**{pr_title}**"})
     assert html.content.decode().startswith("<p><strong>")
     counted = client.get("/projects/icalendar/message/scope/?count=1&to_open=on&listed=")
-    assert ">Update 2 pull requests<" in counted.content.decode()  # without JavaScript
+    assert ">Keep 2 pull requests synchronized<" in counted.content.decode()  # without JavaScript
     assert not PullRequestMessage.objects.exists()  # nothing is saved
 
 

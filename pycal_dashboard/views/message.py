@@ -198,7 +198,11 @@ def preview(
         "markdown": markdown.strip(),
         "pull": f"{pull.repository.full_name}#{pull.number}" if pull else "",
         "count": count,
-        "button": ngettext("Update %(count)s pull request", "Update %(count)s pull requests", count)
+        "button": ngettext(
+            "Keep %(count)s pull request synchronized",
+            "Keep %(count)s pull requests synchronized",
+            count,
+        )
         % {"count": count},
         "example": place,
         "examples": len(examples),
@@ -401,7 +405,9 @@ def project_message_scope(request: HttpRequest, slug: str):
             "message": message,
             "listed": ", ".join(message.listed or []),
             "button": ngettext(
-                "Update %(count)s pull request", "Update %(count)s pull requests", count
+                "Keep %(count)s pull request synchronized",
+                "Keep %(count)s pull requests synchronized",
+                count,
             )
             % {"count": count},
         }
@@ -463,7 +469,11 @@ def project_message_preview(request: HttpRequest, slug: str):
         return HttpResponse(render_markdown(preview(comments, message)["markdown"]))
     with_scope(message, request.POST)
     count = comments.pulls(message).count()
-    button = ngettext("Update %(count)s pull request", "Update %(count)s pull requests", count)
+    button = ngettext(
+        "Keep %(count)s pull request synchronized",
+        "Keep %(count)s pull requests synchronized",
+        count,
+    )
     return JsonResponse({"count": count, "button": button % {"count": count}})
 
 

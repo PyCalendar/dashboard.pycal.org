@@ -630,12 +630,12 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     page.get_by_role("link", name="Edit this step").click()  # the step, and back
     page.get_by_role("link", name="← Back to the review of the message").click()
     expect(page.locator("[data-message-rendered]")).to_contain_text("Ready")
-    page.locator("[data-sync-tabs]").get_by_role("link", name="Scope").click()
+    page.locator("[data-sync-tabs]").get_by_role("link", name="Synchronization").click()
     expect(page.locator("[data-not-applied]")).to_be_visible()  # edited, not applied
     save = page.locator("[data-save-message]")
-    expect(save).to_have_text("Update 0 pull requests")  # off by default
+    expect(save).to_have_text("Keep 0 pull requests synchronized")  # off by default
     page.locator("[data-message-scope]").get_by_text("Add to all open pull requests").click()
-    expect(save).to_have_text("Update 3 pull requests")
+    expect(save).to_have_text("Keep 3 pull requests synchronized")
     page.set_viewport_size({"width": 390, "height": 900})
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")  # fits a phone
     save.click()

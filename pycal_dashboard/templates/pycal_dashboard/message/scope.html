@@ -1,14 +1,14 @@
 {% extends "pycal_dashboard/base.html" %}
 {% load i18n static help %}
-{% block title %}{% translate "The scope of the message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block title %}{% translate "Synchronization" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script src="{% static 'message.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 {% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card message-page" data-message-scope-page>
-<div class="table-head"><h2>{% translate "Which pull requests get it" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+<div class="table-head"><h2>{% translate "Pull request selection" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 <form method="post" class="stacked message-form" data-message-form data-preview="{% url 'project_message_preview' project.slug %}">{% csrf_token %}
-  <fieldset class="message-scope" data-message-scope><legend>{% translate "Which pull requests get it" %}</legend>
+  <fieldset class="message-scope" data-message-scope><legend>{% translate "Options" %}</legend>
     <div class="scope-listed">{% translate "Add to these pull requests:" as listed_label %}{% include "pycal_dashboard/_switch.html" with name="to_listed" value="on" checked=message.to_listed text=listed_label hidden_text="" %}
       <input name="listed" value="{{ listed }}" placeholder="2166, 2167, collective/icalendar#42" aria-label="{% translate "The numbers of the pull requests" %}" autocomplete="off"></div>
     {% translate "Add to all new pull requests" as new_label %}{% include "pycal_dashboard/_switch.html" with name="to_new" value="on" checked=message.to_new text=new_label hidden_text="" %}
@@ -16,7 +16,7 @@
     <div class="scope-not-preferred">{% translate "Add to closed and merged pull requests" as closed_label %}{% include "pycal_dashboard/_switch.html" with name="to_closed" value="on" checked=message.to_closed text=closed_label hidden_text="" %}
       <small>{% translate "Not preferred: they are done, and their people get a notification." %}</small></div>
   </fieldset>
-  <p class="muted">{% translate "The scope is of the message and of the step labels: the pull requests in it get both." %}</p>
+  <p class="muted">{% translate "The scope is of the message and of the step labels" %}</p>
   <p class="save-buttons"><button class="button" name="save" value="yes" data-save-message>{{ button }}</button>
     <button class="button button-quiet button-small" formmethod="get" name="count" value="1" data-count>{% translate "Count" %}</button></p>
 </form>
