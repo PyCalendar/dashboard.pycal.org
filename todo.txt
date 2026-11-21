@@ -573,4 +573,4 @@ community: where to start, what waits for a review, who contributes.
 - [x] Roles, tested for every role and action (tests/test_roles.py): read changes nothing but updates from GitHub;
       write sees the collaborators and the settings and changes the project, but invites nobody, changes no role
       or visibility, and does nothing destructive (delete, restore a backup); owner does everything
-- [ ] The person: confirm that the standing authorization to commit and push holds for this account (the account of the session changed)
+- [x] The person confirmed: push as before, also with this account; writers may remove repositories (not destructive: they can be added again)
