@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.11.0 (2026-11-21)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- The new condition *Type of author* (``author_type``) chooses pull requests by the type of their author: owner, member, collaborator, contributor or first-timer, as GitHub tells it with each pull request. The types are exclusive, which the menu explains with a link to the documentation. The repositories are read again completely once for it.
+
+
 0.10.0 (2026-11-21)
 -------------------
 
