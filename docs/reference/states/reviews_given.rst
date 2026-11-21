@@ -2,10 +2,12 @@
 ``reviews_given``: Reviews given
 ================================
 
-How many reviews a person gave in the project, without those of comments only.
+How many reviews a person gave in the project, of the kinds that count: all by default.
 
-A review counts when it approved, requested changes, or was dismissed later; a
-review with comments only does not count.
+The input ``kinds`` says which reviews count: approved, changes requested,
+commented and dismissed, all of them by default. A dismissed review is an
+approval or a request for changes that a maintainer dismissed later, such as
+after new commits.
 
 It is observed on a person in a project: the author of a pull request, or a
 person of GitHub, counted in all repositories of the project that the viewer
@@ -15,7 +17,18 @@ known yet.
 Inputs
 ======
 
-The state has no inputs.
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Required
+     - What it is
+   * - ``kinds``
+     - ``review-kinds``
+     - no, all of them
+     - The kinds of reviews that count: ``approved``, ``changes_requested``,
+       ``commented`` and ``dismissed``.
 
 Data
 ====

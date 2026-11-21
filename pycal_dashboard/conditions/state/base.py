@@ -45,6 +45,28 @@ class State(ABC):
     inputs: ClassVar[tuple[InputSpec, ...]] = ()
     data: ClassVar[tuple[DataSpec, ...]] = ()
     section: ClassVar[str] = "states"
+    # the states that it is made of, such as reviews_given for review_ratio: their inputs are
+    # its inputs, too (see inputs_of), so that a choice travels to all that use it
+    parts: ClassVar[tuple[type[State], ...]] = ()
+
+    @staticmethod
+    def inputs_of(*states: type[State]) -> tuple[InputSpec, ...]:
+        """The inputs of states and of their parts, each name once, in their order.
+
+        A state made of others, or a condition that compares a state, has their inputs, so that
+        a choice of them, such as the kinds of reviews, is the same wherever it is used.
+
+        Parameters:
+            *states: The states.
+
+        Returns:
+            The inputs.
+        """
+        found: dict[str, InputSpec] = {}
+        for state in states:
+            for spec in (*State.inputs_of(*state.parts), *state.inputs):
+                found.setdefault(spec.name, spec)
+        return tuple(found.values())
 
     @classmethod
     def configure(cls, config: dict | None = None, context: dict | None = None) -> dict:

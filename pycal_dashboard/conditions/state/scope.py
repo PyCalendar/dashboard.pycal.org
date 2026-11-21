@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from django.db.models import Count, F, Q
 
-from pycal_dashboard.conditions.spec.reviews import COUNTED
+from pycal_dashboard.conditions.review_kinds import states as review_states
 from pycal_dashboard.models import GitHubUser, Issue, PullRequestComment, Review, StepSkip
 
 if TYPE_CHECKING:
@@ -100,17 +100,20 @@ class Scope:
         """
         return subject.author if isinstance(subject, Issue) else subject
 
-    def counts(self, name: str) -> dict[int, int]:
+    def counts(self, name: str, kinds: tuple[str, ...] | None = None) -> dict[int, int]:
         """A number of every person in the repositories, by the id of the person.
 
         Parameters:
             name: ``opened`` (pull requests opened), ``closed_own`` (of those, closed by the
-                person without merging) or ``reviews`` (reviews given, not only comments).
+                person without merging) or ``reviews`` (reviews given).
+            kinds: For ``reviews``, the kinds of reviews that count; all of them for None.
 
         Returns:
             The numbers by the id of the ``GitHubUser``; people without any are missing.
         """
-        if name not in self._counts:
+        states = review_states(kinds)
+        key = f"{name}:{','.join(states)}" if name == "reviews" else name
+        if key not in self._counts:
             pulls = Issue.objects.filter(repository__in=self.repositories, pull_request=True)
             if name == "opened":
                 rows = pulls.values("author").annotate(number=Count("pk"))
@@ -123,22 +126,23 @@ class Scope:
             else:
                 rows = (
                     Review.objects.filter(
-                        Q(issue__repository__in=self.repositories), state__in=COUNTED
+                        Q(issue__repository__in=self.repositories), state__in=states
                     )
                     .values("author")
                     .annotate(number=Count("pk"))
                 )
-            self._counts[name] = {row["author"]: row["number"] for row in rows if row["author"]}
-        return self._counts[name]
+            self._counts[key] = {row["author"]: row["number"] for row in rows if row["author"]}
+        return self._counts[key]
 
-    def count(self, name: str, person: GitHubUser) -> int:
+    def count(self, name: str, person: GitHubUser, kinds: tuple[str, ...] | None = None) -> int:
         """A number of a person, see :meth:`counts`.
 
         Parameters:
             name: ``opened``, ``closed_own`` or ``reviews``.
             person: The person.
+            kinds: For ``reviews``, the kinds of reviews that count; all of them for None.
 
         Returns:
             The number.
         """
-        return self.counts(name).get(person.pk, 0)
+        return self.counts(name, kinds).get(person.pk, 0)

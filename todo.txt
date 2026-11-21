@@ -597,12 +597,13 @@ community: where to start, what waits for a review, who contributes.
       10 seconds ("1-" read as 10), with a loading animation while it updates and a check mark when it is done
 - [x] Dark mode: the colors of the steps are computed darker from the color of the step (it may come from a label), on the tab Steps and on the page of a pull request
 - [x] The swatches of the color choice of a step respect dark mode, as the steps do
-- [ ] Review kinds, consistent everywhere (A1): switches approved, changes requested, commented, dismissed, all on by
+- [x] Review kinds, consistent everywhere (A1): switches approved, changes requested, commented, dismissed, all on by
       default; dismissed explained; in the condition reviews, the states reviews_given and review_ratio, the condition
       review_ratio and the column Author; parameters travel: a condition or state that uses a state exposes all its
       inputs; the evidence follows
-- [ ] The page of a contributor (B3): the same switches of the kinds, behind a gear button (JavaScript; works without)
-- [ ] (C) Columns saved before count all kinds now (the default); remind the person to check the settings of the filters
+- [x] The page of a contributor (B3): the same switches of the kinds, behind a gear button (JavaScript; works without)
+- [x] (C) Columns saved before count all kinds now (migration 0030)
+- [ ] The person: check the settings of the filters of the steps (the kinds of reviews; Peer review)
 - [x] Rule: the site names itself by SITE_NAME (dashboard.pycal.org), never "this site"
 - [x] Status labels -> Step labels; their setting is a table: radio, title, description, action:
       Off (no step labels on GitHub; delete all labels that match the steps) and With PR Status (the steps have labels
@@ -631,3 +632,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The actions of a step: "When a pull request completes the step" -> "When a pull request leaves the step"; they
       also follow when the step is skipped while the pull request is in it
 - [x] Scope -> Synchronization; heading Pull request selection; legend Options; the note without its second half; the button Keep N pull requests synchronized
+- [ ] Apply: "Apply the edited message and synchronise it with <n> pull requests"; next to Apply a button Preview on the
+      page Edit and a button Edit on the page Preview
+- [ ] The badge of a pull request: the color of the step is the background of the name of the step
+- [ ] Step labels without the prefix Step: — just the name of the step (the labels on GitHub are renamed at the next update)

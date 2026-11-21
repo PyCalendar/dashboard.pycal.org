@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from django.utils.translation import gettext_noop
 
+from pycal_dashboard.conditions.input.review_kinds import ReviewKindsInput
 from pycal_dashboard.conditions.spec.reviews import ReviewsData
 from pycal_dashboard.conditions.state.person import PersonState
 
@@ -17,15 +18,16 @@ if TYPE_CHECKING:
 class ReviewsGiven(PersonState):
     """How many reviews a person gave on the pull requests of all repositories of a project.
 
-    A review counts when it approved, requested changes, or was dismissed later; a review with
-    comments only does not count.
+    The input ``kinds`` says which reviews count: approved, changes requested, commented and
+    dismissed; all of them by default.
     """
 
     id = "reviews_given"
     title = gettext_noop("Reviews given")
     description = gettext_noop(
-        "How many reviews a person gave in the project, without those of comments only."
+        "How many reviews a person gave in the project, of the kinds that count: all by default."
     )
+    inputs = (ReviewKindsInput(),)
     data = (ReviewsData(),)
 
     phrase = gettext_noop("its author gave %(comparison)s %(number)s reviews")
@@ -37,9 +39,9 @@ class ReviewsGiven(PersonState):
         Parameters:
             person: The person.
             scope: The repositories of the project.
-            values: Not used.
+            values: ``kinds``, the kinds of reviews that count.
 
         Returns:
             How many.
         """
-        return scope.count("reviews", person)
+        return scope.count("reviews", person, values.get("kinds"))

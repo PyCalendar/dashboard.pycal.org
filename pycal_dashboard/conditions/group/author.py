@@ -16,6 +16,8 @@ from pycal_dashboard.conditions.input.comparison import (
     ComparisonInput,
 )
 from pycal_dashboard.conditions.input.number import NumberInput
+from pycal_dashboard.conditions.review_kinds import ALL, KINDS, checked
+from pycal_dashboard.conditions.review_kinds import text as kinds_text
 from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
 from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
@@ -38,6 +40,30 @@ STATES: dict[str, type[PersonState]] = {
 NUMBER = NumberInput("number", "Number", minimum=0)
 COMPARISON = ComparisonInput("comparison", "Comparison")
 DEFAULT = "below"  # such as fewer reviews than pull requests
+
+
+def has_kinds(state: type[PersonState]) -> bool:
+    """Whether a state counts reviews and so has the input of their kinds.
+
+    Parameters:
+        state: The state.
+
+    Returns:
+        True for such as ``reviews_given`` and ``review_ratio``.
+    """
+    return any(spec.name == "kinds" for spec in state.inputs)
+
+
+def state_values(choices: tuple[str, ...]) -> dict:
+    """The inputs of the state of a column, from the choices after the number.
+
+    Parameters:
+        choices: The state, the comparison, the number and the kinds of reviews if not all.
+
+    Returns:
+        ``kinds`` for a state that counts reviews, else nothing.
+    """
+    return {"kinds": checked(choices[3:])} if has_kinds(STATES[choices[0]]) else {}
 
 
 def number_text(number: float) -> str:
@@ -79,37 +105,56 @@ class AuthorGroup(ConditionGroup):
         """Check the state, the comparison and the number.
 
         Parameters:
-            choices: The id of the state, the comparison and the number; or the state and the
-                number alone: above.
+            choices: The id of the state, the comparison, the number and, for a state that
+                counts reviews, their kinds if not all; or the state and the number alone: above.
 
         Returns:
-            The choices, the number as people write it.
+            The choices, the number as people write it, without the kinds when all count.
 
         Raises:
             ConditionInputMissing: There is no number.
-            ConditionInputUnknown: The state or the comparison is not known.
+            ConditionInputUnknown: The state, the comparison or a kind of review is not known.
             ConditionError: The number is wrong.
         """
         if len(choices) == 2:
             choices = (choices[0], "above", choices[1])
-        if len(choices) != 3 or not choices[2].strip():
+        if len(choices) < 3 or not choices[2].strip():
             raise ConditionInputMissing("author: number")
         if choices[0] not in STATES:
             raise ConditionInputUnknown(f"author: {choices[0]}")
-        return choices[0], COMPARISON.parse(choices[1]), number_text(NUMBER.parse(choices[2]))
+        extra = [kind for kind in choices[3:] if kind not in KINDS]
+        if extra:
+            raise ConditionInputUnknown(f"author: {', '.join(extra)}")
+        kinds = checked(choices[3:]) if has_kinds(STATES[choices[0]]) else ALL
+        found = (choices[0], COMPARISON.parse(choices[1]), number_text(NUMBER.parse(choices[2])))
+        return (*found, *(() if kinds == ALL else kinds))
 
     @classmethod
     def parse(cls, form: QueryDict) -> tuple[str, ...]:
         """The state, the comparison and the number of a form.
 
         Parameters:
-            form: ``state``, ``comparison`` and ``number``.
+            form: ``state``, ``comparison``, ``number`` and ``author_kinds``, the switches of
+                the kinds of reviews, with ``author_kinds_form``.
 
         Returns:
             The choices.
+
+        Raises:
+            ConditionInputMissing: A state that counts reviews, and no kind switched on.
         """
+        state = form.get("state", "")
+        kinds = tuple(form.getlist("author_kinds"))
+        counts_reviews = state in STATES and has_kinds(STATES[state])
+        if counts_reviews and form.get("author_kinds_form") and not kinds:
+            raise ConditionInputMissing("author: kinds")
         return cls.check(
-            (form.get("state", ""), form.get("comparison", DEFAULT), form.get("number", ""))
+            (
+                state,
+                form.get("comparison", DEFAULT),
+                form.get("number", ""),
+                *(kinds if counts_reviews else ()),
+            )
         )
 
     @classmethod
@@ -129,7 +174,9 @@ class AuthorGroup(ConditionGroup):
         """
         if not issue.pull_request:
             return None
-        return STATES[choices[0]].compare(issue, choices[1], float(choices[2]), scope)
+        return STATES[choices[0]].compare(
+            issue, choices[1], float(choices[2]), scope, state_values(choices)
+        )
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -143,7 +190,7 @@ class AuthorGroup(ConditionGroup):
         Returns:
             The number, when it is known.
         """
-        value = STATES[choices[0]].observe(issue, scope)
+        value = STATES[choices[0]].observe(issue, scope, state_values(choices))
         return [] if value is None else [{"text": number_text(value), "kind": "number"}]
 
     @classmethod
@@ -196,7 +243,7 @@ class AuthorGroup(ConditionGroup):
             The choices; None for exactly, which has no opposite comparison.
         """
         inverse = INVERSE.get(choices[1])
-        return (choices[0], inverse, choices[2]) if inverse else None
+        return (choices[0], inverse, *choices[2:]) if inverse else None
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
@@ -216,7 +263,11 @@ class AuthorGroup(ConditionGroup):
             words = gettext(COMPARISONS[comparison][2 if state.counted else 1])
         else:
             words = gettext(NOT_EXACTLY)
-        return gettext(state.phrase) % {"comparison": words, "number": choices[2]}
+        text = gettext(state.phrase) % {"comparison": words, "number": choices[2]}
+        kinds = state_values(choices).get("kinds", ALL)
+        if kinds != ALL:
+            text += gettext(" (reviews: %(kinds)s)") % {"kinds": kinds_text(kinds)}
+        return text
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:
@@ -230,7 +281,11 @@ class AuthorGroup(ConditionGroup):
         """
         title = gettext(STATES[choices[0]].title)
         sign = COMPARISONS[choices[1]][0]
-        return [{"text": f"{title} {sign} {choices[2]}", "kind": "number"}]
+        head = [{"text": f"{title} {sign} {choices[2]}", "kind": "number"}]
+        kinds = state_values(choices).get("kinds", ALL)
+        if kinds != ALL:
+            head.append({"text": ", ".join(gettext(KINDS[k][1]) for k in kinds), "kind": "kinds"})
+        return head
 
     @classmethod
     def summary(cls, choices: tuple[str, ...]) -> str:

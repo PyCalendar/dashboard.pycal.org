@@ -41,6 +41,7 @@ class ReviewRatioCompared(Condition):
             "The reviews given for each pull request opened and not closed by the author.",
             minimum=0,
         ),
+        *ReviewRatio.inputs,  # the inputs of the state travel to the condition
     )
     data = ReviewRatio.data
     scoped = True
@@ -51,14 +52,14 @@ class ReviewRatioCompared(Condition):
 
         Parameters:
             issue: The pull request.
-            values: ``comparison`` and ``ratio``.
+            values: ``comparison``, ``ratio`` and the inputs of the state, such as ``kinds``.
             scope: The repositories of the project.
 
         Returns:
             True if it holds; False for a pull request without an author.
         """
         comparison = values.get("comparison", "above")
-        return bool(ReviewRatio.compare(issue, comparison, values["ratio"], scope))
+        return bool(ReviewRatio.compare(issue, comparison, values["ratio"], scope, values))
 
     @classmethod
     def evidence(

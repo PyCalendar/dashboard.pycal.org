@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 20:53+0000\n"
+"POT-Creation-Date: 2026-11-21 21:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,6 +49,10 @@ msgid ""
 msgstr ""
 "aún desconocido: las revisiones de un repositorio del proyecto aún no se han "
 "leído; necesitan la GitHub App"
+
+#, python-format
+msgid " (reviews: %(kinds)s)"
+msgstr " (revisiones: %(kinds)s)"
 
 #, python-format
 msgid "Author: %(state)s %(comparison)s %(number)s"
@@ -188,10 +192,10 @@ msgstr[0] "%(count)s revisión"
 msgstr[1] "%(count)s revisiones"
 
 #, python-format
-msgid "it has %(comparison)s %(number)s review, also of comments"
-msgid_plural "it has %(comparison)s %(number)s reviews, also of comments"
-msgstr[0] "tiene %(comparison)s %(number)s revisión, también de comentarios"
-msgstr[1] "tiene %(comparison)s %(number)s revisiones, también de comentarios"
+msgid "it has %(comparison)s %(number)s review: %(kinds)s"
+msgid_plural "it has %(comparison)s %(number)s reviews: %(kinds)s"
+msgstr[0] "tiene %(comparison)s %(number)s revisión: %(kinds)s"
+msgstr[1] "tiene %(comparison)s %(number)s revisiones: %(kinds)s"
 
 #, python-format
 msgid "it has %(comparison)s %(number)s review"
@@ -202,12 +206,9 @@ msgstr[1] "tiene %(comparison)s %(number)s revisiones"
 msgid "reviews"
 msgstr "revisiones"
 
-msgid "also comments"
-msgstr "también comentarios"
-
 #, python-format
-msgid "Reviews: %(comparison)s %(number)s, also of comments"
-msgstr "Revisiones: %(comparison)s %(number)s, también de comentarios"
+msgid "Reviews: %(comparison)s %(number)s (%(kinds)s)"
+msgstr "Revisiones: %(comparison)s %(number)s (%(kinds)s)"
 
 #, python-format
 msgid "Reviews: %(comparison)s %(number)s"
@@ -263,6 +264,27 @@ msgstr "exactamente"
 msgid "not exactly"
 msgstr "no exactamente"
 
+msgid "approved"
+msgstr "aprobada"
+
+msgid "changes requested"
+msgstr "cambios solicitados"
+
+msgid "commented"
+msgstr "comentada"
+
+msgid "dismissed"
+msgstr "descartada"
+
+msgid ""
+"Dismissed: an approval or a request for changes that a maintainer dismissed "
+"later, such as after new commits; the review stays on GitHub, but no longer "
+"counts there."
+msgstr ""
+"Descartada: una aprobación o una solicitud de cambios que un mantenedor "
+"descartó después, por ejemplo tras nuevos commits; la revisión sigue en "
+"GitHub, pero ya no cuenta allí."
+
 msgid "Its checks on GitHub"
 msgstr "Sus checks en GitHub"
 
@@ -274,18 +296,6 @@ msgstr "Sus etiquetas en GitHub"
 
 msgid "Where it is merged, on GitHub"
 msgstr "Donde se fusiona, en GitHub"
-
-msgid "approved"
-msgstr "aprobada"
-
-msgid "changes requested"
-msgstr "cambios solicitados"
-
-msgid "dismissed"
-msgstr "descartada"
-
-msgid "commented"
-msgstr "comentada"
 
 #, python-format
 msgid "Review by %(handle)s: %(state)s"
@@ -340,11 +350,11 @@ msgid "Reviews given"
 msgstr "Revisiones dadas"
 
 msgid ""
-"How many reviews a person gave in the project, without those of comments "
-"only."
+"How many reviews a person gave in the project, of the kinds that count: all "
+"by default."
 msgstr ""
-"Cuántas revisiones dio una persona en el proyecto, sin las que solo tienen "
-"comentarios."
+"Cuántas revisiones dio una persona en el proyecto, de los tipos que cuentan: "
+"todos por defecto."
 
 #, python-format
 msgid "its author gave %(comparison)s %(number)s reviews"
@@ -1625,16 +1635,8 @@ msgstr "Elige una etiqueta de los repositorios o escribe otra."
 msgid "The pull request has"
 msgstr "El pull request tiene"
 
-msgid ""
-"Approvals and requested changes count; comment reviews count when the switch "
-"below is on. At least and at most include the number."
-msgstr ""
-"Cuentan las aprobaciones y los cambios solicitados; las revisiones de "
-"comentarios cuentan cuando el interruptor de abajo está activado. Al menos y "
-"como máximo incluyen el número."
-
-msgid "Also count comment reviews"
-msgstr "Contar también las revisiones de comentarios"
+msgid "At least and at most include the number."
+msgstr "Al menos y como máximo incluyen el número."
 
 msgid "Of the author, in the project"
 msgstr "Del autor, en el proyecto"
@@ -1656,11 +1658,21 @@ msgstr ""
 "revisiones como pull requests, 0,5 la mitad, 2 el doble. Al menos y como "
 "máximo incluyen el número."
 
+msgid ""
+"The kinds of reviews count for the reviews given and the review to pull "
+"request ratio."
+msgstr ""
+"Los tipos de revisiones cuentan para las revisiones dadas y la proporción de "
+"revisiones por pull request."
+
 msgid "Change the column"
 msgstr "Cambiar la columna"
 
 msgid "Add the column"
 msgstr "Añadir la columna"
+
+msgid "Which reviews count"
+msgstr "Qué revisiones cuentan"
 
 msgid "Actions"
 msgstr "Acciones"
@@ -2381,12 +2393,10 @@ msgstr "Issues"
 
 msgid ""
 "What the conditions of the author count, in the repositories of the project. "
-"A review counts when it approved, requested changes, or was dismissed; "
-"comments do not."
+"The gear chooses which reviews count: all of them by default."
 msgstr ""
 "Lo que cuentan las condiciones del autor, en los repositorios del proyecto. "
-"Una revisión cuenta cuando aprobó, solicitó cambios o fue descartada; los "
-"comentarios no."
+"El engranaje elige qué revisiones cuentan: todas por defecto."
 
 msgid "The profile on GitHub"
 msgstr "El perfil en GitHub"

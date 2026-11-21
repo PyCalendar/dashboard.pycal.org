@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from pycal_dashboard.conditions.condition.reviews import Reviews
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.conditions.input.comparison import COMPARISONS, INVERSE, NOT_EXACTLY
+from pycal_dashboard.conditions.review_kinds import ALL, DISMISSED_HELP, KINDS, checked
+from pycal_dashboard.conditions.review_kinds import text as kinds_text
 from pycal_dashboard.conditions.spec.reviews import ReviewsData
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 
@@ -21,40 +23,40 @@ if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project
 
 DEFAULT = "at_least"
-COMMENTS = "comments"  # the choice that counts reviews of comments only, too
+LEGACY = "comments"  # saved before the kinds: all kinds count
 
 
 def values(choices: tuple[str, ...]) -> dict:
     """The configuration of the condition ``reviews`` of the choices of a column.
 
     Parameters:
-        choices: The comparison, the number and maybe ``comments``.
+        choices: The comparison, the number and the kinds, if not all.
 
     Returns:
-        ``comparison``, ``reviews`` and ``comments``.
+        ``comparison``, ``reviews`` and ``kinds``.
 
     Examples:
-        >>> values(("below", "2", "comments"))
-        {'comparison': 'below', 'reviews': 2, 'comments': True}
+        >>> values(("below", "2", "approved"))
+        {'comparison': 'below', 'reviews': 2, 'kinds': ('approved',)}
     """
-    return {
-        "comparison": choices[0],
-        "reviews": int(choices[1]),
-        "comments": COMMENTS in choices[2:],
-    }
+    return {"comparison": choices[0], "reviews": int(choices[1]), "kinds": checked(choices[2:])}
 
 
 class ReviewsGroup(ConditionGroup):
     """The reviews of a pull request compared with a number: the condition ``reviews``.
 
-    The choices are the comparison, such as ``at_least``, the number, from 0 up, and
-    ``comments`` when reviews of comments only count, too; else they do not. A choice of the
-    number alone, as columns were saved before, is at least that number.
+    The choices are the comparison, such as ``at_least``, the number, from 0 up, and the kinds
+    of reviews that count, such as ``approved``, when not all of them do
+    (:mod:`~pycal_dashboard.conditions.review_kinds`). A choice of the number alone, as columns
+    were saved before, is at least that number; ``comments``, as they were saved before, is all
+    kinds.
     """
 
     id = "reviews"
     title = _("Reviews")
     comparisons = COMPARISONS  # for the menu of the column
+    kinds = KINDS  # the kinds of reviews, for the switches of the menu
+    kinds_help = DISMISSED_HELP
     default = DEFAULT
 
     @classmethod
@@ -62,41 +64,46 @@ class ReviewsGroup(ConditionGroup):
         """Check the comparison and the number.
 
         Parameters:
-            choices: The comparison, the number and maybe ``comments``; or the number alone:
-                at least.
+            choices: The comparison, the number and the kinds of reviews if not all; or the
+                number alone: at least.
 
         Returns:
-            The choices.
+            The choices, without the kinds when all of them count.
 
         Raises:
             ConditionInputMissing: There is no number.
-            ConditionInputUnknown: A third choice is not ``comments``.
+            ConditionInputUnknown: A choice after the number is no kind of review.
             ConditionError: The comparison is not known, or the number is not one from 0 up.
         """
         if len(choices) == 1:
             choices = (DEFAULT, *choices)
-        if len(choices) not in (2, 3) or not choices[1].strip():
+        if len(choices) < 2 or not choices[1].strip():
             raise ConditionInputMissing("reviews: reviews")
-        if choices[2:] not in ((), (COMMENTS,)):
-            raise ConditionInputUnknown(f"reviews: {choices[2]}")
+        unknown = [kind for kind in choices[2:] if kind not in KINDS and kind != LEGACY]
+        if unknown:
+            raise ConditionInputUnknown(f"reviews: {', '.join(unknown)}")
         found = Reviews.configure({"comparison": choices[0], "reviews": choices[1]})
-        return found["comparison"], str(found["reviews"]), *choices[2:]
+        kinds = checked(choices[2:])
+        return found["comparison"], str(found["reviews"]), *(() if kinds == ALL else kinds)
 
     @classmethod
     def parse(cls, form: QueryDict) -> tuple[str, ...]:
         """The comparison and the number of a form.
 
         Parameters:
-            form: ``reviews_comparison``, ``reviews`` and ``reviews_comments`` (``on`` when
-                reviews of comments only count).
+            form: ``reviews_comparison``, ``reviews`` and ``reviews_kinds``, the switches of the
+                kinds of reviews that count; ``reviews_kinds_form`` says that the form has them.
 
         Returns:
             The choices.
+
+        Raises:
+            ConditionInputMissing: No kind of review is switched on.
         """
-        comments = (COMMENTS,) if form.get("reviews_comments") == "on" else ()
-        return cls.check(
-            (form.get("reviews_comparison", DEFAULT), form.get("reviews", ""), *comments)
-        )
+        kinds = tuple(form.getlist("reviews_kinds"))
+        if form.get("reviews_kinds_form") and not kinds:
+            raise ConditionInputMissing("reviews: kinds")
+        return cls.check((form.get("reviews_comparison", DEFAULT), form.get("reviews", ""), *kinds))
 
     @classmethod
     def applies(
@@ -149,7 +156,7 @@ class ReviewsGroup(ConditionGroup):
         """
         if not Reviews.complete(issue):
             return []
-        count = len(ReviewsData.counted(issue, COMMENTS in choices[2:]))
+        count = len(ReviewsData.counted(issue, checked(choices[2:])))
         text = ngettext("%(count)s review", "%(count)s reviews", count) % {"count": count}
         return [{"text": text, "kind": "number"}]
 
@@ -181,12 +188,13 @@ class ReviewsGroup(ConditionGroup):
         if negative:
             comparison = INVERSE.get(comparison, "")
         words = gettext(COMPARISONS[comparison][2]) if comparison else gettext(NOT_EXACTLY)
-        if COMMENTS in choices[2:]:
+        kinds = checked(choices[2:])
+        if kinds != ALL:
             return ngettext(
-                "it has %(comparison)s %(number)s review, also of comments",
-                "it has %(comparison)s %(number)s reviews, also of comments",
+                "it has %(comparison)s %(number)s review: %(kinds)s",
+                "it has %(comparison)s %(number)s reviews: %(kinds)s",
                 number,
-            ) % {"comparison": words, "number": number}
+            ) % {"comparison": words, "number": number, "kinds": kinds_text(kinds)}
         return ngettext(
             "it has %(comparison)s %(number)s review",
             "it has %(comparison)s %(number)s reviews",
@@ -205,8 +213,9 @@ class ReviewsGroup(ConditionGroup):
         """
         sign = COMPARISONS[choices[0]][0]
         head = [{"text": f"{gettext('reviews')} {sign} {choices[1]}", "kind": "number"}]
-        if COMMENTS in choices[2:]:
-            head.append({"text": gettext("also comments"), "kind": "comments"})
+        kinds = checked(choices[2:])
+        if kinds != ALL:
+            head.append({"text": ", ".join(gettext(KINDS[k][1]) for k in kinds), "kind": "kinds"})
         return head
 
     @classmethod
@@ -220,6 +229,8 @@ class ReviewsGroup(ConditionGroup):
             The header.
         """
         found = {"comparison": gettext(COMPARISONS[choices[0]][1]), "number": choices[1]}
-        if COMMENTS in choices[2:]:
-            return gettext("Reviews: %(comparison)s %(number)s, also of comments") % found
+        kinds = checked(choices[2:])
+        if kinds != ALL:
+            found["kinds"] = kinds_text(kinds)
+            return gettext("Reviews: %(comparison)s %(number)s (%(kinds)s)") % found
         return gettext("Reviews: %(comparison)s %(number)s") % found

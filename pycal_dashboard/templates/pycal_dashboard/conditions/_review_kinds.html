@@ -1,0 +1,5 @@
+{% load i18n %}<fieldset class="review-kinds" data-review-kinds="{{ name }}"><legend>{% translate "Which reviews count" %}</legend>
+  <input type="hidden" name="{{ name }}_form" value="1">
+  {% for kind, about in groups.reviews.kinds.items %}{% translate about.1 as kind_text %}{% if kind in chosen %}{% include "pycal_dashboard/_switch.html" with name=name value=kind checked=True text=kind_text hidden_text="" %}{% else %}{% include "pycal_dashboard/_switch.html" with name=name value=kind checked=False text=kind_text hidden_text="" %}{% endif %}{% endfor %}
+  <small class="muted">{% translate groups.reviews.kinds_help %}</small>
+</fieldset>

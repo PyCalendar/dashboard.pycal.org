@@ -46,6 +46,15 @@ Inputs
      - yes
      - The reviews given for each pull request opened and not closed by the
        author.
+   * - ``kinds``
+     - ``review-kinds``
+     - no, all of them
+     - The kinds of reviews that count: ``approved``, ``changes_requested``,
+       ``commented`` and ``dismissed``.
+
+The input ``kinds`` comes from the state :doc:`/reference/states/review_ratio`,
+which has it from :doc:`/reference/states/reviews_given`: the inputs of a state
+travel to the conditions and states that use it.
 
 The type ``number`` is a number with a point before a fraction, from 0 up.
 

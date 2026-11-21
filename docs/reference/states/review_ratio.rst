@@ -18,7 +18,20 @@ known yet.
 Inputs
 ======
 
-The state has no inputs.
+It has the inputs of the states it is made of:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Required
+     - What it is
+   * - ``kinds``
+     - ``review-kinds``
+     - no, all of them
+     - The kinds of reviews that count: ``approved``, ``changes_requested``,
+       ``commented`` and ``dismissed``.
 
 Data
 ====

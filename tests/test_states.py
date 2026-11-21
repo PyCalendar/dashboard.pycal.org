@@ -119,8 +119,11 @@ def test_the_states_of_a_person_in_a_project(repositories):
     anna = pull("Anna 1")
     assert STATES["pull_requests_opened"].observe(anna, scope) == 3
     assert STATES["own_pull_requests_closed"].observe(anna, scope) == 1  # not the merged one
-    assert STATES["reviews_given"].observe(anna, scope) == 1  # not the comment
-    assert STATES["review_ratio"].observe(anna, scope) == 0.5  # 1 / (3 - 1)
+    assert STATES["reviews_given"].observe(anna, scope) == 2  # all kinds: also the comment
+    assert STATES["review_ratio"].observe(anna, scope) == 1  # 2 / (3 - 1)
+    no_comments = {"kinds": ("approved", "changes_requested", "dismissed")}
+    assert STATES["reviews_given"].observe(anna, scope, no_comments) == 1
+    assert STATES["review_ratio"].observe(anna, scope, no_comments) == 0.5  # 1 / (3 - 1)
     ben = person("ben")
     assert STATES["reviews_given"].observe(ben, scope) == 3  # in both repositories
     assert STATES["own_pull_requests_closed"].observe(ben, scope) == 0  # Anna closed it
@@ -150,7 +153,7 @@ def test_unknown_while_the_reviews_are_not_read(repositories):
     other.reviews_changed = None
     other.save()
     assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository, other])) is None
-    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 1
+    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 2
     assert STATES["pull_requests_opened"].observe(pull("Anna 1"), Scope([repository])) == 3
     assert (
         CONDITIONS["review_ratio"].check(
@@ -168,7 +171,7 @@ def test_without_an_author_there_is_no_state(repositories):
 
 @pytest.mark.parametrize(
     ("comparison", "number", "anna", "ben"),
-    [  # Anna 1 has 2 reviews (approved, changes; not the comment), Ben 1 has 1
+    [  # Anna 1 has 3 reviews (approved, changes, a comment), Ben 1 has 1
         ("at_least", 2, True, False),  # the number counts
         ("at_most", 1, False, True),
         ("above", 1, True, False),
@@ -188,7 +191,7 @@ def test_reviews_at_least_by_default(repositories):
     assert condition.configure({"reviews": 0}) == {
         "comparison": "at_least",
         "reviews": 0,
-        "comments": False,
+        "kinds": ("approved", "changes_requested", "commented", "dismissed"),
     }
     with pytest.raises(errors.ConditionInputUnknown):
         condition.configure({"comparison": "around", "reviews": 1})
@@ -196,43 +199,82 @@ def test_reviews_at_least_by_default(repositories):
         condition.configure({"reviews": -1})
 
 
-def test_reviews_of_comments_count_where_it_is_on(repositories):
-    """Anna 1 has 2 reviews that count and a review of comments only."""
+def test_the_kinds_of_reviews_count(repositories):
+    """Anna 1 has an approval, a request for changes and a comment: all kinds by default."""
     condition = CONDITIONS["reviews"]
-    off = condition.configure({"comparison": "exactly", "reviews": 2})
-    on = condition.configure({"comparison": "exactly", "reviews": 3, "comments": "on"})
-    assert on["comments"] is True
-    assert condition.check(pull("Anna 1"), off) is True
-    assert condition.check(pull("Anna 1"), on) is True
-    with pytest.raises(errors.ConditionInputNotBoolean):
-        condition.configure({"reviews": 1, "comments": "maybe"})
+    every = condition.configure({"comparison": "exactly", "reviews": 3})
+    two = condition.configure(
+        {"comparison": "exactly", "reviews": 2, "kinds": "approved, changes_requested"}
+    )
+    assert two["kinds"] == ("approved", "changes_requested")
+    assert condition.check(pull("Anna 1"), every) is True
+    assert condition.check(pull("Anna 1"), two) is True
+    with pytest.raises(errors.ConditionInputUnknown):
+        condition.configure({"reviews": 1, "kinds": "maybe"})
+    with pytest.raises(errors.ConditionInputMissing):
+        condition.configure({"reviews": 1, "kinds": []})
 
 
-def test_a_column_of_reviews_with_comments(repositories):
+def test_a_column_of_kinds_of_reviews(repositories):
     from django.http import QueryDict
 
     from pycal_dashboard.conditions.group.column import Column
     from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 
-    column = Column.decode("reviews~applies~at_least~3~comments")
-    assert column.applies(pull("Anna 1")) is True
-    assert Column.decode("reviews~applies~at_least~3").applies(pull("Anna 1")) is False
-    assert column.sentence == "it has at least 3 reviews, also of comments"
-    assert column.inverted().encode() == "reviews~applies~below~3~comments"
-    assert [part["text"] for part in column.head] == ["reviews ≥ 3", "also comments"]
-    assert column.group.summary(column.choices) == "Reviews: at least 3, also of comments"
-    assert column.group.cell(pull("Anna 1"), column.choices)[0]["text"] == "3 reviews"
-    evidence = column.evidence(pull("Anna 1"))
-    assert [e.text for e in evidence] == [
+    old = Column.decode("reviews~applies~at_least~3~comments")  # saved before: all kinds
+    assert old.encode() == "reviews~applies~at_least~3" and old.applies(pull("Anna 1")) is True
+    column = Column.decode("reviews~applies~at_least~2~changes_requested~approved")
+    assert column.encode() == "reviews~applies~at_least~2~approved~changes_requested"
+    assert column.applies(pull("Anna 1")) is True and column.kinds == column.choices[2:]
+    assert Column.decode("reviews~applies~at_least~2~commented").applies(pull("Anna 1")) is False
+    assert column.sentence == "it has at least 2 reviews: approved or changes requested"
+    assert column.inverted().encode() == "reviews~applies~below~2~approved~changes_requested"
+    assert [part["text"] for part in column.head] == [
+        "reviews ≥ 2",
+        "approved, changes requested",
+    ]
+    assert column.group.summary(column.choices) == (
+        "Reviews: at least 2 (approved or changes requested)"
+    )
+    assert column.group.cell(pull("Anna 1"), column.choices)[0]["text"] == "2 reviews"
+    assert [e.text for e in column.evidence(pull("Anna 1"))] == [
         "Review by ben: approved",
         "Review by ben: changes requested",
-        "Review by anna: commented",
     ]
-    form = QueryDict("reviews_comparison=below&reviews=2&reviews_comments=on")
-    assert ReviewsGroup.parse(form) == ("below", "2", "comments")
+    form = QueryDict(
+        "reviews_comparison=below&reviews=2&reviews_kinds_form=1&reviews_kinds=commented"
+    )
+    assert ReviewsGroup.parse(form) == ("below", "2", "commented")
+    every = "&".join(
+        f"reviews_kinds={k}" for k in ("approved", "changes_requested", "commented", "dismissed")
+    )
+    assert ReviewsGroup.parse(QueryDict(f"reviews=2&reviews_kinds_form=1&{every}")) == (
+        "at_least",
+        "2",
+    )  # all of them: no choice
     assert ReviewsGroup.parse(QueryDict("reviews=2")) == ("at_least", "2")
+    with pytest.raises(errors.ConditionInputMissing):
+        ReviewsGroup.parse(QueryDict("reviews=2&reviews_kinds_form=1"))
     with pytest.raises(errors.ConditionInputUnknown):
         Column.decode("reviews~all~at_least~1~everything")
+
+
+def test_the_inputs_of_states_travel(repositories):
+    """A state made of others, and a condition of a state, have all their inputs."""
+    from pycal_dashboard.conditions.state.base import State
+
+    for state in STATES.values():
+        names = {spec.name for spec in state.inputs}
+        for part in state.parts:
+            assert {spec.name for spec in part.inputs} <= names, (state.id, part.id)
+    assert {spec.name for spec in STATES["review_ratio"].inputs} == {"kinds"}
+    ratio = {spec.name for spec in CONDITIONS["review_ratio"].inputs}
+    assert {spec.name for spec in STATES["review_ratio"].inputs} <= ratio
+    assert {spec.name for spec in CONDITIONS["reviews"].inputs} >= {"kinds"}
+    kinds = [spec for state in STATES.values() for spec in state.inputs if spec.name == "kinds"]
+    kinds += [spec for c in CONDITIONS.values() for spec in c.inputs if spec.name == "kinds"]
+    assert len({(spec.type, spec.default) for spec in kinds}) == 1  # the same everywhere
+    assert State.inputs_of() == ()
 
 
 def test_review_ratio(repositories):
@@ -243,8 +285,14 @@ def test_review_ratio(repositories):
     assert condition.check(pull("Ben 1"), condition.configure({"ratio": 1.5}), scope) is False
     assert condition.check(pull("Ben 1"), {"comparison": "at_least", "ratio": 1.5}, scope)
     assert condition.check(pull("Anna 1"), {**above, "ratio": 0.4}, scope) is True
-    assert condition.check(pull("Anna 1"), {"comparison": "below", "ratio": 1}) is True
-    assert [i["type"] for i in condition.describe()["inputs"]] == ["comparison", "number"]
+    assert condition.check(pull("Anna 1"), {"comparison": "below", "ratio": 1.5}) is True
+    assert [i["type"] for i in condition.describe()["inputs"]] == [
+        "comparison",
+        "number",
+        "review-kinds",
+    ]
+    no_comments = {"comparison": "below", "ratio": 0.6, "kinds": ("approved",)}
+    assert condition.check(pull("Anna 1"), no_comments, scope) is True  # 1 / 2
 
 
 @pytest.mark.parametrize(
@@ -306,8 +354,8 @@ def test_a_column_of_reviews(repositories):
     assert exactly.inverted().encode() == "reviews~not~exactly~1"  # no opposite comparison
     assert exactly.inverted().sentence == "it has not exactly 1 review"
     assert column.group.cell(pull("Anna 1"), column.choices) == [
-        {"text": "2 reviews", "kind": "number"}
-    ]
+        {"text": "3 reviews", "kind": "number"}
+    ]  # all kinds count
     with pytest.raises(errors.ConditionInputOutOfRange):
         Column.decode("reviews~all~at_least~-1")
 
@@ -334,7 +382,14 @@ def test_a_column_of_the_author(repositories):
     assert given.sentence == "its author gave at most 2 reviews"
     below = Column.decode("author~applies~reviews_given~below~2")
     assert below.sentence == "its author gave fewer than 2 reviews"
-    assert below.applies(pull("Anna 1"), scope) is True  # 1 review
+    assert below.applies(pull("Anna 1"), scope) is False  # 2 reviews, with the comment
+    approvals = Column.decode("author~applies~reviews_given~below~2~approved")
+    assert approvals.applies(pull("Anna 1"), scope) is True  # 1 approval
+    assert approvals.sentence == "its author gave fewer than 2 reviews (reviews: approved)"
+    assert [part["text"] for part in approvals.head] == ["Reviews given < 2", "approved"]
+    assert Column.decode("author~all~pull_requests_opened~below~2~approved").encode() == (
+        "author~all~pull_requests_opened~below~2"
+    )  # opened pull requests have no kinds of reviews
     assert given.shows(given.applies(pull("Anna 1"), scope)) is True
     with pytest.raises(errors.ConditionInputUnknown):
         Column.decode("author~all~nothing~1")

@@ -25,6 +25,9 @@ The base classes
 .. automodule:: pycal_dashboard.conditions.evidence
    :members:
 
+.. automodule:: pycal_dashboard.conditions.review_kinds
+   :members:
+
 Inputs
 ======
 
@@ -33,6 +36,10 @@ Inputs
    :show-inheritance:
 
 .. automodule:: pycal_dashboard.conditions.input.integer
+   :members:
+   :show-inheritance:
+
+.. automodule:: pycal_dashboard.conditions.input.review_kinds
    :members:
    :show-inheritance:
 

@@ -80,6 +80,7 @@ class PersonState(State):
         comparison: str,
         number: float,
         scope: Scope | None = None,
+        values: dict | None = None,
     ) -> bool | None:
         """Whether the state compares with a number: what the conditions of states check.
 
@@ -89,11 +90,12 @@ class PersonState(State):
                 :mod:`pycal_dashboard.conditions.input.comparison`.
             number: The number.
             scope: The repositories counted.
+            values: The inputs of the state, such as ``kinds``.
 
         Returns:
             True if it holds; None while the state is not known.
         """
-        value = cls.observe(subject, scope)
+        value = cls.observe(subject, scope, values)
         return None if value is None else compare(value, comparison, number)
 
     @classmethod

@@ -196,8 +196,10 @@ check mark, or not, with a red cross, and why:
 **Reviews**
    The pull request has a number of reviews: *at least* (the default), *at
    most*, *more than*, *fewer than* or *exactly*. At least and at most include
-   the number. Approvals, requested changes and reviews dismissed later count,
-   comments do not. The cell shows how many it has.
+   the number. *Which reviews count*: approved, changes requested, commented
+   and dismissed, all of them by default; a dismissed review is an approval or a
+   request for changes that a maintainer dismissed later. The cell shows how
+   many it has.
 **Author**
    A state of the author compared with a number, counted in all repositories
    of the project that you see: the review to pull request ratio, the reviews
@@ -206,7 +208,9 @@ check mark, or not, with a red cross, and why:
    number. The ratio is the reviews given for each pull request that the
    author opened and did not close themselves: *1* is as many reviews as pull
    requests, *0.5* half as many and *2* twice as many. The cell shows the
-   number of the author. See :doc:`/reference/states/index`.
+   number of the author. The reviews given and the ratio have the same switches
+   *Which reviews count* as the column *Reviews*. See
+   :doc:`/reference/states/index`.
 **Dashboard**
    Data of dashboard.pycal.org, not of GitHub: *PR Sync on*, the pull requests
    with the Status Message of the project, see :ref:`pr-message`, and *a skipped

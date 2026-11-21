@@ -10,6 +10,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext, gettext_noop
 
 from pycal_dashboard.conditions.evidence import Evidence
+from pycal_dashboard.conditions.review_kinds import states as review_states
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.queries import REVIEWS
@@ -153,31 +154,31 @@ class ReviewsData(DataSpec):
             issue.closed_by = self.person(closer, people)
             issue.save(update_fields=["closed_by"])
 
-    def evidence(self, issue: Issue, comments: bool = False) -> list[Evidence]:
+    def evidence(self, issue: Issue, kinds: tuple[str, ...] | None = None) -> list[Evidence]:
         """The reviews of the pull request that count, each on GitHub, the oldest first.
 
         Parameters:
             issue: The pull request.
-            comments: Whether reviews of comments only count, too.
+            kinds: The kinds of reviews that count, see
+                :mod:`~pycal_dashboard.conditions.review_kinds`; all for None.
 
         Returns:
             A link to each review.
         """
-        return [self.review_evidence(issue, review) for review in self.counted(issue, comments)]
+        return [self.review_evidence(issue, review) for review in self.counted(issue, kinds)]
 
     @staticmethod
-    def counted(issue: Issue, comments: bool = False) -> list[Review]:
-        """The reviews of a pull request that count, the oldest first.
+    def counted(issue: Issue, kinds: tuple[str, ...] | None = None) -> list[Review]:
+        """The reviews of a pull request of kinds, the oldest first.
 
         Parameters:
             issue: The pull request.
-            comments: Whether reviews of comments only count, too (``COMMENTED``).
+            kinds: The kinds of reviews that count; all of them for None.
 
         Returns:
-            Those that approved, requested changes or were dismissed (``COUNTED``), and
-            those of comments only if they count.
+            The reviews of these kinds.
         """
-        states = (*COUNTED, COMMENTED) if comments else COUNTED
+        states = review_states(kinds)
         found = [review for review in issue.reviews.all() if review.state in states]
         return sorted(found, key=lambda review: (review.submitted is None, review.submitted))
 

@@ -75,14 +75,20 @@ def test_ci_unknown_says_why(project):
 @pytest.mark.parametrize(
     ("value", "shown"),
     [
-        ("reviews~applies~at_least~4", 3),  # 3 of 4 there: all of them
-        ("reviews~applies~at_least~2", 2),  # 2 decide it
-        ("reviews~applies~at_most~2", 3),  # more than 2: 3 show it
-        ("reviews~applies~at_most~5", 3),  # all
-        ("reviews~applies~above~1", 2),
-        ("reviews~applies~below~2", 2),
-        ("reviews~applies~exactly~3", 3),
-        ("reviews~applies~exactly~1", 2),
+        (
+            "reviews~applies~at_least~4~approved~changes_requested~dismissed",
+            3,
+        ),  # 3 of 4 there: all of them
+        ("reviews~applies~at_least~2~approved~changes_requested~dismissed", 2),  # 2 decide it
+        (
+            "reviews~applies~at_most~2~approved~changes_requested~dismissed",
+            3,
+        ),  # more than 2: 3 show it
+        ("reviews~applies~at_most~5~approved~changes_requested~dismissed", 3),  # all
+        ("reviews~applies~above~1~approved~changes_requested~dismissed", 2),
+        ("reviews~applies~below~2~approved~changes_requested~dismissed", 2),
+        ("reviews~applies~exactly~3~approved~changes_requested~dismissed", 3),
+        ("reviews~applies~exactly~1~approved~changes_requested~dismissed", 2),
     ],
 )
 def test_reviews_show_as_many_as_decide(project, value, shown):
@@ -90,11 +96,19 @@ def test_reviews_show_as_many_as_decide(project, value, shown):
     assert len(found) == shown
     assert found[0] == ("Review by ben: approved", f"{URL}/1#pullrequestreview-50001")
     assert found[1] == ("Review by ben: changes requested", f"{URL}/1#pullrequestreview-50002")
-    assert all("50003" not in url for _text, url in found)  # comments only do not count
+    assert all("50003" not in url for _text, url in found)  # comments are not chosen
+
+
+def test_all_kinds_of_reviews_count_by_default(project):
+    found = evidence("reviews~applies~at_least~4", 1)
+    assert [text for text, _url in found][2] == "Review by ben: commented"
+    assert len(found) == 4
 
 
 def test_no_reviews_link_the_pull_request(project):
-    assert evidence("reviews~applies~at_least~1", 2) == [("Its reviews on GitHub", f"{URL}/2")]
+    assert evidence("reviews~applies~at_least~1~approved~changes_requested~dismissed", 2) == [
+        ("Its reviews on GitHub", f"{URL}/2")
+    ]
     assert Reviews.deciding(0, "at_least", 0) == 0
 
 
@@ -130,9 +144,9 @@ def test_the_page_of_a_contributor(client, project):
     page = client.get("/projects/icalendar/contributors/ben/").content.decode()
     assert 'data-contributor="ben"' in page and "data-contributor-states" in page
     assert "Review to pull request ratio" in page and "∞" in page  # 3 reviews, no pull requests
-    assert '<span class="tab-count">3</span>' in page  # reviews
+    assert '<span class="tab-count">4</span>' in page  # reviews, of all kinds
     reviews = client.get("/projects/icalendar/contributors/BEN/?tab=reviews").content.decode()
-    assert f'href="{URL}/1#pullrequestreview-50001"' in reviews and "50003" not in reviews
+    assert f'href="{URL}/1#pullrequestreview-50001"' in reviews and "50003" in reviews  # all kinds
     issues = client.get("/projects/icalendar/contributors/ben/?tab=issues").content.decode()
     assert "#5 An issue" in issues
     pulls = client.get("/projects/icalendar/contributors/ben/?tab=pull-requests")
@@ -145,3 +159,21 @@ def test_a_contributor_not_in_the_project(client, project):
     answer = client.get("/projects/icalendar/contributors/nobody/")
     assert answer.status_code == 404
     assert "Person not found in the project" in answer.content.decode()
+
+
+def test_the_page_of_a_contributor_chooses_the_kinds_of_reviews(client, project):
+    """All kinds count by default; the gear chooses some, which the tabs and counts keep."""
+    page = client.get("/projects/icalendar/contributors/ben/").content.decode()
+    assert '<span class="tab-count">4</span>' in page  # with the comment
+    assert "data-kinds-menu" in page and 'name="kinds" value="commented" checked' in page
+    assert "Dismissed: an approval or a request for changes" in page
+    chosen = client.get(
+        "/projects/icalendar/contributors/ben/?kinds=approved&kinds=changes_requested"
+    ).content.decode()
+    assert '<span class="tab-count">3</span>' in chosen
+    assert 'name="kinds" value="commented" checked' not in chosen
+    assert 'href="?tab=reviews&amp;kinds=approved&amp;kinds=changes_requested"' in chosen
+    reviews = client.get(
+        "/projects/icalendar/contributors/ben/?tab=reviews&kinds=commented"
+    ).content.decode()
+    assert "pullrequestreview-50003" in reviews and "pullrequestreview-50001" not in reviews

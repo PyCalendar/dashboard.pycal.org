@@ -13,6 +13,7 @@ from pycal_dashboard.conditions.group.dashboard import DashboardGroup
 from pycal_dashboard.conditions.group.labels import LabelsGroup
 from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 from pycal_dashboard.conditions.group.status import StatusGroup
+from pycal_dashboard.conditions.review_kinds import ALL, checked
 from pycal_dashboard.errors import ConditionInputUnknown, UnknownCondition
 
 if TYPE_CHECKING:
@@ -141,6 +142,12 @@ class Column:
             The links, such as to the checks on GitHub.
         """
         return self.group.evidence(issue, self.choices, scope, project)
+
+    @property
+    def kinds(self) -> tuple[str, ...]:
+        """The kinds of reviews that the column counts: its choice, else all of them."""
+        start = {"reviews": 2, "author": 3}.get(self.group.id)
+        return checked(self.choices[start:]) if start is not None else ALL
 
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.

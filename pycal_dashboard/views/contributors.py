@@ -10,7 +10,8 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.author import number_text
-from pycal_dashboard.conditions.spec.reviews import COUNTED, STATES
+from pycal_dashboard.conditions.review_kinds import ALL, DISMISSED_HELP, KINDS, checked, states
+from pycal_dashboard.conditions.spec.reviews import STATES
 from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
 from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
@@ -53,9 +54,7 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
         return moved
     repositories = shown_repositories(access)
     issues = Issue.objects.filter(repository__in=repositories, author__login__iexact=login)
-    reviews = Review.objects.filter(
-        issue__repository__in=repositories, author__login__iexact=login, state__in=COUNTED
-    )
+    reviews = Review.objects.filter(issue__repository__in=repositories, author__login__iexact=login)
     person = (
         GitHubUser.objects.filter(login__iexact=login)
         .filter(
@@ -69,8 +68,10 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
     if person is None:
         raise ContributorNotFound(login)
     issues = issues.filter(author=person)
-    reviews = reviews.filter(author=person)
+    kinds = checked(request.GET.getlist("kinds"))  # the kinds of reviews that count
+    reviews = reviews.filter(author=person, state__in=states(kinds))
     tab = request.GET.get("tab", "profile")
+    values = {"kinds": kinds}
     tab = tab if tab in TABS else "profile"
     scope = Scope(repositories)
     counts = {
@@ -102,7 +103,7 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
             "shown": shown,
             "review_states": STATES,
             "states": [
-                (ReviewsGiven.title, number_text(ReviewsGiven.measure(person, scope, {}))),
+                (ReviewsGiven.title, number_text(ReviewsGiven.measure(person, scope, values))),
                 (
                     PullRequestsOpened.title,
                     number_text(PullRequestsOpened.measure(person, scope, {})),
@@ -111,8 +112,12 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
                     OwnPullRequestsClosed.title,
                     number_text(OwnPullRequestsClosed.measure(person, scope, {})),
                 ),
-                (ReviewRatio.title, number_text(ReviewRatio.measure(person, scope, {}))),
+                (ReviewRatio.title, number_text(ReviewRatio.measure(person, scope, values))),
             ],
             "multiple": len(repositories) > 1,
+            "kinds": kinds,
+            "all_kinds": [(kind, text) for kind, (_state, text) in KINDS.items()],
+            "kinds_query": "" if kinds == ALL else "".join(f"&kinds={kind}" for kind in kinds),
+            "kinds_help": DISMISSED_HELP,
         },
     )

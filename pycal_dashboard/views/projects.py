@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
+from pycal_dashboard.conditions.review_kinds import ALL as REVIEW_KINDS
 from pycal_dashboard.errors import (
     BackupInvalid,
     ConditionInputUnknown,
@@ -528,6 +529,7 @@ def project_pull_requests(request: HttpRequest, slug: str):
             "columns": PULL_REQUEST_COLUMNS,
             "condition_columns": columns,
             "groups": GROUPS,
+            "all_kinds": REVIEW_KINDS,
             "filters": FILTERS,
             "label_names": sorted({label.name for label in labels}),
             "label_colors": {label.name.lower(): label.color for label in labels},

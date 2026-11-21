@@ -99,6 +99,10 @@ partial ``conditions/_input.html``):
    The name of a label of the repository.
 ``bool``
    On or off: ``true`` or ``false``; a switch in a form.
+``review-kinds``
+   The kinds of reviews that count, of ``approved``, ``changes_requested``,
+   ``commented`` and ``dismissed``; all of them by default; a switch for each in
+   a form. Every condition and state that counts reviews has it as ``kinds``.
 
 Data
 ====
