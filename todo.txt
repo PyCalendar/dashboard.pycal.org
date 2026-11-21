@@ -569,3 +569,8 @@ community: where to start, what waits for a review, who contributes.
 - [x] Only owners change roles and add or remove collaborators: it was so (share and unshare need an owner); tests for readers and writers, said in the table of roles
 - [x] AGENTS.md for the team, Codex and Claude Code: setup and checks, where the code is, working for a person (authorization per person, secrets, the live site read-only), the conventions so far; docs/contribute.rst points to it
 - [x] The page of a saved filter: Edit the filter <name> with the button ✓ Saved next to it, which turns while it saves and says Save for changes not saved yet
+- [x] Collaborators and Settings: only for those with more than read (writers and owners): tabs and pages; the privacy policy says so
+- [x] Roles, tested for every role and action (tests/test_roles.py): read changes nothing but updates from GitHub;
+      write sees the collaborators and the settings and changes the project, but invites nobody, changes no role
+      or visibility, and does nothing destructive (delete, restore a backup); owner does everything
+- [ ] The person: confirm that the standing authorization to commit and push holds for this account (the account of the session changed)

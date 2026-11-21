@@ -598,7 +598,7 @@ Backup
 The settings of a project have *Backup*, for writers and owners. **Download the
 backup** saves a file of YAML with the name and description of the project, its
 repositories, its filters, its steps and its message, see :doc:`/reference/backup`.
-**Restore the backup** reads such a file: it replaces the filters and steps of
+**Restore the backup**, for the owners only, reads such a file: it replaces the filters and steps of
 the project, sets its name and description, and adds the repositories that the
 project lacks; the visibility and the address stay as they are. A box confirms
 that the filters and steps are replaced.
@@ -631,12 +631,22 @@ with their avatar. The person must have signed in to the site once. What each ro
      - yes
      - yes
      - yes
+   * - Update it from GitHub
+     - no
+     - yes
+     - yes
+     - yes
    * - Change the name, the description and the repositories
      - no
      - no
      - yes
      - yes
-   * - Update it from GitHub
+   * - Change the filters, the steps and the message
+     - no
+     - no
+     - yes
+     - yes
+   * - See the collaborators and the settings, download a backup
      - no
      - no
      - yes
@@ -646,14 +656,22 @@ with their avatar. The person must have signed in to the site once. What each ro
      - no
      - no
      - yes
-   * - Share it, make it public or private, delete it
+   * - Make it public or private, change its address
+     - no
+     - no
+     - no
+     - yes
+   * - Restore a backup, delete it
      - no
      - no
      - no
      - yes
 
-Only the owners add collaborators and change or remove their roles; the others
-see the collaborators and their roles. A project always has an owner: the only owner can neither change their role
+Readers change nothing in the project, but update it from GitHub. Writers see
+the tabs *Collaborators* and *Settings*: they see who the collaborators are but
+invite nobody, and they do nothing destructive. Only the owners add
+collaborators, change or remove their roles, decide who sees the project, and
+delete it or replace its filters and steps with a backup. A project always has an owner: the only owner can neither change their role
 nor leave until they give another person the role *own*. The administrators of the site (``SITE_ADMINS``) have the rights
 of an owner in every project.
 

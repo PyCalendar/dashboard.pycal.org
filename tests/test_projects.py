@@ -177,15 +177,17 @@ def test_readers_may_not_change_writers_may_not_share(client, project, alice):
     client.force_login(alice)
     page = client.get(f"/projects/{project.slug}/settings/")
     assert page.status_code == 403 and "You may not change this project" in page.content.decode()
-    assert client.post(f"/projects/{project.slug}/update/").status_code == 403
+    assert client.post(f"/projects/{project.slug}/update/").status_code == 302  # readers update
     assert client.get(f"/projects/{project.slug}/repositories/").status_code == 403
     ProjectEditor(ProjectAccess(project, project.created_by)).share("alice", "write")
-    client.post(
+    answer = client.post(
         f"/projects/{project.slug}/settings/",
         {"name": "Changed", "description": "", "visibility": "private"},
     )
+    assert answer.status_code == 403  # writers do not change who sees it
+    client.post(f"/projects/{project.slug}/settings/", {"name": "Changed", "description": ""})
     project.refresh_from_db()
-    assert project.name == "Changed" and project.public  # writers do not change who sees it
+    assert project.name == "Changed" and project.public
     answer = client.post(
         f"/projects/{project.slug}/collaborators/", {"github_name": "x", "role": "read"}
     )
@@ -223,7 +225,10 @@ def test_only_owners_change_roles_and_add_collaborators(client, project, bob, al
     client.force_login(alice)
     address = f"/projects/{project.slug}/collaborators/"
     page = client.get(address).content.decode()
-    assert "data-share" not in page and 'name="remove"' not in page and 'name="role"' not in page
+    if role == "write":  # readers do not see the page
+        assert 'name="remove"' not in page and 'name="role"' not in page
+    assert "data-share" not in page
+    refused = "Only the owners" if role == "write" else "You may not change this project"
     for data in (
         {"github_name": "bob", "role": "read"},  # an owner loses the role
         {"github_name": "carol", "role": "owner"},  # another one gets more
@@ -232,7 +237,7 @@ def test_only_owners_change_roles_and_add_collaborators(client, project, bob, al
         {"remove": ProjectMember.objects.get(user=bob).pk},
     ):
         answer = client.post(address, data)
-        assert answer.status_code == 403 and "Only the owners" in answer.content.decode()
+        assert answer.status_code == 403 and refused in answer.content.decode()
     roles = dict(ProjectMember.objects.values_list("user__username", "role"))
     assert roles == {"bob": "owner", "alice": role, "carol": "read"}
 
@@ -291,9 +296,30 @@ def test_a_project_keeps_an_owner(client, project, bob, alice):
     assert ProjectMember.objects.get(user=bob).role == "read"
 
 
-def test_readers_see_the_collaborators_but_do_not_share(client, private_project, alice):
-    ProjectEditor(ProjectAccess(private_project, private_project.created_by)).share("alice", "read")
+@pytest.mark.parametrize("role", ["", "read"])
+def test_only_writers_see_the_collaborators_and_the_settings(client, project, alice, role):
+    """Readers and signed-in visitors have neither the tabs nor the pages."""
+    if role:
+        ProjectEditor(ProjectAccess(project, project.created_by)).share("alice", role)
     client.force_login(alice)
+    overview = client.get(f"/projects/{project.slug}/").content.decode()
+    assert "/collaborators/" not in overview and "/settings/" not in overview
+    for page in ("collaborators/", "settings/"):
+        answer = client.get(f"/projects/{project.slug}/{page}")
+        assert answer.status_code == 403
+        assert "You may not change this project" in answer.content.decode()
+    client.logout()
+    answer = client.get(f"/projects/{project.slug}/collaborators/")
+    assert answer.status_code == 302 and "/accounts/" in answer["Location"]
+
+
+def test_writers_see_the_collaborators_but_do_not_share(client, private_project, alice):
+    ProjectEditor(ProjectAccess(private_project, private_project.created_by)).share(
+        "alice", "write"
+    )
+    client.force_login(alice)
+    overview = client.get(f"/projects/{private_project.slug}/").content.decode()
+    assert "/collaborators/" in overview and "/settings/" in overview
     page = client.get(f"/projects/{private_project.slug}/collaborators/").content.decode()
     assert "@bob" in page and "The owners of the project share it." in page
     assert "data-share" not in page

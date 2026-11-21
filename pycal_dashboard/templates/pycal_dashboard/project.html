@@ -26,7 +26,7 @@
 {% if status.up_to_date and not status.updating %}<footer class="update-line muted" data-status="{{ status.state }}">
   <span class="badge badge-success">{% translate "Up to date" %}</span>
   <span data-last-updated>{% translate "Last updated:" %} {% when project.updated %}</span>
-  {% if access.can_write %}<form method="post" action="{% url 'project_update' project.slug %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" data-update>{% translate "Update" %}</button></form>{% endif %}
+  {% if access.can_update %}<form method="post" action="{% url 'project_update' project.slug %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" data-update>{% translate "Update" %}</button></form>{% endif %}
 </footer>
 {% else %}<section class="card" data-status="{{ status.state }}">
   {% if status.updating %}
@@ -38,7 +38,7 @@
   {% elif status.state == 'failed' %}<h2><span class="badge badge-error">{% translate "Some repositories could not be updated" %}</span></h2>
   {% else %}<h2><span class="badge badge-warning">{% translate "Out of date" %}</span></h2>{% endif %}
   <p data-last-updated>{% translate "Last updated:" %} {% if project.updated %}{% when project.updated %}{% else %}{% translate "never" %}{% endif %}</p>
-  {% if access.can_write and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
-  {% elif not access.can_write and not status.updating %}<p class="muted">{% translate "The writers and owners of the project update it." %}</p>{% endif %}
+  {% if access.can_update and not status.updating %}<form method="post" action="{% url 'project_update' project.slug %}">{% csrf_token %}<button class="button" data-update>{% translate "Update" %}</button></form>
+  {% elif not access.can_update and not status.updating %}<p class="muted">{% translate "The collaborators of the project update it." %}</p>{% endif %}
 </section>{% endif %}
 {% endblock %}

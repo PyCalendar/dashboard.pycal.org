@@ -25,10 +25,14 @@ class ProjectAccess:
     See a public project                      yes      yes     yes    yes
     See a private project                     no       yes     yes    yes
     See the private repositories of it        no       yes     yes    yes
+    Update it from GitHub                     no       yes     yes    yes
     Change name, description, repositories    no       no      yes    yes
-    Update it from GitHub                     no       no      yes    yes
+    Change filters, steps and the message     no       no      yes    yes
+    See the collaborators and the settings    no       no      yes    yes
+    Download a backup                         no       no      yes    yes
     Add collaborators, change their roles     no       no      no     yes
-    Share it, make it public, delete it       no       no      no     yes
+    Make it public or private, its address    no       no      no     yes
+    Restore a backup, delete it               no       no      no     yes
     ========================================  =======  ======  =====  =====
 
     Everybody who signed in creates projects and owns them. The administrators of the site
@@ -65,6 +69,11 @@ class ProjectAccess:
         return self.rank() >= 1
 
     @property
+    def can_update(self) -> bool:
+        """Whether the person updates the project from GitHub: every collaborator."""
+        return self.is_member
+
+    @property
     def can_write(self) -> bool:
         """Whether the person changes the project and updates it."""
         return self.rank() >= ProjectMember.RANK[ProjectMember.WRITE]
@@ -85,6 +94,20 @@ class ProjectAccess:
         """
         if not self.can_read:
             raise ProjectNotFound(self.project.slug)
+        return self
+
+    def require_update(self) -> ProjectAccess:
+        """Check that the person updates the project from GitHub.
+
+        Returns:
+            These rights.
+
+        Raises:
+            ProjectNotFound: The person does not see the project.
+            ProjectReadOnly: The person has no role in it.
+        """
+        if not self.require_read().can_update:
+            raise ProjectReadOnly(self.project.name)
         return self
 
     def require_write(self) -> ProjectAccess:

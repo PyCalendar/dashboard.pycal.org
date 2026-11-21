@@ -4,8 +4,8 @@ The backup of a project
 
 *Download the backup* in the settings of a project saves a file of YAML with
 the project, its repositories, its filters and its steps; *Restore* reads such a
-file back, see :ref:`project-backup`. Writers and owners of the project make and
-restore backups. The file starts with a comment that says what it is and links
+file back, see :ref:`project-backup`. Writers and owners of the project download
+backups; only the owners restore them, because a backup replaces the filters and steps. The file starts with a comment that says what it is and links
 this page.
 
 .. code-block:: yaml

@@ -44,8 +44,8 @@ DATA = {
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
-            "Everybody sees public projects; only the collaborators see who the collaborators "
-            "are, and the private projects."
+            "Everybody sees public projects; only the collaborators see the private projects, "
+            "and only those who may change a project see who its collaborators are."
         ),
         "why": _("To show the projects and to decide who may change them."),
     },

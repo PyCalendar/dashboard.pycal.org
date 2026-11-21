@@ -563,7 +563,7 @@ def project_update(request: HttpRequest, slug: str):
     Returns:
         The page of the project, which shows the progress.
     """
-    access = ProjectAccess.of(slug, request.user).require_write()
+    access = ProjectAccess.of(slug, request.user).require_update()
     UpdateQueue.add(access.project, request.user)
     return redirect(access.project.path())
 
@@ -595,8 +595,8 @@ def project_edit(request: HttpRequest, slug: str):
             editor.delete()
             messages.success(request, _("The project %(name)s is deleted.") % {"name": project})
             return redirect("projects")
-        public = None
-        if access.is_owner:
+        public = None  # writers keep it: their field is disabled, so it is not sent
+        if "visibility" in request.POST or access.is_owner:
             public = request.POST.get("visibility", "public") == "public"
         editor.change(request.POST.get("name", ""), request.POST.get("description", ""), public)
         messages.success(request, _("The project is saved."))
@@ -840,16 +840,22 @@ def repository_complete(request: HttpRequest):
 def project_collaborators(request: HttpRequest, slug: str):
     """The collaborators of a project and their roles; owners share it and change the roles.
 
+    Only writers and owners see the page, as the settings: readers and visitors do not.
+
     Parameters:
         request: The request.
         slug: The project.
 
     Returns:
         The page.
+
+    Raises:
+        ProjectReadOnly: The person may only read the project, or is none of its collaborators.
     """
     access, moved = opened(request, slug, "collaborators/")
     if moved:
         return moved
+    access.require_write()
     if request.method == "POST":
         editor = ProjectEditor(access)
         if "remove" in request.POST:
@@ -956,10 +962,11 @@ def project_restore(request: HttpRequest, slug: str):
         A redirect to the settings.
 
     Raises:
+        ProjectOwnersOnly: Only the owners restore a backup: it replaces the filters and steps.
         BackupInvalid: The file is no backup that the site can restore.
         BackupVersionUnknown: The backup has a version that the site does not know.
     """
-    access = ProjectAccess.of(slug, request.user).require_write()
+    access = ProjectAccess.of(slug, request.user).require_owner()
     with IMPORT_GUARD:  # see import_guard.py
         from pycal_dashboard.services.project_backup import ProjectBackup
 

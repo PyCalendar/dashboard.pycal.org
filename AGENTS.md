@@ -103,8 +103,10 @@ after a change, follow the rule it names instead of changing the test.
   private projects. A private repository is only in private projects and only
   their people see it; it is added only through the GitHub App installed on it,
   by a person who may read it (`RepositoryLookup`). Who may do what in a project
-  is decided in one place, `ProjectAccess`: only owners add collaborators and change their
-  roles.
+  is decided in one place, `ProjectAccess`: readers change nothing but update from GitHub;
+  writers change the project and see its collaborators and settings, but invite nobody, change
+  no role or visibility and do nothing destructive; owners do everything.
+  `tests/test_roles.py` checks every role with every action: a new action goes into it.
 - The privacy policy (`pycal_dashboard/privacy.py`, the page `/about/privacy/`)
   always says which data of people the site keeps and who gets it: change it
   with every change of what the site keeps, shows or sends. `tests/test_privacy.py`
