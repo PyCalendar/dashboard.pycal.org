@@ -39,8 +39,9 @@ GROUPS: dict[str, type[ConditionGroup]] = {
 }
 # which pull requests the column shows: all, those it applies to, those it does not apply to
 # and skip: a condition of Skip if, which skips the step and hides the pull requests from the
-# filter that it applies to
-FILTERS = ("all", "applies", "not", "skip")
+# filter that it applies to; skip_off: one of Skip if that is switched off. So each condition of
+# a filter has its type (a quality check, or Skip if) and whether it is active.
+FILTERS = ("all", "applies", "not", "skip", "skip_off")
 
 
 @dataclass(frozen=True)
@@ -158,8 +159,41 @@ class Column:
 
     @property
     def skips(self) -> bool:
-        """Whether the column is a condition of Skip if: it applies, the step is skipped."""
+        """Whether the column is an active condition of Skip if: it applies, the step is skipped."""
         return self.filter == "skip"
+
+    @property
+    def kind(self) -> str:
+        """The type of the condition in a filter: ``skip`` for Skip if, else ``check``."""
+        return "skip" if self.filter in ("skip", "skip_off") else "check"
+
+    @property
+    def active(self) -> bool:
+        """Whether the condition is switched on in its filter, as a quality check or Skip if."""
+        return self.filter not in ("all", "skip_off")
+
+    def switched(self, on: bool) -> Column:
+        """The column switched on or off, keeping its type.
+
+        Parameters:
+            on: Whether it is on.
+
+        Returns:
+            The column: a quality check shows what it applies to when on and all when off;
+            Skip if is ``skip`` or ``skip_off``.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.group.status import StatusGroup
+            >>> Column(StatusGroup, ("open",), "skip").switched(False).filter
+            'skip_off'
+            >>> Column(StatusGroup, ("open",), "not").switched(True).filter
+            'not'
+        """
+        if self.kind == "skip":
+            return Column(self.group, self.choices, "skip" if on else "skip_off")
+        if not on:
+            return Column(self.group, self.choices, "all")
+        return Column(self.group, self.choices, self.filter if self.checks else "applies")
 
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.
@@ -214,7 +248,7 @@ class Column:
             'all'
         """
         other = "not" if result == "applies" else "applies"
-        if self.filter in ("all", "skip"):
+        if self.filter in ("all", "skip", "skip_off"):
             return other  # switch this one off
         if self.filter == result:
             return other  # the last one that was on: the other one instead
@@ -240,7 +274,7 @@ class Column:
         choices = self.group.invert(self.choices)
         if choices is not None and self.filter != "all":
             return Column(self.group, choices, self.filter)
-        if self.filter in ("all", "skip"):  # a condition of Skip if inverts by its choices only
+        if self.filter in ("all", "skip", "skip_off"):  # Skip if inverts by its choices only
             return None
         return Column(self.group, self.choices, "not" if self.filter == "applies" else "applies")
 
@@ -273,4 +307,4 @@ class Column:
         Returns:
             True if the column shows the pull requests with this result.
         """
-        return self.filter in ("all", "skip", result)
+        return self.filter in ("all", "skip", "skip_off", result)

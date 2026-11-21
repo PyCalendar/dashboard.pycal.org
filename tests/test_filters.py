@@ -388,3 +388,30 @@ def test_a_condition_of_skip_if_hides_what_it_applies_to(client, project, bob):
         f"/projects/icalendar/filters/save/?{query.replace('applies~present', 'skip~present')}&check=1"
     )
     assert "labels~applies~present~needs+review" in back["Location"]
+
+
+def test_a_condition_of_skip_if_switched_off_stays_in_skip_if(client, project, bob):
+    """Each condition has its type and whether it is active: off, Skip if stays Skip if."""
+    from pycal_dashboard.conditions.group.column import Column
+
+    client.force_login(bob)
+    data = {
+        "col": ["status~applies~open", "labels~skip~present~needs review"],
+        "on": "0",  # the condition of Skip if is off
+        "name": "Open",
+        "save": "new",
+    }
+    client.post("/projects/icalendar/filters/save/", data)
+    saved = PullRequestFilter.objects.get(name="Open")
+    assert saved.columns == ["status~applies~open", "labels~skip_off~present~needs review"]
+    off = Column.decode(saved.columns[1])
+    assert (off.kind, off.active, off.skips) == ("skip", False, False)
+    page = save_page(client, *saved.columns, saved=saved.pk)
+    skip = page.split("data-filter-skip>")[1].split("</table>")[0]
+    assert "It has the label needs review" in skip and 'class="off"' in skip  # still there
+    assert 'name="on" value="1" checked' not in skip
+    assert "The filter shows 2 pull requests now:" in page  # off: it hides nothing
+    on = {**data, "on": ["0", "1"], "save": "this", "saved": saved.pk}
+    client.post("/projects/icalendar/filters/save/", on)
+    saved.refresh_from_db()
+    assert saved.columns[1] == "labels~skip~present~needs review"

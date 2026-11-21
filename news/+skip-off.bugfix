@@ -1,0 +1,1 @@
+A condition of Skip if that is switched off stays in Skip if: each condition of a filter keeps its type and whether it is on.

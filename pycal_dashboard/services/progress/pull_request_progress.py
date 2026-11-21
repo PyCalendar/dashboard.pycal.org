@@ -65,7 +65,7 @@ class PullRequestProgress:
             progress = StepProgress(step, number, skip=overrides.skip(issue, step))
             for value in step.filter.columns:
                 column = Column.decode(value)
-                if column.filter == "all":  # off: no part of the filter
+                if not column.active:  # off: no part of the filter
                     continue
                 cached = results.cached(column) if results else None
                 if cached is not None and issue.pk in cached:

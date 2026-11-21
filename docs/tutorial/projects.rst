@@ -258,7 +258,8 @@ in two tables, with their long names, such as *Label needs review: present*:
    *Skipped:* and the condition, and the tab *Steps* lists them as *Skipped if*.
 
 Drag a condition from one table to the other, or use **To Skip if** and **To the
-quality checks**. A switch at each condition turns it off: it is grayed out and
+quality checks**. Each condition has its type, a quality check or Skip if, and its
+switch: a condition switched off stays in its table, grayed out. A switch at each condition turns it off: it is grayed out and
 stays a column of the table without filtering; when a filter is saved the
 first time, every condition is on. **Invert** next to a condition turns it
 into its opposite, such as *it is not auto-merging* for *it is auto-merging*

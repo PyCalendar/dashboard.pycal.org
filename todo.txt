@@ -639,3 +639,4 @@ community: where to start, what waits for a review, who contributes.
 - [x] PR 2185 is still in Peer review: the handle niccokunzmann is in Skipped for these authors of the step Closed (id 7), not of Peer review (id 4); the steps page shows readers which authors a step skips now
 - [x] The save page of a filter: Quality checks (the conditions as now) and Skip if (any applies: the step is skipped,
       the filter does not show the pull request); conditions are dragged between them, or moved with a button
+- [x] A condition of Skip if that is switched off stays in Skip if (skip_off): each condition of a filter has active and its type, quality check or skip

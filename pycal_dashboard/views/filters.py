@@ -47,10 +47,10 @@ def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
         {
             "column": column,
             "index": index,
-            "filters": enabled or column.filter != "all",
+            "filters": enabled or column.active,
             "opposite": column.opposite(),
             "inverted": column.inverted(),
-            "skips": column.skips,
+            "skips": column.kind == "skip",  # its section, also when it is off
         }
         for index, column in enumerate(columns)
     ]
@@ -81,9 +81,13 @@ def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] |
         if action == "remove":
             del changed[index]
         elif action == "skip":  # a condition of Skip if: it applies, the step is skipped
-            changed[index] = Column(column.group, column.choices, "skip")
+            changed[index] = Column(
+                column.group, column.choices, "skip" if column.active else "skip_off"
+            )
         elif action == "check":  # a quality check: the step waits for it
-            changed[index] = Column(column.group, column.choices, "applies")
+            changed[index] = Column(
+                column.group, column.choices, "applies" if column.active else "all"
+            )
         elif action == "invert":
             changed[index] = column.inverted() or column
         else:  # a column of crosses for its opposite of check marks
@@ -111,14 +115,7 @@ def switched(columns: list[Column], on: set[int]) -> list[Column]:
         >>> [c.filter for c in switched(columns, {1})]
         ['all', 'applies']
     """
-    found = []
-    for index, column in enumerate(columns):
-        if index not in on:
-            filter = "all"
-        else:
-            filter = column.filter if column.filter != "all" else "applies"
-        found.append(Column(column.group, column.choices, filter))
-    return found
+    return [column.switched(index in on) for index, column in enumerate(columns)]
 
 
 def filter_data(saved: PullRequestFilter, count: int, path: str) -> dict:
@@ -166,7 +163,7 @@ def project_filters(request: HttpRequest, slug: str):
                 "columns": columns,
                 "path": access.project.path("pull-requests/") + address,
                 "edit": access.project.path("filters/save/") + address,
-                "in_force": sum(column.filter != "all" for column in columns),
+                "in_force": sum(column.active for column in columns),
                 "rows": [item for item in summary(columns) if item["filters"]],
                 "step": getattr(saved, "step", None) if hasattr(saved, "step") else None,
                 "counts": access.project.path(f"filters/{saved.pk}/"),
@@ -347,7 +344,7 @@ def save_page(
                 or (name is not None and name != saved.name)
             ),
             "original": [  # the filter as it is saved, to restore it before saving a new one
-                (value, Column.decode(value).filter != "all") for value in saved.columns
+                (value, Column.decode(value).active) for value in saved.columns
             ]
             if saved
             else [],
