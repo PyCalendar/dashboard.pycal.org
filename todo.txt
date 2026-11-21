@@ -565,7 +565,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Steps: the explanation below the bar is now: Each step has tasks to complete. A pull request advances ... (as the person wrote it)
 - [x] Pull request 2186 did update after the comment review (15:05:55); comment reviews did not count by design
 - [x] Reviews: the switch Also count comment reviews (the input comments, off by default; ~comments in the column)
-- [ ] The person: switch on Also count comment reviews in the filter of the step Peer review (the site may not write the live data)
+- [x] The person: switch on Also count comment reviews in the filter of the step Peer review: no longer needed, all kinds of reviews count by default (0.8.0)
 - [x] Only owners change roles and add or remove collaborators: it was so (share and unshare need an owner); tests for readers and writers, said in the table of roles
 - [x] AGENTS.md for the team, Codex and Claude Code: setup and checks, where the code is, working for a person (authorization per person, secrets, the live site read-only), the conventions so far; docs/contribute.rst points to it
 - [x] The page of a saved filter: Edit the filter <name> with the button ✓ Saved next to it, which turns while it saves and says Save for changes not saved yet
