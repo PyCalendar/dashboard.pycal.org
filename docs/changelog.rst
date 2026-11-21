@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.10.0 (2026-11-21)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- A group of conditions Text: the title or the description of a pull request starts with, ends with, contains a text, or matches a regex, with a switch for the case of letters.
+
+
 0.9.1 (2026-11-21)
 ------------------
 
