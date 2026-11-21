@@ -84,8 +84,10 @@ class PullRequestProgress:
                 )
             progress.tasks.sort(key=lambda task: not task.todo)  # stable: to do first
             self.steps.append(progress)
-        # the pull request is in the left-most step with a task to do that it does not skip
-        self.current = next(
+        # the pull request is in the step a person chose with its label, else in the left-most
+        # step with a task to do that it does not skip
+        chosen = overrides.chosen(issue.pk)
+        self.current = next((step for step in self.steps if step.step == chosen), None) or next(
             (step for step in self.steps if not step.complete and step.skip is None), None
         )
         if self.current:

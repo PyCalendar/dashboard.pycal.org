@@ -13,6 +13,7 @@ from .label_removed import LabelRemoved
 from .message_written import MessageWritten
 from .preferences_saved import PreferencesSaved
 from .settings_saved import SettingsSaved
+from .step_label_saved import StepLabelSaved
 from .trigger import Trigger
 from .webhook_trigger import WebhookTrigger
 
@@ -25,6 +26,7 @@ __all__ = [
     "MessageWritten",
     "PreferencesSaved",
     "SettingsSaved",
+    "StepLabelSaved",
     "Trigger",
     "WebhookTrigger",
 ]

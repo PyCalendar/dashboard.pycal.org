@@ -324,6 +324,36 @@ every update; the first time it sees a pull request, it only remembers where
 it is, so nothing happens for steps entered or completed before. The log of
 the site records every label added or removed.
 
+.. _status-labels:
+
+Status labels
+-------------
+
+The settings of a project choose the *Status labels of the steps*: off by
+default, *Automatic* or *Manual*. Then each step has a label in each repository
+with the GitHub App, such as *Step: Review*: with the color of the step, the
+gray of GitHub for a step without a color, and the description *Created by*
+the site and the link to the step, ``steps/?step_id=<id>``. The site creates the
+label, or takes one of that name, and changes it when the step changes. A label
+renamed or recolored on GitHub renames or recolors the step; the prefix *Step:*
+is not part of the name of the step.
+
+The labels are only on the open pull requests that have the PR Message, see
+:ref:`pr-message`:
+
+*Automatic*
+   The site puts the label of the step that a pull request is in on it and
+   removes the other labels of steps.
+*Manual*
+   People put the labels on the pull requests; the site does not.
+
+Either way, a label of a step that a person adds puts the pull request into that
+step. When a pull request has two labels of steps or more, the one added last
+stays and the site removes the others. When all of them are removed, the pull
+request is in the step of its conditions again. The message follows the step, and
+the log records every label created, added or removed. A removed step keeps its
+label on GitHub.
+
 **Check** next to the button **+** lists the pull requests outside of the
 steps: no task of any step applies to them, so a filter of a step may lack a
 condition for them. It lists the open pull requests, or all of them, also the

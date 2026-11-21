@@ -121,7 +121,17 @@ MODELS = {
     ),
     "pycal_dashboard.Project": (
         "projects",
-        {"id", "slug", "name", "description", "public", "created_by", "created", "updated"},
+        {
+            "id",
+            "slug",
+            "name",
+            "description",
+            "public",
+            "step_labels",
+            "created_by",
+            "created",
+            "updated",
+        },
     ),
     "pycal_dashboard.ProjectMember": ("projects", {"id", "project", "user", "role", "added"}),
     "pycal_dashboard.ProjectSlug": (None, {"id", "slug", "project", "since", "until"}),
@@ -143,7 +153,14 @@ MODELS = {
             "updated",
         },
     ),
-    "pycal_dashboard.PullRequestPlace": (None, {"id", "project", "issue", "step", "updated"}),
+    "pycal_dashboard.PullRequestPlace": (
+        None,
+        {"id", "project", "issue", "step", "chosen", "labeled", "updated"},
+    ),
+    "pycal_dashboard.StepLabel": (
+        None,
+        {"id", "step", "repository", "github_id", "name", "color", "updated"},
+    ),
     "pycal_dashboard.StepSkip": ("projects", {"id", "step", "issue", "user", "reason", "created"}),
     "pycal_dashboard.PullRequestMessage": (
         "projects",

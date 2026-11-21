@@ -72,6 +72,28 @@ def mark_projects(sender: type, repository: Repository, **kwargs: Any):
 
 @receiver(repository_updated)
 @timed
+def sync_status_labels(sender: type, repository: Repository, **kwargs: Any):
+    """Keep the status labels of the steps in a repository and on its pull requests.
+
+    See :class:`~pycal_dashboard.services.status_labels.StatusLabels`: before the actions of
+    the steps and the messages, which follow the step that a person chose with a label.
+
+    Parameters:
+        sender: Who sent the signal.
+        repository: The repository that was read.
+        **kwargs: More of the signal.
+    """
+    with IMPORT_GUARD:  # see import_guard.py: what writes to GitHub, only when needed
+        from pycal_dashboard.services.status_labels import StatusLabels
+    projects = Project.objects.filter(repositories=repository, steps__isnull=False).exclude(
+        step_labels=Project.LABELS_OFF
+    )
+    for project in projects.distinct():
+        StatusLabels(project).sync(repository)
+
+
+@receiver(repository_updated)
+@timed
 def complete_steps(sender: type, repository: Repository, **kwargs: Any):
     """Act on the steps that the open pull requests of a repository completed.
 

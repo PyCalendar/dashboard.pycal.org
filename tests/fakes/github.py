@@ -192,6 +192,38 @@ class FakeGitHub:
         labels.append(label)
         return label
 
+    def touch(self, issue: dict) -> None:
+        """A change of an issue, such as of its labels: the next update reads it again."""
+        self.touches = getattr(self, "touches", 0) + 1
+        issue["updated_at"] = f"2026-11-03T{min(self.touches, 23):02d}:{self.touches % 60:02d}:00Z"
+
+    def label_issue(self, full_name: str, number: int, name: str, actor: str = "octocat"):
+        """A person adds a label to an issue or pull request on GitHub, with its event."""
+        issue = self.repositories[full_name.lower()]["issues"][number - 1]
+        label = self.add_label(full_name, name)
+        if label not in issue["labels"]:
+            issue["labels"].append(label)
+        issue.setdefault("events", []).append(
+            {"event": "labeled", "label": {"name": name}, "actor": {"login": actor}}
+        )
+        self.touch(issue)
+
+    def unlabel_issue(self, full_name: str, number: int, name: str):
+        """A person removes a label from an issue or pull request on GitHub."""
+        issue = self.repositories[full_name.lower()]["issues"][number - 1]
+        issue["labels"] = [label for label in issue["labels"] if label["name"] != name]
+        issue.setdefault("events", []).append({"event": "unlabeled", "label": {"name": name}})
+        self.touch(issue)
+
+    def edit_label(self, full_name: str, name: str, new_name: str = "", color: str = ""):
+        """A person renames or recolors a label of a repository on GitHub."""
+        for label in self.repositories[full_name.lower()]["labels"]:
+            if label["name"] == name:
+                label["name"] = new_name or label["name"]
+                label["color"] = color or label["color"]
+                return label
+        raise KeyError(name)
+
     def set_checks(self, full_name: str, number: int, rollup: str | None):
         """The state of the checks of the last commit of a pull request, as GraphQL sums them
         up: SUCCESS, FAILURE, ERROR, PENDING, EXPECTED, or None without checks."""
@@ -438,6 +470,10 @@ class FakeGitHub:
                 label = self.add_label(match[1], name)
                 if label not in issue["labels"]:
                     issue["labels"].append(label)
+                issue.setdefault("events", []).append(
+                    {"event": "labeled", "label": {"name": name}, "actor": {"login": "app[bot]"}}
+                )
+            self.touch(issue)
             return httpx.Response(200, json=issue["labels"])
         match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/comments", path)
         if request.method == "POST" and match and token.startswith("installation-"):
@@ -465,7 +501,34 @@ class FakeGitHub:
             if not any(label["name"] == name for label in issue["labels"]):
                 return httpx.Response(404, json={"message": "Label does not exist"})
             issue["labels"] = [label for label in issue["labels"] if label["name"] != name]
+            issue.setdefault("events", []).append({"event": "unlabeled", "label": {"name": name}})
+            self.touch(issue)
             return httpx.Response(200, json=issue["labels"])
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/labels", path)
+        if request.method == "POST" and match and token.startswith("installation-"):
+            fields = json.loads(request.content)
+            labels = self.repositories[match[1].lower()]["labels"]
+            if any(label["name"].lower() == fields["name"].lower() for label in labels):
+                return httpx.Response(422, json={"message": "Validation Failed"})
+            label = self.add_label(match[1], fields["name"], fields.get("description", ""))
+            label["color"] = fields.get("color", label["color"])
+            return httpx.Response(201, json=label)
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/labels/([^/]+)", path)
+        if request.method == "PATCH" and match and token.startswith("installation-"):
+            from urllib.parse import unquote
+
+            fields = json.loads(request.content)
+            for label in self.repositories[match[1].lower()]["labels"]:
+                if label["name"] == unquote(match[2]):
+                    label["name"] = fields.get("new_name", label["name"])
+                    for key in ("color", "description"):
+                        label[key] = fields.get(key, label[key])
+                    return httpx.Response(200, json=label)
+            return httpx.Response(404, json={"message": "Not Found"})
+        match = re.fullmatch(r"/repos/([^/]+/[^/]+)/issues/(\d+)/events", path)
+        if request.method == "GET" and match:
+            issue = self.repositories[match[1].lower()]["issues"][int(match[2]) - 1]
+            return httpx.Response(200, json=issue.get("events", []))
         if request.method != "GET":
             return None
         person = token == self.PERSON_TOKEN

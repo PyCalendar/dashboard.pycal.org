@@ -28,7 +28,7 @@ class LabelAdded(Action):
             issue: The pull request, of a repository with the GitHub App.
             label: The name of the label.
             step: The step it entered or completed.
-            trigger: ``enter`` or ``complete``.
+            trigger: ``enter`` or ``complete``; ``status`` for the status label of a step.
         """
         self.issue, self.label, self.step, self.trigger = issue, label, step, trigger
 
@@ -44,6 +44,11 @@ class LabelAdded(Action):
 
     def text(self) -> str:
         """What was added, to which pull request, and why."""
+        if self.trigger == "status":  # the status label of the step it is in, or was in
+            return (
+                f"Label {self.label} added to {self.issue.repository.full_name}#"
+                f"{self.issue.number}: it is in the step {self.step.name}"
+            )
         why = "entered" if self.trigger == "enter" else "completed"
         return (
             f"Label {self.label} added to {self.issue.repository.full_name}#{self.issue.number}: "

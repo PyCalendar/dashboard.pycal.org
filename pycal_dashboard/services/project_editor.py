@@ -146,6 +146,25 @@ class ProjectEditor:
             self.project.public = public
         self.project.save()
 
+    def label_mode(self, mode: str) -> bool:
+        """Choose who sets the status labels of the steps: nobody, the site or people.
+
+        Parameters:
+            mode: One of ``Project.LABEL_MODES``; anything else keeps it.
+
+        Returns:
+            True if it changed: then the labels follow with an update in the background.
+
+        Raises:
+            ProjectReadOnly: The person may not change the project.
+        """
+        self.access.require_write()
+        if mode not in Project.LABEL_MODES or mode == self.project.step_labels:
+            return False
+        self.project.step_labels = mode
+        self.project.save(update_fields=["step_labels"])
+        return True
+
     def rename(self, slug: str) -> bool:
         """Give the project another address; the old one keeps leading to it.
 

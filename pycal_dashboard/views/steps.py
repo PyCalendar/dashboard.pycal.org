@@ -26,6 +26,7 @@ from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.step_assignment import StepAssignment
+from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.step_actions import KINDS, TRIGGERS, labels, normalized
 from pycal_dashboard.step_template import STEP_GROUPS, VARIABLE, VARIABLES, example, expand
 
@@ -72,6 +73,17 @@ def step_of(project: Project, number: int | str | None) -> PullRequestStep:
 
 # a GitHub handle: letters, digits and single hyphens, at most 39
 HANDLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}")
+
+
+def labels_follow(project: Project, user: object) -> None:
+    """Update the project in the background, so that the status labels follow its steps.
+
+    Parameters:
+        project: The project, whose steps changed.
+        user: Who changed them.
+    """
+    if project.step_labels != Project.LABELS_OFF and project.repositories.exists():
+        UpdateQueue.add(project, user)
 
 
 def handles(text: str) -> list[str]:
@@ -276,6 +288,7 @@ def project_step_add(request: HttpRequest, slug: str):
         name=saved.name,
         position=0 if last is None else last + 1,
     )
+    labels_follow(access.project, request.user)
     url = access.project.path("steps/") + f"?step={step.pk}"
     if wants_json(request):
         return JsonResponse({"step": step.pk, "name": step.name, "url": url}, status=201)
@@ -341,12 +354,14 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
     access, _moved = opened(request, slug, "steps/")
     access.require_write()
     step = step_of(access.project, number)
+    before = (step.name, step.color)
     step.name = " ".join(request.POST.get("name", "").split())[:100] or step.filter.name
     step.summary = request.POST.get("summary", "")
     if request.POST.get("visible_form"):  # the switch: unchecked is not sent
         step.hidden = request.POST.get("visible") != "on"
     color = request.POST.get("color", step.color)
-    step.color = color if color in STEP_COLORS else ""
+    # one of the palette, or the color it has, which may come from its label on GitHub
+    step.color = color if color in STEP_COLORS or color == step.color else ""
     if request.POST.get("skip_form"):  # the field: empty is nobody
         step.skip_authors = handles(request.POST.get("skip_authors", ""))
     if request.POST.get("actions_form"):  # the form shows the actions: empty fields have none
@@ -365,6 +380,8 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
         }
     step.conditions = notes
     step.save()
+    if (step.name, step.color) != before:
+        labels_follow(access.project, request.user)
     if wants_json(request):  # saved while editing, by the script of the page
         return JsonResponse({"step": step.pk, "name": step.name, "color": step.color})
     address = access.project.path("steps/") + f"?step={step.pk}"

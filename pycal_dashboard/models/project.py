@@ -37,12 +37,20 @@ class Project(models.Model):
     it (``ProjectMember``). Who may do what is in ``ProjectAccess``. Its address is
     ``/projects/<slug>/<name>/``: the slug is random unless people choose one; every slug it had
     stays recorded (``ProjectSlug``), so that old links lead to it.
+
+    ``step_labels`` says who sets the status labels of the steps on the pull requests that have
+    the message of the project (``StatusLabels``): nobody (``off``), the site (``automatic``) or
+    people (``manual``).
     """
+
+    LABELS_OFF, LABELS_AUTOMATIC, LABELS_MANUAL = "off", "automatic", "manual"
+    LABEL_MODES = (LABELS_OFF, LABELS_AUTOMATIC, LABELS_MANUAL)
 
     slug = models.CharField(max_length=80, unique=True, default=random_slug)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     public = models.BooleanField(default=True)
+    step_labels = models.CharField(max_length=10, default="off")
     repositories = models.ManyToManyField("Repository", blank=True, related_name="projects")
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -837,3 +837,19 @@ def test_the_colors_of_steps_suit_light_and_dark_pages(page, site, github, bob, 
             assert lightness > 0.7, (address, lightness)
         else:
             assert lightness < 0.3, (address, lightness)
+
+
+def test_choose_who_sets_the_status_labels(signed_in, site, github, bob):
+    """The settings: the status labels of the steps, off by default, automatic or manual."""
+    project = pull_request_project(github, bob)
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/settings/")
+    labels = page.locator("[data-step-labels]")
+    expect(labels.get_by_label("Off")).to_be_checked()
+    labels.get_by_label("Automatic").check()
+    page.get_by_role("button", name="Save", exact=True).click()
+    expect(page.get_by_text("The project is saved.")).to_be_visible()
+    project.refresh_from_db()
+    assert project.step_labels == "automatic"
+    page.goto(f"{site}/projects/icalendar/settings/")
+    expect(page.locator("[data-step-labels]").get_by_label("Automatic")).to_be_checked()

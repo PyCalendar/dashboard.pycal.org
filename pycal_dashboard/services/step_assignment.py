@@ -21,7 +21,8 @@ class StepAssignment:
     it, as the column shows it: the conditions are failures that keep it from being merged.
     Steps more to the left come first; a pull request is in the left-most step that shows it,
     and in none when none does. A step whose filter has no condition in force shows none.
-    A pull request is not in a step that it skips (``StepOverrides``).
+    A pull request is not in a step that it skips, and it is in the step that a person chose
+    with its status label (``StepOverrides``).
     """
 
     def __init__(self, project: Project, scope: Scope | None = None):
@@ -53,22 +54,30 @@ class StepAssignment:
         for step, columns in reversed(self.steps):  # the left-most step comes last and wins
             shown = [(column, results.of(column)) for column in columns]
             for pk in found:
+                if self.overrides.chosen(pk) is not None:
+                    continue
                 if self.overrides.skips_step(pk, logins.get(pk) or "", step):
                     continue
                 if any(column.shows(cells.get(pk)) for column, cells in shown):
                     found[pk] = step
+        for pk in found:
+            found[pk] = self.overrides.chosen(pk) or found[pk]
         return found
 
-    def step_of(self, issue: Issue) -> PullRequestStep | None:
+    def step_of(self, issue: Issue, chosen: bool = True) -> PullRequestStep | None:
         """The step of a pull request.
 
         Parameters:
             issue: The pull request, with its labels and state.
+            chosen: Whether the step that a person chose with its label counts; False for the
+                step of its conditions and skips alone.
 
         Returns:
             The left-most step whose filter shows it and that it does not skip; None if none
-            does.
+            does; the step that a person chose, if any.
         """
+        if chosen and self.overrides.chosen(issue.pk) is not None:
+            return self.overrides.chosen(issue.pk)
         for step, columns in self.steps:
             if self.overrides.skip(issue, step) is not None:
                 continue

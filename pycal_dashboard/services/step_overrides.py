@@ -1,15 +1,18 @@
-"""What people decided about the steps of pull requests, besides their conditions: skips."""
+"""What people decided about the steps of pull requests, besides their conditions.
+
+The skips of steps, and the steps chosen with their status labels on GitHub.
+"""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pycal_dashboard.models import StepSkip
+from pycal_dashboard.models import Project, PullRequestPlace, StepSkip
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from pycal_dashboard.models import Issue, Project, PullRequestStep
+    from pycal_dashboard.models import Issue, PullRequestStep
 
 
 class StepOverrides:
@@ -17,7 +20,9 @@ class StepOverrides:
 
     A pull request skips a step when a writer skipped it for the pull request (``StepSkip``),
     or when the step skips itself for its author (``PullRequestStep.skip_authors``). A pull
-    request is not in a step that it skips: it is in the next one that shows it.
+    request is not in a step that it skips: it is in the next one that shows it. With the
+    status labels of the steps on, a person chooses the step of a pull request with its label
+    (``PullRequestPlace.chosen``): the pull request is in that step, see :meth:`chosen`.
     """
 
     def __init__(self, project: Project, issues: Iterable[Issue] | None = None):
@@ -35,6 +40,25 @@ class StepOverrides:
             step.pk: {str(login).lower() for login in step.skip_authors or []}
             for step in project.steps.all()
         }
+        self.choices: dict[int, PullRequestStep] = {}
+        if project.step_labels != Project.LABELS_OFF:
+            places = PullRequestPlace.objects.filter(project=project, chosen__isnull=False)
+            if issues is not None:
+                places = places.filter(issue__in=[issue.pk for issue in issues])
+            self.choices = {
+                place.issue_id: place.chosen for place in places.select_related("chosen__filter")
+            }
+
+    def chosen(self, pk: int) -> PullRequestStep | None:
+        """The step that a person chose for a pull request with its status label.
+
+        Parameters:
+            pk: The id of the pull request.
+
+        Returns:
+            The step; None when nobody chose one.
+        """
+        return self.choices.get(pk)
 
     def skip(
         self, issue: Issue, step: PullRequestStep, login: str | None = None

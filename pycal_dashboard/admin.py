@@ -23,6 +23,7 @@ from .models import (
     PullRequestStep,
     Repository,
     Review,
+    StepLabel,
     StepSkip,
     UpdateJob,
     WebhookDelivery,
@@ -77,6 +78,7 @@ admin.site.register(
 admin.site.register(
     PullRequestPlace, list_display=["issue", "project", "step", "updated"], raw_id_fields=["issue"]
 )
+admin.site.register(StepLabel, list_display=["name", "step", "repository", "github_id", "updated"])
 admin.site.register(
     StepSkip,
     list_display=["issue", "step", "user", "created"],
