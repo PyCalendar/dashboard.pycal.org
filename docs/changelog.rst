@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.4.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- The tab PR Message is called PR Sync, with the tabs Status Message (the message as before) and Status Label: the step labels, as a table of the choices Off (no step labels; saving it deletes them on GitHub, for owners) and With PR Sync (people label pull requests by hand, and the labels go on the pull requests with the PR Sync on). The labels that were automatic or manual are With PR Sync now.
+
+
 0.3.2 (2026-11-21)
 ------------------
 
