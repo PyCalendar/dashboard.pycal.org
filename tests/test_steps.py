@@ -335,3 +335,23 @@ def test_readers_see_the_visible_steps_and_their_filters(client, project, filter
     assert f'?step={visible.pk}" data-step-link' in filters_page
     assert f'?step={hidden.pk}" data-step-link' not in filters_page
     assert "data-make-step" not in filters_page and "data-edit-filter" not in filters_page
+
+
+def test_a_step_by_its_id_and_one_that_was_removed(client, project, filters, bob):
+    """Labels on GitHub link ?step_id=; a removed step shows a notice and the other steps."""
+    conflict, review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    make_step(client, review)
+    first, second = PullRequestStep.objects.order_by("position")
+    page = client.get(f"/projects/icalendar/steps/?step_id={second.pk}").content.decode()
+    assert f'data-step-detail="{second.pk}"' in page and "data-missing-step" not in page
+    removed = second.pk
+    second.delete()
+    answer = client.get(f"/projects/icalendar/steps/?step_id={removed}")
+    page = answer.content.decode()
+    assert answer.status_code == 404 and "data-missing-step" in page
+    assert f"The project has no step {removed}: it may have been removed." in page
+    assert f'data-step-detail="{first.pk}"' in page  # the steps it has
+    answer = client.get("/projects/icalendar/steps/?step_id=nothing")
+    assert answer.status_code == 404 and "data-missing-step" in answer.content.decode()

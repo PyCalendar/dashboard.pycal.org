@@ -574,3 +574,19 @@ community: where to start, what waits for a review, who contributes.
       write sees the collaborators and the settings and changes the project, but invites nobody, changes no role
       or visibility, and does nothing destructive (delete, restore a backup); owner does everything
 - [x] The person confirmed: push as before, also with this account; writers may remove repositories (not destructive: they can be added again)
+- [x] Steps have an id in links: ?step_id=<id>; an unknown id (such as of a removed step) shows a notice, not an error
+- [ ] Skip a step for a pull request (writers): a reason, connected to the person; remove the skip again (writers);
+      shown below "The pull request is here": the reason (writers only) and the handle linked to the page of the
+      person in the project; skipped steps are gray but show their progress; everybody sees that a step is skipped;
+      a skipped current step: the pull request is in the next step
+- [ ] Steps: GitHub handles of authors for whom the step is skipped automatically (field with completion in the
+      editor of the step); such a skip says "Skipped" and links nobody
+- [ ] Status labels of the steps on GitHub, only on pull requests with the PR Message: the name of the step in the
+      label, the description says it was created by the app and links the step (?step_id=); created or updated when
+      a step is added or changed or the label is missing; a label renamed on GitHub renames the step
+- [ ] Two or more step labels on a pull request: the older ones are removed; a step label added by a person puts the
+      pull request into that step; all removed: as usual. Modes: automatic (the site sets the labels) and manual
+      (people do); the message is updated either way
+- [ ] The bar of the steps of a pull request: titles, progress, "the pull request is here", the skip reason and the
+      buttons in rows aligned across the steps, as in a table
+- [ ] Status labels: their color is that of the step, both ways

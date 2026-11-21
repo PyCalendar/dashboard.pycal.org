@@ -69,6 +69,7 @@ JSON_API = [
 REPEATED = [
     "/*?step=",
     "/*&step=",
+    "/*?step_id=",
     "/*?col=",
     "/*&col=",
     "/*?example=",

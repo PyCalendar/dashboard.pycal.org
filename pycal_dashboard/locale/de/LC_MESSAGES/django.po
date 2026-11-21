@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 17:24+0000\n"
+"POT-Creation-Date: 2026-11-21 17:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2800,6 +2800,14 @@ msgstr "Private Repositorys"
 
 msgid "Go to the overview"
 msgstr "Zur Übersicht"
+
+#, python-format
+msgid ""
+"The project has no step %(id)s: it may have been removed. These are the "
+"steps it has."
+msgstr ""
+"Das Projekt hat keinen Schritt %(id)s: Er wurde vielleicht entfernt. Das "
+"sind seine Schritte."
 
 msgid "Steps of a pull request"
 msgstr "Schritte eines Pull Requests"

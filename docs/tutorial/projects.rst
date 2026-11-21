@@ -289,6 +289,11 @@ the tab *Filters*, or the button **+** of the tab *Steps*, adds the filter as
 the last step. Drag a step in the bar to move it, or use its arrows; steps more
 to the left come first.
 
+The address of a step is ``steps/?step_id=<id>``, such as
+``/projects/icalendar/steps/?step_id=7``: the id stays when the steps move. For an
+id that the project does not have, such as of a step that was removed, the page says so
+and shows the steps it has.
+
 A click on a step shows it below the bar, with **Edit the filter** at the top
 right, which opens the page of saving its filter. Its name is that of its filter
 until you change it, and its summary is a template in Markdown. A click on a

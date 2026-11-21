@@ -4,6 +4,7 @@
 {% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'steps.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
+{% if missing %}<p class="message message-warning" role="alert" data-missing-step>{% blocktranslate with id=missing %}The project has no step {{ id }}: it may have been removed. These are the steps it has.{% endblocktranslate %}</p>{% endif %}
 <section class="card steps" data-steps>
 <div class="table-head"><h2>{% translate "Steps of a pull request" %}</h2>
 <span class="steps-tools">{% if steps %}<a class="button button-quiet button-small" href="{% url 'project_steps_check' project.slug %}" data-check-steps title="{% translate "The pull requests outside of the steps: no task of any step applies to them" %}">{% translate "Check" %}</a>{% endif %}
