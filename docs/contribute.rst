@@ -13,6 +13,12 @@ The prompts of AI agents are recorded with `ai-prompt-auto-commit
 messages; ``make dev`` installs its hooks. ``todo.txt`` lists the requirements
 of the prompts and what is open.
 
+AI agents, such as Claude Code and Codex, follow the rules of
+:file:`AGENTS.md` in the root of the repository: how to set up and check a
+change, the rules of the code that the tests check, and what they ask the
+person about. Claude Code reads it through :file:`CLAUDE.md`. A rule that
+matters for the whole team goes into :file:`AGENTS.md`.
+
 Every change that people notice has a news fragment in ``news/``, such as
 ``news/12.feature`` or ``news/+topic.bugfix``, and updates the documentation.
 Each build of the documentation drafts the fragments with towncrier into the
