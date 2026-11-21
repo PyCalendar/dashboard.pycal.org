@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.3.2 (2026-11-21)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Skipping a step: the reason is asked in a dialog that pops out, the step says Skipped by @handle: reason in the row of The pull request is here, and Don't skip undoes it.
+
+
 0.3.1 (2026-11-21)
 ------------------
 
