@@ -222,6 +222,19 @@ ACTIONS = {
         ),
         lambda w: not StepSkip.objects.filter(step=w.step, issue=w.pull).exists(),
     ),
+    "switch the step labels on": (
+        "write",
+        lambda c, w: c.post(w.path + "sync/labels/", {"step_labels": "sync"}),
+        lambda w: Project.objects.get(pk=w.project.pk).step_labels == "sync",
+    ),
+    "switch the step labels off, which deletes them": (
+        "owner",
+        lambda c, w: (
+            Project.objects.filter(pk=w.project.pk).update(step_labels="sync"),
+            c.post(w.path + "sync/labels/", {"step_labels": "off"}),
+        )[1],
+        lambda w: Project.objects.get(pk=w.project.pk).step_labels == "off",
+    ),
     "edit the message": (
         "write",
         lambda c, w: c.get(w.path + "message/edit/"),

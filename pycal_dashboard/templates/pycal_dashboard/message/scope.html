@@ -4,6 +4,7 @@
 {% block head %}<script src="{% static 'message.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
+{% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card message-page" data-message-scope-page>
 <div class="table-head"><h2>{% translate "Which pull requests get it" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 {% include "pycal_dashboard/message/_flow.html" %}

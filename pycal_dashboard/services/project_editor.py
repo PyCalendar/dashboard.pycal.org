@@ -147,7 +147,7 @@ class ProjectEditor:
         self.project.save()
 
     def label_mode(self, mode: str) -> bool:
-        """Choose who sets the status labels of the steps: nobody, the site or people.
+        """Switch the step labels on or off; off deletes them on GitHub.
 
         Parameters:
             mode: One of ``Project.LABEL_MODES``; anything else keeps it.
@@ -157,10 +157,13 @@ class ProjectEditor:
 
         Raises:
             ProjectReadOnly: The person may not change the project.
+            ProjectOwnersOnly: Only owners switch them off: it deletes labels on GitHub.
         """
         self.access.require_write()
         if mode not in Project.LABEL_MODES or mode == self.project.step_labels:
             return False
+        if mode == Project.LABELS_OFF:
+            self.access.require_owner()
         self.project.step_labels = mode
         self.project.save(update_fields=["step_labels"])
         return True

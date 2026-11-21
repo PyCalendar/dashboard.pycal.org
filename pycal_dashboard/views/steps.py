@@ -76,7 +76,7 @@ HANDLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}")
 
 
 def labels_follow(project: Project, user: object) -> None:
-    """Update the project in the background, so that the status labels follow its steps.
+    """Update the project in the background, so that the step labels follow its steps.
 
     Parameters:
         project: The project, whose steps changed.

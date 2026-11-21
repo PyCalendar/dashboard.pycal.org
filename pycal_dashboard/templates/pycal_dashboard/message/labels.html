@@ -1,0 +1,23 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Status Label" %} · {% translate "PR Sync" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+{% include "pycal_dashboard/message/_sync_tabs.html" %}
+<section class="card" data-step-labels>
+<h2>{% translate "Step labels" %}</h2>
+<p class="muted">{% blocktranslate %}A label of a step has the color of the step and links to it, such as Step: Review. A label that a person puts on a pull request puts it into that step; of several, the one added last stays, and {{ site_name }} removes the others.{% endblocktranslate %}</p>
+<form method="post" data-step-labels-form>{% csrf_token %}
+<div class="table-wrap"><table class="table choice-table">
+  <thead><tr><th><span class="visually-hidden">{% translate "Choice" %}</span></th><th>{% translate "Step labels" %}</th><th>{% translate "What it means" %}</th><th>{% translate "What saving it does" %}</th></tr></thead>
+  <tbody>{% for mode in modes %}<tr data-mode="{{ mode.value }}">
+    <td><input type="radio" id="step-labels-{{ mode.value }}" name="step_labels" value="{{ mode.value }}"{% if project.step_labels == mode.value %} checked{% endif %}{% if not mode.allowed %} disabled{% endif %}></td>
+    <th scope="row"><label for="step-labels-{{ mode.value }}">{{ mode.title }}</label></th>
+    <td>{{ mode.description }}</td>
+    <td class="muted">{{ mode.action }}</td>
+  </tr>{% endfor %}</tbody>
+</table></div>
+{% if access.can_write %}<p><button class="button">{% translate "Save the step labels" %}</button>{% if not access.is_owner %} <small class="muted">{% translate "Only the owners switch them off: it deletes labels on GitHub." %}</small>{% endif %}</p>{% endif %}
+</form>
+</section>
+{% endblock %}

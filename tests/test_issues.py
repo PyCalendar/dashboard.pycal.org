@@ -247,7 +247,7 @@ def test_the_tabs_are_in_order_overview_public_private(client, project, bob):
         "Pull requests",
         "Filters",
         "Steps",
-        "PR Message",
+        "PR Sync",
         "Repositories",
         "Collaborators",
         "Settings",

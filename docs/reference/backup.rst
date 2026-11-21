@@ -88,7 +88,7 @@ The keys
    ``skip_authors``, the GitHub handles of the authors whose pull requests skip
    it. The skips of single pull requests are not in a backup.
 ``message``
-   The message of the tab *PR Message*, see :ref:`pr-message`: its
+   The Status Message of the tab *PR Sync*, see :ref:`pr-message`: its
    ``template``, the pull requests ``listed`` by their numbers, and the
    switches of its scope, ``to_listed``, ``to_new``, ``to_open`` and
    ``to_closed``; empty without a message. Restoring sets it, with new pull

@@ -91,7 +91,7 @@ class ProjectBackup:
         }
 
     def message(self) -> dict | None:
-        """The message of the tab PR Message, as the file keeps it; None without one."""
+        """The message of the tab PR Sync, as the file keeps it; None without one."""
         message = PullRequestMessage.objects.filter(project=self.project).first()
         if message is None:
             return None
@@ -217,7 +217,7 @@ class ProjectBackup:
         return [str(name) for name in data.get("repositories") or []]
 
     def restore_message(self, data: dict | None) -> None:
-        """Set the message of the tab PR Message; a file without one leaves it as it is.
+        """Set the message of the tab PR Sync; a file without one leaves it as it is.
 
         New pull requests are those opened from now on.
 

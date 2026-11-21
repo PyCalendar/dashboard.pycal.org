@@ -1,4 +1,4 @@
-"""The status labels of the steps on GitHub: which step a pull request is in."""
+"""The step labels on GitHub: which step a pull request is in."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from django.conf import settings
 
-from pycal_dashboard.actions import LabelAdded, LabelRemoved, StepLabelSaved
+from pycal_dashboard.actions import LabelAdded, LabelRemoved, StepLabelDeleted, StepLabelSaved
 from pycal_dashboard.github.installation_token import InstallationToken
 from pycal_dashboard.models import (
     Issue,
@@ -105,33 +105,30 @@ def description(step: PullRequestStep) -> str:
 
 
 class StatusLabels:
-    """The status labels of the steps of a project in a repository, after each update of it.
+    """The step labels of a project in a repository, after each update of it.
 
-    Each step has a label in each repository of the project (``StepLabel``), such as
-    *Step: Review*, with the color of the step and a description that links the step; a label
-    renamed or recolored on GitHub renames or recolors the step. On the open pull requests that
-    have the message of the project (``PullRequestComment``), the label shows the step they are
-    in, as the project says (``Project.step_labels``):
+    With the step labels on (``Project.step_labels`` is ``sync``), each step has a label in
+    each repository of the project (``StepLabel``), such as *Step: Review*, with the color of the
+    step and a description that links the step; a label renamed or recolored on GitHub renames
+    or recolors the step. People put the labels on pull requests by hand; on the open pull
+    requests with the PR Sync on (``PullRequestComment``), the site puts the label of the step
+    they are in on them and removes the others.
 
-    ``automatic``
-        The site puts the label of the step a pull request is in on it, and removes the others.
-    ``manual``
-        People put the labels on the pull requests; the site does not.
-
-    Either way, a step label that a person put on a pull request puts it into that step
+    A step label that a person put on a pull request puts it into that step
     (``PullRequestPlace.chosen``); when a pull request has several, the one added last stays
     and the site removes the others. Without any, the pull request is in the step of its
-    conditions again. Every write to GitHub is an action of the log.
+    conditions again. With the step labels off, the site deletes the labels of the steps that it
+    made (:meth:`remove`). Every write to GitHub is an action of the log.
     """
 
     def __init__(self, project: Project):
         """The steps of a project.
 
         Parameters:
-            project: The project, with ``step_labels`` other than ``off``.
+            project: The project.
         """
         self.project = project
-        self.automatic = project.step_labels == Project.LABELS_AUTOMATIC
+        self.on = project.step_labels == Project.LABELS_SYNC
         self.steps = list(project.steps.select_related("project"))
 
     def sync(self, repository: Repository) -> None:
@@ -140,10 +137,39 @@ class StatusLabels:
         Parameters:
             repository: The repository that was updated, with the GitHub App.
         """
-        if not self.steps or not repository.app_installed:
+        if not repository.app_installed:
+            return
+        if not self.on:
+            self.remove(repository)
+            return
+        if not self.steps:
             return
         names = self.define(repository)
         self.place(repository, names)
+
+    def remove(self, repository: Repository) -> None:
+        """Delete the labels of the steps in a repository on GitHub, with the step labels off.
+
+        Only the labels the site made or took for the steps (``StepLabel``) are deleted; the
+        pull requests are in the steps of their conditions again.
+
+        Parameters:
+            repository: The repository.
+        """
+        found = StepLabel.objects.filter(repository=repository, step__project=self.project)
+        for saved in found.select_related("step"):
+            label = repository.labels.filter(github_id=saved.github_id).first()
+            if label is not None:
+                try:
+                    StepLabelDeleted(repository, saved.step, label.name).run()
+                except Exception:  # one label does not stop the others
+                    log.exception("%s: the label %s could not be deleted", repository, label)
+                    continue
+                label.delete()
+            saved.delete()
+        PullRequestPlace.objects.filter(project=self.project, issue__repository=repository).exclude(
+            chosen=None, labeled=None
+        ).update(chosen=None, labeled=None)
 
     def define(self, repository: Repository) -> dict[int, str]:
         """Create or change the label of each step in a repository; follow changes on GitHub.
@@ -224,7 +250,7 @@ class StatusLabels:
         return label
 
     def place(self, repository: Repository, names: dict[int, str]) -> None:
-        """Put the label of its step on each open pull request with the message, as the mode says.
+        """Follow the labels that people put on, and label the pull requests with the PR Sync on.
 
         Parameters:
             repository: The repository.
@@ -236,11 +262,11 @@ class StatusLabels:
             for found in StepLabel.objects.filter(repository=repository, step__in=self.steps)
             if found.github_id and found.step_id in names
         }
-        with_message = PullRequestComment.objects.filter(project=self.project).values("issue")
+        synced = set(
+            PullRequestComment.objects.filter(project=self.project).values_list("issue", flat=True)
+        )
         pulls = (
-            Issue.objects.filter(
-                repository=repository, pull_request=True, state=Issue.OPEN, pk__in=with_message
-            )
+            Issue.objects.filter(repository=repository, pull_request=True, state=Issue.OPEN)
             .select_related("author", "repository__installation", "pull_state")
             .prefetch_related("labels", "reviews")
         )
@@ -260,9 +286,10 @@ class StatusLabels:
                         self.write(LabelRemoved, issue, names[step.pk], step)
                 on = [keep]
             current = on[0] if on else None
-            chosen = current if not self.automatic or current != place.labeled else None
+            automatic = issue.pk in synced  # the PR Sync is on: the site labels it
+            chosen = current if not automatic or current != place.labeled else None
             labeled = None
-            if self.automatic and chosen is None:
+            if automatic and chosen is None:
                 labeled = assignment.step_of(issue, chosen=False)
                 if current is not None and current != labeled:
                     self.write(LabelRemoved, issue, names[current.pk], current)

@@ -514,6 +514,19 @@ class FakeGitHub:
             label["color"] = fields.get("color", label["color"])
             return httpx.Response(201, json=label)
         match = re.fullmatch(r"/repos/([^/]+/[^/]+)/labels/([^/]+)", path)
+        if request.method == "DELETE" and match and token.startswith("installation-"):
+            from urllib.parse import unquote
+
+            repository = self.repositories[match[1].lower()]
+            name = unquote(match[2])
+            if not any(label["name"] == name for label in repository["labels"]):
+                return httpx.Response(404, json={"message": "Not Found"})
+            repository["labels"] = [it for it in repository["labels"] if it["name"] != name]
+            for issue in repository["issues"]:  # GitHub removes it from the issues, too
+                if any(label["name"] == name for label in issue["labels"]):
+                    issue["labels"] = [it for it in issue["labels"] if it["name"] != name]
+                    self.touch(issue)
+            return httpx.Response(204)
         if request.method == "PATCH" and match and token.startswith("installation-"):
             from urllib.parse import unquote
 

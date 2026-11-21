@@ -139,6 +139,8 @@ after a change, follow the rule it names instead of changing the test.
   least that shows why it holds or not (`Evidence`); its data specs give the links.
   A new choice of a column keeps the columns saved before as they were.
 - Steps are shown to visitors by their names, never by their numbers.
+- The site names itself by its name, `SITE_NAME` (`{{ site_name }}` in templates), such as
+  dashboard.pycal.org, never "this site" or "the site" in the texts that people read.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),
   which the people of `SITE_ADMINS` reach; `tests/test_account.py` checks it.
 - Of GitHub, the site keeps the installations of the GitHub App with their

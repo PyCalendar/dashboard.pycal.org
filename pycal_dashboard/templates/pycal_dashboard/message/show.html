@@ -1,10 +1,11 @@
 {% extends "pycal_dashboard/base.html" %}
 {% load i18n help %}
-{% block title %}{% translate "PR Message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block title %}{% translate "Status Message" %} · {% translate "PR Sync" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
+{% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card message-page" data-message>
-<div class="table-head"><h2>{% translate "PR Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
+<div class="table-head"><h2>{% translate "Status Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 {% include "pycal_dashboard/message/_flow.html" %}
 <p class="muted">{% translate "The GitHub App writes this message as a comment on the pull requests of its scope, and updates it whenever the message or the values of its variables change." %}</p>
 {% if message %}<p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>

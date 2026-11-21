@@ -17,12 +17,6 @@
     <label class="choice" data-visibility="private"><input type="radio" name="visibility" value="private"{% if not form.public %} checked{% endif %}> <strong>{% translate "Private" %}</strong><small>{% translate "Only its collaborators can view this project." %}</small></label>
     </div>
     {% if not new and not access.is_owner %}<small>{% translate "Only the owners change it." %}</small>{% endif %}</fieldset>
-  {% if not new %}<fieldset class="step-labels" data-step-labels><legend>{% translate "Status labels of the steps" %}</legend>
-    <p class="muted">{% translate "Each step has a label on GitHub, such as Step: Review, with the color of the step and a link to it. On the pull requests that have the PR Message, the label shows which step they are in. A label that a person adds puts the pull request into its step; of several, the one added last stays." %}</p>
-    <label class="choice"><input type="radio" name="step_labels" value="off"{% if form.step_labels == "off" %} checked{% endif %}> <strong>{% translate "Off" %}</strong> <small>{% translate "No labels: nothing is written to GitHub." %}</small></label>
-    <label class="choice"><input type="radio" name="step_labels" value="automatic"{% if form.step_labels == "automatic" %} checked{% endif %}> <strong>{% translate "Automatic" %}</strong> <small>{% translate "The site puts the label of the step on each pull request and removes the others." %}</small></label>
-    <label class="choice"><input type="radio" name="step_labels" value="manual"{% if form.step_labels == "manual" %} checked{% endif %}> <strong>{% translate "Manual" %}</strong> <small>{% translate "People put the labels on the pull requests; the site keeps the labels themselves up to date." %}</small></label>
-  </fieldset>{% endif %}
   <p><button class="button">{% if new %}{% translate "Create the project" %}{% else %}{% translate "Save" %}{% endif %}</button></p>
 </form>
 {% if not new and access.is_owner %}<section class="card" id="address" data-address><h2>{% translate "Address" %} {% translate "The address of a project" as help %}{% help_link links.project_address help %}</h2>

@@ -73,7 +73,7 @@ def mark_projects(sender: type, repository: Repository, **kwargs: Any):
 @receiver(repository_updated)
 @timed
 def sync_status_labels(sender: type, repository: Repository, **kwargs: Any):
-    """Keep the status labels of the steps in a repository and on its pull requests.
+    """Keep the step labels in a repository and on its pull requests, or delete them when off.
 
     See :class:`~pycal_dashboard.services.status_labels.StatusLabels`: before the actions of
     the steps and the messages, which follow the step that a person chose with a label.
@@ -85,10 +85,11 @@ def sync_status_labels(sender: type, repository: Repository, **kwargs: Any):
     """
     with IMPORT_GUARD:  # see import_guard.py: what writes to GitHub, only when needed
         from pycal_dashboard.services.status_labels import StatusLabels
-    projects = Project.objects.filter(repositories=repository, steps__isnull=False).exclude(
-        step_labels=Project.LABELS_OFF
+    on = Project.objects.filter(repositories=repository, step_labels=Project.LABELS_SYNC)
+    labeled = Project.objects.filter(  # off, with labels to delete
+        repositories=repository, steps__labels__repository=repository
     )
-    for project in projects.distinct():
+    for project in (on | labeled).distinct():
         StatusLabels(project).sync(repository)
 
 

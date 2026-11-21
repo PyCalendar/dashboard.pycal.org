@@ -599,15 +599,12 @@ def project_edit(request: HttpRequest, slug: str):
         if "visibility" in request.POST or access.is_owner:
             public = request.POST.get("visibility", "public") == "public"
         editor.change(request.POST.get("name", ""), request.POST.get("description", ""), public)
-        if editor.label_mode(request.POST.get("step_labels", "")) and project.repositories.exists():
-            UpdateQueue.add(project, request.user)  # the labels follow in the background
         messages.success(request, _("The project is saved."))
         return redirect(project.path())
     form = {
         "name": project.name,
         "description": project.description,
         "public": project.public,
-        "step_labels": project.step_labels,
     }
     return render(
         request,

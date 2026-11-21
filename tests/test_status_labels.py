@@ -83,7 +83,7 @@ def test_off_writes_nothing(github, project):
 def test_automatic_creates_the_labels_and_puts_them_on(github, project, settings):
     settings.SITE_URL = "https://dashboard.example.org"
     settings.SITE_NAME = "Dashboard"
-    mode(project, "automatic")
+    mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
     label = repository_label(github, "Step: Conflicts")
@@ -107,7 +107,7 @@ def test_automatic_creates_the_labels_and_puts_them_on(github, project, settings
 
 
 def test_a_label_changed_on_github_changes_the_step(github, project):
-    mode(project, "automatic")
+    mode(project, "sync")
     update(project)
     github.edit_label(REPO, "Step: Review", new_name="Step: Peer review", color="bfdbfe")
     github.edit_label(REPO, "Step: Conflicts", color="ededed")
@@ -121,7 +121,7 @@ def test_a_label_changed_on_github_changes_the_step(github, project):
 
 
 def test_a_step_changed_on_the_site_changes_its_label(github, project, client, bob):
-    mode(project, "automatic")
+    mode(project, "sync")
     update(project)
     review = PullRequestStep.objects.get(name="Review")
     client.force_login(bob)
@@ -138,7 +138,7 @@ def test_a_step_changed_on_the_site_changes_its_label(github, project, client, b
 
 def test_a_person_chooses_the_step_with_a_label(github, project):
     """Automatic: the label a person adds wins; without labels the site takes over again."""
-    mode(project, "automatic")
+    mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
     github.label_issue(REPO, 2, "Step: Conflicts")  # Ready, in Review, goes back
@@ -154,35 +154,67 @@ def test_a_person_chooses_the_step_with_a_label(github, project):
     assert PullRequestProgress(ready, project).current.step == review
 
 
-def test_manual_leaves_the_labels_to_people(github, project):
-    mode(project, "manual")
+def test_people_label_the_pull_requests_without_the_pr_sync(github, project):
+    """Other (3) has no PR Sync: the site does not label it, but follows the labels of people."""
+    mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
-    assert labels_of(github, 1) == [] and repository_label(github, "Step: Review")
-    github.label_issue(REPO, 1, "Step: Review")
-    github.label_issue(REPO, 1, "Step: Conflicts")  # added last: it stays
+    assert labels_of(github, 3) == [] and repository_label(github, "Step: Review")
+    github.label_issue(REPO, 3, "Step: Review")
+    github.label_issue(REPO, 3, "Step: Conflicts")  # added last: it stays
     update(project)
-    assert labels_of(github, 1) == ["Step: Conflicts"]
-    assert place(1).chosen == conflicts
-    github.unlabel_issue(REPO, 1, "Step: Conflicts")
-    github.label_issue(REPO, 1, "Step: Review")
+    assert labels_of(github, 3) == ["Step: Conflicts"]
+    assert place(3).chosen == conflicts
+    github.unlabel_issue(REPO, 3, "Step: Conflicts")
+    github.label_issue(REPO, 3, "Step: Review")
     update(project)
-    assert place(1).chosen == review and labels_of(github, 1) == ["Step: Review"]
+    assert place(3).chosen == review and labels_of(github, 3) == ["Step: Review"]
 
 
-def test_the_mode_is_a_setting_of_writers(client, project, bob):
+def test_off_deletes_the_labels_of_the_steps(github, project):
+    mode(project, "sync")
+    update(project)
+    github.label_issue(REPO, 3, "Step: Review")
+    update(project)
+    assert place(3).chosen is not None
+    mode(project, "off")
+    update(project)
+    names = [label["name"] for label in github.repositories[REPO]["labels"]]
+    assert "Step: Review" not in names and "Step: Conflicts" not in names
+    assert "needs review" in names  # the other labels stay
+    assert labels_of(github, 1) == [] and labels_of(github, 3) == []
+    assert not StepLabel.objects.exists() and place(3).chosen is None
+    assert LogAction.objects.filter(text__contains="Label Step: Review deleted").exists()
+    github.requests.clear()
+    update(project)  # nothing left to delete
+    assert not [r for r in github.writes() if "/labels" in r.url.path]
+
+
+def test_the_step_labels_are_on_the_tab_status_label(client, project, bob, alice):
+    """Writers switch them on; only owners switch them off, which deletes labels."""
+    from pycal_dashboard.services.project_access import ProjectAccess
+
+    page = client.get("/projects/icalendar/sync/labels/").content.decode()  # public
+    assert 'name="step_labels" value="off" checked disabled' in page and "Save the step" not in page
+    assert "dashboard.pycal.org puts the label" in page and "this site" not in page
+    ProjectEditor(ProjectAccess(project, bob)).share("alice", "write")
+    client.force_login(alice)
+    answer = client.post("/projects/icalendar/sync/labels/", {"step_labels": "sync"})
+    assert answer["Location"] == "/projects/icalendar/sync/labels/"
+    project.refresh_from_db()
+    assert project.step_labels == "sync"
+    page = client.get("/projects/icalendar/sync/labels/").content.decode()
+    assert 'value="off" disabled' in page and "Only the owners switch them off" in page
+    answer = client.post("/projects/icalendar/sync/labels/", {"step_labels": "off"})
+    assert answer.status_code == 403
+    project.refresh_from_db()
+    assert project.step_labels == "sync"
     client.force_login(bob)
-    page = client.get("/projects/icalendar/settings/").content.decode()
-    assert 'name="step_labels" value="off" checked' in page
-    client.post(
-        "/projects/icalendar/settings/",
-        {"name": "iCalendar", "description": "", "step_labels": "automatic"},
-    )
+    client.post("/projects/icalendar/sync/labels/", {"step_labels": "everything"})
     project.refresh_from_db()
-    assert project.step_labels == "automatic"
-    client.post(
-        "/projects/icalendar/settings/",
-        {"name": "iCalendar", "description": "", "step_labels": "everything"},
-    )
+    assert project.step_labels == "sync"  # unknown: kept
+    client.post("/projects/icalendar/sync/labels/", {"step_labels": "off"})
     project.refresh_from_db()
-    assert project.step_labels == "automatic"  # unknown: kept
+    assert project.step_labels == "off"
+    settings = client.get("/projects/icalendar/settings/").content.decode()
+    assert "step_labels" not in settings  # no longer in the settings

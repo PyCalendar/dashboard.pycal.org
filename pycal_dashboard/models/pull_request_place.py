@@ -10,7 +10,7 @@ class PullRequestPlace(models.Model):
     step follow (``StepCompletion``). The first time the site sees a pull request in a project,
     it only records its place: nothing happens for steps completed before.
 
-    With the status labels of the steps (``Project.step_labels``), it also keeps the step that a
+    With the step labels on (``Project.step_labels``), it also keeps the step that a
     person chose with a label (``chosen``): the pull request is in that step. And the step whose
     label the site put on it (``labeled``), which is no choice of a person.
     """

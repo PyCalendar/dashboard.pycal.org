@@ -38,13 +38,13 @@ class Project(models.Model):
     ``/projects/<slug>/<name>/``: the slug is random unless people choose one; every slug it had
     stays recorded (``ProjectSlug``), so that old links lead to it.
 
-    ``step_labels`` says who sets the status labels of the steps on the pull requests that have
-    the message of the project (``StatusLabels``): nobody (``off``), the site (``automatic``) or
-    people (``manual``).
+    ``step_labels`` says whether the steps have labels on GitHub (``StatusLabels``): none
+    (``off``), or labels that people put on pull requests and that the site puts on those with
+    the PR Sync on (``sync``).
     """
 
-    LABELS_OFF, LABELS_AUTOMATIC, LABELS_MANUAL = "off", "automatic", "manual"
-    LABEL_MODES = (LABELS_OFF, LABELS_AUTOMATIC, LABELS_MANUAL)
+    LABELS_OFF, LABELS_SYNC = "off", "sync"
+    LABEL_MODES = (LABELS_OFF, LABELS_SYNC)
 
     slug = models.CharField(max_length=80, unique=True, default=random_slug)
     name = models.CharField(max_length=100)

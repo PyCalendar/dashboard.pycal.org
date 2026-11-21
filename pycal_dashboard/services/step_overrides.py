@@ -1,6 +1,6 @@
 """What people decided about the steps of pull requests, besides their conditions.
 
-The skips of steps, and the steps chosen with their status labels on GitHub.
+The skips of steps, and the steps chosen with their step labels on GitHub.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ class StepOverrides:
     A pull request skips a step when a writer skipped it for the pull request (``StepSkip``),
     or when the step skips itself for its author (``PullRequestStep.skip_authors``). A pull
     request is not in a step that it skips: it is in the next one that shows it. With the
-    status labels of the steps on, a person chooses the step of a pull request with its label
+    step labels on, a person chooses the step of a pull request with its label
     (``PullRequestPlace.chosen``): the pull request is in that step, see :meth:`chosen`.
     """
 

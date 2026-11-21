@@ -1,4 +1,4 @@
-"""The tab PR Message: the message of a project as a comment on its pull requests.
+"""The tab PR Sync: the Status Message of a project as a comment on its pull requests.
 
 Editing it is a flow of four pages: the current message (or none), the editor of its
 template, the review of the draft with example pull requests in every state of the steps,
@@ -10,10 +10,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
@@ -24,6 +26,7 @@ from pycal_dashboard.models import Issue, Project, PullRequestMessage
 from pycal_dashboard.services.example_pulls import ExamplePulls
 from pycal_dashboard.services.message_comments import MessageComments
 from pycal_dashboard.services.project_access import ProjectAccess
+from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.step_template import GROUPS, example, expand
 
@@ -412,3 +415,69 @@ def project_message_preview(request: HttpRequest, slug: str):
     count = comments.pulls(message).count()
     button = ngettext("Update %(count)s pull request", "Update %(count)s pull requests", count)
     return JsonResponse({"count": count, "button": button % {"count": count}})
+
+
+@require_http_methods(["GET", "HEAD", "POST"])
+def project_sync_labels(request: HttpRequest, slug: str):
+    """The tab Status Label of PR Sync: whether the steps have labels on GitHub.
+
+    Everybody who sees the project sees the setting; writers switch the labels on, which
+    creates them and labels the pull requests with the PR Sync on, and owners switch them off,
+    which deletes them on GitHub. The labels follow in the background, with an update.
+
+    Parameters:
+        request: The request; POST with ``step_labels``, one of ``Project.LABEL_MODES``.
+        slug: The project.
+
+    Returns:
+        The page, or a redirect to it after saving.
+
+    Raises:
+        ProjectReadOnly: Only writers change it.
+        ProjectOwnersOnly: Only owners switch the labels off.
+    """
+    access, moved = opened(request, slug, "sync/labels/")
+    if moved:
+        return moved
+    project = access.project
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse('account_login')}?next={project.path('sync/labels/')}")
+        if ProjectEditor(access).label_mode(request.POST.get("step_labels", "")):
+            if project.repositories.exists():
+                UpdateQueue.add(project, request.user)  # the labels follow in the background
+            messages.success(request, _("The step labels are saved."))
+        return redirect(project.path("sync/labels/"))
+    return render(
+        request,
+        "pycal_dashboard/message/labels.html",
+        {
+            "project": project,
+            "access": access,
+            "modes": [
+                {
+                    "value": Project.LABELS_OFF,
+                    "title": _("Off"),
+                    "description": _("No step labels on GitHub."),
+                    "action": _("Deletes the labels of the steps on GitHub."),
+                    "allowed": access.is_owner,
+                },
+                {
+                    "value": Project.LABELS_SYNC,
+                    "title": _("With PR Sync"),
+                    "description": _(
+                        "The steps have labels on GitHub, such as Step: Review. People put them "
+                        "on pull requests by hand; %(site)s puts the label of the step on the pull "
+                        "requests with the PR Sync on."
+                    )
+                    % {"site": settings.SITE_NAME},
+                    "action": _(
+                        "Creates the labels and labels the pull requests with the PR Sync on."
+                    ),
+                    "allowed": access.can_write,
+                },
+            ],
+            "tab": "message",
+            "sync_tab": "labels",
+        },
+    )

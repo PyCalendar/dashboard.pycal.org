@@ -328,33 +328,35 @@ the site records every label added or removed.
 
 .. _status-labels:
 
-Status labels
--------------
+Step labels
+-----------
 
-The settings of a project choose the *Status labels of the steps*: off by
-default, *Automatic* or *Manual*. Then each step has a label in each repository
-with the GitHub App, such as *Step: Review*: with the color of the step, the
-gray of GitHub for a step without a color, and the description *Created by*
-the site and the link to the step, ``steps/?step_id=<id>``. The site creates the
+The tab *Status Label* of *PR Sync*, see :ref:`pr-message`, switches the step
+labels on and off. It is a table of the choices, with what each means and what
+saving it does:
+
+*Off*, by default
+   No step labels on GitHub. Saving it deletes the labels of the steps on
+   GitHub, so only the owners switch them off.
+*With PR Sync*
+   The steps have labels on GitHub. People put them on pull requests by hand,
+   and dashboard.pycal.org puts the label of the step on the pull requests with
+   the PR Sync on. Saving it creates the labels and labels those pull requests.
+
+Each step then has a label in each repository with the GitHub App, such as
+*Step: Review*: with the color of the step, the gray of GitHub for a step
+without a color, and the description *Created by dashboard.pycal.org* with the
+link to the step, ``steps/?step_id=<id>``. dashboard.pycal.org creates the
 label, or takes one of that name, and changes it when the step changes. A label
 renamed or recolored on GitHub renames or recolors the step; the prefix *Step:*
 is not part of the name of the step.
 
-The labels are only on the open pull requests that have the PR Message, see
-:ref:`pr-message`:
-
-*Automatic*
-   The site puts the label of the step that a pull request is in on it and
-   removes the other labels of steps.
-*Manual*
-   People put the labels on the pull requests; the site does not.
-
-Either way, a label of a step that a person adds puts the pull request into that
-step. When a pull request has two labels of steps or more, the one added last
-stays and the site removes the others. When all of them are removed, the pull
+A label of a step that a person adds puts the pull request into that step. When
+a pull request has two labels of steps or more, the one added last stays and
+dashboard.pycal.org removes the others. When all of them are removed, the pull
 request is in the step of its conditions again. The message follows the step, and
-the log records every label created, added or removed. A removed step keeps its
-label on GitHub.
+the log records every label created, added, removed or deleted. A removed step
+keeps its label on GitHub.
 
 **Check** next to the button **+** lists the pull requests outside of the
 steps: no task of any step applies to them, so a filter of a step may lack a
@@ -581,7 +583,7 @@ number.
      - ``- [x] Review it``
 
 The variables of the group *Message* are for the message of the tab
-*PR Message* only, see :ref:`pr-message`; in a pull request in no step, the
+*PR Sync* only, see :ref:`pr-message`; in a pull request in no step, the
 variables of the step are empty.
 
 The values are text: a title such as ``[click](https://example.org)`` stays
@@ -591,10 +593,13 @@ tasks are Markdown, made by the site and the writers of the project.
 
 .. _pr-message:
 
-PR Message
-==========
+PR Sync
+=======
 
-The tab *PR Message*, right of *Steps*, has the message of the project: the
+The tab *PR Sync*, right of *Steps*, has two tabs: *Status Message* and *Status
+Label*, the step labels, see :ref:`status-labels`.
+
+*Status Message* has the message of the project: the
 GitHub App writes it as a comment on pull requests, and updates the comment
 whenever the message or the values of its variables change, such as when a pull
 request enters the next step. It is off until its scope says which pull

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 19:53+0000\n"
+"POT-Creation-Date: 2026-11-21 20:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1187,8 +1187,8 @@ msgstr "Pull requests"
 msgid "Filters"
 msgstr "Filtros"
 
-msgid "PR Message"
-msgstr "Mensaje del PR"
+msgid "PR Sync"
+msgstr "PR Sync"
 
 msgid "Repositories"
 msgstr "Repositorios"
@@ -1871,6 +1871,12 @@ msgstr "Tal como lo recibe el pull request %(pull)s."
 msgid "With an example pull request."
 msgstr "Con un pull request de ejemplo."
 
+msgid "Status Message"
+msgstr "Mensaje de estado"
+
+msgid "Status Label"
+msgstr "Etiqueta de estado"
+
 msgid "Edit the message"
 msgstr "Editar el mensaje"
 
@@ -1892,6 +1898,34 @@ msgstr "← Volver"
 
 msgid "Next: review →"
 msgstr "Siguiente: revisar →"
+
+msgid "Step labels"
+msgstr "Etiquetas de los pasos"
+
+#, python-format
+msgid ""
+"A label of a step has the color of the step and links to it, such as Step: "
+"Review. A label that a person puts on a pull request puts it into that step; "
+"of several, the one added last stays, and %(site_name)s removes the others."
+msgstr ""
+"Una etiqueta de un paso tiene el color del paso y enlaza a él, como Step: "
+"Review. Una etiqueta que una persona pone en un pull request lo pone en ese "
+"paso; de varias, queda la última añadida y %(site_name)s quita las demás."
+
+msgid "Choice"
+msgstr "Opción"
+
+msgid "What it means"
+msgstr "Qué significa"
+
+msgid "What saving it does"
+msgstr "Qué hace guardarlo"
+
+msgid "Save the step labels"
+msgstr "Guardar las etiquetas de los pasos"
+
+msgid "Only the owners switch them off: it deletes labels on GitHub."
+msgstr "Solo los propietarios las desactivan: eso borra etiquetas en GitHub."
 
 msgid "Review the message"
 msgstr "Revisar el mensaje"
@@ -2462,45 +2496,6 @@ msgstr "Solo sus colaboradores pueden ver este proyecto."
 
 msgid "Only the owners change it."
 msgstr "Solo los propietarios lo cambian."
-
-msgid "Status labels of the steps"
-msgstr "Etiquetas de estado de los pasos"
-
-msgid ""
-"Each step has a label on GitHub, such as Step: Review, with the color of the "
-"step and a link to it. On the pull requests that have the PR Message, the "
-"label shows which step they are in. A label that a person adds puts the pull "
-"request into its step; of several, the one added last stays."
-msgstr ""
-"Cada paso tiene una etiqueta en GitHub, como Step: Review, con el color del "
-"paso y un enlace a él. En los pull requests con el mensaje de PR, la "
-"etiqueta muestra en qué paso están. Una etiqueta que añade una persona pone "
-"el pull request en su paso; de varias, queda la última añadida."
-
-msgid "Off"
-msgstr "Desactivadas"
-
-msgid "No labels: nothing is written to GitHub."
-msgstr "Sin etiquetas: no se escribe nada en GitHub."
-
-msgid "Automatic"
-msgstr "Automáticas"
-
-msgid ""
-"The site puts the label of the step on each pull request and removes the "
-"others."
-msgstr ""
-"El sitio pone la etiqueta del paso en cada pull request y quita las demás."
-
-msgid "Manual"
-msgstr "Manuales"
-
-msgid ""
-"People put the labels on the pull requests; the site keeps the labels "
-"themselves up to date."
-msgstr ""
-"Las personas ponen las etiquetas en los pull requests; el sitio mantiene al "
-"día las etiquetas mismas."
 
 msgid "Create the project"
 msgstr "Crear el proyecto"
@@ -3332,6 +3327,34 @@ msgstr[0] ""
 msgstr[1] ""
 "El mensaje está guardado: %(count)s pull requests lo reciben en segundo "
 "plano."
+
+msgid "The step labels are saved."
+msgstr "Las etiquetas de los pasos están guardadas."
+
+msgid "Off"
+msgstr "Desactivadas"
+
+msgid "No step labels on GitHub."
+msgstr "Sin etiquetas de pasos en GitHub."
+
+msgid "Deletes the labels of the steps on GitHub."
+msgstr "Borra las etiquetas de los pasos en GitHub."
+
+msgid "With PR Sync"
+msgstr "Con PR Sync"
+
+#, python-format
+msgid ""
+"The steps have labels on GitHub, such as Step: Review. People put them on "
+"pull requests by hand; %(site)s puts the label of the step on the pull "
+"requests with the PR Sync on."
+msgstr ""
+"Los pasos tienen etiquetas en GitHub, como Step: Review. Las personas las "
+"ponen a mano en los pull requests; %(site)s pone la etiqueta del paso en los "
+"pull requests con PR Sync activado."
+
+msgid "Creates the labels and labels the pull requests with the PR Sync on."
+msgstr "Crea las etiquetas y etiqueta los pull requests con PR Sync activado."
 
 msgid "People now sign in with the OAuth app."
 msgstr "Ahora las personas inician sesión con la aplicación OAuth."

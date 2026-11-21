@@ -1,4 +1,4 @@
-"""The tab PR Message: the message of a project as a comment on its pull requests."""
+"""The tab PR Sync, Status Message: the message of a project as a comment on its pull requests."""
 
 import pytest
 
@@ -58,7 +58,7 @@ def save(client, template="Hi {author_handle}: {step_name}\n\n{tasks_all}", **fi
 def test_the_tab_is_public_and_off_by_default(client, project):
     page = client.get("/projects/icalendar/message/").content.decode()
     tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
-    assert tabs.index("Steps") < tabs.index("PR Message")
+    assert tabs.index("Steps") < tabs.index("PR Sync")
     assert "data-no-message" in page and "data-edit-message" not in page  # visitors
     assert "data-message-flow" not in page
     assert not PullRequestMessage.objects.exists()

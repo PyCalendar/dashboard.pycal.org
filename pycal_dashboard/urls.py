@@ -77,6 +77,11 @@ urlpatterns = [
     path("projects/<project_slug:slug>/steps/", steps.project_steps, name="project_steps"),
     path("projects/<project_slug:slug>/message/", message.project_message, name="project_message"),
     path(
+        "projects/<project_slug:slug>/sync/labels/",
+        message.project_sync_labels,
+        name="project_sync_labels",
+    ),
+    path(
         "projects/<project_slug:slug>/message/edit/",
         message.project_message_edit,
         name="project_message_edit",

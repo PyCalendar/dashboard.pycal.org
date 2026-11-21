@@ -1,0 +1,4 @@
+{% load i18n %}<nav aria-label="{% translate "PR Sync" %}"><ul class="tabs sync-tabs" data-sync-tabs>
+  <li><a href="{% url 'project_message' project.slug %}"{% if sync_tab != "labels" %} aria-current="page"{% endif %}>{% translate "Status Message" %}</a></li>
+  <li><a href="{% url 'project_sync_labels' project.slug %}"{% if sync_tab == "labels" %} aria-current="page"{% endif %}>{% translate "Status Label" %}</a></li>
+</ul></nav>
