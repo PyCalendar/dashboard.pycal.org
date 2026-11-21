@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.3.1 (2026-11-21)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- The swatches of the choice of the color of a step suit dark pages, too: there they show the dark tint that the step gets.
+
+
 0.3.0 (2026-11-21)
 ------------------
 
