@@ -129,7 +129,9 @@ zone.
 
 When repositories are added, the site updates them from GitHub in the
 background at once. **Update** updates them again. A progress bar shows how many
-are updated; the page reloads itself until the update ends. The project is *up
+are updated, with a turning circle; the box *Updating* reads itself again every 10
+seconds, not the whole page, and shows a check mark with the new numbers when the
+update ends. Without JavaScript, the page reloads itself instead. The project is *up
 to date* when every repository was updated in the last day without an error. A
 repository that could not be updated shows why: a notice at the top of the
 overview names each one with its error, linked to the documentation of the

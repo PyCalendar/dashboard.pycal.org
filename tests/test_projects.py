@@ -474,8 +474,11 @@ def test_update_a_project(client, project, bob, repositories):
     job = UpdateJob.objects.get()
     assert (job.status, job.percent) == ("queued", 0)
     page = client.get(f"/projects/{project.slug}/").content.decode()
-    assert 'http-equiv="refresh"' in page and "data-progress" in page
-    assert "0 of 2 repositories updated from GitHub" in page
+    # without JavaScript the page reloads itself; with it, a script reads the box again
+    assert '<noscript><meta http-equiv="refresh" content="3"></noscript>' in page
+    assert "project-status.js" in page and "data-progress" in page
+    assert 'data-status="updating" data-live-status' in page and 'class="loading"' in page
+    assert "0 of 2 repositories updated from GitHub. This box updates itself." in page
     client.post(f"/projects/{project.slug}/update/")  # one at a time
     assert UpdateJob.objects.count() == 1
     assert UpdateQueue.work() == 1
@@ -483,6 +486,7 @@ def test_update_a_project(client, project, bob, repositories):
     assert (job.status, job.done, job.total, job.errors, job.percent) == ("done", 2, 2, 0, 100)
     page = client.get(f"/projects/{project.slug}/").content.decode()
     assert "Up to date" in page and 'http-equiv="refresh"' not in page
+    assert "project-status.js" not in page and 'data-after-update="totals"' in page
     assert "<li data-open-issues><strong>4</strong>" in page
     assert "<strong>2</strong>" in page.split("data-open-pull-requests>")[1].split("</li>")[0]
     icalendar = Repository.objects.get(full_name="collective/icalendar")

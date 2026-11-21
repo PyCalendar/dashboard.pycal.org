@@ -1,0 +1,1 @@
+The overview of a project no longer reloads itself while it updates: the box Updating reads itself again every 10 seconds, with a turning circle, and shows a check mark and the new numbers when the update is done.

@@ -853,3 +853,34 @@ def test_choose_who_sets_the_status_labels(signed_in, site, github, bob):
     assert project.step_labels == "automatic"
     page.goto(f"{site}/projects/icalendar/settings/")
     expect(page.locator("[data-step-labels]").get_by_label("Automatic")).to_be_checked()
+
+
+def test_the_overview_updates_only_its_box(page, site, github, bob):
+    """While a project updates, the box Updating reads itself again every 10 seconds; the page
+    does not reload. When the update is done, the box shows a check mark."""
+    from pycal_dashboard.models import Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from pycal_dashboard.services.update_queue import UpdateQueue
+
+    github.add_repository("collective/icalendar", issues=3, pulls=2, installation=11)
+    project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    project.repositories.add(Repository.objects.create(full_name="collective/icalendar"))
+    UpdateQueue.add(project, bob, start=False)
+    page.clock.install()
+    page.goto(f"{site}/projects/icalendar/")
+    box = page.locator("[data-live-status]")
+    expect(box).to_have_attribute("data-status", "updating")
+    expect(box.locator(".loading[role=status]")).to_be_visible()
+    page.evaluate("window.notReloaded = true")
+    page.clock.run_for(11_000)  # still updating: the box again, the same page
+    expect(page.locator("[data-live-status]")).to_have_attribute("data-status", "updating")
+    assert UpdateQueue.work() == 1
+    page.clock.run_for(11_000)
+    box = page.locator("[data-live-status]")
+    expect(box).to_have_attribute("data-update-done", "")
+    expect(box.locator(".badge-success")).to_be_visible()
+    assert "✓" in box.locator(".badge-success").evaluate(
+        "e => getComputedStyle(e, '::before').content"
+    )
+    expect(page.locator("[data-open-issues] strong")).to_have_text("3")  # the numbers, too
+    assert page.evaluate("window.notReloaded") is True

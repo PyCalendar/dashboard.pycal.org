@@ -331,7 +331,7 @@ def test_the_update_is_at_the_bottom_of_the_overview(client, project, bob):
     client.force_login(bob)
     page = client.get(project.path()).content.decode()
     assert page.index("data-repositories") < page.index('data-status="current"')
-    assert '<footer class="update-line muted" data-status="current">' in page
+    assert '<footer class="update-line muted" data-status="current" data-live-status>' in page
     assert "data-update" in page.split('data-status="current"')[1]
 
 
