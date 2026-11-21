@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 18:31+0000\n"
+"POT-Creation-Date: 2026-11-21 18:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -998,59 +998,6 @@ msgstr "las tareas pendientes; una frase cuando no hay nada que hacer"
 msgid "the tasks done; a sentence when nothing is done"
 msgstr "las tareas hechas; una frase cuando no hay nada hecho"
 
-msgid "Email addresses"
-msgstr "Direcciones de correo"
-
-msgid "Your email addresses"
-msgstr "Tus direcciones de correo"
-
-msgid "Back to the account"
-msgstr "Volver a la cuenta"
-
-msgid ""
-"The site sends emails only to verified addresses, and to the primary one. "
-"Verify an address with the link that the site sends to it."
-msgstr ""
-"El sitio solo envía correos a direcciones verificadas, y a la principal. "
-"Verifica una dirección con el enlace que el sitio le envía."
-
-msgid "verified"
-msgstr "verificada"
-
-msgid "not verified"
-msgstr "sin verificar"
-
-msgid "primary"
-msgstr "principal"
-
-msgid "Send a link to verify it"
-msgstr "Enviar un enlace para verificarla"
-
-msgid "Make primary"
-msgstr "Hacer principal"
-
-msgid "Remove"
-msgstr "Eliminar"
-
-msgid ""
-"Only a verified address can become the primary one. The primary address "
-"cannot be removed: make another one primary first."
-msgstr ""
-"Solo una dirección verificada puede ser la principal. La dirección principal "
-"no se puede eliminar: haz principal otra primero."
-
-msgid "No email address yet."
-msgstr "Todavía no hay dirección de correo."
-
-msgid "Add an address"
-msgstr "Añadir una dirección"
-
-msgid "Email address"
-msgstr "Dirección de correo"
-
-msgid "Add it and send a link to verify it"
-msgstr "Añadirla y enviar un enlace para verificarla"
-
 #, python-format
 msgid ""
 "Hello,\n"
@@ -1366,21 +1313,51 @@ msgstr "Solo tú ves esta página."
 msgid "GitHub handle"
 msgstr "Identificador de GitHub"
 
+msgid ""
+"The site sends emails only to verified addresses, and only what you choose "
+"in the preferences. Verify an address with the link that the site sends to "
+"it."
+msgstr ""
+"El sitio envía correos solo a direcciones verificadas, y solo lo que eliges "
+"en las preferencias. Verifica una dirección con el enlace que el sitio le "
+"envía."
+
+msgid "verified"
+msgstr "verificada"
+
+msgid "not verified"
+msgstr "sin verificar"
+
+msgid "primary"
+msgstr "principal"
+
+msgid "Send a link to verify it"
+msgstr "Enviar un enlace para verificarla"
+
+msgid "Make primary"
+msgstr "Hacer principal"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid ""
+"Only a verified address can become the primary one. The primary address "
+"cannot be removed: make another one primary first."
+msgstr ""
+"Solo una dirección verificada puede ser la principal. La dirección principal "
+"no se puede eliminar: haz principal otra primero."
+
 msgid "No email address. GitHub did not share a verified one."
 msgstr "No hay dirección de correo. GitHub no compartió ninguna verificada."
 
-msgid "Add an address or choose the primary one"
-msgstr "Añadir una dirección o elegir la principal"
+msgid "Add an address"
+msgstr "Añadir una dirección"
 
-msgid ""
-"The site sends emails only to verified addresses and only what you choose "
-"below."
-msgstr ""
-"El sitio solo envía correos a direcciones verificadas y solo lo que elijas "
-"abajo."
+msgid "Email address"
+msgstr "Dirección de correo"
 
-msgid "Preferences"
-msgstr "Preferencias"
+msgid "Add it and send a link to verify it"
+msgstr "Añadirla y enviar un enlace para verificarla"
 
 msgid "As the browser"
 msgstr "Como el navegador"
@@ -2186,10 +2163,10 @@ msgstr "Tus datos"
 
 msgid ""
 "Your account shows what the site keeps of you. You delete your account and "
-"data yourself, in the red area at the bottom of the page Account."
+"data yourself, on the tab Delete the account of the page Account."
 msgstr ""
-"Tu cuenta muestra lo que el sitio guarda de ti. Puedes borrar tu cuenta y "
-"tus datos en la zona roja al final de la página Cuenta."
+"Tu cuenta muestra lo que el sitio guarda de ti. Borras tu cuenta y tus datos "
+"tú mismo, en la pestaña Borrar la cuenta de la página Cuenta."
 
 msgid "To ask about your data, write to the people who run the site:"
 msgstr ""
@@ -3251,6 +3228,12 @@ msgid "%(count)d day ago"
 msgid_plural "%(count)d days ago"
 msgstr[0] "hace %(count)d día"
 msgstr[1] "hace %(count)d días"
+
+msgid "Email addresses"
+msgstr "Direcciones de correo"
+
+msgid "Preferences"
+msgstr "Preferencias"
 
 msgid "Your preferences are saved."
 msgstr "Tus preferencias están guardadas."

@@ -591,7 +591,7 @@ community: where to start, what waits for a review, who contributes.
       buttons in rows aligned across the steps, as in a table
 - [x] Status labels: their color is that of the step, both ways; no color is the default gray of GitHub, ededed, both ways
 - [x] Release 0.1.0 after the skips and status labels; from then on a small release after each completed feature
-- [ ] /account/ as a page with tabs; an Emails tab with every function of /accounts/email/ (add, primary, verify again,
+- [x] /account/ as a page with tabs; an Emails tab with every function of /accounts/email/ (add, primary, verify again,
       remove); the user menu without Email addresses
 - [x] The overview of a project does not reload itself while updating: a script refreshes only the box Updating every
       10 seconds ("1-" read as 10), with a loading animation while it updates and a check mark when it is done

@@ -24,17 +24,18 @@ behalf.
 The page Account
 ================
 
-Only you see it. It shows:
+Only you see it. It has tabs, each at its own address, such as
+``/account/?tab=preferences``:
 
-- **Email addresses**: those GitHub shared, whether they are verified and which
-  one is primary, with *Send a link to verify it* for an address that is not
-  verified, see below.
+- **Email addresses**: those GitHub shared and those you added, whether they are
+  verified and which one is primary, with everything to manage them, see below.
 - **Preferences**: the language, the colors and the emails, see below.
 - **The GitHub App**: *Install the GitHub App* on the repositories of your
   account or of an organization, see :doc:`/how-to/install-app`. *Your
   installations* lists those you installed or changed: whether they have every
   permission, or what they lack with *Accept the permissions on GitHub*, see
   :ref:`new-permissions`.
+- **Delete the account**, see :ref:`delete-account`.
 
 .. _preferences:
 
@@ -64,8 +65,7 @@ Email addresses
 ===============
 
 GitHub shares the addresses that it verified; they are verified on the site,
-too. On the page *Email addresses* (*Add an address or choose the primary one*
-on the page *Account*, or in the menu of your account) you can:
+too. On the tab *Email addresses* of the page *Account* you can:
 
 Add an address
    Enter it and press *Add it and send a link to verify it*. The site sends an
@@ -127,7 +127,7 @@ If GitHub asks for other permissions later, it comes back unread.
 Delete your account
 ===================
 
-The red area at the bottom of the page *Account* deletes your account on this
+The tab *Delete the account* of the page *Account* deletes your account on this
 site: your GitHub handle and token, your email addresses, your preferences and
 your roles in projects. Type your GitHub handle to confirm it; it cannot be
 undone, and you are signed out.

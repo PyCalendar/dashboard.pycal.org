@@ -115,7 +115,7 @@ def test_the_repositories_of_an_installation_changed(client, alice_with_email):
 def test_the_account_page_shows_the_installations(client, alice_with_email):
     webhook(client, "created", installation({"metadata": "read"}))
     client.force_login(alice_with_email)
-    page = client.get("/account/").content.decode()
+    page = client.get("/account/?tab=app").content.decode()
     assert (
         'data-installation="5"' in page
         and '<span class="permission-name">Issues</span>: Read-only' in page
@@ -123,7 +123,7 @@ def test_the_account_page_shows_the_installations(client, alice_with_email):
     assert 'href="https://github.com/organizations/PyCalendar/settings/installations/5"' in page
     other = person(43, "bob")
     client.force_login(other)
-    assert 'data-installation="5"' not in client.get("/account/").content.decode()
+    assert 'data-installation="5"' not in client.get("/account/?tab=app").content.decode()
 
 
 def test_the_email_switch_is_saved(client, alice):

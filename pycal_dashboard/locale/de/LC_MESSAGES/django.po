@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 18:31+0000\n"
+"POT-Creation-Date: 2026-11-21 18:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1011,59 +1011,6 @@ msgstr "die zu erledigenden Aufgaben; ein Satz, wenn nichts zu tun ist"
 msgid "the tasks done; a sentence when nothing is done"
 msgstr "die erledigten Aufgaben; ein Satz, wenn nichts erledigt ist"
 
-msgid "Email addresses"
-msgstr "E-Mail-Adressen"
-
-msgid "Your email addresses"
-msgstr "Deine E-Mail-Adressen"
-
-msgid "Back to the account"
-msgstr "Zurück zum Konto"
-
-msgid ""
-"The site sends emails only to verified addresses, and to the primary one. "
-"Verify an address with the link that the site sends to it."
-msgstr ""
-"Die Seite sendet E-Mails nur an bestätigte Adressen, und zwar an die "
-"primäre. Bestätige eine Adresse mit dem Link, den die Seite an sie schickt."
-
-msgid "verified"
-msgstr "bestätigt"
-
-msgid "not verified"
-msgstr "nicht bestätigt"
-
-msgid "primary"
-msgstr "primär"
-
-msgid "Send a link to verify it"
-msgstr "Einen Link zum Bestätigen senden"
-
-msgid "Make primary"
-msgstr "Zur primären machen"
-
-msgid "Remove"
-msgstr "Entfernen"
-
-msgid ""
-"Only a verified address can become the primary one. The primary address "
-"cannot be removed: make another one primary first."
-msgstr ""
-"Nur eine bestätigte Adresse kann die primäre werden. Die primäre Adresse "
-"kann nicht entfernt werden: Mache zuerst eine andere zur primären."
-
-msgid "No email address yet."
-msgstr "Noch keine E-Mail-Adresse."
-
-msgid "Add an address"
-msgstr "Eine Adresse hinzufügen"
-
-msgid "Email address"
-msgstr "E-Mail-Adresse"
-
-msgid "Add it and send a link to verify it"
-msgstr "Hinzufügen und einen Link zum Bestätigen senden"
-
 #, python-format
 msgid ""
 "Hello,\n"
@@ -1379,21 +1326,51 @@ msgstr "Nur du siehst diese Seite."
 msgid "GitHub handle"
 msgstr "GitHub-Handle"
 
+msgid ""
+"The site sends emails only to verified addresses, and only what you choose "
+"in the preferences. Verify an address with the link that the site sends to "
+"it."
+msgstr ""
+"Die Seite sendet E-Mails nur an bestätigte Adressen, und nur, was du in den "
+"Einstellungen wählst. Bestätige eine Adresse mit dem Link, den die Seite an "
+"sie sendet."
+
+msgid "verified"
+msgstr "bestätigt"
+
+msgid "not verified"
+msgstr "nicht bestätigt"
+
+msgid "primary"
+msgstr "primär"
+
+msgid "Send a link to verify it"
+msgstr "Einen Link zum Bestätigen senden"
+
+msgid "Make primary"
+msgstr "Zur primären machen"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid ""
+"Only a verified address can become the primary one. The primary address "
+"cannot be removed: make another one primary first."
+msgstr ""
+"Nur eine bestätigte Adresse kann die primäre werden. Die primäre Adresse "
+"kann nicht entfernt werden: Mache zuerst eine andere zur primären."
+
 msgid "No email address. GitHub did not share a verified one."
 msgstr "Keine E-Mail-Adresse. GitHub hat keine bestätigte geteilt."
 
-msgid "Add an address or choose the primary one"
-msgstr "Eine Adresse hinzufügen oder die primäre wählen"
+msgid "Add an address"
+msgstr "Eine Adresse hinzufügen"
 
-msgid ""
-"The site sends emails only to verified addresses and only what you choose "
-"below."
-msgstr ""
-"Die Seite sendet E-Mails nur an bestätigte Adressen und nur, was du unten "
-"wählst."
+msgid "Email address"
+msgstr "E-Mail-Adresse"
 
-msgid "Preferences"
-msgstr "Einstellungen"
+msgid "Add it and send a link to verify it"
+msgstr "Hinzufügen und einen Link zum Bestätigen senden"
 
 msgid "As the browser"
 msgstr "Wie der Browser"
@@ -2202,10 +2179,10 @@ msgstr "Deine Daten"
 
 msgid ""
 "Your account shows what the site keeps of you. You delete your account and "
-"data yourself, in the red area at the bottom of the page Account."
+"data yourself, on the tab Delete the account of the page Account."
 msgstr ""
 "Dein Konto zeigt, was die Seite von dir speichert. Du löschst dein Konto und "
-"deine Daten selbst, im roten Bereich unten auf der Seite Konto."
+"deine Daten selbst, im Tab Das Konto löschen der Seite Konto."
 
 msgid "To ask about your data, write to the people who run the site:"
 msgstr ""
@@ -3284,6 +3261,12 @@ msgid "%(count)d day ago"
 msgid_plural "%(count)d days ago"
 msgstr[0] "vor %(count)d Tag"
 msgstr[1] "vor %(count)d Tagen"
+
+msgid "Email addresses"
+msgstr "E-Mail-Adressen"
+
+msgid "Preferences"
+msgstr "Einstellungen"
 
 msgid "Your preferences are saved."
 msgstr "Deine Einstellungen sind gespeichert."

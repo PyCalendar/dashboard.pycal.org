@@ -26,7 +26,7 @@ def test_the_account_chooses_the_language_on_every_device(client, alice):
     response = client.post("/account/", {"language": "de", "theme": "dark"})
     assert response.status_code == 302
     assert Preferences.objects.get(user=alice).language == "de"
-    page = client.get("/account/", HTTP_ACCEPT_LANGUAGE="es")  # the browser says Spanish
+    page = client.get(response["Location"], HTTP_ACCEPT_LANGUAGE="es")  # the browser: Spanish
     assert lang(page) == "de" and theme(page) == "dark"
     assert "Deine Einstellungen sind gespeichert." in page.content.decode()
     assert '<option value="de" lang="de" selected>Deutsch</option>' in page.content.decode()

@@ -55,10 +55,37 @@ def test_the_account(signed_in, site):
     page = signed_in
     page.goto(f"{site}/account/")
     expect(page.get_by_role("heading", name="Account · @bob")).to_be_visible()
+    tabs = page.locator("[data-account-tabs]")
+    expect(tabs.get_by_role("link", name="Email addresses")).to_have_attribute(
+        "aria-current", "page"
+    )  # the first tab
+    tabs.get_by_role("link", name="The GitHub App").click()
     expect(page.get_by_role("link", name="Install the GitHub App").first).to_have_attribute(
         "href", "https://github.com/apps/dashboard-test/installations/new"
     )
+    tabs = page.locator("[data-account-tabs]")
+    tabs.get_by_role("link", name="Preferences").click()
     expect(page.get_by_label("Email me when an installation")).to_be_checked()
+
+
+def test_the_email_addresses_on_the_account(signed_in, site):
+    """The tab Email addresses adds an address and stays; the menu has no Email addresses."""
+    page = signed_in
+    page.goto(f"{site}/account/")
+    page.locator(".account-menu summary").click()
+    expect(page.locator(".account-menu").get_by_role("link", name="Email addresses")).to_have_count(
+        0
+    )
+    page.locator(".account-menu summary").click()
+    page.get_by_label("Email address").fill("bob@example.org")
+    page.get_by_role("button", name="Add it and send a link to verify it").click()
+    expect(page).to_have_url(f"{site}/account/?tab=emails")
+    expect(page.locator("[data-address='bob@example.org']")).to_contain_text("not verified")
+    expect(
+        page.locator("[data-address='bob@example.org']").get_by_role(
+            "button", name="Send a link to verify it"
+        )
+    ).to_be_visible()
 
 
 def test_sign_out(signed_in, site):
@@ -71,7 +98,7 @@ def test_sign_out(signed_in, site):
 
 def test_phone_width_without_horizontal_scroll(page, site):
     page.set_viewport_size({"width": 360, "height": 740})
-    for path in ("/", "/about/", "/account/", "/setup/github-app/"):
+    for path in ("/", "/about/", "/account/", "/account/?tab=app", "/setup/github-app/"):
         page.goto(f"{site}{path}")
         width = page.evaluate("document.documentElement.scrollWidth")
         assert width <= 360, (path, width)
@@ -101,7 +128,7 @@ def test_switch_the_language(page, site):
 
 def test_choose_the_language_and_the_colors_in_the_account(signed_in, site):
     page = signed_in
-    page.goto(f"{site}/account/")
+    page.goto(f"{site}/account/?tab=preferences")
     page.locator("select#language").select_option("de")
     page.locator("select#theme").select_option("dark")
     page.get_by_role("button", name="Save the preferences").click()
@@ -122,11 +149,12 @@ def test_the_browser_reaches_nothing_but_the_site(page, site):
 
 
 def test_delete_the_account(signed_in, site):
-    """The red area of the page Account deletes the account after the GitHub handle is typed."""
+    """The tab Delete the account deletes it after the GitHub handle is typed."""
     from django.contrib.auth import get_user_model
 
     page = signed_in
     page.goto(f"{site}/account/")
+    page.locator("[data-account-tabs]").get_by_role("link", name="Delete the account").click()
     area = page.locator("[data-delete-account]")
     expect(area).to_have_css("border-top-style", "solid")
     area.get_by_label("Type your GitHub handle, bob, to confirm").fill("bob")

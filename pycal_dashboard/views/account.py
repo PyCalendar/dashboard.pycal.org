@@ -13,8 +13,10 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.http import HttpRequest
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.actions import PreferencesSaved, Trigger
@@ -76,6 +78,16 @@ def save_preferences(request: HttpRequest, login: str) -> None:
         PreferencesSaved(login, language, theme, email_permissions).run()
 
 
+# the tabs of the account, in their order; the first one is shown by default
+ACCOUNT_TAB_TITLES = (
+    ("emails", gettext_noop("Email addresses")),
+    ("preferences", gettext_noop("Preferences")),
+    ("app", gettext_noop("The GitHub App")),
+    ("delete", gettext_noop("Delete the account")),
+)
+ACCOUNT_TABS = tuple(name for name, _title in ACCOUNT_TAB_TITLES)
+
+
 @login_required
 @require_http_methods(["GET", "POST"])
 def account(request: HttpRequest):
@@ -85,8 +97,13 @@ def account(request: HttpRequest):
     browser and the menus decide. The types of emails to switch on and off come with the
     features that send them.
 
+    The page has tabs (``ACCOUNT_TABS``), each at ``?tab=<name>``: the email addresses with
+    all that ``/accounts/email/`` does, the preferences, the GitHub App, and deleting the
+    account.
+
     Parameters:
-        request: The request of a person who signed in; POST saves the preferences.
+        request: The request of a person who signed in; ``tab`` is the tab to show; POST saves
+            the preferences.
 
     Returns:
         The page, or a redirect after saving.
@@ -103,17 +120,39 @@ def account(request: HttpRequest):
         if preferences.language:
             translation.activate(preferences.language)  # the message in the new language
         messages.success(request, _("Your preferences are saved."))
-        return redirect("account")
+        return redirect(reverse("account") + "?tab=preferences")
+    return account_page(request, identity, request.GET.get("tab", ""))
+
+
+def account_page(
+    request: HttpRequest, identity: GitHubIdentity, tab: str, email_form: object = None
+):
+    """The page of the account with one of its tabs.
+
+    Parameters:
+        request: The request.
+        identity: Who the person is on GitHub.
+        tab: One of ``ACCOUNT_TABS``; the first one for anything else.
+        email_form: The form of a new email address with its errors, None for an empty one.
+
+    Returns:
+        The page.
+    """
+    tab = tab if tab in ACCOUNT_TABS else ACCOUNT_TABS[0]
     return render(
         request,
         "pycal_dashboard/account.html",
         {
             "identity": identity,
+            "tab": tab,
+            "tabs": [(name, _(title)) for name, title in ACCOUNT_TAB_TITLES],
             "preferences": Preferences.of(request.user) or Preferences(),
-            "installations": installations_of(identity),
+            "installations": installations_of(identity) if tab == "app" else [],
             "language_choices": settings.LANGUAGES,
             "theme_choices": THEMES,
             "emails": EmailAddress.objects.filter(user=request.user).order_by("-primary", "email"),
+            "can_add_email": EmailAddress.objects.can_add_email(request.user),
+            "email_form": email_form,
             "removal": AccountRemoval(request.user, identity.login),
         },
     )

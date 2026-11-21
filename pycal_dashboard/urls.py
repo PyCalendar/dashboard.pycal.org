@@ -7,6 +7,7 @@ from django.urls import include, path, register_converter
 from .project_slug_converter import ProjectSlugConverter
 from .views import (
     account,
+    account_email,
     contributors,
     filters,
     message,
@@ -172,7 +173,7 @@ urlpatterns = [
     path("setup/oauth-app/", oauth_app.oauth_app, name="oauth_app"),
     path("github/webhook/", webhook.webhook, name="webhook"),
     # the email addresses: allauth leaves them out with SOCIALACCOUNT_ONLY
-    path("accounts/email/", account_views.email, name="account_email"),
+    path("accounts/email/", account_email.AccountEmailView.as_view(), name="account_email"),
     path(
         "accounts/confirm-email/",
         account_views.email_verification_sent,

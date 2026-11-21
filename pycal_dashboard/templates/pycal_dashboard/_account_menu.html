@@ -4,7 +4,6 @@
     <li><a href="{% url 'projects' %}?mine=1" data-my-projects>{% translate "My projects" %}</a></li>
     <li><a href="{% url 'notifications' %}" data-notifications-link>{% translate "Notifications" %}{% if notification_count %} <span class="count-badge">{{ notification_count }}</span>{% endif %}</a></li>
     <li><a href="{% url 'account' %}">{% translate "Account and preferences" %}</a></li>
-    <li><a href="{% url 'account_email' %}">{% translate "Email addresses" %}</a></li>
     {% if site_admin %}<li class="separator" role="separator"></li>
     <li class="menu-heading">{% translate "Administration" %}</li>
     <li><a href="{% url 'logs' %}">{% translate "Log" %}</a></li>

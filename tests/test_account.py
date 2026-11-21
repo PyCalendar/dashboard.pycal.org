@@ -17,6 +17,7 @@ def test_account_page(client, bob):
     client.force_login(bob)
     content = client.get("/account/").content.decode()
     assert "@bob" in content and "bob@example.org" in content
+    content = client.get("/account/?tab=preferences").content.decode()
     assert 'name="email_permissions" value="yes" checked' in content
 
 
@@ -27,10 +28,32 @@ def test_account_without_github(client, db):
     assert response.status_code == 403 and b'data-error="NoGitHubAccount"' in response.content
 
 
-def test_email_page(client, alice):
+def test_the_account_has_tabs(client, alice):
+    """Email addresses, Preferences, The GitHub App and Delete the account, each at ?tab=."""
     client.force_login(alice)
-    response = client.get("/accounts/email/")
-    assert response.status_code == 200 and b"Email addresses" in response.content
+    page = client.get("/account/").content.decode()
+    tabs = page.split("data-account-tabs")[1].split("</ul>")[0]
+    for name in ("emails", "preferences", "app", "delete"):
+        assert f'href="?tab={name}"' in tabs
+    assert 'aria-current="page" data-account-tab="emails"' in page and "data-emails-tab" in page
+    assert "data-preferences" not in page and "data-delete-account" not in page
+    for name, marker in (
+        ("preferences", "data-preferences"),
+        ("app", "data-install"),
+        ("delete", "data-delete-account"),
+        ("nothing", "data-emails-tab"),  # an unknown tab: the first one
+    ):
+        page = client.get(f"/account/?tab={name}").content.decode()
+        assert marker in page, name
+    answer = client.post("/account/", {"language": "", "theme": ""})
+    assert answer["Location"] == "/account/?tab=preferences"
+
+
+def test_the_menu_has_no_email_addresses(client, alice):
+    """They are on the tab Email addresses of the account."""
+    client.force_login(alice)
+    menu = client.get("/").content.decode().split('class="account-menu"')[1].split("</details>")[0]
+    assert "/accounts/email/" not in menu and 'href="/account/"' in menu
 
 
 def test_deliveries_for_admins_only(client, admin, alice):
@@ -88,7 +111,7 @@ def test_install_the_app_when_signed_in(client, alice):
     install = "https://github.com/apps/dashboard-test/installations/new"
     assert install not in client.get("/").content.decode()  # visitors see no button
     client.force_login(alice)
-    account = client.get("/account/").content.decode()
+    account = client.get("/account/?tab=app").content.decode()
     assert install in account and "https://docs.example.org/how-to/install-app.html" in account
     assert install not in client.get("/").content.decode()  # not in the menu: when adding
 
@@ -96,5 +119,5 @@ def test_install_the_app_when_signed_in(client, alice):
 def test_no_install_button_without_an_app(client, alice, settings):
     settings.GITHUB_APP_ID = ""
     client.force_login(alice)
-    content = client.get("/account/").content.decode()
+    content = client.get("/account/?tab=app").content.decode()
     assert "installations/new" not in content and "/setup/github-app/" in content

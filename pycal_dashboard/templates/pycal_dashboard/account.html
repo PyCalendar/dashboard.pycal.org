@@ -5,16 +5,29 @@
 <h1>{% translate "Account" %} · @{{ identity.login }} {% translate "Your profile on GitHub" as profile_label %}{% github_link "https://github.com/"|add:identity.login profile_label %} {% translate "Your account" as help %}{% help_link links.account help %}</h1>
 <p class="muted">{% translate "Only you see this page." %}</p>
 <p data-github-name>{% translate "GitHub handle" %}: <strong>@{{ identity.login }}</strong></p>
-<div class="columns">
-<section class="card" id="emails"><h2>{% translate "Email addresses" %}</h2>
-  {% if emails %}<ul class="list addresses" data-emails>{% for address in emails %}<li data-address="{{ address.email }}"><span class="address">{{ address.email }}</span> {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>
-    <form method="post" action="{% url 'account_email' %}" class="inline">{% csrf_token %}<input type="hidden" name="email" value="{{ address.email }}"><button class="button button-quiet" name="action_send">{% translate "Send a link to verify it" %}</button></form>{% endif %}{% if address.primary %} <span class="badge">{% translate "primary" %}</span>{% endif %}</li>{% endfor %}</ul>
+<nav aria-label="{% translate "Account" %}"><ul class="tabs" data-account-tabs>{% for name, title in tabs %}
+  <li><a href="?tab={{ name }}"{% if tab == name %} aria-current="page"{% endif %} data-account-tab="{{ name }}">{{ title }}</a></li>{% endfor %}
+</ul></nav>
+{% if tab == "emails" %}<section class="card" id="emails" data-emails-tab>
+  <p class="lead">{% translate "The site sends emails only to verified addresses, and only what you choose in the preferences. Verify an address with the link that the site sends to it." %}</p>
+  {% if emails %}<ul class="list addresses" data-emails>{% for address in emails %}<li data-address="{{ address.email }}"><span class="address">{{ address.email }}</span>
+    {% if address.verified %}<span class="badge badge-success">{% translate "verified" %}</span>{% else %}<span class="badge badge-warning">{% translate "not verified" %}</span>{% endif %}
+    {% if address.primary %}<span class="badge">{% translate "primary" %}</span>{% endif %}
+    <form method="post" action="{% url 'account_email' %}" class="inline">{% csrf_token %}<input type="hidden" name="email" value="{{ address.email }}">
+      {% if not address.verified %}<button class="button" name="action_send">{% translate "Send a link to verify it" %}</button>{% endif %}
+      {% if not address.primary %}{% if address.verified %}<button class="button button-quiet" name="action_primary">{% translate "Make primary" %}</button>{% endif %}
+      <button class="button button-quiet" name="action_remove">{% translate "Remove" %}</button>{% endif %}
+    </form></li>{% endfor %}</ul>
+  <p class="muted">{% translate "Only a verified address can become the primary one. The primary address cannot be removed: make another one primary first." %}</p>
   {% else %}<p>{% translate "No email address. GitHub did not share a verified one." %}</p>{% endif %}
-  <p><a class="button button-quiet" href="{% url 'account_email' %}">{% translate "Add an address or choose the primary one" %}</a></p>
-  <p class="muted">{% translate "The site sends emails only to verified addresses and only what you choose below." %}</p>
+  {% if can_add_email %}<h2>{% translate "Add an address" %}</h2>
+  <form method="post" action="{% url 'account_email' %}" class="stacked" data-add-email>{% csrf_token %}
+    {% if email_form.errors %}<div class="message message-error" role="alert" data-email-error>{{ email_form.email.errors|join:" " }}{{ email_form.non_field_errors|join:" " }}</div>{% endif %}
+    <p><label for="id_email">{% translate "Email address" %}</label><input id="id_email" type="email" name="email" required autocomplete="email" value="{{ email_form.email.value|default:'' }}"></p>
+    <p><button class="button" name="action_add">{% translate "Add it and send a link to verify it" %}</button></p>
+  </form>{% endif %}
 </section>
-<section class="card" id="preferences"><h2>{% translate "Preferences" %}</h2>
-<form method="post" class="stacked" data-preferences>{% csrf_token %}
+{% elif tab == "preferences" %}<section class="card" id="preferences"><form method="post" class="stacked" data-preferences>{% csrf_token %}
   <p><label for="language">{% translate "Language" %}</label>
     <select id="language" name="language"><option value="">{% translate "As the browser" %}</option>{% for code, name in language_choices %}<option value="{{ code }}" lang="{{ code }}"{% if preferences.language == code %} selected{% endif %}>{{ name }}</option>{% endfor %}</select>
     <small>{% translate "Without a choice, the language of your browser decides, or the language menu at the top." %}</small></p>
@@ -28,8 +41,7 @@
   <p><button class="button">{% translate "Save the preferences" %}</button></p>
 </form>
 </section>
-<section class="card" id="install" data-install><h2>{% translate "The GitHub App" %}</h2>
-  {% if installations %}<h3>{% translate "Your installations" %}</h3><ul class="list" data-installations>{% for installation in installations %}<li data-installation="{{ installation.github_id }}"><strong>{{ installation.account_login }}</strong>
+{% elif tab == "app" %}<section class="card" id="install" data-install>  {% if installations %}<h3>{% translate "Your installations" %}</h3><ul class="list" data-installations>{% for installation in installations %}<li data-installation="{{ installation.github_id }}"><strong>{{ installation.account_login }}</strong>
     {% if installation.suspended %}<span class="badge badge-warning">{% translate "suspended" %}</span>{% endif %}
     {% if installation.missing_permissions %}<span class="badge badge-warning">{% translate "needs more permissions" %}</span>
       {% permission_list installation.missing_permissions %}
@@ -39,8 +51,7 @@
   <p><a class="button" href="{{ install_url }}">{% translate "Install the GitHub App" %}</a> {% translate "Ways to install the GitHub App" as ways %}{% help_link links.install_help ways %}</p>
   {% else %}{% url 'register_app' as register_url %}<p>{% blocktranslate %}The site has no GitHub App yet. The people who run the site <a href="{{ register_url }}">register it</a> first.{% endblocktranslate %}</p>{% endif %}
 </section>
-</div>
-{% with own=removal.own_projects shared=removal.shared_projects %}<section class="card danger-zone" id="delete" data-delete-account>
+{% else %}{% with own=removal.own_projects shared=removal.shared_projects %}<section class="card danger-zone" id="delete" data-delete-account>
   <h2>{% translate "Delete the account" %} {% translate "Delete your account" as help %}{% help_link links.delete_account help %}</h2>
   <p>{% translate "This deletes your account on this site: your GitHub handle and token, your email addresses, your preferences and your roles in projects. It cannot be undone. Issues and pull requests stay on GitHub, as before." %}</p>
   {% if shared %}<p class="message message-error" data-shared-projects>{% translate "You are the only owner of projects that others share. Give another person the role own, or delete the project, first:" %}
@@ -51,5 +62,5 @@
     <input id="confirm" name="confirm" autocomplete="off" required pattern="@?{{ identity.login }}" title="{{ identity.login }}"></p>
     <p><button class="button button-danger" data-delete>{% translate "Delete my account" %}</button></p>
   </form>{% endif %}
-</section>{% endwith %}
+</section>{% endwith %}{% endif %}
 {% endblock %}

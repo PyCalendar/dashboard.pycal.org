@@ -21,7 +21,7 @@ pytestmark = pytest.mark.django_db
 
 def test_the_page_account_has_the_red_area(client, bob):
     client.force_login(bob)
-    page = client.get("/account/").content.decode()
+    page = client.get("/account/?tab=delete").content.decode()
     area = page.split("data-delete-account")[1]
     assert 'class="card danger-zone"' in page and 'action="/account/delete/"' in area
     assert "Type your GitHub handle, bob, to confirm" in area
@@ -34,7 +34,7 @@ def test_delete_the_account(client, bob):
     Preferences.objects.create(user=bob, theme="dark")
     alone = ProjectEditor.create(bob, "Alone")
     client.force_login(bob)
-    page = client.get("/account/").content.decode()
+    page = client.get("/account/?tab=delete").content.decode()
     assert "data-own-projects" in page and "Alone" in page.split("data-own-projects")[1]
     answer = client.post("/account/delete/", {"confirm": "@Bob"}, follow=True)
     assert answer.redirect_chain[-1][0] == "/"
@@ -69,7 +69,7 @@ def test_the_only_owner_of_a_shared_project_hands_it_over_first(client, bob, ali
     project = ProjectEditor.create(bob, "Shared")
     ProjectEditor(ProjectAccess(project, bob)).share("alice", "read")
     client.force_login(bob)
-    page = client.get("/account/").content.decode()
+    page = client.get("/account/?tab=delete").content.decode()
     assert "data-shared-projects" in page and 'action="/account/delete/"' not in page
     assert f"/projects/{project.slug}/collaborators/" in page
     answer = client.post("/account/delete/", {"confirm": "bob"})
