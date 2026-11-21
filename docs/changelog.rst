@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.8.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- The kinds of reviews are the same choice everywhere they are counted: the switches approved, changes requested, commented and dismissed, all on by default, in the column Reviews, in the reviews given and the review ratio of the column Author, and behind the gear of the page of a person. Columns saved before count all kinds now. The inputs of a state travel to the conditions and states that use it.
+
+
 0.7.1 (2026-11-21)
 ------------------
 
