@@ -9,6 +9,22 @@ Changelog
 
 .. towncrier release notes start
 
+0.6.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- The message of PR Sync is not lost while it is edited: the edited message is saved while it is written and stays until Apply makes it the current one, which says Applied in green once they are the same. The tabs are Current Message (with Message, Markdown and Edit above it), Edit and Preview side by side, Status Label and Scope, which is of the message and the step labels.
+- The step labels: Apply, Synchronize, and above Apply what it does, such as Create the labels Step: Review and label 3 pull requests, or Delete the labels from the repositories.
+
+
+Bug fixes
+~~~~~~~~~
+
+- The fields of Markdown are as wide as their form.
+
+
 0.5.0 (2026-11-21)
 ------------------
 
