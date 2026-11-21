@@ -36,11 +36,11 @@ class StatusLabels:
     """The step labels of a project in a repository, after each update of it.
 
     With the step labels on (``Project.step_labels`` is ``sync``), each step has a label in
-    each repository of the project (``StepLabel``), such as *Step: Review*, with the color of the
-    step and a description that links the step; a label renamed or recolored on GitHub renames
-    or recolors the step. People put the labels on pull requests by hand; on the open pull
-    requests with the PR Sync on (``PullRequestComment``), the site puts the label of the step
-    they are in on them and removes the others.
+    each repository of the project (``StepLabel``), named as the step, such as *Review*, with
+    the color of the step and a description that links the step; a label renamed or recolored
+    on GitHub renames or recolors the step. People put the labels on pull requests by hand; on
+    the open pull requests with the PR Sync on (``PullRequestComment``), the site puts the
+    label of the step they are in on them and removes the others.
 
     A step label that a person put on a pull request puts it into that step
     (``PullRequestPlace.chosen``); when a pull request has several, the one added last stays

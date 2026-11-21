@@ -720,7 +720,7 @@ def test_a_saved_filter_saves_itself(signed_in, site, github, bob):
     expect(status).to_have_text("✓ Saved", timeout=10000)
     saved.refresh_from_db()
     assert saved.name == "Maintainer review"
-    page.get_by_role("link", name="Step: Peer review").click()
+    page.get_by_role("link", name="Peer review").click()
     expect(page.locator(f"[data-step-detail='{step.pk}']")).to_be_visible()
     page.go_back()
     page.get_by_role("link", name="Edit the conditions").click()
@@ -754,7 +754,7 @@ def test_readers_go_from_the_filters_to_the_steps_and_back(page, site, github, b
     )
     PullRequestStep.objects.create(project=project, filter=saved, name="Peer review")
     page.goto(f"{site}/projects/icalendar/filters/")
-    page.get_by_role("link", name="Step: Peer review").click()
+    page.get_by_role("link", name="Peer review").click()
     page.get_by_role("link", name="Filter: Review").click()
     expect(page.get_by_role("heading", name=re.compile("^Review"))).to_be_visible()
 
@@ -895,7 +895,7 @@ def test_choose_who_sets_the_status_labels(signed_in, site, github, bob):
     expect(effect).to_be_hidden()  # the current choice: nothing to apply
     table.get_by_label("Synchronize").check()
     expect(effect).to_be_visible()  # what Apply does, above it
-    expect(effect).to_contain_text("Create the labels Step: Review and label 0 pull requests.")
+    expect(effect).to_contain_text("Create the labels Review and label 0 pull requests.")
     page.get_by_role("button", name="Apply").click()
     expect(page.get_by_text("The step labels are applied.")).to_be_visible()
     project.refresh_from_db()

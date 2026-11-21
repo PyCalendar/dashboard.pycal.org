@@ -635,4 +635,4 @@ community: where to start, what waits for a review, who contributes.
 - [ ] Apply: "Apply the edited message and synchronise it with <n> pull requests"; next to Apply a button Preview on the
       page Edit and a button Edit on the page Preview
 - [ ] The badge of a pull request: the color of the step is the background of the name of the step
-- [ ] Step labels without the prefix Step: — just the name of the step (the labels on GitHub are renamed at the next update)
+- [x] Step labels without the prefix Step: — just the name of the step (the labels on GitHub are renamed at the next update)

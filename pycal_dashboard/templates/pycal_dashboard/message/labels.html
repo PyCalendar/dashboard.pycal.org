@@ -6,7 +6,7 @@
 {% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card" data-step-labels>
 <h2>{% translate "Step labels" %}</h2>
-<p class="muted">{% blocktranslate %}A label of a step has the color of the step and links to it, such as Step: Review. A label that a person puts on a pull request puts it into that step; of several, the one added last stays, and {{ site_name }} removes the others.{% endblocktranslate %}</p>
+<p class="muted">{% blocktranslate %}A label of a step has the name and the color of the step and links to it. A label that a person puts on a pull request puts it into that step; of several, the one added last stays, and {{ site_name }} removes the others.{% endblocktranslate %}</p>
 <form method="post" data-step-labels-form>{% csrf_token %}
 <div class="table-wrap"><table class="table choice-table">
   <thead><tr><th><span class="visually-hidden">{% translate "Choice" %}</span></th><th>{% translate "Step labels" %}</th><th>{% translate "What it means" %}</th></tr></thead>

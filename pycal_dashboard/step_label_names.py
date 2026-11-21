@@ -13,32 +13,32 @@ from django.conf import settings
 if TYPE_CHECKING:
     from pycal_dashboard.models import PullRequestStep
 
-PREFIX = "Step: "  # the labels of steps, such as "Step: Review", next to other labels
+PREFIX = "Step: "  # what labels of steps had before their names, such as "Step: Review"
 MAX_NAME = 50  # GitHub allows labels of at most 50 characters
 MAX_DESCRIPTION = 100  # and descriptions of at most 100
 DEFAULT_COLOR = "ededed"  # the gray of GitHub for a label: a step without a color
 
 
 def label_name(step: PullRequestStep) -> str:
-    """The name of the label of a step on GitHub.
+    """The name of the label of a step on GitHub: the name of the step.
 
     Parameters:
         step: The step.
 
     Returns:
-        Such as ``Step: Review``, at most 50 characters.
+        Such as ``Review``, at most 50 characters.
     """
-    return (PREFIX + step.name)[:MAX_NAME].strip()
+    return step.name[:MAX_NAME].strip()
 
 
 def step_name(label: str) -> str:
     """The name of a step from the name of its label, renamed on GitHub.
 
     Parameters:
-        label: The name of the label, such as ``Step: Peer review``.
+        label: The name of the label, such as ``Peer review``.
 
     Returns:
-        Such as ``Peer review``: without the prefix, if it has one.
+        The name; without the prefix ``Step:`` that the labels had before.
 
     Examples:
         >>> step_name("Step: Peer review"), step_name("Peer review")

@@ -547,7 +547,7 @@ def project_sync_labels(request: HttpRequest, slug: str):
                     "value": Project.LABELS_SYNC,
                     "title": _("Synchronize"),
                     "description": _(
-                        "The steps have labels on GitHub, such as Step: Review. People put them "
+                        "The steps have labels on GitHub, named as the steps. People put them "
                         "on pull requests by hand; %(site)s puts the label of the step on the pull "
                         "requests with the PR Sync on."
                     )

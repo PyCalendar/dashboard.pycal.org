@@ -531,7 +531,14 @@ class FakeGitHub:
             from urllib.parse import unquote
 
             fields = json.loads(request.content)
-            for label in self.repositories[match[1].lower()]["labels"]:
+            labels = self.repositories[match[1].lower()]["labels"]
+            new = fields.get("new_name", "").lower()
+            if new and any(
+                label["name"].lower() == new and label["name"] != unquote(match[2])
+                for label in labels
+            ):
+                return httpx.Response(422, json={"message": "Validation Failed"})  # taken
+            for label in labels:
                 if label["name"] == unquote(match[2]):
                     label["name"] = fields.get("new_name", label["name"])
                     for key in ("color", "description"):

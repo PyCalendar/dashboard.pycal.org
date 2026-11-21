@@ -36,7 +36,7 @@ class StepLabelSaved(Action):
         Parameters:
             repository: The repository, with the GitHub App.
             step: The step of the label.
-            name: The name of the label, such as ``Step: Review``.
+            name: The name of the label, the name of the step, such as ``Review``.
             color: Its color, such as ``d73a4a``.
             description: Its description, at most 100 characters.
             old: The name of the label on GitHub to change; "" to create it.

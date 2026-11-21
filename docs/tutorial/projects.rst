@@ -347,21 +347,22 @@ another one says above **Apply** what Apply does:
 
 *Off*, by default
    No step labels on GitHub. Apply deletes the labels of the steps from the
-   repositories, such as *Delete the labels Step: Review from
+   repositories, such as *Delete the labels Review from
    collective/icalendar*, so only the owners switch them off.
 *Synchronize*
    The steps have labels on GitHub. People put them on pull requests by hand,
    and dashboard.pycal.org puts the label of the step on the pull requests with
    the PR Sync on. Apply creates the labels and labels those pull requests, such
-   as *Create the labels Step: Review and label 3 pull requests*.
+   as *Create the labels Review and label 3 pull requests*.
 
-Each step then has a label in each repository with the GitHub App, such as
-*Step: Review*: with the color of the step, the gray of GitHub for a step
-without a color, and the description *Created by dashboard.pycal.org* with the
-link to the step, ``steps/?step_id=<id>``. dashboard.pycal.org creates the
+Each step then has a label in each repository with the GitHub App, with the name
+of the step, such as *Review*: with the color of the step, the gray of GitHub for
+a step without a color, and the description *Created by dashboard.pycal.org* with
+the link to the step, ``steps/?step_id=<id>``. dashboard.pycal.org creates the
 label, or takes one of that name, and changes it when the step changes. A label
-renamed or recolored on GitHub renames or recolors the step; the prefix *Step:*
-is not part of the name of the step.
+renamed or recolored on GitHub renames or recolors the step. Labels made before
+with the prefix *Step:*, such as *Step: Review*, are renamed to the name of the
+step at the next update.
 
 A label of a step that a person adds puts the pull request into that step. When
 a pull request has two labels of steps or more, the one added last stays and

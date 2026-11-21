@@ -86,21 +86,21 @@ def test_automatic_creates_the_labels_and_puts_them_on(github, project, settings
     mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
-    label = repository_label(github, "Step: Conflicts")
+    label = repository_label(github, "Conflicts")
     assert label["color"] == "fecaca"
     assert label["description"] == (
         "Created by Dashboard: "
         f"https://dashboard.example.org/projects/icalendar/steps/?step_id={conflicts.pk}"
     )
-    assert repository_label(github, "Step: Review")["color"] == "ededed"  # no color: gray
+    assert repository_label(github, "Review")["color"] == "ededed"  # no color: gray
     assert description(review).endswith(f"?step_id={review.pk}")
-    assert labels_of(github, 1) == ["Step: Conflicts"]
-    assert labels_of(github, 2) == ["Step: Review", "needs review"]
+    assert labels_of(github, 1) == ["Conflicts"]
+    assert labels_of(github, 2) == ["Review", "needs review"]
     assert labels_of(github, 3) == []  # without the message
     assert (place(1).labeled, place(1).chosen) == (conflicts, None)
     texts = list(LogAction.objects.values_list("text", flat=True))
-    assert any("Label Step: Review created in collective/icalendar" in t for t in texts)
-    assert any("Label Step: Review added to collective/icalendar#2: it is in" in t for t in texts)
+    assert any("Label Review created in collective/icalendar" in t for t in texts)
+    assert any("Label Review added to collective/icalendar#2: it is in" in t for t in texts)
     github.requests.clear()
     update(project)  # again: nothing changed, nothing is written
     assert not [r for r in github.writes() if "/labels" in r.url.path]
@@ -109,8 +109,8 @@ def test_automatic_creates_the_labels_and_puts_them_on(github, project, settings
 def test_a_label_changed_on_github_changes_the_step(github, project):
     mode(project, "sync")
     update(project)
-    github.edit_label(REPO, "Step: Review", new_name="Step: Peer review", color="bfdbfe")
-    github.edit_label(REPO, "Step: Conflicts", color="ededed")
+    github.edit_label(REPO, "Review", new_name="Peer review", color="bfdbfe")
+    github.edit_label(REPO, "Conflicts", color="ededed")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
     assert (review.name, review.color) == ("Peer review", "#bfdbfe")
@@ -131,9 +131,9 @@ def test_a_step_changed_on_the_site_changes_its_label(github, project, client, b
         HTTP_ACCEPT="application/json",
     )
     update(project)
-    label = repository_label(github, "Step: Peer review")
+    label = repository_label(github, "Peer review")
     assert label["color"] == "bbf7d0"
-    assert labels_of(github, 2) == ["Step: Peer review", "needs review"]  # the same label
+    assert labels_of(github, 2) == ["Peer review", "needs review"]  # the same label
 
 
 def test_a_person_chooses_the_step_with_a_label(github, project):
@@ -141,15 +141,15 @@ def test_a_person_chooses_the_step_with_a_label(github, project):
     mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
-    github.label_issue(REPO, 2, "Step: Conflicts")  # Ready, in Review, goes back
+    github.label_issue(REPO, 2, "Conflicts")  # Ready, in Review, goes back
     update(project)
-    assert labels_of(github, 2) == ["Step: Conflicts", "needs review"]  # the older one removed
+    assert labels_of(github, 2) == ["Conflicts", "needs review"]  # the older one removed
     assert (place(2).chosen, place(2).labeled) == (conflicts, None)
     ready = Issue.objects.get(number=2)
     assert PullRequestProgress(ready, project).current.step == conflicts
-    github.unlabel_issue(REPO, 2, "Step: Conflicts")  # all removed: as usual
+    github.unlabel_issue(REPO, 2, "Conflicts")  # all removed: as usual
     update(project)
-    assert labels_of(github, 2) == ["Step: Review", "needs review"]
+    assert labels_of(github, 2) == ["Review", "needs review"]
     assert (place(2).chosen, place(2).labeled) == (None, review)
     assert PullRequestProgress(ready, project).current.step == review
 
@@ -159,32 +159,32 @@ def test_people_label_the_pull_requests_without_the_pr_sync(github, project):
     mode(project, "sync")
     update(project)
     conflicts, review = PullRequestStep.objects.order_by("position")
-    assert labels_of(github, 3) == [] and repository_label(github, "Step: Review")
-    github.label_issue(REPO, 3, "Step: Review")
-    github.label_issue(REPO, 3, "Step: Conflicts")  # added last: it stays
+    assert labels_of(github, 3) == [] and repository_label(github, "Review")
+    github.label_issue(REPO, 3, "Review")
+    github.label_issue(REPO, 3, "Conflicts")  # added last: it stays
     update(project)
-    assert labels_of(github, 3) == ["Step: Conflicts"]
+    assert labels_of(github, 3) == ["Conflicts"]
     assert place(3).chosen == conflicts
-    github.unlabel_issue(REPO, 3, "Step: Conflicts")
-    github.label_issue(REPO, 3, "Step: Review")
+    github.unlabel_issue(REPO, 3, "Conflicts")
+    github.label_issue(REPO, 3, "Review")
     update(project)
-    assert place(3).chosen == review and labels_of(github, 3) == ["Step: Review"]
+    assert place(3).chosen == review and labels_of(github, 3) == ["Review"]
 
 
 def test_off_deletes_the_labels_of_the_steps(github, project):
     mode(project, "sync")
     update(project)
-    github.label_issue(REPO, 3, "Step: Review")
+    github.label_issue(REPO, 3, "Review")
     update(project)
     assert place(3).chosen is not None
     mode(project, "off")
     update(project)
     names = [label["name"] for label in github.repositories[REPO]["labels"]]
-    assert "Step: Review" not in names and "Step: Conflicts" not in names
+    assert "Review" not in names and "Conflicts" not in names
     assert "needs review" in names  # the other labels stay
     assert labels_of(github, 1) == [] and labels_of(github, 3) == []
     assert not StepLabel.objects.exists() and place(3).chosen is None
-    assert LogAction.objects.filter(text__contains="Label Step: Review deleted").exists()
+    assert LogAction.objects.filter(text__contains="Label Review deleted").exists()
     github.requests.clear()
     update(project)  # nothing left to delete
     assert not [r for r in github.writes() if "/labels" in r.url.path]
@@ -200,7 +200,7 @@ def test_the_step_labels_are_on_the_tab_status_label(client, project, bob, alice
     assert "dashboard.pycal.org puts the label" in page and "this site" not in page
     assert "What saving it does" not in page and ">Synchronize<" in page
     effect = page.split('data-effect="sync">')[1].split("</p>")[0]
-    assert effect == "Create the labels Step: Conflicts, Step: Review and label 2 pull requests."
+    assert effect == "Create the labels Conflicts, Review and label 2 pull requests."
     ProjectEditor(ProjectAccess(project, bob)).share("alice", "write")
     client.force_login(alice)
     answer = client.post("/projects/icalendar/sync/labels/", {"step_labels": "sync"})
@@ -231,5 +231,27 @@ def test_what_apply_does_for_off(github, client, project, bob):
     client.force_login(bob)
     page = client.get("/projects/icalendar/sync/labels/").content.decode()
     effect = page.split('data-effect="off">')[1].split("</p>")[0]
-    assert effect == "Delete the labels Step: Conflicts, Step: Review from collective/icalendar."
+    assert effect == "Delete the labels Conflicts, Review from collective/icalendar."
     assert 'value="sync" checked data-current' in page
+
+
+def test_a_label_made_with_the_prefix_is_renamed_to_the_name_of_the_step(github, project):
+    """Labels of steps were Step: <name> before; they are the names of the steps now."""
+    from pycal_dashboard.models import Label
+
+    old = github.add_label(REPO, "Step: Review", "", "ededed")
+    update(project)  # off: the label is only known, by its id
+    repository = project.repositories.get()
+    review = PullRequestStep.objects.get(name="Review")
+    StepLabel.objects.create(
+        step=review,
+        repository=repository,
+        github_id=Label.objects.get(repository=repository, name="Step: Review").github_id,
+        name="Step: Review",
+        color="ededed",
+    )
+    mode(project, "sync")
+    update(project)
+    names = [label["name"] for label in github.repositories[REPO]["labels"]]
+    assert "Step: Review" not in names and old["name"] == "Review"
+    assert PullRequestStep.objects.get(pk=review.pk).name == "Review"  # not renamed by it
