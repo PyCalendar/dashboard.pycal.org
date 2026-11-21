@@ -274,3 +274,17 @@ def test_a_task_has_its_description_below_it(project):
         " A person reviews it<br>\nAsk @octocat in the chat.</p>\n"
         "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ul>"
     )
+
+
+def test_visitors_step_through_the_stages(client, project):
+    """Logged out, the saved message shows in every state of the steps, and for a number."""
+    PullRequestMessage.objects.create(project=project, template="{pr_title}: {tasks_todo}")
+    first = client.get("/projects/icalendar/message/").content.decode()
+    assert "Example 1 of 2: Review, 0 of 1 tasks done" in first and "data-example-nav" in first
+    assert "Ready: " in first
+    second = client.get("/projects/icalendar/message/?example=1").content.decode()
+    assert "Example 2 of 2: outside of the steps, 1 of 1 tasks done" in second
+    chosen = client.get("/projects/icalendar/message/?pull=2").content.decode()
+    assert "Conflict: " in chosen
+    assert "data-edit-step-of-example" not in first  # editing the steps is for writers
+    assert client.get("/projects/icalendar/message/review/").status_code == 302  # the draft

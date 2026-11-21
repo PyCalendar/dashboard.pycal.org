@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-20 21:58+0000\n"
+"POT-Creation-Date: 2026-11-21 11:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1790,6 +1790,18 @@ msgstr "Älter"
 msgid "Nothing yet."
 msgstr "Noch nichts."
 
+msgid "The example before: one task less done"
+msgstr "Das Beispiel davor: eine Aufgabe weniger erledigt"
+
+msgid "The next example: one more task done"
+msgstr "Das nächste Beispiel: eine Aufgabe mehr erledigt"
+
+msgid "The message of the pull request"
+msgstr "Die Nachricht des Pull Requests"
+
+msgid "Show"
+msgstr "Zeigen"
+
 msgid "1. Message"
 msgstr "1. Nachricht"
 
@@ -1843,18 +1855,6 @@ msgid ""
 msgstr ""
 "Geh Beispiel-Pull-Requests durch, von keiner erledigten Aufgabe bis zu "
 "allen, oder sieh dir die Nachricht eines Pull Requests an."
-
-msgid "The example before: one task less done"
-msgstr "Das Beispiel davor: eine Aufgabe weniger erledigt"
-
-msgid "The next example: one more task done"
-msgstr "Das nächste Beispiel: eine Aufgabe mehr erledigt"
-
-msgid "The message of the pull request"
-msgstr "Die Nachricht des Pull Requests"
-
-msgid "Show"
-msgstr "Zeigen"
 
 #, python-format
 msgid "It is in the step %(name)s."

@@ -7,7 +7,9 @@
 <div class="table-head"><h2>{% translate "PR Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 {% include "pycal_dashboard/message/_flow.html" %}
 <p class="muted">{% translate "The GitHub App writes this message as a comment on the pull requests of its scope, and updates it whenever the message or the values of its variables change." %}</p>
-{% if message %}{% include "pycal_dashboard/message/_shown.html" with query="" %}
+{% if message %}<p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>
+{% include "pycal_dashboard/message/_examples.html" %}
+{% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode %}
 <h3>{% translate "Which pull requests get it" %}</h3>
 <ul class="list" data-message-scope-summary>{% if message.to_listed and message.listed %}<li>{% translate "These pull requests:" %} {{ message.listed|join:", " }}</li>{% endif %}{% if message.to_new %}<li>{% translate "All new pull requests" %}</li>{% endif %}{% if message.to_open %}<li>{% translate "All open pull requests" %}</li>{% endif %}{% if message.to_closed %}<li>{% translate "Closed and merged pull requests" %}</li>{% endif %}</ul>
 <p data-message-count>{% blocktranslate count counter=preview.count %}{{ counter }} pull request gets it.{% plural %}{{ counter }} pull requests get it.{% endblocktranslate %}</p>

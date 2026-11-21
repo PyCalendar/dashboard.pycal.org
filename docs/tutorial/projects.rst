@@ -523,6 +523,8 @@ Writers and owners edit it in four pages, which a bar at the top names:
 
 1. **Message**: the message as a pull request gets it, with its Markdown on the
    tab **Markdown**, and which pull requests get it; or that there is none yet.
+   Everybody who sees the project steps through its examples here, as on the
+   review below, and sees the message of a pull request by its number.
    **Edit the message**, or **Create the message**, starts editing.
 2. **Edit**: the template in the editor of Markdown, with the menu
    **Variables**: those of the steps, see :ref:`step-variables`, and those of

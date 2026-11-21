@@ -246,10 +246,12 @@ def flow_page(
 def project_message(request: HttpRequest, slug: str):
     """1. The message as a pull request gets it, and its scope; or that there is none.
 
-    Public like the project; writers and owners start editing it.
+    Public like the project, also the examples in every state of the steps; writers and owners
+    start editing it.
 
     Parameters:
-        request: The request; ``view=markdown`` shows the Markdown.
+        request: The request; ``example`` the example from 0, ``pull`` a pull request to see
+            instead, ``view=markdown`` the Markdown.
         slug: The project.
 
     Returns:
@@ -260,7 +262,12 @@ def project_message(request: HttpRequest, slug: str):
         message = saved_message(access.project)
         return {
             "message": message,
-            "preview": preview(comments, message) if message else None,
+            "preview": preview(
+                comments, message, request.GET.get("example"), request.GET.get("pull", "")
+            )
+            if message
+            else None,
+            "pull_text": request.GET.get("pull", ""),
             "markdown_view": request.GET.get("view") == "markdown",
         }
 
