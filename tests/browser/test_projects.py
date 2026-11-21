@@ -1021,3 +1021,20 @@ def test_drag_a_condition_into_skip_if(signed_in, site, github, bob):
     skip.get_by_role("link", name="To the quality checks").click()
     expect(page).to_have_url(re.compile(r"labels~applies~present"))
     expect(page.locator("tbody[data-section='skip'] tr[data-condition-row]")).to_have_count(0)
+
+
+def test_a_column_of_text(page, site, github, bob):
+    """The menu + adds a column of text: the title starts with a text, the case not matching."""
+    pull_request_project(github, bob)
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    menu.get_by_label("Condition").select_option("text")
+    menu.get_by_label("How it matches").select_option("starts")
+    menu.get_by_label("The text, or the regex").fill("con")
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=text~all~title~starts~con"))
+    conflict = page.locator("[data-pull-request='collective/icalendar#2'] .col-condition")
+    expect(conflict).to_have_attribute("data-result", "yes")
+    ready = page.locator("[data-pull-request='collective/icalendar#1'] .col-condition")
+    expect(ready).to_have_attribute("data-result", "no")

@@ -49,6 +49,8 @@ condition chooses the least of them
      - A pull request has a number of reviews, without those of comments only.
    * - :doc:`review_ratio`
      - The review to pull request ratio of the author compared with a number.
+   * - :doc:`text_matches`
+     - The title or the description of a pull request matches a text or a regex.
    * - :doc:`pr_sync`
      - The PR Sync of the project is on for a pull request: it has its Status Message.
    * - :doc:`step_skipped`
@@ -71,6 +73,7 @@ condition chooses the least of them
    closed
    reviews
    review_ratio
+   text_matches
    pr_sync
    step_skipped
    api
@@ -99,6 +102,8 @@ partial ``conditions/_input.html``):
    The name of a label of the repository.
 ``bool``
    On or off: ``true`` or ``false``; a switch in a form.
+``choice``
+   One of a few names, such as ``title`` or ``description``.
 ``review-kinds``
    The kinds of reviews that count, of ``approved``, ``changes_requested``,
    ``commented`` and ``dismissed``; all of them by default; a switch for each in

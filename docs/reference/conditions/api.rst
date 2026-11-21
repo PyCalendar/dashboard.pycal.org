@@ -39,6 +39,10 @@ Inputs
    :members:
    :show-inheritance:
 
+.. automodule:: pycal_dashboard.conditions.input.choice
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.input.review_kinds
    :members:
    :show-inheritance:
@@ -149,3 +153,9 @@ Conditions
 
 .. automodule:: pycal_dashboard.conditions.condition.step_skipped
    :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.text_matches
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.text_match
+   :members:

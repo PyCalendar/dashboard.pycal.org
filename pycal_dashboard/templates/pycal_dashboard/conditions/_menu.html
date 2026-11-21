@@ -18,6 +18,16 @@
     <small class="muted">{% translate "At least and at most include the number." %}</small></p>
     {% if column.group.id == "reviews" %}{% include "pycal_dashboard/conditions/_review_kinds.html" with name="reviews_kinds" chosen=column.kinds %}{% else %}{% include "pycal_dashboard/conditions/_review_kinds.html" with name="reviews_kinds" chosen=all_kinds %}{% endif %}
   </fieldset>
+  <fieldset class="group-fields fields-text"><legend>{% translate "Text" %}</legend>
+    <p><label for="text-field-{{ index }}">{% translate "The text of the pull request" %}</label>
+    <select id="text-field-{{ index }}" name="text_field">{% for name, text in groups.text.fields.items %}<option value="{{ name }}"{% if column.group.id == "text" and column.choices.0 == name %} selected{% endif %}>{% translate text %}</option>{% endfor %}</select></p>
+    <p><label for="text-mode-{{ index }}">{% translate "How it matches" %}</label>
+    <select id="text-mode-{{ index }}" name="text_mode">{% for name, text in groups.text.modes.items %}<option value="{{ name }}"{% if column.group.id == "text" %}{% if column.choices.1 == name %} selected{% endif %}{% elif name == "contains" %} selected{% endif %}>{% translate text %}</option>{% endfor %}</select></p>
+    <p><label for="text-value-{{ index }}">{% translate "The text, or the regex" %}</label>
+    <input id="text-value-{{ index }}" name="text_value" maxlength="100" autocomplete="off" data-required-for="text" value="{% if column.group.id == 'text' %}{{ column.choices.2 }}{% endif %}">
+    <small class="muted">{% translate "A regex is of Python, such as ^(fix|feat):, at most 100 characters; repetitions of groups that repeat themselves, such as (a+)+, are refused." %}</small></p>
+    {% translate "Case sensitive" as case_text %}{% if column.group.id == "text" and "case" in column.choices %}{% include "pycal_dashboard/_switch.html" with name="text_case" value="on" checked=True text=case_text hidden_text="" %}{% else %}{% include "pycal_dashboard/_switch.html" with name="text_case" value="on" checked=False text=case_text hidden_text="" %}{% endif %}
+  </fieldset>
   <fieldset class="group-fields fields-author"><legend>{% translate "Author" %}</legend>
     <p><label for="state-{{ index }}">{% translate "Of the author, in the project" %}</label>
     <select id="state-{{ index }}" name="state">{% for state_id, state in groups.author.states.items %}<option value="{{ state_id }}"{% if column.group.id == 'author' and column.choices.0 == state_id %} selected{% endif %} title="{% translate state.description %}">{% translate state.title %}</option>{% endfor %}</select></p>

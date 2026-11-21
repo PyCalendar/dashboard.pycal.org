@@ -211,6 +211,13 @@ check mark, or not, with a red cross, and why:
    number of the author. The reviews given and the ratio have the same switches
    *Which reviews count* as the column *Reviews*. See
    :doc:`/reference/states/index`.
+**Text**
+   The title or the description of the pull request *starts with*, *ends
+   with*, *contains* a text, or *matches the regex*, such as ``^(fix|feat):``;
+   the case of letters does not matter unless *Case sensitive* is on. A regex
+   has at most 100 characters; repetitions of groups that repeat themselves,
+   such as ``(a+)+``, are refused, as they can take very long. See
+   :doc:`/reference/conditions/text_matches`.
 **Dashboard**
    Data of dashboard.pycal.org, not of GitHub: *PR Sync on*, the pull requests
    with the Status Message of the project, see :ref:`pr-message`, and *a skipped

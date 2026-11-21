@@ -13,6 +13,7 @@ from pycal_dashboard.conditions.group.dashboard import DashboardGroup
 from pycal_dashboard.conditions.group.labels import LabelsGroup
 from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 from pycal_dashboard.conditions.group.status import StatusGroup
+from pycal_dashboard.conditions.group.text import TextGroup
 from pycal_dashboard.conditions.review_kinds import ALL, checked
 from pycal_dashboard.errors import ConditionInputUnknown, UnknownCondition
 
@@ -34,6 +35,7 @@ GROUPS: dict[str, type[ConditionGroup]] = {
         StatusGroup,
         ReviewsGroup,
         AuthorGroup,
+        TextGroup,
         DashboardGroup,
     )
 }

@@ -31,6 +31,7 @@ from pycal_dashboard.conditions.condition.pr_sync_on import PrSyncOn
 from pycal_dashboard.conditions.condition.review_ratio import ReviewRatioCompared
 from pycal_dashboard.conditions.condition.reviews import Reviews
 from pycal_dashboard.conditions.condition.step_skipped import StepSkipped
+from pycal_dashboard.conditions.condition.text_matches import TextMatches
 from pycal_dashboard.conditions.spec.checks import ChecksData
 from pycal_dashboard.conditions.spec.issue import IssueData
 from pycal_dashboard.conditions.spec.labels import LabelsData
@@ -60,6 +61,7 @@ CONDITIONS: dict[str, type[Condition]] = {
         Closed,
         Reviews,
         ReviewRatioCompared,
+        TextMatches,
         PrSyncOn,
         StepSkipped,
     )

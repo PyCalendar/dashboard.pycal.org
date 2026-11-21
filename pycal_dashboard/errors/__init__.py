@@ -26,6 +26,7 @@ from .conditions import (
     ConditionInputUnknown,
     ConditionLabelUnknown,
     ConditionRangeInvalid,
+    TextPatternInvalid,
     UnknownCondition,
 )
 from .configuration import (
@@ -171,6 +172,7 @@ __all__ = [
     "ProjectSlugInvalid",
     "ProjectSlugTaken",
     "SkipReasonMissing",
+    "TextPatternInvalid",
     "RegistrationCodeMissing",
     "RegistrationError",
     "RegistrationExpired",

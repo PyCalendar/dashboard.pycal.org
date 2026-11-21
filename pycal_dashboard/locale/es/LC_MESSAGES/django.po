@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 21:49+0000\n"
+"POT-Creation-Date: 2026-11-21 22:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -240,6 +240,24 @@ msgstr "no está %(states)s"
 msgid "or"
 msgstr "o"
 
+msgid "Text"
+msgstr "Texto"
+
+#, python-format
+msgid "its %(field)s does not match: %(mode)s “%(text)s”"
+msgstr "su %(field)s no coincide: %(mode)s «%(text)s»"
+
+#, python-format
+msgid "its %(field)s %(mode)s “%(text)s”"
+msgstr "su %(field)s %(mode)s «%(text)s»"
+
+msgid ", case sensitive"
+msgstr ", distinguiendo mayúsculas"
+
+#, python-format
+msgid "Text: %(head)s"
+msgstr "Texto: %(head)s"
+
 msgid "above"
 msgstr "por encima de"
 
@@ -360,6 +378,24 @@ msgstr ""
 msgid "its author gave %(comparison)s %(number)s reviews"
 msgstr "su autor dio %(comparison)s %(number)s revisiones"
 
+msgid "title"
+msgstr "título"
+
+msgid "description"
+msgstr "descripción"
+
+msgid "starts with"
+msgstr "empieza con"
+
+msgid "ends with"
+msgstr "termina con"
+
+msgid "contains"
+msgstr "contiene"
+
+msgid "matches the regex"
+msgstr "coincide con la expresión regular"
+
 msgid "As the system"
 msgstr "Como el sistema"
 
@@ -428,6 +464,9 @@ msgstr "El número está fuera del rango"
 
 msgid "Invalid range"
 msgstr "Rango no válido"
+
+msgid "The text to match is not valid"
+msgstr "El texto a comparar no es válido"
 
 msgid "Unknown label"
 msgstr "Etiqueta desconocida"
@@ -1670,6 +1709,26 @@ msgstr "El pull request tiene"
 
 msgid "At least and at most include the number."
 msgstr "Al menos y como máximo incluyen el número."
+
+msgid "The text of the pull request"
+msgstr "El texto del pull request"
+
+msgid "How it matches"
+msgstr "Cómo coincide"
+
+msgid "The text, or the regex"
+msgstr "El texto o la expresión regular"
+
+msgid ""
+"A regex is of Python, such as ^(fix|feat):, at most 100 characters; "
+"repetitions of groups that repeat themselves, such as (a+)+, are refused."
+msgstr ""
+"Una expresión regular es de Python, como ^(fix|feat):, de 100 caracteres "
+"como máximo; se rechazan las repeticiones de grupos que se repiten a sí "
+"mismos, como (a+)+."
+
+msgid "Case sensitive"
+msgstr "Distinguir mayúsculas"
 
 msgid "Of the author, in the project"
 msgstr "Del autor, en el proyecto"

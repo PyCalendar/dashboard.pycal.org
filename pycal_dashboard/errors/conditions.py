@@ -99,6 +99,17 @@ class ConditionRangeInvalid(ConditionError):
     title = _("Invalid range")
 
 
+class TextPatternInvalid(ConditionError):
+    r"""A text to match is empty or too long, or a regular expression is wrong or may be slow.
+
+    Give at most 100 characters. A regular expression must be valid for Python, such as
+    ``^(fix|feat):``; repetitions of groups that repeat themselves, such as ``(a+)+``, and
+    back-references, such as ``\1``, are refused, as they can take very long to match.
+    """
+
+    title = _("The text to match is not valid")
+
+
 class ConditionLabelUnknown(ConditionError):
     """The repository has no label of this name.
 
