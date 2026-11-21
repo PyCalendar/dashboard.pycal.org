@@ -51,7 +51,7 @@ class MessageComments:
         self.repositories = (
             list(repositories) if repositories is not None else list(project.repositories.all())
         )
-        self.results = ColumnResults(self.repositories)
+        self.results = ColumnResults(self.repositories, project=project)
         self.scope = self.results.scope
         self._overrides: StepOverrides | None = None  # the skips, read when first needed
 

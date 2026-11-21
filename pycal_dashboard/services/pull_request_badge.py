@@ -71,7 +71,7 @@ class PullRequestBadge:
             ``("Steps", "outside", ...)`` when no task of any step is to do, outside of the
             usual steps; ``("Steps", "none", ...)`` without steps.
         """
-        results = ColumnResults(self.repositories)
+        results = ColumnResults(self.repositories, project=self.project)
         progress = PullRequestProgress(self.issue, self.project, results.scope, results)
         if progress.current:
             current = progress.current

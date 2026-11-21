@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 20:14+0000\n"
+"POT-Creation-Date: 2026-11-21 20:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,8 +24,18 @@ msgstr "Fusionado: los checks se leen solo para pull requests abiertos"
 msgid "Closed: the checks are read for open pull requests only"
 msgstr "Cerrado: los checks se leen solo para pull requests abiertos"
 
+msgid "Its Status Message on GitHub"
+msgstr "Su mensaje de estado en GitHub"
+
+msgid "The PR Sync of the project"
+msgstr "El PR Sync del proyecto"
+
 msgid "Its reviews on GitHub"
 msgstr "Sus revisiones en GitHub"
+
+#, python-format
+msgid "Its steps on %(site)s"
+msgstr "Sus pasos en %(site)s"
 
 msgid "Author"
 msgstr "Autor"
@@ -118,6 +128,34 @@ msgstr ""
 
 msgid "not known yet: no check of the last commit has completed"
 msgstr "aún no se sabe: ninguna comprobación del último commit ha terminado"
+
+msgid "Dashboard"
+msgstr "Panel"
+
+msgid "PR Sync on"
+msgstr "PR Sync activado"
+
+msgid "a skipped step"
+msgstr "un paso saltado"
+
+#, python-format
+msgid "it has %(states)s"
+msgstr "tiene %(states)s"
+
+#, python-format
+msgid "it does not have %(states)s"
+msgstr "no tiene %(states)s"
+
+msgid "the PR Sync on"
+msgstr "el PR Sync activado"
+
+msgid ""
+"Data of the dashboard, not of GitHub: whether the PR Sync of the project is "
+"on for a pull request, and whether it skips a step, skipped by a person or "
+"for its author."
+msgstr ""
+"Datos del panel, no de GitHub: si el PR Sync del proyecto está activado para "
+"un pull request, y si salta un paso, saltado por una persona o para su autor."
 
 msgid "Label"
 msgstr "Etiqueta"

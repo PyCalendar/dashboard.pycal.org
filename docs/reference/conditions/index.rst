@@ -49,6 +49,10 @@ condition chooses the least of them
      - A pull request has a number of reviews, without those of comments only.
    * - :doc:`review_ratio`
      - The review to pull request ratio of the author compared with a number.
+   * - :doc:`pr_sync`
+     - The PR Sync of the project is on for a pull request: it has its Status Message.
+   * - :doc:`step_skipped`
+     - A pull request skips a step of the project, skipped by a person or for its author.
 
 .. toctree::
    :hidden:
@@ -67,6 +71,8 @@ condition chooses the least of them
    closed
    reviews
    review_ratio
+   pr_sync
+   step_skipped
    api
 
 Inputs

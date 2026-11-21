@@ -32,6 +32,8 @@ IDS = [
     "closed",
     "reviews",
     "review_ratio",
+    "pr_sync",
+    "step_skipped",
 ]
 REPO = "collective/icalendar"
 

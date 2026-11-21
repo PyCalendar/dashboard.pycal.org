@@ -27,8 +27,10 @@ from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
 from pycal_dashboard.conditions.condition.merged import Merged
 from pycal_dashboard.conditions.condition.open import Open
+from pycal_dashboard.conditions.condition.pr_sync_on import PrSyncOn
 from pycal_dashboard.conditions.condition.review_ratio import ReviewRatioCompared
 from pycal_dashboard.conditions.condition.reviews import Reviews
+from pycal_dashboard.conditions.condition.step_skipped import StepSkipped
 from pycal_dashboard.conditions.spec.checks import ChecksData
 from pycal_dashboard.conditions.spec.issue import IssueData
 from pycal_dashboard.conditions.spec.labels import LabelsData
@@ -58,6 +60,8 @@ CONDITIONS: dict[str, type[Condition]] = {
         Closed,
         Reviews,
         ReviewRatioCompared,
+        PrSyncOn,
+        StepSkipped,
     )
 }
 # the states of people, numbers counted in the repositories of a project

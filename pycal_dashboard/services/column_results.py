@@ -13,7 +13,7 @@ from pycal_dashboard.models import Issue
 
 if TYPE_CHECKING:
     from pycal_dashboard.conditions.group.column import Column
-    from pycal_dashboard.models import Repository
+    from pycal_dashboard.models import Project, Repository
 
 CACHED_SECONDS = 24 * 3600  # the key changes with every update of a repository
 
@@ -28,15 +28,21 @@ class ColumnResults:
     then loads only the pull requests it shows (:meth:`rows`).
     """
 
-    def __init__(self, repositories: list[Repository], scope: Scope | None = None):
+    def __init__(
+        self,
+        repositories: list[Repository],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ):
         """The pull requests of repositories.
 
         Parameters:
             repositories: The repositories that the person sees.
             scope: Where the states of the authors are counted; the repositories by default.
+            project: The project, for the conditions on data of the dashboard; None for none.
         """
         self.repositories = list(repositories)
-        self.scope = scope or Scope(self.repositories)
+        self.scope = scope or Scope(self.repositories, project)
         self._pulls: list[Issue] | None = None
         self._reviews = False  # whether the reviews of the pull requests are loaded
 
@@ -102,11 +108,12 @@ class ColumnResults:
             The result by the id of the pull request: True, False, or None while not known.
         """
         key = self.key(column)
-        found = cache.get(key)
+        found = cache.get(key) if column.group.cached else None
         if found is None:
             pulls = self.pulls(reviews=column.group.id == "reviews")
             found = {pull.pk: column.applies(pull, self.scope) for pull in pulls}
-            cache.set(key, found, CACHED_SECONDS)
+            if column.group.cached:
+                cache.set(key, found, CACHED_SECONDS)
         return found
 
     def cached(self, column: Column) -> dict[int, bool | None] | None:
@@ -121,6 +128,8 @@ class ColumnResults:
         Returns:
             The results by the id of the pull request; None when they are not in the cache.
         """
+        if not column.group.cached:  # such as data of the dashboard: evaluated each time
+            return None
         return cache.get(self.key(column))
 
     def key(self, column: Column) -> str:

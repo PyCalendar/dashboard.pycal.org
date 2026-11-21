@@ -9,6 +9,7 @@ from urllib.parse import unquote
 from pycal_dashboard.conditions.group.author import AuthorGroup
 from pycal_dashboard.conditions.group.branch import BranchGroup
 from pycal_dashboard.conditions.group.ci import CiGroup
+from pycal_dashboard.conditions.group.dashboard import DashboardGroup
 from pycal_dashboard.conditions.group.labels import LabelsGroup
 from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 from pycal_dashboard.conditions.group.status import StatusGroup
@@ -25,7 +26,15 @@ if TYPE_CHECKING:
 # the groups in the order of the menu
 GROUPS: dict[str, type[ConditionGroup]] = {
     group.id: group
-    for group in (LabelsGroup, BranchGroup, CiGroup, StatusGroup, ReviewsGroup, AuthorGroup)
+    for group in (
+        LabelsGroup,
+        BranchGroup,
+        CiGroup,
+        StatusGroup,
+        ReviewsGroup,
+        AuthorGroup,
+        DashboardGroup,
+    )
 }
 # which pull requests the column shows: all, those it applies to, those it does not apply to
 FILTERS = ("all", "applies", "not")

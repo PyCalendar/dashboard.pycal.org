@@ -97,7 +97,7 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             lambda: {"pull_requests": [issue_data(issue) for issue, _query in choices]},
         )
     issue = found[0]
-    results = ColumnResults(repositories)
+    results = ColumnResults(repositories, project=access.project)
     progress = PullRequestProgress(issue, access.project, results.scope, results)
     shown = progress.chosen(request.GET.get("step"))
     if shown and not wants_json(request):  # the JSON has that of every step

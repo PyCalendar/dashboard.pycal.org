@@ -74,16 +74,17 @@ class SwitchesGroup(ConditionGroup):
         return cls.check(tuple(form.getlist(cls.id)))
 
     @classmethod
-    def results(cls, issue: Issue) -> dict[str, bool | None]:
+    def results(cls, issue: Issue, scope: Scope | None = None) -> dict[str, bool | None]:
         """Whether the condition of each switch holds for a pull request.
 
         Parameters:
             issue: The pull request.
+            scope: The repositories and the project, for conditions on data of the dashboard.
 
         Returns:
             The result of each switch by its name.
         """
-        return {name: condition.check(issue, {}) for name, condition, _text in cls.switches}
+        return {name: condition.check(issue, {}, scope) for name, condition, _text in cls.switches}
 
     @classmethod
     def applies(
@@ -94,12 +95,12 @@ class SwitchesGroup(ConditionGroup):
         Parameters:
             issue: The pull request.
             choices: The switches that are on.
-            scope: Not used: the condition is of the pull request itself.
+            scope: The repositories and the project, for conditions on data of the dashboard.
 
         Returns:
             True if one holds; None if none holds and one cannot be assessed.
         """
-        results = cls.results(issue)
+        results = cls.results(issue, scope)
         chosen = [results[name] for name in choices]
         if any(chosen):
             return True
@@ -118,13 +119,13 @@ class SwitchesGroup(ConditionGroup):
         Parameters:
             issue: The pull request.
             choices: The switches that are on.
-            scope: Not used: the condition is of the pull request itself.
+            scope: The repositories and the project, for conditions on data of the dashboard.
             project: Not used.
 
         Returns:
             The links of their conditions, each once.
         """
-        results = cls.results(issue)
+        results = cls.results(issue, scope)
         holding = [name for name in choices if results[name]]
         conditions = {name: condition for name, condition, _text in cls.switches}
         return Evidence.unique(
@@ -142,12 +143,12 @@ class SwitchesGroup(ConditionGroup):
         Parameters:
             issue: The pull request.
             choices: The switches that are on.
-            scope: Not used: the condition is of the pull request itself.
+            scope: The repositories and the project, for conditions on data of the dashboard.
 
         Returns:
             Each text that holds, with its name as its kind.
         """
-        results = cls.results(issue)
+        results = cls.results(issue, scope)
         return [
             {"text": gettext(text), "kind": name}
             for name, _condition, text in cls.switches

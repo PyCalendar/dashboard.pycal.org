@@ -511,7 +511,7 @@ def project_pull_requests(request: HttpRequest, slug: str):
         address = table_address(changed, size, saved.pk if saved else None)
         return redirect(access.project.path("pull-requests/") + address)
     repositories = shown_repositories(access)
-    results = ColumnResults(repositories)
+    results = ColumnResults(repositories, project=access.project)
     pages = Paginator(results.matching(columns), size)
     shown = pages.get_page(request.GET.get("page"))
     shown.object_list = results.rows(list(shown.object_list), columns)  # only this page

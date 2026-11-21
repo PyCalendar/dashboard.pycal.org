@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from django.db.models import Count, F, Q
 
 from pycal_dashboard.conditions.spec.reviews import COUNTED
-from pycal_dashboard.models import GitHubUser, Issue, Review
+from pycal_dashboard.models import GitHubUser, Issue, PullRequestComment, Review, StepSkip
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Project, Repository
@@ -20,14 +20,57 @@ class Scope:
     asked for, so that a table of many pull requests asks the database a few times only.
     """
 
-    def __init__(self, repositories: list[Repository]):
+    def __init__(self, repositories: list[Repository], project: Project | None = None):
         """The repositories counted.
 
         Parameters:
             repositories: The repositories, such as those of a project that a person sees.
+            project: The project, for the conditions on data of the dashboard, such as its PR
+                Sync; None when not known.
         """
         self.repositories = list(repositories)
+        self.project = project
         self._counts: dict[str, dict[int, int]] = {}
+        self._synced: set[int] | None = None
+        self._skips: tuple[set[int], set[str]] | None = None
+
+    def synced(self) -> set[int] | None:
+        """The pull requests with the PR Sync of the project on, read once.
+
+        Returns:
+            Their ids; None without a project.
+        """
+        if self.project is None:
+            return None
+        if self._synced is None:
+            self._synced = set(
+                PullRequestComment.objects.filter(project=self.project).values_list(
+                    "issue", flat=True
+                )
+            )
+        return self._synced
+
+    def skips(self) -> tuple[set[int], set[str]] | None:
+        """Who skips a step of the project: pull requests by a writer, and authors, read once.
+
+        Returns:
+            The ids of the pull requests that a writer skipped a step for, and the GitHub
+            handles (lower case) of the authors whose pull requests skip a step; None without a
+            project.
+        """
+        if self.project is None:
+            return None
+        if self._skips is None:
+            issues = set(
+                StepSkip.objects.filter(step__project=self.project).values_list("issue", flat=True)
+            )
+            authors = {
+                str(login).lower()
+                for logins in self.project.steps.values_list("skip_authors", flat=True)
+                for login in logins or []
+            }
+            self._skips = (issues, authors)
+        return self._skips
 
     @classmethod
     def of(cls, subject: Issue | GitHubUser | Project) -> Scope:
@@ -43,7 +86,7 @@ class Scope:
             return cls([subject.repository])
         if isinstance(subject, GitHubUser):
             return cls([])
-        return cls(list(subject.repositories.all()))
+        return cls(list(subject.repositories.all()), subject)
 
     @staticmethod
     def person(subject: Issue | GitHubUser) -> GitHubUser | None:

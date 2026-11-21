@@ -927,3 +927,26 @@ def test_the_choice_of_a_color_suits_light_and_dark_pages(signed_in, site, githu
             assert lightness > 0.6, (index, lightness)
         else:  # the tint of a chosen step: well below the text, above the dark page
             assert lightness < 0.35, (index, lightness)
+
+
+def test_a_column_of_the_dashboard(page, site, github, bob):
+    """The menu + adds the column Dashboard: the pull requests that skip a step."""
+    from pycal_dashboard.models import Issue, PullRequestFilter, PullRequestStep, StepSkip
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    step = PullRequestStep.objects.create(project=project, filter=saved, name="Review")
+    StepSkip.objects.create(step=step, issue=Issue.objects.get(number=2), user=bob, reason="Met")
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.get_by_label("Add a condition").click()
+    menu = page.locator("[data-add-condition] [data-condition-form]")
+    menu.get_by_label("Condition").select_option("dashboard")
+    menu.locator(".fields-dashboard label.switch", has_text="a skipped step").click()
+    menu.get_by_role("button", name="Add the column").click()
+    expect(page).to_have_url(re.compile(r"col=dashboard~\w+~skipped"))
+    skipping = page.locator("[data-pull-request='collective/icalendar#2'] .col-condition")
+    expect(skipping).to_have_attribute("data-result", "yes")
+    other = page.locator("[data-pull-request='collective/icalendar#1'] .col-condition")
+    expect(other).to_have_attribute("data-result", "no")

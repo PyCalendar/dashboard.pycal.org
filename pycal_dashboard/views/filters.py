@@ -166,7 +166,9 @@ def project_filters(request: HttpRequest, slug: str):
         )
 
     def data() -> dict:
-        results = ColumnResults(shown_repositories(access))  # loaded once for all filters
+        results = ColumnResults(
+            shown_repositories(access), project=access.project
+        )  # loaded once for all filters
         return {
             "filters": [
                 filter_data(f["saved"], len(results.matching(f["columns"])), f["path"])
@@ -202,7 +204,7 @@ def project_filter_counts(request: HttpRequest, slug: str, number: int):
         return moved
     saved = saved_filter(access.project, str(number))
     columns = [Column.decode(value) for value in saved.columns]
-    results = ColumnResults(shown_repositories(access))
+    results = ColumnResults(shown_repositories(access), project=access.project)
     # only the conditions in force: those that are off are no part of the filter
     rows = [item for item in summary(columns) if item["filters"]]
     for item in rows:
@@ -343,7 +345,7 @@ def save_page(
             else [],
             "name": saved.name if name is None and saved else (name or ""),
             "description": request.POST.get("description", saved.description if saved else ""),
-            "count": len(ColumnResults(repositories).matching(columns)),
+            "count": len(ColumnResults(repositories, project=access.project).matching(columns)),
             "back": access.project.path("pull-requests/")
             + table_address(columns, PER_PAGE, saved.pk if saved else None),
             "address": table_address(columns, PER_PAGE, saved.pk if saved else None),

@@ -207,6 +207,11 @@ check mark, or not, with a red cross, and why:
    author opened and did not close themselves: *1* is as many reviews as pull
    requests, *0.5* half as many and *2* twice as many. The cell shows the
    number of the author. See :doc:`/reference/states/index`.
+**Dashboard**
+   Data of dashboard.pycal.org, not of GitHub: *PR Sync on*, the pull requests
+   with the Status Message of the project, see :ref:`pr-message`, and *a skipped
+   step*, those that skip a step, skipped by a person or for their author. Its
+   results are not kept in the cache, as they change without an update.
 
 The header of a column is short: the label, struck through when it must be
 absent, or the states chosen, such as *conflict*. Below it, the gear changes

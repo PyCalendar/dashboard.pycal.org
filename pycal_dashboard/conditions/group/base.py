@@ -29,6 +29,9 @@ class ConditionGroup(ABC):
 
     id: ClassVar[str] = ""
     title: ClassVar[str] = ""
+    # whether the results of a column are kept in the cache under the version of the
+    # repositories: not for data that changes without an update from GitHub
+    cached: ClassVar[bool] = True
 
     @classmethod
     @abstractmethod

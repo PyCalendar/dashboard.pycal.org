@@ -79,6 +79,10 @@ Data
    :members:
    :show-inheritance:
 
+.. automodule:: pycal_dashboard.conditions.spec.dashboard
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.spec.reviews
    :members:
    :show-inheritance:
@@ -126,4 +130,15 @@ Conditions
    :no-members:
 
 .. automodule:: pycal_dashboard.conditions.condition.review_ratio
+   :no-members:
+
+
+.. automodule:: pycal_dashboard.conditions.condition.dashboard_condition
+   :members:
+   :show-inheritance:
+
+.. automodule:: pycal_dashboard.conditions.condition.pr_sync_on
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.step_skipped
    :no-members:

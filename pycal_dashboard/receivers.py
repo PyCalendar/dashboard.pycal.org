@@ -138,7 +138,7 @@ def prepare_results(sender: type, repository: Repository, **kwargs: Any):
         everything = list(project.repositories.all())
         public = [found for found in everything if not found.private]
         for repositories in {tuple(everything), tuple(public)}:
-            results = ColumnResults(list(repositories))
+            results = ColumnResults(list(repositories), project=project)
             for value in values:
                 results.of(Column.decode(value))
 

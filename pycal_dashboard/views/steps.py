@@ -431,7 +431,7 @@ def project_steps_check(request: HttpRequest, slug: str):
     repositories = shown_repositories(access)
     every = request.GET.get("all") == "1"
     steps = list(access.project.steps.all())
-    results = ColumnResults(repositories)
+    results = ColumnResults(repositories, project=access.project)
     places = StepAssignment(access.project, results.scope).step_of_all(results) if steps else {}
     open_ids = (
         None

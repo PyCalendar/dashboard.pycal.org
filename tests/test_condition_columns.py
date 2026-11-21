@@ -276,3 +276,14 @@ def test_the_menu_explains_unknown_ci(client, project):
     help = page.split('data-switches-help="ci">')[1].split("</small>")[0]
     assert help.startswith("Unknown: the checks are read for open pull requests only")
     assert 'data-switches-help="status"' not in page  # only where it explains something
+
+
+def test_the_menu_shows_the_fields_of_every_group():
+    """The fields of a group show when it is chosen in the menu of a column: a rule of CSS."""
+    from pathlib import Path
+
+    from pycal_dashboard.conditions.group.column import GROUPS
+
+    css = (Path(__file__).parent.parent / "static" / "style.css").read_text()
+    for id in GROUPS:
+        assert f'option[value="{id}"]:checked) .fields-{id}' in css, id
