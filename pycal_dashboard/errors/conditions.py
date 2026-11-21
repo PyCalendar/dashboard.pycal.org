@@ -53,6 +53,15 @@ class ConditionInputNotText(ConditionError):
     title = _("The input is not a text")
 
 
+class ConditionInputNotBoolean(ConditionError):
+    """An input of a condition must be on or off.
+
+    Give it as ``true`` or ``false``; a form sends ``on`` for a switch that is on.
+    """
+
+    title = _("The input is neither on nor off")
+
+
 class ConditionInputNotInteger(ConditionError):
     """An input of a condition must be a whole number.
 

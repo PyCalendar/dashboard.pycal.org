@@ -36,6 +36,10 @@ Inputs
    :members:
    :show-inheritance:
 
+.. automodule:: pycal_dashboard.conditions.input.boolean
+   :members:
+   :show-inheritance:
+
 .. automodule:: pycal_dashboard.conditions.input.positive_integer
    :members:
    :show-inheritance:

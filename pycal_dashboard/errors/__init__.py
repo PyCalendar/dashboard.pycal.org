@@ -18,6 +18,7 @@ from .base import (
 from .conditions import (
     ConditionError,
     ConditionInputMissing,
+    ConditionInputNotBoolean,
     ConditionInputNotInteger,
     ConditionInputNotNumber,
     ConditionInputNotText,
@@ -121,6 +122,7 @@ __all__ = [
     "AccountOwnsSharedProjects",
     "ConditionError",
     "ConditionInputMissing",
+    "ConditionInputNotBoolean",
     "ConditionInputNotInteger",
     "ConditionInputNotNumber",
     "ConditionInputNotText",

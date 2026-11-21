@@ -185,11 +185,54 @@ def test_reviews(repositories, comparison, number, anna, ben):
 
 def test_reviews_at_least_by_default(repositories):
     condition = CONDITIONS["reviews"]
-    assert condition.configure({"reviews": 0}) == {"comparison": "at_least", "reviews": 0}
+    assert condition.configure({"reviews": 0}) == {
+        "comparison": "at_least",
+        "reviews": 0,
+        "comments": False,
+    }
     with pytest.raises(errors.ConditionInputUnknown):
         condition.configure({"comparison": "around", "reviews": 1})
     with pytest.raises(errors.ConditionInputOutOfRange):
         condition.configure({"reviews": -1})
+
+
+def test_reviews_of_comments_count_where_it_is_on(repositories):
+    """Anna 1 has 2 reviews that count and a review of comments only."""
+    condition = CONDITIONS["reviews"]
+    off = condition.configure({"comparison": "exactly", "reviews": 2})
+    on = condition.configure({"comparison": "exactly", "reviews": 3, "comments": "on"})
+    assert on["comments"] is True
+    assert condition.check(pull("Anna 1"), off) is True
+    assert condition.check(pull("Anna 1"), on) is True
+    with pytest.raises(errors.ConditionInputNotBoolean):
+        condition.configure({"reviews": 1, "comments": "maybe"})
+
+
+def test_a_column_of_reviews_with_comments(repositories):
+    from django.http import QueryDict
+
+    from pycal_dashboard.conditions.group.column import Column
+    from pycal_dashboard.conditions.group.reviews import ReviewsGroup
+
+    column = Column.decode("reviews~applies~at_least~3~comments")
+    assert column.applies(pull("Anna 1")) is True
+    assert Column.decode("reviews~applies~at_least~3").applies(pull("Anna 1")) is False
+    assert column.sentence == "it has at least 3 reviews, also of comments"
+    assert column.inverted().encode() == "reviews~applies~below~3~comments"
+    assert [part["text"] for part in column.head] == ["reviews ≥ 3", "also comments"]
+    assert column.group.summary(column.choices) == "Reviews: at least 3, also of comments"
+    assert column.group.cell(pull("Anna 1"), column.choices)[0]["text"] == "3 reviews"
+    evidence = column.evidence(pull("Anna 1"))
+    assert [e.text for e in evidence] == [
+        "Review by ben: approved",
+        "Review by ben: changes requested",
+        "Review by anna: commented",
+    ]
+    form = QueryDict("reviews_comparison=below&reviews=2&reviews_comments=on")
+    assert ReviewsGroup.parse(form) == ("below", "2", "comments")
+    assert ReviewsGroup.parse(QueryDict("reviews=2")) == ("at_least", "2")
+    with pytest.raises(errors.ConditionInputUnknown):
+        Column.decode("reviews~all~at_least~1~everything")
 
 
 def test_review_ratio(repositories):

@@ -91,6 +91,8 @@ partial ``conditions/_input.html``):
    Two whole numbers, ``[low, high]``, low not above high.
 ``string-label``
    The name of a label of the repository.
+``bool``
+   On or off: ``true`` or ``false``; a switch in a form.
 
 Data
 ====

@@ -24,11 +24,14 @@ PER_PAGE = 20
 LEAST_PER_PAGE = 5
 # the reviews that count: not those with only comments
 COUNTED = ("APPROVED", "CHANGES_REQUESTED", "DISMISSED")
+# a review of comments only, which counts where a condition says so
+COMMENTED = "COMMENTED"
 # the states of reviews that count, for people
 STATES = {
     "APPROVED": gettext_noop("approved"),
     "CHANGES_REQUESTED": gettext_noop("changes requested"),
     "DISMISSED": gettext_noop("dismissed"),
+    "COMMENTED": gettext_noop("commented"),
 }
 
 
@@ -150,28 +153,32 @@ class ReviewsData(DataSpec):
             issue.closed_by = self.person(closer, people)
             issue.save(update_fields=["closed_by"])
 
-    def evidence(self, issue: Issue) -> list[Evidence]:
+    def evidence(self, issue: Issue, comments: bool = False) -> list[Evidence]:
         """The reviews of the pull request that count, each on GitHub, the oldest first.
 
         Parameters:
             issue: The pull request.
+            comments: Whether reviews of comments only count, too.
 
         Returns:
             A link to each review.
         """
-        return [self.review_evidence(issue, review) for review in self.counted(issue)]
+        return [self.review_evidence(issue, review) for review in self.counted(issue, comments)]
 
     @staticmethod
-    def counted(issue: Issue) -> list[Review]:
+    def counted(issue: Issue, comments: bool = False) -> list[Review]:
         """The reviews of a pull request that count, the oldest first.
 
         Parameters:
             issue: The pull request.
+            comments: Whether reviews of comments only count, too (``COMMENTED``).
 
         Returns:
-            Those that approved, requested changes or were dismissed (``COUNTED``).
+            Those that approved, requested changes or were dismissed (``COUNTED``), and
+            those of comments only if they count.
         """
-        found = [review for review in issue.reviews.all() if review.state in COUNTED]
+        states = (*COUNTED, COMMENTED) if comments else COUNTED
+        found = [review for review in issue.reviews.all() if review.state in states]
         return sorted(found, key=lambda review: (review.submitted is None, review.submitted))
 
     @staticmethod

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 11:46+0000\n"
+"POT-Creation-Date: 2026-11-21 15:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,6 +150,12 @@ msgstr[0] "%(count)s revisión"
 msgstr[1] "%(count)s revisiones"
 
 #, python-format
+msgid "it has %(comparison)s %(number)s review, also of comments"
+msgid_plural "it has %(comparison)s %(number)s reviews, also of comments"
+msgstr[0] "tiene %(comparison)s %(number)s revisión, también de comentarios"
+msgstr[1] "tiene %(comparison)s %(number)s revisiones, también de comentarios"
+
+#, python-format
 msgid "it has %(comparison)s %(number)s review"
 msgid_plural "it has %(comparison)s %(number)s reviews"
 msgstr[0] "tiene %(comparison)s %(number)s revisión"
@@ -157,6 +163,13 @@ msgstr[1] "tiene %(comparison)s %(number)s revisiones"
 
 msgid "reviews"
 msgstr "revisiones"
+
+msgid "also comments"
+msgstr "también comentarios"
+
+#, python-format
+msgid "Reviews: %(comparison)s %(number)s, also of comments"
+msgstr "Revisiones: %(comparison)s %(number)s, también de comentarios"
 
 #, python-format
 msgid "Reviews: %(comparison)s %(number)s"
@@ -232,6 +245,9 @@ msgstr "cambios solicitados"
 
 msgid "dismissed"
 msgstr "descartada"
+
+msgid "commented"
+msgstr "comentada"
 
 #, python-format
 msgid "Review by %(handle)s: %(state)s"
@@ -349,6 +365,9 @@ msgstr "Entrada desconocida de la condición"
 
 msgid "The input is not a text"
 msgstr "La entrada no es un texto"
+
+msgid "The input is neither on nor off"
+msgstr "La entrada no está ni activada ni desactivada"
 
 msgid "The input is not a whole number"
 msgstr "La entrada no es un número entero"
@@ -1589,11 +1608,15 @@ msgid "The pull request has"
 msgstr "El pull request tiene"
 
 msgid ""
-"Approvals and requested changes count, comments do not. At least and at most "
-"include the number."
+"Approvals and requested changes count; comment reviews count when the switch "
+"below is on. At least and at most include the number."
 msgstr ""
-"Cuentan las aprobaciones y los cambios solicitados, los comentarios no. Al "
-"menos y como máximo incluyen el número."
+"Cuentan las aprobaciones y los cambios solicitados; las revisiones de "
+"comentarios cuentan cuando el interruptor de abajo está activado. Al menos y "
+"como máximo incluyen el número."
+
+msgid "Also count comment reviews"
+msgstr "Contar también las revisiones de comentarios"
 
 msgid "Of the author, in the project"
 msgstr "Del autor, en el proyecto"

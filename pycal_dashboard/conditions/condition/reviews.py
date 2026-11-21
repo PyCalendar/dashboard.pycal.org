@@ -8,9 +8,10 @@ from django.utils.translation import gettext
 
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.evidence import Evidence
+from pycal_dashboard.conditions.input.boolean import BooleanInput
 from pycal_dashboard.conditions.input.comparison import ComparisonInput, compare
 from pycal_dashboard.conditions.input.integer import IntegerInput
-from pycal_dashboard.conditions.spec.reviews import COUNTED, ReviewsData
+from pycal_dashboard.conditions.spec.reviews import ReviewsData
 
 if TYPE_CHECKING:
     from pycal_dashboard.conditions.state.scope import Scope
@@ -23,12 +24,14 @@ class Reviews(Condition):
     Holds when the number of reviews of the pull request compares with the input ``reviews``
     as the input ``comparison`` says, such as at least 2; at least and at most include the
     number. A review counts when it approved, requested changes, or was dismissed later; a
-    review with comments only does not count.
+    review with comments only counts when the input ``comments`` is on.
     """
 
     id = "reviews"
     title = "Reviews"
-    description = "A pull request has a number of reviews, without those of comments only."
+    description = (
+        "A pull request has a number of reviews, with those of comments only if they count."
+    )
     inputs = (
         ComparisonInput(
             "comparison",
@@ -38,6 +41,13 @@ class Reviews(Condition):
             default="at_least",
         ),
         IntegerInput("reviews", "Reviews", "The number of reviews to compare with.", minimum=0),
+        BooleanInput(
+            "comments",
+            "Comment reviews",
+            "Whether reviews of comments only count, too; off by default, as on GitHub.",
+            required=False,
+            default=False,
+        ),
     )
     data = (ReviewsData(),)
 
@@ -47,13 +57,13 @@ class Reviews(Condition):
 
         Parameters:
             issue: The pull request.
-            values: ``comparison`` and ``reviews``.
+            values: ``comparison``, ``reviews`` and ``comments``.
 
         Returns:
             True if it holds.
         """
         # the reviews prefetched with the pull request, if so
-        counted = sum(review.state in COUNTED for review in issue.reviews.all())
+        counted = len(ReviewsData.counted(issue, values.get("comments", False)))
         return compare(counted, values.get("comparison", "at_least"), values["reviews"])
 
     @staticmethod
@@ -102,14 +112,14 @@ class Reviews(Condition):
 
         Parameters:
             issue: The pull request.
-            values: ``comparison`` and ``reviews``.
+            values: ``comparison``, ``reviews`` and ``comments``.
             scope: Not used.
             project: Not used.
 
         Returns:
             A link to each review; to the pull request without one to show.
         """
-        found = ReviewsData().evidence(issue)
+        found = ReviewsData().evidence(issue, values.get("comments", False))
         shown = cls.deciding(len(found), values.get("comparison", "at_least"), values["reviews"])
         if not shown:
             return [Evidence(gettext("Its reviews on GitHub"), issue.url)]

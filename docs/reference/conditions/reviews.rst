@@ -2,12 +2,14 @@
 ``reviews``: Reviews
 =====================
 
-A pull request has a number of reviews, without those of comments only.
+A pull request has a number of reviews, with those of comments only if they count.
 
 Holds when the number of reviews of the pull request compares with the input
 ``reviews`` as the input ``comparison`` says, such as at least 2. A review
 counts when it approved, requested changes, or was dismissed later; a review
-with comments only does not count.
+with comments only counts when the input ``comments`` is on, the switch *Also
+count comment reviews* of the column. It is off by default, as GitHub counts
+the reviews that a branch requires.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.
@@ -30,6 +32,10 @@ Inputs
      - ``int``
      - yes
      - The number of reviews to compare with, from 0 up.
+   * - ``comments``
+     - ``bool``
+     - no, ``false``
+     - Whether reviews of comments only count, too.
 
 The type ``comparison`` is one of these; *at most* and *at least* include the
 number itself:
@@ -60,7 +66,10 @@ The inputs as JSON:
 
 .. code-block:: json
 
-   {"comparison": "at_least", "reviews": 2}
+   {"comparison": "at_least", "reviews": 2, "comments": true}
+
+In the address of the table, a column that counts the reviews of comments,
+too, ends with ``~comments``, such as ``reviews~applies~at_least~2~comments``.
 
 Data
 ====

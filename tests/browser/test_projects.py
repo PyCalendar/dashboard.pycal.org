@@ -499,6 +499,13 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     expect(page).to_have_url(re.compile(r"col=reviews~all~at_least~1"))
     ready = page.locator("[data-pull-request='collective/icalendar#1']")
     expect(ready.locator(".col-condition")).to_contain_text("1 review")
+    # the comment reviews count, too, with the switch in the gear of the column
+    page.locator("th.col-condition .column-menu summary").first.click()
+    gear = page.locator("th.col-condition [data-condition-form]").first
+    gear.locator("[data-reviews-comments] label.switch").click()
+    gear.get_by_role("button", name="Change the column").click()
+    expect(page).to_have_url(re.compile(r"col=reviews~all~at_least~1~comments"))
+    expect(ready.locator(".col-condition")).to_contain_text("2 reviews")
     page.get_by_label("Add a condition").click()
     menu.get_by_label("Condition").select_option("author")
     menu.get_by_label("Of the author, in the project").select_option("review_ratio")
@@ -507,6 +514,7 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     menu.get_by_label("The number to compare with").fill("0.3")
     menu.get_by_role("button", name="Add the column").click()
     expect(page).to_have_url(re.compile(r"col=author~all~review_ratio~above~0.3"))
+    expect(page).to_have_url(re.compile(r"col=reviews~all~at_least~1~comments"))
     # octocat opened 3 and reviewed once: 0.33
     expect(ready.locator(".col-condition").nth(1)).to_contain_text("0.33")
     expect(ready.locator(".col-condition").nth(1)).to_have_attribute("data-result", "yes")

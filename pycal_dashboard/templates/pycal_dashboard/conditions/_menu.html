@@ -15,7 +15,8 @@
     <p><label for="reviews-comparison-{{ index }}">{% translate "The pull request has" %}</label>
     <span class="comparison-row"><select id="reviews-comparison-{{ index }}" name="reviews_comparison">{% for name, about in groups.reviews.comparisons.items %}<option value="{{ name }}"{% if column.group.id == 'reviews' %}{% if column.choices.0 == name %} selected{% endif %}{% elif name == groups.reviews.default %} selected{% endif %}>{% translate about.1 %} {{ about.0 }}</option>{% endfor %}</select>
     <input id="reviews-{{ index }}" name="reviews" type="number" inputmode="numeric" min="0" step="1" data-required-for="reviews" aria-label="{% translate "Reviews" %}" value="{% if column.group.id == 'reviews' %}{{ column.choices.1 }}{% else %}1{% endif %}"> <span>{% translate "reviews" %}</span></span>
-    <small class="muted">{% translate "Approvals and requested changes count, comments do not. At least and at most include the number." %}</small></p>
+    <small class="muted">{% translate "Approvals and requested changes count; comment reviews count when the switch below is on. At least and at most include the number." %}</small></p>
+    <p class="reviews-comments" data-reviews-comments>{% translate "Also count comment reviews" as comments_text %}{% if column.group.id == 'reviews' and 'comments' in column.choices %}{% include "pycal_dashboard/_switch.html" with name="reviews_comments" value="on" checked=True text=comments_text %}{% else %}{% include "pycal_dashboard/_switch.html" with name="reviews_comments" value="on" checked=False text=comments_text %}{% endif %}</p>
   </fieldset>
   <fieldset class="group-fields fields-author"><legend>{% translate "Author" %}</legend>
     <p><label for="state-{{ index }}">{% translate "Of the author, in the project" %}</label>
