@@ -268,3 +268,11 @@ def test_the_filters_are_an_or(client, project):
     assert list(results(page)) == ["Merged"]  # a column that shows both does not filter
     page = page_of(client, project, "status~all~merged", "ci~all~passing")
     assert len(results(page)) == 4  # nothing filters
+
+
+def test_the_menu_explains_unknown_ci(client, project):
+    """Closed and merged pull requests have no checks read: their CI is unknown."""
+    page = page_of(client, project)
+    help = page.split('data-switches-help="ci">')[1].split("</small>")[0]
+    assert help.startswith("Unknown: the checks are read for open pull requests only")
+    assert 'data-switches-help="status"' not in page  # only where it explains something

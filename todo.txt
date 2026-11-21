@@ -550,3 +550,4 @@ community: where to start, what waits for a review, who contributes.
 - [x] - [ ] and - [x] show checkboxes as on GitHub in the Markdown of the site, fixed
 - [x] The page of a pull request shows no number of a step: the name only
 - [x] The page of the message: the stages and a pull request by its number also for visitors
+- [x] CI failing or unknown: 1275 is right (closed and merged pull requests have no checks read); the menu of the column explains unknown

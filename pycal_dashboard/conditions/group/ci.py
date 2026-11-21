@@ -25,6 +25,11 @@ class CiGroup(SwitchesGroup):
         ("unknown", CiUnknown, gettext_noop("unknown")),
     )
     exclusive = ("passing", "failing", "unknown")
+    help = gettext_noop(
+        "Unknown: the checks are read for open pull requests only, so closed and merged ones "
+        "are unknown; also open ones whose checks are not read yet, or that the GitHub App may "
+        "not read."
+    )
     phrase = (gettext_noop("its CI is %(states)s"), gettext_noop("its CI is not %(states)s"))
 
     @classmethod

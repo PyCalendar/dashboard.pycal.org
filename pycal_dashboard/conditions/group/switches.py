@@ -31,6 +31,8 @@ class SwitchesGroup(ConditionGroup):
     phrase: ClassVar[tuple[str, str]] = ("", "")
     # the words of switches in the sentence where they differ from their texts
     words: ClassVar[dict[str, str]] = {}
+    # a short explanation of the switches below them in the menu of a column, "" for none
+    help: ClassVar[str] = ""
 
     @classmethod
     def names(cls) -> list[str]:

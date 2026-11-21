@@ -27,6 +27,7 @@
   </fieldset>
   {% for id, group in groups.items %}{% if group.switches %}<fieldset class="group-fields fields-{{ id }}" data-switches="{{ id }}"><legend>{% translate group.title %}</legend>
     {% for name, condition, text in group.switches %}{% translate text as switch_text %}{% if column.group.id == id and name in column.choices %}{% include "pycal_dashboard/_switch.html" with name=id value=name checked=True text=switch_text hidden_text="" %}{% else %}{% include "pycal_dashboard/_switch.html" with name=id value=name checked=False text=switch_text hidden_text="" %}{% endif %}{% endfor %}
+    {% if group.help %}<small class="muted switches-help" data-switches-help="{{ id }}">{% translate group.help %}</small>{% endif %}
   </fieldset>{% endif %}{% endfor %}
   {% if column %}<input type="hidden" name="filter" value="{{ column.filter }}">{% endif %}
   <p><button class="button">{% if column %}{% translate "Change the column" %}{% else %}{% translate "Add the column" %}{% endif %}</button></p>

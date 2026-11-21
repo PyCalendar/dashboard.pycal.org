@@ -185,8 +185,10 @@ check mark, or not, with a red cross, and why:
    Up to date, outdated or in conflict with its base branch, as many as you
    switch on; a merged pull request is up to date. The cell names what applies.
 **CI**
-   Passing or failing: the last complete result of the checks, also while new
-   ones run.
+   Passing, failing or unknown: the last complete result of the checks, also
+   while new ones run. The checks are read for open pull requests only, so the
+   CI of closed and merged ones is unknown, as is that of open ones whose checks
+   are not read yet or that the GitHub App may not read; the menu says so.
 **Status**
    Open, closed, merged or auto-merging, with their colors.
 **Reviews**
