@@ -213,6 +213,30 @@ def test_share_the_project(client, project, bob, alice):
     assert not ProjectMember.objects.filter(user=alice).exists()
 
 
+@pytest.mark.parametrize("role", ["read", "write"])
+def test_only_owners_change_roles_and_add_collaborators(client, project, bob, alice, role):
+    """Readers and writers add nobody, change no role and remove nobody, not even themselves."""
+    carol = person(3, "carol")
+    owner = ProjectEditor(ProjectAccess(project, bob))
+    owner.share("alice", role)
+    owner.share("carol", "read")
+    client.force_login(alice)
+    address = f"/projects/{project.slug}/collaborators/"
+    page = client.get(address).content.decode()
+    assert "data-share" not in page and 'name="remove"' not in page and 'name="role"' not in page
+    for data in (
+        {"github_name": "bob", "role": "read"},  # an owner loses the role
+        {"github_name": "carol", "role": "owner"},  # another one gets more
+        {"github_name": "alice", "role": "owner"},  # oneself
+        {"remove": ProjectMember.objects.get(user=carol).pk},
+        {"remove": ProjectMember.objects.get(user=bob).pk},
+    ):
+        answer = client.post(address, data)
+        assert answer.status_code == 403 and "Only the owners" in answer.content.decode()
+    roles = dict(ProjectMember.objects.values_list("user__username", "role"))
+    assert roles == {"bob": "owner", "alice": role, "carol": "read"}
+
+
 @pytest.mark.parametrize(
     ("name", "role", "error"),
     [("nobody", "read", "Nobody with this GitHub handle"), ("alice", "boss", "Unknown role")],

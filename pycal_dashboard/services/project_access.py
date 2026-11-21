@@ -27,6 +27,7 @@ class ProjectAccess:
     See the private repositories of it        no       yes     yes    yes
     Change name, description, repositories    no       no      yes    yes
     Update it from GitHub                     no       no      yes    yes
+    Add collaborators, change their roles     no       no      no     yes
     Share it, make it public, delete it       no       no      no     yes
     ========================================  =======  ======  =====  =====
 

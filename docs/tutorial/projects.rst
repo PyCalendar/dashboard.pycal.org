@@ -639,13 +639,19 @@ with their avatar. The person must have signed in to the site once. What each ro
      - no
      - yes
      - yes
+   * - Add collaborators, change and remove their roles
+     - no
+     - no
+     - no
+     - yes
    * - Share it, make it public or private, delete it
      - no
      - no
      - no
      - yes
 
-A project always has an owner: the only owner can neither change their role
+Only the owners add collaborators and change or remove their roles; the others
+see the collaborators and their roles. A project always has an owner: the only owner can neither change their role
 nor leave until they give another person the role *own*. The administrators of the site (``SITE_ADMINS``) have the rights
 of an owner in every project.
 
