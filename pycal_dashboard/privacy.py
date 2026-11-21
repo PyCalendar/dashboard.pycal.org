@@ -40,12 +40,15 @@ DATA = {
     },
     "projects": {
         "what": _(
-            "The projects you create, and the role of each collaborator with their GitHub handle."
+            "The projects you create, the role of each collaborator with their GitHub handle, "
+            "and who skipped a step for a pull request, when, and why."
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
             "Everybody sees public projects; only the collaborators see the private projects, "
-            "and only those who may change a project see who its collaborators are."
+            "and only those who may change a project see who its collaborators are. Everybody "
+            "who sees a pull request sees who skipped a step for it; only those who may change "
+            "the project see why."
         ),
         "why": _("To show the projects and to decide who may change them."),
     },
@@ -135,11 +138,13 @@ MODELS = {
             "hidden",
             "color",
             "actions",
+            "skip_authors",
             "created",
             "updated",
         },
     ),
     "pycal_dashboard.PullRequestPlace": (None, {"id", "project", "issue", "step", "updated"}),
+    "pycal_dashboard.StepSkip": ("projects", {"id", "step", "issue", "user", "reason", "created"}),
     "pycal_dashboard.PullRequestMessage": (
         "projects",
         {

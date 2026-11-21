@@ -80,6 +80,7 @@ from .projects import (
     PullRequestNumberAmbiguous,
     RepositoryNameInvalid,
     RepositoryNotFound,
+    SkipReasonMissing,
     StepNotFound,
     UnknownRole,
 )
@@ -169,6 +170,7 @@ __all__ = [
     "ProjectReadOnly",
     "ProjectSlugInvalid",
     "ProjectSlugTaken",
+    "SkipReasonMissing",
     "RegistrationCodeMissing",
     "RegistrationError",
     "RegistrationExpired",

@@ -762,3 +762,43 @@ def test_the_evidence_of_a_task_and_the_page_of_its_author(page, site, github, b
     expect(items).to_have_count(3)
     page.get_by_role("link", name="#2 Conflict").click()
     expect(page.locator("[data-tasks]")).to_be_visible()
+
+
+def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
+    """A writer skips the step a pull request is in, with a reason; the rows stay aligned."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    for position, (name, column) in enumerate(
+        (
+            ("Peer review of the pull request", "labels~applies~present~needs review"),
+            ("Open", "status~applies~open"),
+        )
+    ):
+        saved = PullRequestFilter.objects.create(project=project, name=name, columns=[column])
+        PullRequestStep.objects.create(project=project, filter=saved, name=name, position=position)
+    page = signed_in
+    page.set_viewport_size({"width": 700, "height": 900})  # the long name takes two lines
+    page.goto(f"{site}/projects/icalendar/pull/1/")
+    bar = page.locator("[data-progress]")
+    first, second = bar.locator("[data-step]").nth(0), bar.locator("[data-step]").nth(1)
+    expect(first).to_have_attribute("data-current", "")
+    # the rows line up as in a table: the tasks of both steps at the same height
+    tops = [box.locator(".progress-tasks").bounding_box()["y"] for box in (first, second)]
+    assert abs(tops[0] - tops[1]) < 1
+    first.locator("[data-skip-step] summary").click()
+    first.get_by_label("Why it skips the step").fill("Reviewed at the meeting")
+    first.get_by_role("button", name="Skip Peer review of the pull request").click()
+    expect(page.get_by_text("The step Peer review of the pull request is skipped.")).to_be_visible()
+    first = page.locator("[data-progress] [data-step]").nth(0)
+    expect(first).to_have_attribute("data-skipped", "")
+    expect(first.locator("[data-skip-reason]")).to_have_text("Reviewed at the meeting")
+    expect(first.locator("[data-skipped-by] a")).to_have_attribute(
+        "href", "/projects/icalendar/contributors/bob/"
+    )
+    second = page.locator("[data-progress] [data-step]").nth(1)
+    expect(second.locator(".progress-here")).to_have_text("The pull request is here")
+    heres = [box.locator(".progress-here").bounding_box()["y"] for box in (first, second)]
+    assert abs(heres[0] - heres[1]) < 1
+    first.get_by_role("button", name="Remove the skip").click()
+    expect(page.locator("[data-progress] [data-step]").nth(0)).to_have_attribute("data-current", "")

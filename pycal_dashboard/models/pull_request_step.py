@@ -30,6 +30,9 @@ class PullRequestStep(models.Model):
     # what the site does when a pull request completes the step, such as
     # [{"kind": "add_label", "label": "reviewed"}] (StepCompletion)
     actions = models.JSONField(default=list, blank=True)
+    # the GitHub handles of the authors whose pull requests skip the step, such as
+    # ["niccokunzmann"] (StepOverrides)
+    skip_authors = models.JSONField(default=list, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

@@ -8,6 +8,7 @@ from django.utils.text import capfirst
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
+from pycal_dashboard.services.step_overrides import StepOverrides
 from pycal_dashboard.step_template import expand, values_of
 
 from .step_progress import StepProgress
@@ -33,6 +34,7 @@ class PullRequestProgress:
         project: Project,
         scope: Scope | None = None,
         results: ColumnResults | None = None,
+        overrides: StepOverrides | None = None,
     ):
         """Find the tasks of every step of the project for a pull request.
 
@@ -43,8 +45,11 @@ class PullRequestProgress:
                 of the author are counted; all of the project when None.
             results: The results of the columns of the repositories, used where the cache
                 has them; else each condition is evaluated for the pull request.
+            overrides: The skips of the steps, read once for many pull requests; those of this
+                pull request when None.
         """
         scope = scope or Scope.of(project)
+        overrides = overrides or StepOverrides(project, [issue])
         self.issue = issue
         self.project = project
         self.scope = scope
@@ -56,7 +61,7 @@ class PullRequestProgress:
                 "step_number": str(number),
                 "step_id": str(step.pk),
             }
-            progress = StepProgress(step, number)
+            progress = StepProgress(step, number, skip=overrides.skip(issue, step))
             for value in step.filter.columns:
                 column = Column.decode(value)
                 if column.filter == "all":  # off: no part of the filter
@@ -79,10 +84,15 @@ class PullRequestProgress:
                 )
             progress.tasks.sort(key=lambda task: not task.todo)  # stable: to do first
             self.steps.append(progress)
-        self.current = next((step for step in self.steps if not step.complete), None)
+        # the pull request is in the left-most step with a task to do that it does not skip
+        self.current = next(
+            (step for step in self.steps if not step.complete and step.skip is None), None
+        )
         if self.current:
             self.current.current = True
-        stage = "past" if self.current else "outside"
+        # it went through all steps when it skipped those with tasks to do
+        self.skipped_open = any(not step.complete and step.skip for step in self.steps)
+        stage = "past" if self.current or self.skipped_open else "outside"
         for step in self.steps:
             if step.current:
                 stage = "current"
@@ -101,7 +111,7 @@ class PullRequestProgress:
 
         Such as a merged pull request, or one that none of the filters of the steps shows.
         """
-        return bool(self.steps) and self.current is None
+        return bool(self.steps) and self.current is None and not self.skipped_open
 
     def chosen(self, number: int | str | None) -> StepProgress | None:
         """The step to show below the bar.
@@ -135,7 +145,8 @@ class PullRequestProgress:
         Returns:
             ``step``, the id of the step the pull request is in (None when it is in none),
             ``outside``, whether it is outside of the usual steps, and ``steps``, each with its
-            ``id``, ``name``, ``number``, ``hidden``, ``complete``, ``done``, ``total`` and
+            ``id``, ``name``, ``number``, ``hidden``, ``skipped`` (not why), ``complete``,
+            ``done``, ``total`` and
             ``tasks``: their ``condition``, ``sentence``, ``state``, ``summary`` and
             ``evidence`` (each with ``text`` and ``url``; empty until it is found).
         """
@@ -148,6 +159,7 @@ class PullRequestProgress:
                     "name": step.step.name,
                     "number": step.number,
                     "hidden": step.step.hidden,
+                    "skipped": step.skip is not None,
                     "complete": step.complete,
                     "done": step.done,
                     "total": len(step.tasks),

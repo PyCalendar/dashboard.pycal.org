@@ -13,13 +13,20 @@
 <p class="pull-meta"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span>
 {% github_user pull.author %} <span class="muted">{% when pull.created %}</span></p>
 {% if progress.steps %}<ol class="progress-bar" data-progress{% if progress.outside %} data-outside{% endif %}>{% for step in progress.visible %}
-<li class="progress-step" data-step="{{ step.step.pk }}" data-stage="{{ step.stage }}" data-complete="{{ step.complete|yesno:'true,false' }}"{% if step.current %} data-current{% if step.done %} data-partial{% endif %}{% endif %}{% if step.step.hidden %} data-hidden{% endif %}>
-  <a href="{{ step_query }}{{ step.step.pk }}"{% if step == shown %} aria-current="step"{% endif %}{% if step.step.color %} style="--step-color: {{ step.step.color }}"{% endif %}>
-    <span class="progress-title">{% if step.stage == "past" %}<span class="progress-check" aria-hidden="true">✓</span> {% endif %}{{ step.step.name }}</span>
-    <span class="progress-tasks">{% if step.stage == "past" or step.stage == "current" %}<span class="progress-count" title="{% blocktranslate with done=step.done total=step.tasks|length %}{{ done }} of {{ total }} tasks done{% endblocktranslate %}">{{ step.done }}/{{ step.tasks|length }}</span>{% endif %}
-      <span class="squares" aria-hidden="true">{% for state in step.squares %}<span class="square square-{{ state }}"></span>{% endfor %}</span></span>
-    {% if step.current %}<small class="progress-here">{% translate "The pull request is here" %}</small>{% endif %}
-  </a></li>{% endfor %}</ol>
+<li class="progress-step" data-step="{{ step.step.pk }}" data-stage="{{ step.stage }}" data-complete="{{ step.complete|yesno:'true,false' }}"{% if step.current %} data-current{% if step.done %} data-partial{% endif %}{% endif %}{% if step.step.hidden %} data-hidden{% endif %}{% if step.skip %} data-skipped{% endif %}{% if step == shown %} data-shown{% endif %}{% if step.step.color %} style="--step-color: {{ step.step.color }}"{% endif %}>
+  <a class="progress-title" href="{{ step_query }}{{ step.step.pk }}"{% if step == shown %} aria-current="step"{% endif %}>{% if step.stage == "past" and not step.skip %}<span class="progress-check" aria-hidden="true">✓</span> {% endif %}{{ step.step.name }}</a>
+  <span class="progress-tasks">{% if step.stage == "past" or step.stage == "current" or step.skip %}<span class="progress-count" title="{% blocktranslate with done=step.done total=step.tasks|length %}{{ done }} of {{ total }} tasks done{% endblocktranslate %}">{{ step.done }}/{{ step.tasks|length }}</span>{% endif %}
+    <span class="squares" aria-hidden="true">{% for state in step.squares %}<span class="square square-{{ state }}"></span>{% endfor %}</span></span>
+  <small class="progress-here">{% if step.current %}{% translate "The pull request is here" %}{% endif %}</small>
+  <div class="progress-skip">{% if step.skip %}<span class="badge muted" data-skip-mark>{% translate "Skipped" %}</span>{% if not step.skip.automatic %}
+    {% if access.can_write and step.skip.reason %}<span class="skip-reason" data-skip-reason>{{ step.skip.reason }}</span>{% endif %}
+    {% with handle=step.skip.user.profile.github_name %}{% if handle %}<span class="skip-by" data-skipped-by>{% url 'project_contributor' project.slug handle as person_url %}{% github_user handle size=16 href=person_url %}</span>{% endif %}{% endwith %}{% endif %}{% endif %}</div>
+  <div class="progress-actions">{% if access.can_write %}{% if step.skip and not step.skip.automatic %}<form method="post" action="{% url 'project_pull_request_skip' project.slug pull.number %}">{% csrf_token %}<input type="hidden" name="step" value="{{ step.step.pk }}">{% if repository_query %}<input type="hidden" name="repository" value="{{ pull.repository.full_name }}">{% endif %}<button class="button button-quiet button-small" name="remove" value="1" data-unskip>{% translate "Remove the skip" %}</button></form>
+    {% elif not step.skip %}<details class="skip-step" data-skip-step><summary class="button button-quiet button-small">{% translate "Skip" %}</summary>
+      <form method="post" action="{% url 'project_pull_request_skip' project.slug pull.number %}" class="stacked skip-form">{% csrf_token %}<input type="hidden" name="step" value="{{ step.step.pk }}">{% if repository_query %}<input type="hidden" name="repository" value="{{ pull.repository.full_name }}">{% endif %}
+        <p><label for="skip-reason-{{ step.step.pk }}">{% translate "Why it skips the step" %}</label><textarea id="skip-reason-{{ step.step.pk }}" name="reason" rows="3" maxlength="2000" required></textarea><small class="muted">{% translate "The writers and owners of the project see why; everybody sees that you skipped it." %}</small></p>
+        <p><button class="button button-small">{% blocktranslate with name=step.step.name %}Skip {{ name }}{% endblocktranslate %}</button></p></form></details>{% endif %}{% endif %}</div>
+</li>{% endfor %}</ol>
 {% if progress.outside %}<p class="message" data-outside-note>{% translate "This pull request is outside of the usual steps it should take: no task of any step applies to it." %}</p>{% endif %}
 {% else %}<p class="muted" data-no-steps>{% url 'project_steps' project.slug as steps_url %}{% blocktranslate %}The project has no steps yet: see the tab <a href="{{ steps_url }}">Steps</a>.{% endblocktranslate %}</p>{% endif %}
 </section>

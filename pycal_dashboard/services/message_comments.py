@@ -16,6 +16,7 @@ from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Issue, PullRequestComment, PullRequestMessage
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
+from pycal_dashboard.services.step_overrides import StepOverrides
 from pycal_dashboard.step_template import expand, values_of
 
 if TYPE_CHECKING:
@@ -52,6 +53,7 @@ class MessageComments:
         )
         self.results = ColumnResults(self.repositories)
         self.scope = self.results.scope
+        self._overrides: StepOverrides | None = None  # the skips, read when first needed
 
     def marker(self) -> str:
         """The hidden line that ends every comment of the message: what wrote it."""
@@ -146,7 +148,11 @@ class MessageComments:
         Returns:
             The values by the names of the variables.
         """
-        progress = PullRequestProgress(issue, self.project, self.scope, self.results)
+        if self._overrides is None:
+            self._overrides = StepOverrides(self.project)
+        progress = PullRequestProgress(
+            issue, self.project, self.scope, self.results, self._overrides
+        )
         current = progress.current
         values = {"step_name": "", "step_number": "", "step_id": ""} | values_of(
             issue, self.project, current.step if current else None

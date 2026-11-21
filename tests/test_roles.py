@@ -16,11 +16,13 @@ import pytest
 from django.utils import timezone
 
 from pycal_dashboard.models import (
+    Issue,
     Project,
     ProjectMember,
     PullRequestFilter,
     PullRequestStep,
     Repository,
+    StepSkip,
     UpdateJob,
 )
 from pycal_dashboard.services.project_access import ProjectAccess
@@ -42,6 +44,7 @@ class World:
     saved: PullRequestFilter
     step: PullRequestStep
     carol: object
+    pull: Issue
     backup: str = ""
     path: str = field(init=False)
 
@@ -62,7 +65,16 @@ def world(bob):
     step = PullRequestStep.objects.create(project=project, filter=saved, name="Open")
     carol = person(3, "carol")
     ProjectEditor(ProjectAccess(project, bob)).share("carol", "read")
-    found = World(project, repository, saved, step, carol)
+    pull = Issue.objects.create(
+        repository=repository,
+        github_id=1,
+        number=7,
+        title="A pull request",
+        pull_request=True,
+        created=now,
+    )
+    StepSkip.objects.create(step=step, issue=pull, user=bob, reason="Before")  # to remove
+    found = World(project, repository, saved, step, carol, pull)
     found.backup = ProjectBackup(project).export()
     return found
 
@@ -196,6 +208,20 @@ ACTIONS = {
         lambda c, w: c.post(w.path + f"steps/{w.step.pk}/remove/"),
         lambda w: not PullRequestStep.objects.filter(pk=w.step.pk).exists(),
     ),
+    "skip a step of a pull request": (
+        "write",
+        lambda c, w: c.post(
+            w.path + f"pull/{w.pull.number}/skip/", {"step": w.step.pk, "reason": "Met"}
+        ),
+        lambda w: StepSkip.objects.filter(step=w.step, issue=w.pull).exists(),
+    ),
+    "remove the skip of a step": (
+        "write",
+        lambda c, w: c.post(
+            w.path + f"pull/{w.pull.number}/skip/", {"step": w.step.pk, "remove": "1"}
+        ),
+        lambda w: not StepSkip.objects.filter(step=w.step, issue=w.pull).exists(),
+    ),
     "edit the message": (
         "write",
         lambda c, w: c.get(w.path + "message/edit/"),
@@ -230,6 +256,7 @@ def test_who_may_do_what(client, world, signed_in, action):
         assert world.project.repositories.exists()
         assert PullRequestStep.objects.filter(pk=world.step.pk, name="Open").exists()
         assert not world.project.filters.filter(name="Merged").exists()
+        assert StepSkip.objects.get(step=world.step, issue=world.pull).reason == "Before"
 
 
 @pytest.mark.parametrize("signed_in", ROLES, indirect=True)

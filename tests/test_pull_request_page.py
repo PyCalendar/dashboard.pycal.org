@@ -4,12 +4,22 @@ import re
 
 import pytest
 
-from pycal_dashboard.models import Issue, PullRequestFilter, PullRequestStep, Repository
+from pycal_dashboard.models import (
+    Issue,
+    PullRequestFilter,
+    PullRequestStep,
+    Repository,
+    StepSkip,
+)
 from pycal_dashboard.services.progress import PullRequestProgress
+from pycal_dashboard.services.project_access import ProjectAccess
+from pycal_dashboard.services.project_editor import ProjectEditor
+from pycal_dashboard.services.step_assignment import StepAssignment
 
 from .test_steps import filters, project  # noqa: F401 (fixtures)
 
 pytestmark = pytest.mark.django_db
+JSON = {"HTTP_ACCEPT": "application/json"}
 URL = "https://github.com/collective/icalendar/pull"
 
 
@@ -196,3 +206,116 @@ def test_the_stages_of_the_steps(client, project, filters):  # noqa: F811
     assert PullRequestProgress(Issue.objects.get(title="Merged"), project).steps[0].stage == (
         "outside"
     )
+
+
+@pytest.fixture
+def open_step(project, steps):  # noqa: F811
+    """A third step that every open pull request is in, after Review."""
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Open", columns=["status~applies~open"]
+    )
+    return PullRequestStep.objects.create(project=project, filter=saved, name="Open", position=2)
+
+
+def skip(client, step, reason="The maintainers met", number=None, **data):
+    number = number or number_of("Ready")
+    return client.post(
+        f"/projects/icalendar/pull/{number}/skip/", {"step": step.pk, "reason": reason, **data}
+    )
+
+
+def test_a_skipped_step_moves_the_pull_request_to_the_next(client, project, steps, open_step, bob):  # noqa: F811
+    _first, second = steps
+    client.force_login(bob)
+    answer = skip(client, second)
+    assert answer.status_code == 302 and answer["Location"].endswith(f"?step={second.pk}")
+    found = StepSkip.objects.get()
+    assert (found.user, found.reason, found.automatic) == (bob, "The maintainers met", False)
+    issue = Issue.objects.get(title="Ready")
+    progress = PullRequestProgress(issue, project)
+    assert progress.current.step == open_step and progress.steps[1].skip == found
+    assert StepAssignment(project).step_of(issue) == open_step
+    page = client.get(f"/projects/icalendar/pull/{issue.number}/").content.decode()
+    box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
+    assert "data-skipped" in box and "data-skip-mark" in box and ">0/1<" in box  # its tasks
+    assert "The maintainers met" in box and "data-unskip" in box
+    assert 'href="/projects/icalendar/contributors/bob/"' in box  # who, on the site
+    assert "data-skip-step" not in box
+    other = page.split(f'data-step="{open_step.pk}"')[1].split("</li>")[0]
+    assert "The pull request is here" in other and "data-skip-step" in other
+    assert client.get("/projects/icalendar/contributors/bob/").status_code == 200
+    data = client.get(f"/projects/icalendar/pull/{issue.number}.json").json()
+    assert data["step"] == open_step.pk and data["steps"][1]["skipped"] is True
+    assert "The maintainers met" not in str(data)  # the reason is not public
+    skip(client, second, remove="1")
+    assert not StepSkip.objects.exists()
+    assert PullRequestProgress(issue, project).current.step == second
+
+
+def test_everybody_sees_the_skip_but_only_writers_the_reason(
+    client,
+    project,  # noqa: F811
+    steps,
+    open_step,
+    bob,
+    alice,
+):
+    _first, second = steps
+    StepSkip.objects.create(
+        step=second, issue=Issue.objects.get(title="Ready"), user=bob, reason="Secret"
+    )
+    for viewer in (None, alice):  # a visitor, a reader
+        if viewer:
+            ProjectEditor(ProjectAccess(project, bob)).share("alice", "read")
+            client.force_login(alice)
+        page = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/").content.decode()
+        box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
+        assert "data-skip-mark" in box and "data-skipped-by" in box
+        assert "Secret" not in page and "data-unskip" not in page and "data-skip-step" not in page
+        assert skip(client, second).status_code in (302, 403)
+    assert StepSkip.objects.get().reason == "Secret"  # readers change nothing
+    assert skip(client, second).status_code == 403
+
+
+def test_a_skip_needs_a_reason_and_a_step(client, project, steps, bob):  # noqa: F811
+    _first, second = steps
+    client.force_login(bob)
+    answer = skip(client, second, reason="  ")
+    assert answer.status_code == 400 and "The reason to skip the step is missing" in (
+        answer.content.decode()
+    )
+    answer = client.post(
+        f"/projects/icalendar/pull/{number_of('Ready')}/skip/", {"step": "999", "reason": "x"}
+    )
+    assert answer.status_code == 404 and not StepSkip.objects.exists()
+
+
+def test_a_step_skips_itself_for_its_authors(client, project, steps, open_step, bob):  # noqa: F811
+    """The author octocat is in skip_authors: Skipped, without a reason or a person."""
+    _first, second = steps
+    client.force_login(bob)
+    edit = f"/projects/icalendar/steps/{second.pk}/edit/"
+    client.post(edit, {"name": "Review", "skip_form": "1", "skip_authors": "@octocat, x/y"}, **JSON)
+    second.refresh_from_db()
+    assert second.skip_authors == ["octocat"]
+    issue = Issue.objects.get(title="Ready")
+    progress = PullRequestProgress(issue, project)
+    assert progress.steps[1].skip.automatic and progress.current.step == open_step
+    page = client.get(f"/projects/icalendar/pull/{issue.number}/").content.decode()
+    box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
+    assert "data-skip-mark" in box and ">Skipped<" in box
+    assert "data-skipped-by" not in box and "data-unskip" not in box and "data-skip-step" not in box
+    steps_page = client.get(f"/projects/icalendar/steps/?step_id={second.pk}").content.decode()
+    assert 'value="octocat"' in steps_page and "data-complete-list" in steps_page
+    client.post(edit, {"name": "Review"}, **JSON)  # a form without the field keeps it
+    second.refresh_from_db()
+    assert second.skip_authors == ["octocat"]
+
+
+def test_skipping_every_open_step_is_not_outside(project, steps, bob):  # noqa: F811
+    _first, second = steps
+    issue = Issue.objects.get(title="Ready")
+    StepSkip.objects.create(step=second, issue=issue, user=bob, reason="Done elsewhere")
+    progress = PullRequestProgress(issue, project)
+    assert progress.current is None and not progress.outside
+    assert [step.stage for step in progress.steps] == ["past", "past"]

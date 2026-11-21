@@ -1,0 +1,1 @@
+Writers skip a step for a pull request with a reason, and remove the skip again; the pull request is then in the next step. Steps skip themselves for the pull requests of the authors they name. The boxes of the steps of a pull request are aligned in rows.

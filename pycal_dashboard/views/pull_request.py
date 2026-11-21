@@ -11,13 +11,24 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from urllib.parse import urlencode
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseNotModified
-from django.views.decorators.http import require_http_methods
+from django.shortcuts import redirect
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_http_methods, require_POST
 
-from pycal_dashboard.errors import PullRequestNotFound, PullRequestNumberAmbiguous
+from pycal_dashboard.errors import (
+    PullRequestNotFound,
+    PullRequestNumberAmbiguous,
+    SkipReasonMissing,
+    StepNotFound,
+)
+from pycal_dashboard.models import PullRequestStep, StepSkip
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
+from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.step_template import expand, values_of
 
 from .json_page import page, wants_json
@@ -101,6 +112,7 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             "progress": progress,
             "shown": shown,
             "step_query": "?" + urlencode(keep) + "&step=" if keep else "?step=",
+            "repository_query": bool(name),
             "step_summary": expand(shown.step.summary, values_of(issue, access.project, shown.step))
             if shown
             else "",
@@ -162,3 +174,49 @@ def evidence_data(progress: PullRequestProgress) -> dict:
     """
     progress.find_evidence(progress.steps)
     return progress.data()
+
+
+@login_required
+@require_POST
+def project_pull_request_skip(request: HttpRequest, slug: str, number: int):
+    """Skip a step for a pull request with a reason, or remove the skip (``remove``).
+
+    The pull request is then in the next step that shows it. Its repository is updated in the
+    background, so that the message, the labels and the actions of the steps follow.
+
+    Parameters:
+        request: The request: ``step``, the id of the step, ``reason`` or ``remove``, and
+            ``repository`` when several repositories have a pull request of the number.
+        slug: The project.
+        number: The number of the pull request on GitHub.
+
+    Returns:
+        A redirect to the page of the pull request, with the step shown.
+
+    Raises:
+        ProjectReadOnly: Only the writers and owners skip steps.
+        StepNotFound: The project has no such step.
+        SkipReasonMissing: The reason is empty.
+    """
+    access, _moved = opened(request, slug, f"pull/{number}/")
+    access.require_write()
+    name = request.POST.get("repository") or None
+    issue = numbered(shown_repositories(access), number, name)[0]
+    try:
+        step = access.project.steps.get(pk=int(request.POST.get("step") or 0))
+    except (ValueError, PullRequestStep.DoesNotExist):
+        raise StepNotFound(str(request.POST.get("step", ""))[:20]) from None
+    if "remove" in request.POST:
+        StepSkip.objects.filter(step=step, issue=issue).delete()
+        messages.success(request, _("The step %(name)s is not skipped any more.") % {"name": step})
+    else:
+        reason = request.POST.get("reason", "").strip()[:2000]
+        if not reason:
+            raise SkipReasonMissing(step.name)
+        StepSkip.objects.update_or_create(
+            step=step, issue=issue, defaults={"user": request.user, "reason": reason}
+        )
+        messages.success(request, _("The step %(name)s is skipped.") % {"name": step.name})
+    UpdateQueue.add_repository(issue.repository)  # the message and the labels follow
+    query = {"step": step.pk} | ({"repository": name} if name else {})
+    return redirect(access.project.path(f"pull/{number}/") + "?" + urlencode(query))

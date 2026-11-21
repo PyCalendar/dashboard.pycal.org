@@ -7,6 +7,7 @@ Moving and adding steps work as forms, and with JavaScript without loading the p
 
 from __future__ import annotations
 
+import re
 from urllib.parse import urlencode
 
 from django.contrib.auth.decorators import login_required
@@ -67,6 +68,31 @@ def step_of(project: Project, number: int | str | None) -> PullRequestStep:
         return project.steps.select_related("filter").get(pk=int(number or 0))
     except (ValueError, PullRequestStep.DoesNotExist):
         raise StepNotFound(str(number)) from None
+
+
+# a GitHub handle: letters, digits and single hyphens, at most 39
+HANDLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}")
+
+
+def handles(text: str) -> list[str]:
+    """The GitHub handles of a text, separated by commas or spaces, each once.
+
+    Parameters:
+        text: Such as ``@niccokunzmann, octocat``.
+
+    Returns:
+        The handles that GitHub allows, without ``@``, in their order.
+
+    Examples:
+        >>> handles("@niccokunzmann, octocat octocat,  not/valid, ")
+        ['niccokunzmann', 'octocat']
+    """
+    found: list[str] = []
+    for part in re.split(r"[,\s]+", text):
+        name = part.strip().lstrip("@")
+        if HANDLE.fullmatch(name) and name.lower() not in {f.lower() for f in found}:
+            found.append(name)
+    return found[:100]
 
 
 def conditions_of(step: PullRequestStep) -> list[dict]:
@@ -321,6 +347,8 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
         step.hidden = request.POST.get("visible") != "on"
     color = request.POST.get("color", step.color)
     step.color = color if color in STEP_COLORS else ""
+    if request.POST.get("skip_form"):  # the field: empty is nobody
+        step.skip_authors = handles(request.POST.get("skip_authors", ""))
     if request.POST.get("actions_form"):  # the form shows the actions: empty fields have none
         step.actions = {
             trigger: {kind: labels(request.POST.get(f"{trigger}_{kind}", "")) for kind in KINDS}

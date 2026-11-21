@@ -1,6 +1,7 @@
 // Proposes the people who signed in while an owner types a GitHub name to share a project with
 // (input[data-complete-people]): their avatar, GitHub name and full name. Without JavaScript,
-// the field takes the GitHub name as typed.
+// the field takes the GitHub name as typed. A field of several names separated by commas
+// (data-complete-list) proposes for the last one.
 (function () {
   "use strict";
   var count = 0;
@@ -25,8 +26,19 @@
       input.setAttribute("aria-expanded", "false");
       input.removeAttribute("aria-activedescendant");
     }
+    var several = input.hasAttribute("data-complete-list");
+    function typed() {  // the name that is typed: the last one of a list
+      return several ? input.value.split(",").pop().trim() : input.value.trim();
+    }
     function choose(item) {
-      input.value = item.dataset.login;
+      if (several) {
+        var names = input.value.split(",").map(function (name) { return name.trim(); });
+        names[names.length - 1] = item.dataset.login;
+        input.value = names.filter(Boolean).join(", ") + ", ";
+      } else {
+        input.value = item.dataset.login;
+      }
+      input.dispatchEvent(new Event("input", {bubbles: true}));  // such as to save it
       close();
     }
     function mark(index) {
@@ -74,12 +86,12 @@
     }
     function propose() {
       clearTimeout(timer);
-      var text = input.value.trim();
+      var text = typed();
       if (!text) { close(); return; }
       timer = setTimeout(function () {
         fetch(input.dataset.completePeople + "?q=" + encodeURIComponent(text), {credentials: "same-origin"})
           .then(function (answer) { return answer.ok ? answer.json() : {people: []}; })
-          .then(function (data) { if (input.value.trim() === text) { show(data.people); } })
+          .then(function (data) { if (typed() === text) { show(data.people); } })
           .catch(function () {});
       }, 200);
     }
@@ -93,7 +105,7 @@
     });
     input.addEventListener("blur", close);
     input.dataset.completeConnected = "";  // ready: what was typed before is proposed now
-    if (input.value.trim()) { propose(); }
+    if (input.value.trim() && !several) { propose(); }
   }
   document.querySelectorAll("input[data-complete-people]").forEach(connect);
 }());

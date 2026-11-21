@@ -56,6 +56,11 @@ urlpatterns = [
         name="project_pull_request",
     ),
     path(
+        "projects/<project_slug:slug>/pull/<int:number>/skip/",
+        pull_request.project_pull_request_skip,
+        name="project_pull_request_skip",
+    ),
+    path(
         "projects/<project_slug:slug>/pull/<int:number>/badge.svg",
         pull_request.project_pull_request_badge,
         {"kind": "svg"},

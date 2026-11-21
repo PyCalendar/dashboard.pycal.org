@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 17:40+0000\n"
+"POT-Creation-Date: 2026-11-21 17:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -538,6 +538,9 @@ msgstr "Das Projekt hat einen Filter mit diesem Namen"
 msgid "Step not found"
 msgstr "Schritt nicht gefunden"
 
+msgid "The reason to skip the step is missing"
+msgstr "Der Grund, den Schritt zu überspringen, fehlt"
+
 msgid "The filter is a step already"
 msgstr "Der Filter ist schon ein Schritt"
 
@@ -743,11 +746,12 @@ msgid "To show the site as you like on every device."
 msgstr "Um dir die Seite auf jedem Gerät so zu zeigen, wie du es magst."
 
 msgid ""
-"The projects you create, and the role of each collaborator with their GitHub "
-"handle."
+"The projects you create, the role of each collaborator with their GitHub "
+"handle, and who skipped a step for a pull request, when, and why."
 msgstr ""
-"Die Projekte, die du erstellst, und die Rolle jeder mitwirkenden Person mit "
-"ihrem GitHub-Handle."
+"Die Projekte, die du erstellst, die Rolle jedes Mitwirkenden mit seinem "
+"GitHub-Handle, und wer einen Schritt für einen Pull Request übersprungen "
+"hat, wann und warum."
 
 msgid "Collaborators of projects"
 msgstr "Mitwirkende von Projekten"
@@ -755,10 +759,13 @@ msgstr "Mitwirkende von Projekten"
 msgid ""
 "Everybody sees public projects; only the collaborators see the private "
 "projects, and only those who may change a project see who its collaborators "
-"are."
+"are. Everybody who sees a pull request sees who skipped a step for it; only "
+"those who may change the project see why."
 msgstr ""
 "Alle sehen öffentliche Projekte; nur die Mitwirkenden sehen die privaten "
-"Projekte, und nur wer ein Projekt ändern darf, sieht, wer daran mitwirkt."
+"Projekte, und nur wer ein Projekt ändern darf, sieht, wer daran mitwirkt. "
+"Alle, die einen Pull Request sehen, sehen, wer einen Schritt dafür "
+"übersprungen hat; nur wer das Projekt ändern darf, sieht warum."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Um die Projekte zu zeigen und zu entscheiden, wer sie ändern darf."
@@ -2597,6 +2604,29 @@ msgstr "%(done)s von %(total)s Aufgaben erledigt"
 msgid "The pull request is here"
 msgstr "Der Pull Request ist hier"
 
+msgid "Skipped"
+msgstr "Übersprungen"
+
+msgid "Remove the skip"
+msgstr "Nicht mehr überspringen"
+
+msgid "Skip"
+msgstr "Überspringen"
+
+msgid "Why it skips the step"
+msgstr "Warum er den Schritt überspringt"
+
+msgid ""
+"The writers and owners of the project see why; everybody sees that you "
+"skipped it."
+msgstr ""
+"Die Schreibenden und Eigentümer des Projekts sehen warum; alle sehen, dass "
+"du ihn übersprungen hast."
+
+#, python-format
+msgid "Skip %(name)s"
+msgstr "%(name)s überspringen"
+
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "
 "any step applies to it."
@@ -2904,6 +2934,21 @@ msgid ""
 msgstr ""
 "Der Filter hat keine wirksamen Bedingungen: dieser Schritt hat keine "
 "Aufgaben, und kein Pull Request ist in ihm."
+
+msgid "Skipped for these authors"
+msgstr "Übersprungen für diese Autorinnen und Autoren"
+
+msgid "GitHub handles of authors"
+msgstr "GitHub-Handles der Autorinnen und Autoren"
+
+msgid ""
+"The pull requests of these authors skip the step: they are in the next one. "
+"The page of such a pull request says that the step is skipped. Separated by "
+"commas."
+msgstr ""
+"Die Pull Requests dieser Autorinnen und Autoren überspringen den Schritt: "
+"Sie sind im nächsten. Die Seite eines solchen Pull Requests sagt, dass der "
+"Schritt übersprungen ist. Durch Kommas getrennt."
 
 msgid "Labels"
 msgstr "Labels"
@@ -3365,6 +3410,14 @@ msgstr ""
 
 msgid "The backup is restored."
 msgstr "Die Sicherung ist wiederhergestellt."
+
+#, python-format
+msgid "The step %(name)s is not skipped any more."
+msgstr "Der Schritt %(name)s wird nicht mehr übersprungen."
+
+#, python-format
+msgid "The step %(name)s is skipped."
+msgstr "Der Schritt %(name)s wird übersprungen."
 
 msgid "With an example pull request:"
 msgstr "Mit einem Beispiel-Pull-Request:"

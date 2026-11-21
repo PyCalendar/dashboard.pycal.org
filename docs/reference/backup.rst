@@ -46,6 +46,7 @@ this page.
        complete:
          add: []
          remove: [needs review]
+     skip_authors: [niccokunzmann]
    message:
      template: '{pr_badge} **{step_name}** {tasks_all}'
      listed: ['2166']
@@ -83,7 +84,9 @@ The keys
    page of a pull request, its ``color`` (such as ``#bfdbfe``, or empty), the
    ``tasks`` (the ``summary`` and ``description`` of each condition of its
    filter, by the column) and its ``actions``: the labels to ``add`` and to
-   ``remove`` when a pull request will ``enter`` the step or ``complete`` it.
+   ``remove`` when a pull request will ``enter`` the step or ``complete`` it, and
+   ``skip_authors``, the GitHub handles of the authors whose pull requests skip
+   it. The skips of single pull requests are not in a backup.
 ``message``
    The message of the tab *PR Message*, see :ref:`pr-message`: its
    ``template``, the pull requests ``listed`` by their numbers, and the

@@ -83,7 +83,9 @@ def avatar_url(person: GitHubUser | str, size: int) -> str:
 
 
 @register.inclusion_tag("pycal_dashboard/_github_user.html")
-def github_user(person: GitHubUser | str | None, size: int = 20, name: str = "") -> dict:
+def github_user(
+    person: GitHubUser | str | None, size: int = 20, name: str = "", href: str = ""
+) -> dict:
     """A person of GitHub: their avatar from GitHub before their name, linked to GitHub.
 
     Parameters:
@@ -91,6 +93,8 @@ def github_user(person: GitHubUser | str | None, size: int = 20, name: str = "")
         size: The width of the avatar, in CSS pixels.
         name: A full name to show after the GitHub name; "" for none: the pages show the GitHub
             name alone.
+        href: Another address to link, such as the page of the person in a project; ""
+            for their profile on GitHub.
 
     Returns:
         The context of the partial.
@@ -98,6 +102,7 @@ def github_user(person: GitHubUser | str | None, size: int = 20, name: str = "")
     login = getattr(person, "login", None) or (str(person) if person else "")
     return {
         "login": login,
+        "href": href or f"https://github.com/{login}",
         "name": name,
         "avatar": avatar_url(person, size) if login else "",
         "size": size,

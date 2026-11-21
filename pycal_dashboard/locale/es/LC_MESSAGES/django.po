@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 17:40+0000\n"
+"POT-Creation-Date: 2026-11-21 17:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -534,6 +534,9 @@ msgstr "El proyecto tiene un filtro con este nombre"
 msgid "Step not found"
 msgstr "Paso no encontrado"
 
+msgid "The reason to skip the step is missing"
+msgstr "Falta el motivo para saltar el paso"
+
 msgid "The filter is a step already"
 msgstr "El filtro ya es un paso"
 
@@ -737,11 +740,11 @@ msgid "To show the site as you like on every device."
 msgstr "Para mostrarte el sitio como te gusta en cada dispositivo."
 
 msgid ""
-"The projects you create, and the role of each collaborator with their GitHub "
-"handle."
+"The projects you create, the role of each collaborator with their GitHub "
+"handle, and who skipped a step for a pull request, when, and why."
 msgstr ""
-"Los proyectos que creas y el rol de cada colaborador con su identificador de "
-"GitHub."
+"Los proyectos que creas, el rol de cada colaborador con su identificador de "
+"GitHub, y quién saltó un paso de un pull request, cuándo y por qué."
 
 msgid "Collaborators of projects"
 msgstr "Colaboradores de proyectos"
@@ -749,11 +752,13 @@ msgstr "Colaboradores de proyectos"
 msgid ""
 "Everybody sees public projects; only the collaborators see the private "
 "projects, and only those who may change a project see who its collaborators "
-"are."
+"are. Everybody who sees a pull request sees who skipped a step for it; only "
+"those who may change the project see why."
 msgstr ""
 "Todos ven los proyectos públicos; solo los colaboradores ven los proyectos "
 "privados, y solo quienes pueden cambiar un proyecto ven quiénes colaboran en "
-"él."
+"él. Todos los que ven un pull request ven quién saltó un paso; solo quienes "
+"pueden cambiar el proyecto ven por qué."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Para mostrar los proyectos y decidir quién puede cambiarlos."
@@ -2582,6 +2587,29 @@ msgstr "%(done)s de %(total)s tareas hechas"
 msgid "The pull request is here"
 msgstr "El pull request está aquí"
 
+msgid "Skipped"
+msgstr "Saltado"
+
+msgid "Remove the skip"
+msgstr "Quitar el salto"
+
+msgid "Skip"
+msgstr "Saltar"
+
+msgid "Why it skips the step"
+msgstr "Por qué salta el paso"
+
+msgid ""
+"The writers and owners of the project see why; everybody sees that you "
+"skipped it."
+msgstr ""
+"Los editores y propietarios del proyecto ven por qué; todos ven que lo "
+"saltaste."
+
+#, python-format
+msgid "Skip %(name)s"
+msgstr "Saltar %(name)s"
+
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "
 "any step applies to it."
@@ -2878,6 +2906,20 @@ msgid ""
 msgstr ""
 "El filtro no tiene condiciones en vigor: este paso no tiene tareas y ningún "
 "pull request está en él."
+
+msgid "Skipped for these authors"
+msgstr "Saltado para estos autores"
+
+msgid "GitHub handles of authors"
+msgstr "Identificadores de GitHub de los autores"
+
+msgid ""
+"The pull requests of these authors skip the step: they are in the next one. "
+"The page of such a pull request says that the step is skipped. Separated by "
+"commas."
+msgstr ""
+"Los pull requests de estos autores saltan el paso: están en el siguiente. La "
+"página de un pull request así dice que el paso se saltó. Separados por comas."
 
 msgid "Labels"
 msgstr "Etiquetas"
@@ -3335,6 +3377,14 @@ msgstr ""
 
 msgid "The backup is restored."
 msgstr "La copia de seguridad está restaurada."
+
+#, python-format
+msgid "The step %(name)s is not skipped any more."
+msgstr "El paso %(name)s ya no se salta."
+
+#, python-format
+msgid "The step %(name)s is skipped."
+msgstr "El paso %(name)s se salta."
 
 msgid "With an example pull request:"
 msgstr "Con un pull request de ejemplo:"

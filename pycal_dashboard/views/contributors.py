@@ -46,7 +46,7 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
 
     Raises:
         ContributorNotFound: Nobody of this handle opened an issue or a pull request, or
-            reviewed one, in the repositories of the project.
+            reviewed one, in the repositories of the project, or skipped one of its steps.
     """
     access, moved = opened(request, slug, f"contributors/{login}/")
     if moved:
@@ -58,7 +58,11 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
     )
     person = (
         GitHubUser.objects.filter(login__iexact=login)
-        .filter(Q(pk__in=issues.values("author")) | Q(pk__in=reviews.values("author")))
+        .filter(
+            Q(pk__in=issues.values("author"))
+            | Q(pk__in=reviews.values("author"))
+            | Q(user__step_skips__step__project=access.project)  # who skipped a step
+        )
         .order_by("pk")
         .first()
     )

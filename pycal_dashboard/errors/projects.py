@@ -239,6 +239,17 @@ class StepNotFound(ProjectError):
     status = 404
 
 
+class SkipReasonMissing(ProjectError):
+    """A step is skipped for a pull request only with a reason.
+
+    Write why the pull request skips the step, such as *The maintainers reviewed it at the
+    meeting*. Only the writers and owners of the project see the reason.
+    """
+
+    title = _("The reason to skip the step is missing")
+    status = 400
+
+
 class FilterIsAStep(ProjectError):
     """The filter is a step already.
 

@@ -83,6 +83,7 @@ class ProjectBackup:
                     "color": step.color,
                     "tasks": step.conditions or {},
                     "actions": normalized(step.actions),
+                    "skip_authors": list(step.skip_authors or []),
                 }
                 for step in project.steps.select_related("filter")
             ],
@@ -209,6 +210,7 @@ class ProjectBackup:
                     color=_color(step.get("color")),
                     conditions=step.get("tasks") or {},
                     actions=normalized(step.get("actions")),
+                    skip_authors=[str(name) for name in step.get("skip_authors") or []][:100],
                     position=position,
                 )
             self.restore_message(data.get("message"))
