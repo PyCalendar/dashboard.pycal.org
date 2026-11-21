@@ -22,6 +22,9 @@ The base classes
 .. automodule:: pycal_dashboard.conditions.spec.base
    :members:
 
+.. automodule:: pycal_dashboard.conditions.evidence
+   :members:
+
 Inputs
 ======
 

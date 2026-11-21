@@ -57,6 +57,7 @@ from .github import (
 from .projects import (
     BackupInvalid,
     BackupVersionUnknown,
+    ContributorNotFound,
     FilterIsAStep,
     FilterNameMissing,
     FilterNameTaken,
@@ -109,6 +110,7 @@ __all__ = [
     "BackupVersionUnknown",
     "FilterIsAStep",
     "StepNotFound",
+    "ContributorNotFound",
     "PullRequestNotFound",
     "GitHubSignInExpired",
     "PullRequestNumberAmbiguous",

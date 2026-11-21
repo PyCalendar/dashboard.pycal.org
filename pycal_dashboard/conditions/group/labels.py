@@ -16,8 +16,9 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 MODES = {"present": LabelExists, "absent": LabelAbsent}
 
@@ -79,6 +80,27 @@ class LabelsGroup(ConditionGroup):
             True or False; None while the labels are not read.
         """
         return MODES[choices[0]].check(issue, {"label": choices[1]})
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        choices: tuple[str, ...],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The labels of the pull request on GitHub.
+
+        Parameters:
+            issue: The pull request.
+            choices: The mode and the label.
+            scope: Not used.
+            project: Not used.
+
+        Returns:
+            The link.
+        """
+        return MODES[choices[0]].evidence(issue, {"label": choices[1]}, scope, project)
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:

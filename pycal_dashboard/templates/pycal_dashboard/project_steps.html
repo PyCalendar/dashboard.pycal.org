@@ -18,7 +18,7 @@
   <button class="button button-quiet button-small step-move" name="direction" value="right" title="{% translate "Move right: later" %}" aria-label="{% translate "Move right: later" %}"{% if forloop.last %} disabled{% endif %}>→</button></form>
   {% else %}<span class="step-box"{% if step.color %} style="--step-color: {{ step.color }}"{% endif %}><a href="?step={{ step.pk }}"{% if step == shown %} aria-current="step"{% endif %}><small class="muted step-number">{% blocktranslate with number=forloop.counter %}Step {{ number }}{% endblocktranslate %}</small> <span class="step-name">{{ step.name }}</span>{% if step.hidden %} <small class="muted step-hidden-mark" data-hidden-mark>{% translate "hidden" %}</small>{% endif %}</a></span>{% endif %}
 </li>{% endfor %}</ol>
-<p class="muted">{% translate "A pull request is in the left-most step that has a task for it: a condition of its filter that applies. The tasks are what keeps it from being merged." %}</p>
+<p class="muted">{% translate "Each step has tasks to complete. A pull request advances to the next step only if all tasks in a step are completed. Click on a step and find out what there is to do at each step." %}</p>
 {% else %}<p data-no-steps>{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}No steps yet. Make a saved filter a step on the tab <a href="{{ filters_url }}">Filters</a>, or add one with the button +.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">

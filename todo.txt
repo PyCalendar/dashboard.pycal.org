@@ -555,3 +555,11 @@ community: where to start, what waits for a review, who contributes.
       like a step (Save as a new filter leaves the saved one as it was)
 - [x] Filters: the link to the step for everyone who can read; Steps: Filter: for readers
 - [x] Steps: who only reads the project sees the visible steps only
+- [x] Conditions show the minimal evidence on the page of a pull request (the specs give it, so that it is reused):
+      auto-merge, branch outdated/up to date, conflict -> the merge box on GitHub; CI failing/passing -> /checks;
+      CI unknown -> the reason (closed/merged) and the pull request; open/closed/merged and labels -> the pull request
+- [x] The merge box has no stable id (React ids such as _r_3g_ change): link the id next to it
+- [x] Reviews: links to as many reviews as decide the condition (4 needed, 3 there: those 3; at most 2: 3 if more, else all)
+- [x] Review ratio: a link to /projects/<project>/contributors/<handle>/, a new page with the tabs Profile,
+      Reviews, Issues and Pull requests with their counts
+- [x] Steps: the explanation below the bar is now: Each step has tasks to complete. A pull request advances ... (as the person wrote it)

@@ -5,11 +5,13 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.state.base import State
 from pycal_dashboard.conditions.state.scope import Scope
 
 if TYPE_CHECKING:
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.conditions.spec.base import DataSpec
+    from pycal_dashboard.models import Issue, Project
 
 
 class Condition(State):
@@ -64,6 +66,9 @@ class Condition(State):
             return None
         return cls.assess(issue, values, scope)
 
+    # the data whose evidence shows the condition, see evidence(); None for all of data
+    shown: ClassVar[tuple[DataSpec, ...] | None] = None
+
     # whether it checks states of the author, counted in the repositories of the project: then
     # assess() takes the scope, and the data of all of them must be complete
     scoped: ClassVar[bool] = False
@@ -96,3 +101,29 @@ class Condition(State):
         Returns:
             True if it holds.
         """
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        values: dict,
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The least that shows why the condition holds for a pull request, or why not.
+
+        By default, the evidence of its data (:meth:`DataSpec.evidence
+        <pycal_dashboard.conditions.spec.base.DataSpec.evidence>`), or of the data in
+        ``shown``, each link once.
+
+        Parameters:
+            issue: The pull request.
+            values: The configuration.
+            scope: The repositories of the project, for the states of its author.
+            project: The project, for its pages, such as that of the author.
+
+        Returns:
+            The links.
+        """
+        specs = cls.data if cls.shown is None else cls.shown
+        return Evidence.unique([found for spec in specs for found in spec.evidence(issue)])

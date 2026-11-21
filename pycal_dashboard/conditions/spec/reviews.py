@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING
 from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.utils.translation import gettext, gettext_noop
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.github.queries import REVIEWS
@@ -22,6 +24,12 @@ PER_PAGE = 20
 LEAST_PER_PAGE = 5
 # the reviews that count: not those with only comments
 COUNTED = ("APPROVED", "CHANGES_REQUESTED", "DISMISSED")
+# the states of reviews that count, for people
+STATES = {
+    "APPROVED": gettext_noop("approved"),
+    "CHANGES_REQUESTED": gettext_noop("changes requested"),
+    "DISMISSED": gettext_noop("dismissed"),
+}
 
 
 class ReviewsData(DataSpec):
@@ -141,6 +149,48 @@ class ReviewsData(DataSpec):
             closer = closings[-1].get("actor") if closings and issue.state == Issue.CLOSED else None
             issue.closed_by = self.person(closer, people)
             issue.save(update_fields=["closed_by"])
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """The reviews of the pull request that count, each on GitHub, the oldest first.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            A link to each review.
+        """
+        return [self.review_evidence(issue, review) for review in self.counted(issue)]
+
+    @staticmethod
+    def counted(issue: Issue) -> list[Review]:
+        """The reviews of a pull request that count, the oldest first.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            Those that approved, requested changes or were dismissed (``COUNTED``).
+        """
+        found = [review for review in issue.reviews.all() if review.state in COUNTED]
+        return sorted(found, key=lambda review: (review.submitted is None, review.submitted))
+
+    @staticmethod
+    def review_evidence(issue: Issue, review: Review) -> Evidence:
+        """A review on GitHub, by its author.
+
+        Parameters:
+            issue: The pull request.
+            review: One of its reviews.
+
+        Returns:
+            The link to it, such as ``Review by stevepiercy: approved``.
+        """
+        state = STATES.get(review.state, review.state.lower())
+        text = gettext("Review by %(handle)s: %(state)s") % {
+            "handle": review.author.login if review.author else gettext("a deleted account"),
+            "state": gettext(state),
+        }
+        return Evidence(text, f"{issue.url}#pullrequestreview-{review.github_id}")
 
     def complete(self, issue: Issue) -> bool:
         """The reviews of the repository of the pull request were read.

@@ -5,13 +5,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from django.utils import timezone
+from django.utils.translation import gettext
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.models import PullRequestState
 
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue
 
+# the box to merge a pull request on GitHub has ids that change with each load, such as
+# _r_3g_; the box of comments right below it keeps its id
+MERGE_BOX = "#issue-comment-box"
 # mergeable of GraphQL as the site keeps it: None while GitHub computes it
 MERGEABLE = {"MERGEABLE": True, "CONFLICTING": False, "UNKNOWN": None}
 
@@ -52,6 +57,20 @@ class PullRequestData(DataSpec):
                 "updated": timezone.now(),
             },
         )
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """The box at the bottom of the pull request on GitHub, where it is merged.
+
+        It shows conflicts, an outdated branch and auto-merge. GitHub gives the box no id that
+        stays the same (``MERGE_BOX``), so the link goes to the box of comments below it.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            The link to it.
+        """
+        return [Evidence(gettext("Where it is merged, on GitHub"), issue.url + MERGE_BOX)]
 
     def complete(self, issue: Issue) -> bool:
         """Read since the last change of the pull request, and GitHub knows if it merges.

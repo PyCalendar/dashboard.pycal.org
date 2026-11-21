@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.utils.translation import gettext
+
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
 from pycal_dashboard.import_guard import IMPORT_GUARD
@@ -105,6 +108,17 @@ class LabelsData(DataSpec):
             if isinstance(label, dict) and label.get("name")
         ]
         issue.labels.set(labels)
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """The labels of the pull request, at the right of its page on GitHub.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            The link to it.
+        """
+        return [Evidence(gettext("Its labels on GitHub"), issue.url)]
 
     def complete(self, issue: Issue) -> bool:
         """The labels are kept with the issues since data version 2.

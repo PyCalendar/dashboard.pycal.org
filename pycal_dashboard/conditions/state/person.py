@@ -4,13 +4,17 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from typing import TYPE_CHECKING, ClassVar
+from urllib.parse import quote
 
+from django.utils.translation import gettext
+
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.input.comparison import compare
 from pycal_dashboard.conditions.state.base import State
 from pycal_dashboard.conditions.state.scope import Scope
 
 if TYPE_CHECKING:
-    from pycal_dashboard.models import GitHubUser, Issue
+    from pycal_dashboard.models import GitHubUser, Issue, Project
 
 
 class PersonState(State):
@@ -51,6 +55,23 @@ class PersonState(State):
         if person is None or not all(spec.complete_in(scope.repositories) for spec in cls.data):
             return None
         return cls.measure(person, scope, values or {})
+
+    @classmethod
+    def evidence(cls, issue: Issue, project: Project | None) -> list[Evidence]:
+        """The page of the author of a pull request in the project, where they are counted.
+
+        Parameters:
+            issue: The pull request.
+            project: The project; None for no page.
+
+        Returns:
+            The link to the page of the author; none without an author or a project.
+        """
+        person = Scope.person(issue)
+        if person is None or project is None:
+            return []
+        text = gettext("%(handle)s in the project") % {"handle": person.login}
+        return [Evidence(text, project.path(f"contributors/{quote(person.login)}/"))]
 
     @classmethod
     def compare(

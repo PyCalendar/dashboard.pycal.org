@@ -31,7 +31,8 @@
     <summary>{% if task.state == "todo" %}<span class="task-mark task-mark-todo">{% translate "TODO" %}</span>{% elif task.state == "done" %}<span class="task-mark task-mark-done" role="img" aria-label="{% translate "done" %}" title="{% translate "done" %}">✓</span>{% else %}<span class="task-mark task-mark-unknown" role="img" aria-label="{% translate "not known yet" %}" title="{% translate "not known yet" %}">?</span>{% endif %}
       <span class="task-summary">{% if task.summary %}{{ task.summary|markdown }}{% else %}{{ task.column.sentence|capfirst }}{% endif %}</span></summary>
     <div class="task-body">{% if task.description %}<div class="markdown">{{ task.description|markdown }}</div>{% endif %}
-      <p class="muted condition-name">{% translate "Condition:" %} {{ task.column.sentence|capfirst }}</p></div>
+      <p class="muted condition-name">{% translate "Condition:" %} {{ task.column.sentence|capfirst }}</p>
+      {% if task.evidence %}<ul class="evidence" data-evidence>{% for found in task.evidence %}<li><a href="{{ found.url }}">{{ found.text }}</a></li>{% endfor %}</ul>{% endif %}</div>
   </details></li>{% endfor %}</ul>
 {% else %}<p class="muted">{% translate "This step has no tasks." %}</p>{% endif %}
 </section>{% endif %}{% endif %}

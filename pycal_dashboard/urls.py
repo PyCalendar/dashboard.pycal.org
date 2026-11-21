@@ -7,6 +7,7 @@ from django.urls import include, path, register_converter
 from .project_slug_converter import ProjectSlugConverter
 from .views import (
     account,
+    contributors,
     filters,
     message,
     oauth_app,
@@ -43,6 +44,11 @@ urlpatterns = [
         "projects/<project_slug:slug>/pull-requests/",
         projects.project_pull_requests,
         name="project_pull_requests",
+    ),
+    path(
+        "projects/<project_slug:slug>/contributors/<str:login>/",
+        contributors.project_contributor,
+        name="project_contributor",
     ),
     path(
         "projects/<project_slug:slug>/pull/<int:number>/",

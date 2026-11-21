@@ -713,3 +713,30 @@ def test_readers_go_from_the_filters_to_the_steps_and_back(page, site, github, b
     page.get_by_role("link", name="Step: Peer review").click()
     page.get_by_role("link", name="Filter: Review").click()
     expect(page.get_by_role("heading", name=re.compile("^Review"))).to_be_visible()
+
+
+def test_the_evidence_of_a_task_and_the_page_of_its_author(page, site, github, bob):
+    """A task links to the merge box on GitHub and to the page of the author with its tabs."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project,
+        name="Ready",
+        columns=["branch~applies~conflict", "author~applies~review_ratio~below~1"],
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Ready")
+    page.goto(f"{site}/projects/icalendar/pull/2/")
+    tasks = page.locator("[data-tasks]")
+    expect(tasks.get_by_role("link", name="Where it is merged, on GitHub")).to_have_attribute(
+        "href", "https://github.com/collective/icalendar/pull/2#issue-comment-box"
+    )
+    tasks.get_by_role("link", name="octocat in the project").click()
+    states = page.locator("[data-contributor-states]")
+    expect(states).to_contain_text("Review to pull request ratio")
+    expect(states).to_contain_text("Pull requests opened")
+    page.get_by_role("link", name="Pull requests 3").click()
+    items = page.locator("[data-contributor-list='pull-requests'] li")
+    expect(items).to_have_count(3)
+    page.get_by_role("link", name="#2 Conflict").click()
+    expect(page.locator("[data-tasks]")).to_be_visible()

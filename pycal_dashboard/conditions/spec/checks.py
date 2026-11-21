@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from django.utils import timezone
+from django.utils.translation import gettext
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.models import PullRequestState
 
@@ -68,6 +70,17 @@ class ChecksData(DataSpec):
         if summary != PullRequestState.PENDING:  # complete: the result while new checks run
             defaults["checks_complete"] = summary
         PullRequestState.objects.update_or_create(issue=issue, defaults=defaults)
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """The checks of the pull request on GitHub.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            The link to them.
+        """
+        return [Evidence(gettext("Its checks on GitHub"), issue.url + "/checks")]
 
     def complete(self, issue: Issue) -> bool:
         """Read after the last reading of the pull request, for its last commit.

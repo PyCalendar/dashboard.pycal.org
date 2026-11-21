@@ -17,9 +17,10 @@ from pycal_dashboard.errors import ConditionInputUnknown, UnknownCondition
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.group.base import ConditionGroup
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 # the groups in the order of the menu
 GROUPS: dict[str, type[ConditionGroup]] = {
@@ -116,6 +117,21 @@ class Column:
             True or False; None while its data is not complete.
         """
         return self.group.applies(issue, self.choices, scope)
+
+    def evidence(
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
+    ) -> list[Evidence]:
+        """The least that shows why the condition of the column holds for a pull request, or not.
+
+        Parameters:
+            issue: The pull request.
+            scope: The repositories of the project, for the states of its author.
+            project: The project, for its pages.
+
+        Returns:
+            The links, such as to the checks on GitHub.
+        """
+        return self.group.evidence(issue, self.choices, scope, project)
 
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.

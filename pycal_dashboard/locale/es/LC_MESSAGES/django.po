@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 11:26+0000\n"
+"POT-Creation-Date: 2026-11-21 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Merged: the checks are read for open pull requests only"
+msgstr "Fusionado: los checks se leen solo para pull requests abiertos"
+
+msgid "Closed: the checks are read for open pull requests only"
+msgstr "Cerrado: los checks se leen solo para pull requests abiertos"
+
+msgid "Its reviews on GitHub"
+msgstr "Sus revisiones en GitHub"
 
 msgid "Author"
 msgstr "Autor"
@@ -203,6 +212,34 @@ msgstr "exactamente"
 msgid "not exactly"
 msgstr "no exactamente"
 
+msgid "Its checks on GitHub"
+msgstr "Sus checks en GitHub"
+
+msgid "The pull request on GitHub"
+msgstr "El pull request en GitHub"
+
+msgid "Its labels on GitHub"
+msgstr "Sus etiquetas en GitHub"
+
+msgid "Where it is merged, on GitHub"
+msgstr "Donde se fusiona, en GitHub"
+
+msgid "approved"
+msgstr "aprobada"
+
+msgid "changes requested"
+msgstr "cambios solicitados"
+
+msgid "dismissed"
+msgstr "descartada"
+
+#, python-format
+msgid "Review by %(handle)s: %(state)s"
+msgstr "Revisión de %(handle)s: %(state)s"
+
+msgid "a deleted account"
+msgstr "una cuenta eliminada"
+
 msgid "Own pull requests closed"
 msgstr "Pull requests propios cerrados"
 
@@ -214,6 +251,10 @@ msgstr ""
 #, python-format
 msgid "its author closed %(comparison)s %(number)s of their own pull requests"
 msgstr "su autor cerró %(comparison)s %(number)s de sus propios pull requests"
+
+#, python-format
+msgid "%(handle)s in the project"
+msgstr "%(handle)s en el proyecto"
 
 msgid "Pull requests opened"
 msgstr "Pull requests abiertos"
@@ -477,6 +518,9 @@ msgstr "Paso no encontrado"
 msgid "The filter is a step already"
 msgstr "El filtro ya es un paso"
 
+msgid "Person not found in the project"
+msgstr "Persona no encontrada en el proyecto"
+
 msgid "Pull request not found"
 msgstr "Pull request no encontrado"
 
@@ -699,14 +743,16 @@ msgid ""
 "reviews of the pull requests: who gave them, when, and whether they "
 "approved; of these people their GitHub handle, id, GitHub name and the "
 "address of their avatar. The site counts with them how many pull requests a "
-"person opened and reviewed in a project."
+"person opened and reviewed in a project, and shows them on the page of the "
+"person in the project."
 msgstr ""
 "Los issues y pull requests de los repositorios de los proyectos: su título, "
 "descripción y fechas, quién los creó y quién los cerró, y las revisiones de "
 "los pull requests: quién las dio, cuándo y si aprobaron; de estas personas, "
 "su identificador de GitHub, su id, su nombre de GitHub y la dirección de su "
 "avatar. Con ellos, el sitio cuenta cuántos pull requests abrió y revisó una "
-"persona en un proyecto."
+"persona en un proyecto, y los muestra en la página de la persona en el "
+"proyecto."
 
 msgid "People on GitHub, also those who never use this site"
 msgstr "Personas en GitHub, también las que nunca usan este sitio"
@@ -2233,6 +2279,36 @@ msgstr ""
 msgid "The owners of the project share it."
 msgstr "Los propietarios del proyecto lo comparten."
 
+msgid "Of the person"
+msgstr "De la persona"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Issues"
+msgstr "Issues"
+
+msgid ""
+"What the conditions of the author count, in the repositories of the project. "
+"A review counts when it approved, requested changes, or was dismissed; "
+"comments do not."
+msgstr ""
+"Lo que cuentan las condiciones del autor, en los repositorios del proyecto. "
+"Una revisión cuenta cuando aprobó, solicitó cambios o fue descartada; los "
+"comentarios no."
+
+msgid "The profile on GitHub"
+msgstr "El perfil en GitHub"
+
+msgid "← Earlier"
+msgstr "← Antes"
+
+msgid "Later →"
+msgstr "Después →"
+
+msgid "None in the repositories of the project."
+msgstr "Ninguno en los repositorios del proyecto."
+
 msgid "Back to the filters"
 msgstr "Volver a los filtros"
 
@@ -2712,12 +2788,13 @@ msgid "Move right: later"
 msgstr "Mover a la derecha: después"
 
 msgid ""
-"A pull request is in the left-most step that has a task for it: a condition "
-"of its filter that applies. The tasks are what keeps it from being merged."
+"Each step has tasks to complete. A pull request advances to the next step "
+"only if all tasks in a step are completed. Click on a step and find out what "
+"there is to do at each step."
 msgstr ""
-"Un pull request está en el paso más a la izquierda que tiene una tarea para "
-"él: una condición de su filtro que se aplica. Las tareas son lo que impide "
-"fusionarlo."
+"Cada paso tiene tareas que completar. Un pull request avanza al siguiente "
+"paso solo si todas las tareas de un paso están completadas. Haz clic en un "
+"paso y descubre qué hay que hacer en cada uno."
 
 #, python-format
 msgid ""
@@ -2849,12 +2926,6 @@ msgstr "Autoría"
 
 msgid "Created"
 msgstr "Creado"
-
-msgid "← Earlier"
-msgstr "← Antes"
-
-msgid "Later →"
-msgstr "Después →"
 
 msgid "Every pull request is in a step."
 msgstr "Cada pull request está en un paso."

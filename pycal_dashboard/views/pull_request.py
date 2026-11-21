@@ -20,7 +20,7 @@ from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
 from pycal_dashboard.step_template import expand, values_of
 
-from .json_page import page
+from .json_page import page, wants_json
 from .projects import issue_data, opened, pull_requests_of, shown_repositories
 
 if TYPE_CHECKING:
@@ -89,6 +89,8 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
     results = ColumnResults(repositories)
     progress = PullRequestProgress(issue, access.project, results.scope, results)
     shown = progress.chosen(request.GET.get("step"))
+    if shown and not wants_json(request):  # the JSON has that of every step
+        progress.find_evidence([shown])
     keep = {"repository": name} if name else {}
     return page(
         request,
@@ -103,7 +105,7 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             if shown
             else "",
         },
-        lambda: {**issue_data(issue), **progress.data()},
+        lambda: {**issue_data(issue), **evidence_data(progress)},
     )
 
 
@@ -146,3 +148,17 @@ def project_pull_request_badge(request: HttpRequest, slug: str, number: int, kin
     answer["ETag"] = etag
     answer["Cache-Control"] = f"{'private' if private else 'public'}, max-age={BADGE_SECONDS}"
     return answer
+
+
+def evidence_data(progress: PullRequestProgress) -> dict:
+    """The progress of a pull request for its JSON, with the evidence of every task.
+
+    Parameters:
+        progress: The progress.
+
+    Returns:
+        The data, see :meth:`PullRequestProgress.data
+        <pycal_dashboard.services.progress.pull_request_progress.PullRequestProgress.data>`.
+    """
+    progress.find_evidence(progress.steps)
+    return progress.data()

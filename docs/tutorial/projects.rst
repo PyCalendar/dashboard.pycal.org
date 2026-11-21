@@ -347,6 +347,30 @@ come first, marked *TODO* and open, with their description; the tasks done have
 a green check mark and are closed. The summaries and descriptions show the
 values of the pull request in place of the variables.
 
+Each task shows the evidence of its condition: the least that shows why it holds
+or not, as links. The checks of a passing or failing CI open on GitHub
+(``/checks``); for an unknown CI, the reason, such as that the pull request is
+closed or merged, and the pull request. A conflict, an outdated or up-to-date
+branch and auto-merge open the box at the bottom of the pull request where it is
+merged; GitHub gives that box no id that stays the same, so the link goes to the
+box of comments right below it. Open, closed, merged and labels open the pull
+request. Reviews show as many reviews as decide the condition: when 4 are
+needed and 3 are there, those 3; for at most 2, three when there are more, else
+all of them. The review to pull request ratio and the other states of the
+author open the page of the author in the project.
+
+.. _contributor-page:
+
+The page of a person in a project
+---------------------------------
+
+``/projects/<slug>/contributors/<handle>/``, public like the project, shows a
+person of GitHub in the repositories of the project that you see, with tabs:
+*Profile* has what the conditions of the author count (reviews given, pull
+requests opened, own pull requests closed and the review to pull request
+ratio), and *Reviews*, *Issues* and *Pull requests* list them with their
+counts, the newest first. The handle is that of GitHub, in any case.
+
 .. _pull-request-badge:
 
 The badge of a pull request

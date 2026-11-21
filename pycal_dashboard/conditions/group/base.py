@@ -10,8 +10,9 @@ from django.utils.translation import gettext
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 
 class ConditionGroup(ABC):
@@ -103,6 +104,28 @@ class ConditionGroup(ABC):
         Returns:
             Such as ``it has the label bug`` or ``its branch is not outdated or in conflict``.
         """
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        choices: tuple[str, ...],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The least that shows why the condition holds for a pull request, or why not.
+
+        Parameters:
+            issue: The pull request.
+            choices: The choices.
+            scope: The repositories of the project, for the states of its author.
+            project: The project, for its pages.
+
+        Returns:
+            The links, see :meth:`Condition.evidence
+            <pycal_dashboard.conditions.condition.base.Condition.evidence>`; none by default.
+        """
+        return []
 
     @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:

@@ -10,6 +10,7 @@ from pycal_dashboard.services.progress import PullRequestProgress
 from .test_steps import filters, project  # noqa: F401 (fixtures)
 
 pytestmark = pytest.mark.django_db
+URL = "https://github.com/collective/icalendar/pull"
 
 
 @pytest.fixture
@@ -131,6 +132,7 @@ def test_the_json(client, project, steps):  # noqa: F811
         "sentence": "It has the label needs review",
         "state": "todo",
         "summary": "Review Ready",
+        "evidence": [{"text": "Its labels on GitHub", "url": f"{URL}/1"}],
     }
 
 

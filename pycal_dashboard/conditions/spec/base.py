@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from pycal_dashboard.github.permissions import EVENTS, LEVELS, REQUIRED
 
 if TYPE_CHECKING:
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.github.client import GitHubClient
     from pycal_dashboard.models import Issue, Repository
 
@@ -76,6 +77,17 @@ class DataSpec(ABC):
             issue: The pull request.
             node: The pull request of GraphQL, with the fields of ``graphql``.
         """
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """Where people see the data of a pull request, for the evidence of its conditions.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            The links, such as to the checks on GitHub; none by default.
+        """
+        return []
 
     @abstractmethod
     def complete(self, issue: Issue) -> bool:

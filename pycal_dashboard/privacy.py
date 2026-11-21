@@ -55,7 +55,8 @@ DATA = {
             "description and times, who created and who closed them, and the reviews of the pull "
             "requests: who gave them, when, and whether they approved; of these people their "
             "GitHub handle, id, GitHub name and the address of their avatar. The site counts "
-            "with them how many pull requests a person opened and reviewed in a project."
+            "with them how many pull requests a person opened and reviewed in a project, and "
+            "shows them on the page of the person in the project."
         ),
         "whose": _("People on GitHub, also those who never use this site"),
         "seen_by": _(

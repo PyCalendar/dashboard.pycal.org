@@ -24,6 +24,7 @@ class CiPasses(Condition):
     title = "CI passes"
     description = "The checks of the last commit of a pull request passed."
     data = (PullRequestData(), ChecksData())
+    shown = (ChecksData(),)
 
     @classmethod
     def assess(cls, issue: Issue, values: dict) -> bool:

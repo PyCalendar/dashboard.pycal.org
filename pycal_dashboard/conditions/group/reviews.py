@@ -16,8 +16,9 @@ from pycal_dashboard.errors import ConditionInputMissing
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 DEFAULT = "at_least"
 
@@ -83,6 +84,28 @@ class ReviewsGroup(ConditionGroup):
             True or False; None while the reviews are not read.
         """
         return Reviews.check(issue, {"comparison": choices[0], "reviews": int(choices[1])})
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        choices: tuple[str, ...],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """As many reviews as decide the condition, see ``Reviews.evidence``.
+
+        Parameters:
+            issue: The pull request.
+            choices: The comparison and the number.
+            scope: Not used.
+            project: Not used.
+
+        Returns:
+            The links.
+        """
+        values = {"comparison": choices[0], "reviews": int(choices[1])}
+        return Reviews.evidence(issue, values, scope, project)
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:

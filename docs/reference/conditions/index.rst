@@ -8,6 +8,14 @@ repository reads for it in the background. A condition is a state of a pull
 request that is true or false; the :doc:`states of people </reference/states/index>`
 are numbers, and conditions such as ``review_ratio`` compare them with a number.
 
+Each condition shows its evidence on the page of a pull request: the least that
+shows why it holds or not, such as the checks on GitHub, or as many reviews as
+decide it (:class:`~pycal_dashboard.conditions.evidence.Evidence`). The data
+specs give the links of their data, which the conditions reuse
+(:meth:`~pycal_dashboard.conditions.spec.base.DataSpec.evidence`), and a
+condition chooses the least of them
+(:meth:`~pycal_dashboard.conditions.condition.base.Condition.evidence`).
+
 .. list-table::
    :header-rows: 1
 

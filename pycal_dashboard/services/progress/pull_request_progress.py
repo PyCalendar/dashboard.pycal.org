@@ -46,6 +46,8 @@ class PullRequestProgress:
         """
         scope = scope or Scope.of(project)
         self.issue = issue
+        self.project = project
+        self.scope = scope
         self.steps: list[StepProgress] = []
         base = values_of(issue, project)  # the same for every step, with its own after it
         for number, step in enumerate(project.steps.select_related("filter"), 1):
@@ -117,6 +119,16 @@ class PullRequestProgress:
         visible = self.visible
         return self.current or (visible[-1] if visible else None)
 
+    def find_evidence(self, steps: list[StepProgress]) -> None:
+        """Find the evidence of the tasks of steps, which only the page of the pull request shows.
+
+        Parameters:
+            steps: The steps, such as the one shown below the bar.
+        """
+        for step in steps:
+            for task in step.tasks:
+                task.evidence = task.column.evidence(self.issue, self.scope, self.project)
+
     def data(self) -> dict:
         """The progress for the JSON of the page.
 
@@ -124,7 +136,8 @@ class PullRequestProgress:
             ``step``, the id of the step the pull request is in (None when it is in none),
             ``outside``, whether it is outside of the usual steps, and ``steps``, each with its
             ``id``, ``name``, ``number``, ``hidden``, ``complete``, ``done``, ``total`` and
-            ``tasks``: their ``condition``, ``sentence``, ``state`` and ``summary``.
+            ``tasks``: their ``condition``, ``sentence``, ``state``, ``summary`` and
+            ``evidence`` (each with ``text`` and ``url``; empty until it is found).
         """
         return {
             "step": self.current.step.pk if self.current else None,
@@ -144,6 +157,7 @@ class PullRequestProgress:
                             "sentence": capfirst(str(task.column.sentence)),
                             "state": task.state,
                             "summary": task.summary,
+                            "evidence": [found.data() for found in task.evidence],
                         }
                         for task in step.tasks
                     ],

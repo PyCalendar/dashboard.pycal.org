@@ -25,9 +25,10 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 if TYPE_CHECKING:
     from django.http import QueryDict
 
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.person import PersonState
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 # the states of the author that a column compares, in the order of the menu
 STATES: dict[str, type[PersonState]] = {
@@ -144,6 +145,27 @@ class AuthorGroup(ConditionGroup):
         """
         value = STATES[choices[0]].observe(issue, scope)
         return [] if value is None else [{"text": number_text(value), "kind": "number"}]
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        choices: tuple[str, ...],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The page of the author in the project, where the states are counted.
+
+        Parameters:
+            issue: The pull request.
+            choices: The state, the comparison and the number.
+            scope: Not used.
+            project: The project.
+
+        Returns:
+            The link; none without an author or a project.
+        """
+        return STATES[choices[0]].evidence(issue, project)
 
     @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:

@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.utils.translation import gettext
+
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.spec.base import DataSpec
 
 if TYPE_CHECKING:
@@ -34,6 +37,17 @@ class IssueData(DataSpec):
             0.
         """
         return 0
+
+    def evidence(self, issue: Issue) -> list[Evidence]:
+        """The pull request on GitHub: whether it is open, closed or merged.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            The link to it.
+        """
+        return [Evidence(gettext("The pull request on GitHub"), issue.url)]
 
     def complete(self, issue: Issue) -> bool:
         """The pull request is known.

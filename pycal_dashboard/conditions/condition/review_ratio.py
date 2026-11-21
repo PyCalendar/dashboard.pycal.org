@@ -10,8 +10,9 @@ from pycal_dashboard.conditions.input.number import NumberInput
 from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
 
 if TYPE_CHECKING:
+    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 
 class ReviewRatioCompared(Condition):
@@ -58,3 +59,24 @@ class ReviewRatioCompared(Condition):
         """
         comparison = values.get("comparison", "above")
         return bool(ReviewRatio.compare(issue, comparison, values["ratio"], scope))
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        values: dict,
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The page of the author in the project, with the reviews and pull requests counted.
+
+        Parameters:
+            issue: The pull request.
+            values: Not used.
+            scope: Not used.
+            project: The project.
+
+        Returns:
+            The link to the page of the author; none without an author or a project.
+        """
+        return ReviewRatio.evidence(issue, project)

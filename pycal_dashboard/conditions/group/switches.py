@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.utils.translation import gettext
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 
     from pycal_dashboard.conditions.condition.base import Condition
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.models import Issue, Project
 
 
 class SwitchesGroup(ConditionGroup):
@@ -103,6 +104,36 @@ class SwitchesGroup(ConditionGroup):
         if any(chosen):
             return True
         return None if None in chosen else False
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        choices: tuple[str, ...],
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """The evidence of the switches that hold, or of all that are on when none holds.
+
+        Parameters:
+            issue: The pull request.
+            choices: The switches that are on.
+            scope: Not used: the condition is of the pull request itself.
+            project: Not used.
+
+        Returns:
+            The links of their conditions, each once.
+        """
+        results = cls.results(issue)
+        holding = [name for name in choices if results[name]]
+        conditions = {name: condition for name, condition, _text in cls.switches}
+        return Evidence.unique(
+            [
+                found
+                for name in holding or choices
+                for found in conditions[name].evidence(issue, {}, scope, project)
+            ]
+        )
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:

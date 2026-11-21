@@ -30,6 +30,7 @@ class BranchUpToDate(Condition):
     title = "Branch up to date"
     description = "The branch of a pull request is up to date with its base branch."
     data = (IssueData(), PullRequestData())
+    shown = (PullRequestData(),)
 
     @classmethod
     def complete(cls, issue: Issue) -> bool:

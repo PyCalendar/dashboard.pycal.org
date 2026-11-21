@@ -250,6 +250,19 @@ class FilterIsAStep(ProjectError):
     status = 409
 
 
+class ContributorNotFound(ProjectError):
+    """Nobody of this GitHub handle took part in the repositories of the project that you see.
+
+    The page of a person in a project lists the issues and pull requests they opened and the
+    reviews they gave in its repositories. Check the handle in the address; the person may
+    only have commented, which the page does not count, or worked in a private repository of
+    the project that you may not see.
+    """
+
+    title = _("Person not found in the project")
+    status = 404
+
+
 class PullRequestNotFound(ProjectError):
     """The project has no pull request of this number that you may see.
 

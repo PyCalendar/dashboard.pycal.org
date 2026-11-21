@@ -74,6 +74,7 @@ REPEATED = [
     "/*?example=",
     "/*?pull=",
     "/*?view=",
+    "/*?tab=",
     "/*/badge.svg",
     "/*/badge.png",
     "/projects/*/message/review/",

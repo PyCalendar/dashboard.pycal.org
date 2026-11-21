@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.utils.translation import gettext
+
 from pycal_dashboard.conditions.condition.base import Condition
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
+from pycal_dashboard.conditions.evidence import Evidence
+from pycal_dashboard.conditions.spec.checks import ChecksData
 from pycal_dashboard.conditions.spec.issue import IssueData
 
 if TYPE_CHECKING:
-    from pycal_dashboard.models import Issue
+    from pycal_dashboard.conditions.state.scope import Scope
+    from pycal_dashboard.models import Issue, Project
 
 
 class CiUnknown(Condition):
@@ -38,3 +43,30 @@ class CiUnknown(Condition):
             True if ``ci_passes`` cannot be assessed.
         """
         return CiPasses.check(issue, {}) is None
+
+    @classmethod
+    def evidence(
+        cls,
+        issue: Issue,
+        values: dict,
+        scope: Scope | None = None,
+        project: Project | None = None,
+    ) -> list[Evidence]:
+        """Why the result is not known: the pull request is closed or merged; else its checks.
+
+        Parameters:
+            issue: The pull request.
+            values: Nothing: the condition has no inputs.
+            scope: Not used.
+            project: Not used.
+
+        Returns:
+            The reason with the link to the pull request, or the link to its checks.
+        """
+        if issue.merged is not None:
+            reason = gettext("Merged: the checks are read for open pull requests only")
+            return [Evidence(reason, issue.url)]
+        if issue.state != issue.OPEN:
+            reason = gettext("Closed: the checks are read for open pull requests only")
+            return [Evidence(reason, issue.url)]
+        return ChecksData().evidence(issue)

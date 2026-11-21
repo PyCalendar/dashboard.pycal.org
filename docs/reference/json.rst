@@ -46,8 +46,9 @@ Every public page has its information as JSON at the address of the page with
        :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
        whether it is ``complete``, how many tasks are ``done`` of the
        ``total``, and its ``tasks``, each with its ``condition``,
-       ``sentence``, ``state`` (``todo``, ``done`` or ``unknown``) and
-       ``summary``. When several repositories have a pull request of the
+       ``sentence``, ``state`` (``todo``, ``done`` or ``unknown``),
+       ``summary`` and ``evidence``, the links that show why its condition
+       holds or not, each with ``text`` and ``url``. When several repositories have a pull request of the
        number, it lists them as ``pull_requests``: ``?repository=owner/name``
        chooses one
    * - ``/projects/<slug>/``
