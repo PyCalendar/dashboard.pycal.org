@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.7.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- About: the tab About is Contact, with tiles to the documentation, to report a problem or leave feedback, and to the changelog; Version and GitHub App are tabs of their own.
+- The actions of a step: When a pull request leaves the step, instead of completes; they also follow when the step is skipped while the pull request is in it.
+
+
 0.6.0 (2026-11-21)
 ------------------
 
