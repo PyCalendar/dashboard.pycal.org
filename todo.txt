@@ -625,6 +625,6 @@ community: where to start, what waits for a review, who contributes.
       Documentation."; instead the tiles Documentation, Report a problem or leave feedback, and Changelog; Version
       and GitHub App become tabs like Privacy and Licenses; Licenses without "AGPL-3.0-or-later · All licenses"
 - [x] The Markdown fields are always as wide as possible
-- [ ] Step labels: Save -> Apply; without the column What saving it does; choosing another option shows above Apply
+- [x] Step labels: Save -> Apply; without the column What saving it does; choosing another option shows above Apply
       what it does: "Create the labels <names> and label <n> pull requests", or for Off "Delete the labels <names>
-      from <n> pull requests" (the second text was cut off in the prompt: check it with the person)
+      from <repositories>" (the person gave it); With PR Sync -> Synchronize

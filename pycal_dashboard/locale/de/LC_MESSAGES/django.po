@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 20:33+0000\n"
+"POT-Creation-Date: 2026-11-21 20:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1999,12 +1999,6 @@ msgstr "Wahl"
 msgid "What it means"
 msgstr "Was es bedeutet"
 
-msgid "What saving it does"
-msgstr "Was das Speichern tut"
-
-msgid "Save the step labels"
-msgstr "Die Labels der Schritte speichern"
-
 msgid "Only the owners switch them off: it deletes labels on GitHub."
 msgstr "Nur die Eigentümer schalten sie aus: Das löscht Labels auf GitHub."
 
@@ -3430,8 +3424,26 @@ msgstr[1] ""
 "Die Nachricht ist angewendet: %(count)s Pull Requests bekommen sie im "
 "Hintergrund."
 
-msgid "The step labels are saved."
-msgstr "Die Labels der Schritte sind gespeichert."
+msgid "The step labels are applied."
+msgstr "Die Labels der Schritte sind angewendet."
+
+msgid "no repository: none has them yet"
+msgstr "keinem Repository: Noch keins hat sie"
+
+msgid "none: the project has no steps"
+msgstr "keine: Das Projekt hat keine Schritte"
+
+#, python-format
+msgid "Create the labels %(names)s and label %(count)s pull request."
+msgid_plural "Create the labels %(names)s and label %(count)s pull requests."
+msgstr[0] ""
+"Die Labels %(names)s erstellen und %(count)s Pull Request damit versehen."
+msgstr[1] ""
+"Die Labels %(names)s erstellen und %(count)s Pull Requests damit versehen."
+
+#, python-format
+msgid "Delete the labels %(names)s from %(repositories)s."
+msgstr "Die Labels %(names)s aus %(repositories)s löschen."
 
 msgid "Off"
 msgstr "Aus"
@@ -3439,11 +3451,8 @@ msgstr "Aus"
 msgid "No step labels on GitHub."
 msgstr "Keine Labels der Schritte auf GitHub."
 
-msgid "Deletes the labels of the steps on GitHub."
-msgstr "Löscht die Labels der Schritte auf GitHub."
-
-msgid "With PR Sync"
-msgstr "Mit PR Sync"
+msgid "Synchronize"
+msgstr "Synchronisieren"
 
 #, python-format
 msgid ""
@@ -3454,11 +3463,6 @@ msgstr ""
 "Die Schritte haben Labels auf GitHub, etwa Step: Review. Menschen setzen sie "
 "von Hand auf Pull Requests; %(site)s setzt das Label des Schritts auf die "
 "Pull Requests mit eingeschaltetem PR Sync."
-
-msgid "Creates the labels and labels the pull requests with the PR Sync on."
-msgstr ""
-"Erstellt die Labels und versieht die Pull Requests mit eingeschaltetem PR "
-"Sync damit."
 
 msgid "People now sign in with the OAuth app."
 msgstr "Menschen melden sich jetzt mit der OAuth-App an."

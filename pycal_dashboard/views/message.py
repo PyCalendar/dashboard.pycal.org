@@ -22,12 +22,19 @@ from django.utils.translation import ngettext
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.markdown_text import render as render_markdown
-from pycal_dashboard.models import Issue, Project, PullRequestMessage
+from pycal_dashboard.models import (
+    Issue,
+    Project,
+    PullRequestComment,
+    PullRequestMessage,
+    StepLabel,
+)
 from pycal_dashboard.services.example_pulls import ExamplePulls
 from pycal_dashboard.services.message_comments import MessageComments
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
+from pycal_dashboard.step_label_names import label_name
 from pycal_dashboard.step_template import GROUPS, example, expand
 
 from .projects import opened, shown_repositories
@@ -489,8 +496,30 @@ def project_sync_labels(request: HttpRequest, slug: str):
         if ProjectEditor(access).label_mode(request.POST.get("step_labels", "")):
             if project.repositories.exists():
                 UpdateQueue.add(project, request.user)  # the labels follow in the background
-            messages.success(request, _("The step labels are saved."))
+            messages.success(request, _("The step labels are applied."))
         return redirect(project.path("sync/labels/"))
+    names = [label_name(step) for step in project.steps.all()]
+    synced = Issue.objects.filter(
+        repository__in=project.repositories.all(),
+        pull_request=True,
+        state=Issue.OPEN,
+        pk__in=PullRequestComment.objects.filter(project=project).values("issue"),
+    ).count()
+    with_labels = StepLabel.objects.filter(step__project=project).values("repository")
+    repositories = ", ".join(
+        sorted(project.repositories.filter(pk__in=with_labels).values_list("full_name", flat=True))
+    ) or _("no repository: none has them yet")
+    listed = ", ".join(names) or _("none: the project has no steps")
+    effects = {
+        Project.LABELS_SYNC: ngettext(
+            "Create the labels %(names)s and label %(count)s pull request.",
+            "Create the labels %(names)s and label %(count)s pull requests.",
+            synced,
+        )
+        % {"names": listed, "count": synced},
+        Project.LABELS_OFF: _("Delete the labels %(names)s from %(repositories)s.")
+        % {"names": listed, "repositories": repositories},
+    }
     return render(
         request,
         "pycal_dashboard/message/labels.html",
@@ -502,24 +531,21 @@ def project_sync_labels(request: HttpRequest, slug: str):
                     "value": Project.LABELS_OFF,
                     "title": _("Off"),
                     "description": _("No step labels on GitHub."),
-                    "action": _("Deletes the labels of the steps on GitHub."),
                     "allowed": access.is_owner,
                 },
                 {
                     "value": Project.LABELS_SYNC,
-                    "title": _("With PR Sync"),
+                    "title": _("Synchronize"),
                     "description": _(
                         "The steps have labels on GitHub, such as Step: Review. People put them "
                         "on pull requests by hand; %(site)s puts the label of the step on the pull "
                         "requests with the PR Sync on."
                     )
                     % {"site": settings.SITE_NAME},
-                    "action": _(
-                        "Creates the labels and labels the pull requests with the PR Sync on."
-                    ),
                     "allowed": access.can_write,
                 },
             ],
+            "effects": effects,
             "tab": "message",
             "sync_tab": "labels",
             "applied": applied(project),

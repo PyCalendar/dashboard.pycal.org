@@ -875,22 +875,30 @@ def test_the_colors_of_steps_suit_light_and_dark_pages(page, site, github, bob, 
 
 def test_choose_who_sets_the_status_labels(signed_in, site, github, bob):
     """PR Sync, tab Status Label: a table of the choices of the step labels, off by default."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
     project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Review")
     page = signed_in
     page.goto(f"{site}/projects/icalendar/")
     page.get_by_role("link", name="PR Sync").click()
     page.locator("[data-sync-tabs]").get_by_role("link", name="Status Label").click()
     table = page.locator("[data-step-labels] table")
     expect(table.get_by_label("Off")).to_be_checked()
-    expect(table.locator("tr[data-mode='sync']")).to_contain_text(
-        "Creates the labels and labels the pull requests with the PR Sync on."
-    )
-    table.get_by_label("With PR Sync").check()
-    page.get_by_role("button", name="Save the step labels").click()
-    expect(page.get_by_text("The step labels are saved.")).to_be_visible()
+    effect = page.locator("[data-effect='sync']")
+    expect(effect).to_be_hidden()  # the current choice: nothing to apply
+    table.get_by_label("Synchronize").check()
+    expect(effect).to_be_visible()  # what Apply does, above it
+    expect(effect).to_contain_text("Create the labels Step: Review and label 0 pull requests.")
+    page.get_by_role("button", name="Apply").click()
+    expect(page.get_by_text("The step labels are applied.")).to_be_visible()
     project.refresh_from_db()
     assert project.step_labels == "sync"
-    expect(page.locator("[data-step-labels] table").get_by_label("With PR Sync")).to_be_checked()
+    expect(page.locator("[data-step-labels] table").get_by_label("Synchronize")).to_be_checked()
+    expect(page.locator("[data-effect='sync']")).to_be_hidden()
 
 
 def test_the_overview_updates_only_its_box(page, site, github, bob):

@@ -16,7 +16,7 @@ from pycal_dashboard.models import (
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.repository_update import RepositoryUpdate
-from pycal_dashboard.services.status_labels import description
+from pycal_dashboard.step_label_names import description
 
 pytestmark = pytest.mark.django_db
 REPO = "collective/icalendar"
@@ -195,8 +195,12 @@ def test_the_step_labels_are_on_the_tab_status_label(client, project, bob, alice
     from pycal_dashboard.services.project_access import ProjectAccess
 
     page = client.get("/projects/icalendar/sync/labels/").content.decode()  # public
-    assert 'name="step_labels" value="off" checked disabled' in page and "Save the step" not in page
+    assert 'name="step_labels" value="off" checked data-current disabled' in page
+    assert ">Apply<" not in page  # visitors change nothing
     assert "dashboard.pycal.org puts the label" in page and "this site" not in page
+    assert "What saving it does" not in page and ">Synchronize<" in page
+    effect = page.split('data-effect="sync">')[1].split("</p>")[0]
+    assert effect == "Create the labels Step: Conflicts, Step: Review and label 2 pull requests."
     ProjectEditor(ProjectAccess(project, bob)).share("alice", "write")
     client.force_login(alice)
     answer = client.post("/projects/icalendar/sync/labels/", {"step_labels": "sync"})
@@ -205,6 +209,7 @@ def test_the_step_labels_are_on_the_tab_status_label(client, project, bob, alice
     assert project.step_labels == "sync"
     page = client.get("/projects/icalendar/sync/labels/").content.decode()
     assert 'value="off" disabled' in page and "Only the owners switch them off" in page
+    assert ">Apply<" in page
     answer = client.post("/projects/icalendar/sync/labels/", {"step_labels": "off"})
     assert answer.status_code == 403
     project.refresh_from_db()
@@ -218,3 +223,13 @@ def test_the_step_labels_are_on_the_tab_status_label(client, project, bob, alice
     assert project.step_labels == "off"
     settings = client.get("/projects/icalendar/settings/").content.decode()
     assert "step_labels" not in settings  # no longer in the settings
+
+
+def test_what_apply_does_for_off(github, client, project, bob):
+    mode(project, "sync")
+    update(project)
+    client.force_login(bob)
+    page = client.get("/projects/icalendar/sync/labels/").content.decode()
+    effect = page.split('data-effect="off">')[1].split("</p>")[0]
+    assert effect == "Delete the labels Step: Conflicts, Step: Review from collective/icalendar."
+    assert 'value="sync" checked data-current' in page

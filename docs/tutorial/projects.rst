@@ -337,16 +337,18 @@ Step labels
 -----------
 
 The tab *Status Label* of *PR Sync*, see :ref:`pr-message`, switches the step
-labels on and off. It is a table of the choices, with what each means and what
-saving it does:
+labels on and off. It is a table of the choices with what each means; choosing
+another one says above **Apply** what Apply does:
 
 *Off*, by default
-   No step labels on GitHub. Saving it deletes the labels of the steps on
-   GitHub, so only the owners switch them off.
-*With PR Sync*
+   No step labels on GitHub. Apply deletes the labels of the steps from the
+   repositories, such as *Delete the labels Step: Review from
+   collective/icalendar*, so only the owners switch them off.
+*Synchronize*
    The steps have labels on GitHub. People put them on pull requests by hand,
    and dashboard.pycal.org puts the label of the step on the pull requests with
-   the PR Sync on. Saving it creates the labels and labels those pull requests.
+   the PR Sync on. Apply creates the labels and labels those pull requests, such
+   as *Create the labels Step: Review and label 3 pull requests*.
 
 Each step then has a label in each repository with the GitHub App, such as
 *Step: Review*: with the color of the step, the gray of GitHub for a step

@@ -598,3 +598,9 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 .apply-form { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: 1rem; }
 .button.button-success, .button.button-success:disabled { background: var(--success); border-color: var(--success); color: #fff; opacity: 1; cursor: default; }
 .message-of { margin-top: .4rem; }
+
+/* the step labels: what Apply does shows when another choice than the current one is chosen
+   (without JavaScript: the choice that is checked decides) */
+.step-labels-effect { display: none; }
+form:has(input[name="step_labels"][value="sync"]:checked:not([data-current])) [data-effect="sync"],
+form:has(input[name="step_labels"][value="off"]:checked:not([data-current])) [data-effect="off"] { display: block; }
