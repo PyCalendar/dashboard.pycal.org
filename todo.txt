@@ -595,4 +595,4 @@ community: where to start, what waits for a review, who contributes.
       remove); the user menu without Email addresses
 - [ ] The overview of a project does not reload itself while updating: a script refreshes only the box Updating every
       10 seconds ("1-" read as 10), with a loading animation while it updates and a check mark when it is done
-- [ ] Dark mode: the colors of the steps are computed darker from the color of the step (it may come from a label), on the tab Steps and on the page of a pull request
+- [x] Dark mode: the colors of the steps are computed darker from the color of the step (it may come from a label), on the tab Steps and on the page of a pull request

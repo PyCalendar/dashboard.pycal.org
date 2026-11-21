@@ -513,6 +513,18 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 /* the colors of steps: a background in the bars */
 .step-box[style*="--step-color"] { background: color-mix(in srgb, var(--step-color) 35%, var(--surface)); }
 .step-item.current .step-box[style*="--step-color"] { background: color-mix(in srgb, var(--step-color) 65%, var(--surface)); }
+/* the backgrounds of the colors of steps, which may come from labels on GitHub: the hue of the
+   color with a lightness that suits the page, light on light pages and dark on dark pages, so
+   that the text stays readable whatever the color (light-dark follows color-scheme, which the
+   theme sets). Browsers without these keep the mix above. */
+@supports (color: light-dark(oklch(from red l c h), red)) {
+  [style*="--step-color"] {
+    --step-tint: light-dark(oklch(from var(--step-color) .93 calc(c * .5) h), oklch(from var(--step-color) .3 calc(c * .5) h));
+    --step-tint-strong: light-dark(oklch(from var(--step-color) .84 calc(c * .8) h), oklch(from var(--step-color) .42 calc(c * .8) h));
+  }
+  .progress-step[style*="--step-color"], .step-box[style*="--step-color"] { background: var(--step-tint); }
+  .progress-step[style*="--step-color"][data-shown], .step-item.current .step-box[style*="--step-color"] { background: var(--step-tint-strong); }
+}
 form.stacked fieldset.step-colors { display: flex; flex-wrap: wrap; gap: .35rem; border: 0; padding: 0; margin: .5rem 0 1rem; }
 .step-colors legend { font-weight: 600; margin-bottom: .3rem; padding: 0; }
 form.stacked label.color-choice { display: inline-flex; margin: 0; cursor: pointer; }

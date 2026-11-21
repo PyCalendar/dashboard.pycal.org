@@ -2,6 +2,7 @@
 
 import re
 
+import pytest
 from playwright.sync_api import expect
 
 from pycal_dashboard.models import Profile, Project
@@ -802,3 +803,37 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     assert abs(heres[0] - heres[1]) < 1
     first.get_by_role("button", name="Remove the skip").click()
     expect(page.locator("[data-progress] [data-step]").nth(0)).to_have_attribute("data-current", "")
+
+
+LIGHTNESS = """e => {  // the lightness of the background of an element, 0 to 1
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  context.fillStyle = getComputedStyle(e).backgroundColor;
+  context.fillRect(0, 0, 1, 1);
+  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}"""
+
+
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_colors_of_steps_suit_light_and_dark_pages(page, site, github, bob, scheme):
+    """A strong color, as labels on GitHub have, is a light background on light pages and a
+    dark one on dark pages, so that the text stays readable."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Review", color="#d73a4a")
+    page.emulate_media(color_scheme=scheme)
+    for address, box in (
+        ("/projects/icalendar/steps/", "[data-step-bar] .step-box"),
+        ("/projects/icalendar/pull/1/", "[data-progress] [data-step]"),
+    ):
+        page.goto(site + address)
+        lightness = page.locator(box).first.evaluate(LIGHTNESS)
+        if scheme == "light":
+            assert lightness > 0.7, (address, lightness)
+        else:
+            assert lightness < 0.3, (address, lightness)
