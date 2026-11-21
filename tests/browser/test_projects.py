@@ -895,3 +895,26 @@ def test_the_overview_updates_only_its_box(page, site, github, bob):
     )
     expect(page.locator("[data-open-issues] strong")).to_have_text("3")  # the numbers, too
     assert page.evaluate("window.notReloaded") is True
+
+
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_choice_of_a_color_suits_light_and_dark_pages(signed_in, site, github, bob, scheme):
+    """The swatches of the editor of a step: the color on light pages, dark on dark ones."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Review")
+    page = signed_in
+    page.emulate_media(color_scheme=scheme)
+    page.goto(f"{site}/projects/icalendar/steps/")
+    swatches = page.locator("[data-step-colors] .swatch[style]")
+    expect(swatches.first).to_be_visible()
+    for index in range(swatches.count()):
+        lightness = swatches.nth(index).evaluate(LIGHTNESS)
+        if scheme == "light":
+            assert lightness > 0.6, (index, lightness)
+        else:  # the tint of a chosen step: well below the text, above the dark page
+            assert lightness < 0.35, (index, lightness)

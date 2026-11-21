@@ -524,6 +524,9 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
   }
   .progress-step[style*="--step-color"], .step-box[style*="--step-color"] { background: var(--step-tint); }
   .progress-step[style*="--step-color"][data-shown], .step-item.current .step-box[style*="--step-color"] { background: var(--step-tint-strong); }
+  /* the swatches of the choice of a color: the color itself on light pages, and on dark pages
+     the dark tint that a chosen step gets there */
+  .swatch[style*="--swatch"] { background: light-dark(var(--swatch), oklch(from var(--swatch) .42 calc(c * .8) h)); }
 }
 form.stacked fieldset.step-colors { display: flex; flex-wrap: wrap; gap: .35rem; border: 0; padding: 0; margin: .5rem 0 1rem; }
 .step-colors legend { font-weight: 600; margin-bottom: .3rem; padding: 0; }
