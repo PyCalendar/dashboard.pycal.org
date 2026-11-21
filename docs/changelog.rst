@@ -9,6 +9,21 @@ Changelog
 
 .. towncrier release notes start
 
+0.8.1 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- The badge of a pull request has the color of the step behind its name. Apply says that it synchronises the edited message with N pull requests, with the buttons Preview and Edit next to it.
+
+
+Bug fixes
+~~~~~~~~~
+
+- The labels of steps are the names of the steps, without Step:; those made before are renamed at the next update.
+
+
 0.8.0 (2026-11-21)
 ------------------
 
