@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.8.2 (2026-11-21)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- The pages name the site by its name, such as dashboard.pycal.org, instead of this site or the site.
+- The tab Steps shows everybody which authors a step skips.
+
+
 0.8.1 (2026-11-21)
 ------------------
 
