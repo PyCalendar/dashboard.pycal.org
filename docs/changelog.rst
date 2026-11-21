@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.9.1 (2026-11-21)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- A condition of Skip if that is switched off stays in Skip if: each condition of a filter keeps its type and whether it is on.
+
+
 0.9.0 (2026-11-21)
 ------------------
 
