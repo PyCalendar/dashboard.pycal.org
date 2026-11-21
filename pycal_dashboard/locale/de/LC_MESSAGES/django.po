@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 20:23+0000\n"
+"POT-Creation-Date: 2026-11-21 20:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1892,6 +1892,19 @@ msgstr "Älter"
 msgid "Nothing yet."
 msgstr "Noch nichts."
 
+msgid "Apply"
+msgstr "Anwenden"
+
+msgid "Applied"
+msgstr "Angewendet"
+
+msgid ""
+"Apply makes the edited message the current one, which the pull requests of "
+"the scope get."
+msgstr ""
+"Anwenden macht die bearbeitete Nachricht zur aktuellen, die die Pull "
+"Requests des Umfangs bekommen."
+
 msgid "The example before: one task less done"
 msgstr "Das Beispiel davor: eine Aufgabe weniger erledigt"
 
@@ -1904,20 +1917,11 @@ msgstr "Die Nachricht des Pull Requests"
 msgid "Show"
 msgstr "Zeigen"
 
-msgid "1. Message"
-msgstr "1. Nachricht"
-
-msgid "2. Edit"
-msgstr "2. Bearbeiten"
-
-msgid "3. Review"
-msgstr "3. Prüfen"
-
-msgid "4. Scope"
-msgstr "4. Bereich"
-
 msgid "Markdown"
 msgstr "Markdown"
+
+msgid "Edit"
+msgstr "Bearbeiten"
 
 #, python-format
 msgid "As the pull request %(pull)s gets it."
@@ -1926,11 +1930,24 @@ msgstr "So, wie der Pull Request %(pull)s sie bekommt."
 msgid "With an example pull request."
 msgstr "Mit einem Beispiel-Pull-Request."
 
-msgid "Status Message"
-msgstr "Statusnachricht"
+msgid "Current Message"
+msgstr "Aktuelle Nachricht"
 
 msgid "Status Label"
 msgstr "Status-Label"
+
+msgid "Scope"
+msgstr "Umfang"
+
+msgid ""
+"The edited message is not applied yet: the pull requests still get the "
+"current one."
+msgstr ""
+"Die bearbeitete Nachricht ist noch nicht angewendet: Die Pull Requests "
+"bekommen noch die aktuelle."
+
+msgid "Continue editing"
+msgstr "Weiter bearbeiten"
 
 msgid "Edit the message"
 msgstr "Die Nachricht bearbeiten"
@@ -1942,17 +1959,25 @@ msgid "The message"
 msgstr "Die Nachricht"
 
 msgid ""
-"The next page shows it with example pull requests in every state of the "
-"steps. Nothing is written to GitHub before the last page."
+"The edited message is saved while you write; the pull requests get it once "
+"it is applied. Preview shows it with example pull requests in every state of "
+"the steps."
 msgstr ""
-"Die nächste Seite zeigt sie mit Beispiel-Pull-Requests in jedem Zustand der "
-"Schritte. Vor der letzten Seite wird nichts auf GitHub geschrieben."
+"Die bearbeitete Nachricht wird beim Schreiben gespeichert; die Pull Requests "
+"bekommen sie, sobald sie angewendet ist. Die Vorschau zeigt sie mit Beispiel-"
+"Pull-Requests in jedem Zustand der Schritte."
 
-msgid "← Back"
-msgstr "← Zurück"
+msgid "Save"
+msgstr "Speichern"
 
-msgid "Next: review →"
-msgstr "Weiter: prüfen →"
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+msgid "Saved"
+msgstr "Gespeichert"
+
+msgid "Not saved: is the network away? It is tried again."
+msgstr "Nicht gespeichert: ist das Netz weg? Es wird erneut versucht."
 
 msgid "Step labels"
 msgstr "Labels der Schritte"
@@ -1983,8 +2008,8 @@ msgstr "Die Labels der Schritte speichern"
 msgid "Only the owners switch them off: it deletes labels on GitHub."
 msgstr "Nur die Eigentümer schalten sie aus: Das löscht Labels auf GitHub."
 
-msgid "Review the message"
-msgstr "Die Nachricht prüfen"
+msgid "Preview of the edited message"
+msgstr "Vorschau der bearbeiteten Nachricht"
 
 msgid ""
 "Step through example pull requests, from no task done to all of them, or see "
@@ -1999,12 +2024,6 @@ msgstr "Er ist im Schritt %(name)s."
 
 msgid "Edit this step"
 msgstr "Diesen Schritt bearbeiten"
-
-msgid "← Edit"
-msgstr "← Bearbeiten"
-
-msgid "Next: scope →"
-msgstr "Weiter: Bereich →"
 
 msgid "The scope of the message"
 msgstr "Der Bereich der Nachricht"
@@ -2032,14 +2051,18 @@ msgstr ""
 "Nicht empfohlen: sie sind erledigt, und ihre Personen bekommen eine "
 "Benachrichtigung."
 
-msgid "← Review"
-msgstr "← Prüfen"
-
-msgid "Cancel"
-msgstr "Abbrechen"
+msgid ""
+"The scope is of the message and of the step labels: the pull requests in it "
+"get both."
+msgstr ""
+"Der Umfang gilt für die Nachricht und die Labels der Schritte: Die Pull "
+"Requests darin bekommen beides."
 
 msgid "Count"
 msgstr "Zählen"
+
+msgid "Status Message"
+msgstr "Statusnachricht"
 
 msgid ""
 "The GitHub App writes this message as a comment on the pull requests of its "
@@ -2422,18 +2445,6 @@ msgstr "Zurück zu den Pull Requests"
 msgid "Edit the filter %(name)s"
 msgstr "Den Filter %(name)s bearbeiten"
 
-msgid "Save"
-msgstr "Speichern"
-
-msgid "Saving…"
-msgstr "Wird gespeichert…"
-
-msgid "Saved"
-msgstr "Gespeichert"
-
-msgid "Not saved: is the network away? It is tried again."
-msgstr "Nicht gespeichert: ist das Netz weg? Es wird erneut versucht."
-
 msgid "Not saved: another filter has this name."
 msgstr "Nicht gespeichert: Ein anderer Filter hat diesen Namen."
 
@@ -2485,9 +2496,6 @@ msgstr ""
 
 msgid "New filter"
 msgstr "Neuer Filter"
-
-msgid "Edit"
-msgstr "Bearbeiten"
 
 msgid "Make it a step"
 msgstr "Zu einem Schritt machen"
@@ -2673,6 +2681,9 @@ msgstr "%(name)s überspringen"
 
 msgid "Reason for skipping"
 msgstr "Grund für das Überspringen"
+
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "
@@ -3385,19 +3396,38 @@ msgid_plural "Update %(count)s pull requests"
 msgstr[0] "%(count)s Pull Request aktualisieren"
 msgstr[1] "%(count)s Pull Requests aktualisieren"
 
+msgid "The edited message is saved; it is not applied yet."
+msgstr ""
+"Die bearbeitete Nachricht ist gespeichert; sie ist noch nicht angewendet."
+
 #, python-format
 msgid "These are no numbers of pull requests: %(wrong)s"
 msgstr "Das sind keine Nummern von Pull Requests: %(wrong)s"
 
 #, python-format
-msgid "The message is saved: %(count)s pull request gets it in the background."
+msgid ""
+"The scope is saved: %(count)s pull request gets the message in the "
+"background."
 msgid_plural ""
-"The message is saved: %(count)s pull requests get it in the background."
+"The scope is saved: %(count)s pull requests get the message in the "
+"background."
 msgstr[0] ""
-"Die Nachricht ist gespeichert: %(count)s Pull Request bekommt sie im "
+"Der Umfang ist gespeichert: %(count)s Pull Request bekommt die Nachricht im "
 "Hintergrund."
 msgstr[1] ""
-"Die Nachricht ist gespeichert: %(count)s Pull Requests bekommen sie im "
+"Der Umfang ist gespeichert: %(count)s Pull Requests bekommen die Nachricht "
+"im Hintergrund."
+
+#, python-format
+msgid ""
+"The message is applied: %(count)s pull request gets it in the background."
+msgid_plural ""
+"The message is applied: %(count)s pull requests get it in the background."
+msgstr[0] ""
+"Die Nachricht ist angewendet: %(count)s Pull Request bekommt sie im "
+"Hintergrund."
+msgstr[1] ""
+"Die Nachricht ist angewendet: %(count)s Pull Requests bekommen sie im "
 "Hintergrund."
 
 msgid "The step labels are saved."

@@ -1,0 +1,5 @@
+{% load i18n %}<form method="post" action="{% url 'project_message_edit' project.slug %}" class="apply-form" data-apply-form>{% csrf_token %}{% translate "Apply" as apply_text %}{% translate "Applied" as applied_text %}
+  {% if applied %}<button class="button button-success" name="apply" value="yes" disabled data-apply data-applied data-apply-text="{{ apply_text }}" data-applied-text="{{ applied_text }}">✓ {% translate "Applied" %}</button>
+  {% else %}<button class="button" name="apply" value="yes" data-apply data-apply-text="{{ apply_text }}" data-applied-text="{{ applied_text }}">{% translate "Apply" %}</button>{% endif %}
+  <small class="muted">{% translate "Apply makes the edited message the current one, which the pull requests of the scope get." %}</small>
+</form>

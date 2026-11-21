@@ -1,4 +1,7 @@
 {% load i18n %}<nav aria-label="{% translate "PR Sync" %}"><ul class="tabs sync-tabs" data-sync-tabs>
-  <li><a href="{% url 'project_message' project.slug %}"{% if sync_tab != "labels" %} aria-current="page"{% endif %}>{% translate "Status Message" %}</a></li>
+  <li><a href="{% url 'project_message' project.slug %}"{% if sync_tab == "message" %} aria-current="page"{% endif %}>{% translate "Current Message" %}</a></li>
+  {% if access.can_write %}<li class="tab-group" data-tab-group="edit"><a href="{% url 'project_message_edit' project.slug %}"{% if sync_tab == "edit" %} aria-current="page"{% endif %}>{% translate "Edit" %}</a><a href="{% url 'project_message_review' project.slug %}"{% if sync_tab == "review" %} aria-current="page"{% endif %}>{% translate "Preview" %}</a></li>{% endif %}
   <li><a href="{% url 'project_sync_labels' project.slug %}"{% if sync_tab == "labels" %} aria-current="page"{% endif %}>{% translate "Status Label" %}</a></li>
+  {% if access.can_write %}<li><a href="{% url 'project_message_scope' project.slug %}"{% if sync_tab == "scope" %} aria-current="page"{% endif %}>{% translate "Scope" %}</a></li>{% endif %}
 </ul></nav>
+{% if access.can_write and not applied and sync_tab != "edit" and sync_tab != "review" %}<p class="message message-warning" role="status" data-not-applied>{% translate "The edited message is not applied yet: the pull requests still get the current one." %} <a href="{% url 'project_message_edit' project.slug %}">{% translate "Continue editing" %}</a></p>{% endif %}

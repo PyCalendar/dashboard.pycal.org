@@ -601,37 +601,46 @@ tasks are Markdown, made by the site and the writers of the project.
 PR Sync
 =======
 
-The tab *PR Sync*, right of *Steps*, has two tabs: *Status Message* and *Status
-Label*, the step labels, see :ref:`status-labels`.
+The tab *PR Sync*, right of *Steps*, has the tabs *Current Message*, *Edit* and
+*Preview* side by side, as they belong together, *Status Label*, the step labels,
+see :ref:`status-labels`, and *Scope*. *Edit*, *Preview* and *Scope* are for
+writers and owners.
 
-*Status Message* has the message of the project: the
-GitHub App writes it as a comment on pull requests, and updates the comment
-whenever the message or the values of its variables change, such as when a pull
-request enters the next step. It is off until its scope says which pull
-requests get it.
+The message of the project is the Status Message: the GitHub App writes it as a
+comment on pull requests, and updates the comment whenever the message or the
+values of its variables change, such as when a pull request enters the next step.
+It is off until its scope says which pull requests get it.
 
-Writers and owners edit it in four pages, which a bar at the top names:
+There are two messages: the current one, which the pull requests get, and the
+edited one, which is saved while it is written, also when you open the page
+again later, and which the pull requests do not get before it is applied.
 
-1. **Message**: the message as a pull request gets it, with its Markdown on the
-   tab **Markdown**, and which pull requests get it; or that there is none yet.
-   Everybody who sees the project steps through its examples here, as on the
-   review below, and sees the message of a pull request by its number.
-   **Edit the message**, or **Create the message**, starts editing.
-2. **Edit**: the template in the editor of Markdown, with the menu
-   **Variables**: those of the steps, see :ref:`step-variables`, and those of
-   the group *Message*, such as the tasks of the step as a list of tasks of
-   GitHub. **Preview** shows it with a pull request. **Next: review** keeps it
-   as a draft of yours: nothing is written to GitHub before the last page.
-3. **Review**: the draft as example pull requests get it. Each example is in
+**Current Message**
+   The message as a pull request gets it, with the tabs *Message*, *Markdown*
+   and *Edit* above it, and below it which pull request it is of, and which pull
+   requests get it; or that there is none yet. Everybody who sees the project
+   steps through its examples here, as on *Preview*, and sees the message of a
+   pull request by its number.
+**Edit**
+   The edited message in the editor of Markdown, with the menu **Variables**:
+   those of the steps, see :ref:`step-variables`, and those of the group
+   *Message*, such as the tasks of the step as a list of tasks of GitHub. It is
+   saved while you write; without JavaScript, **Save** saves it.
+**Preview**
+   The edited message as example pull requests get it. Each example is in
    another state: another step, or another task done, to do or not known yet.
    They go from no task done to all of them: **→** shows the next one, **←**
    the one before, such as *Example 2 of 6: Review, 1 of 5 tasks done*.
    **Show** shows the message of a pull request by its number instead. **Edit
    this step** opens the step that the pull request is in, with **Back to the
    review of the message** at the top.
-4. **Scope**: which pull requests get it, below.
 
-The scope, at the bottom:
+*Edit* and *Preview* end with **Apply**: it makes the edited message the current
+one, and the comments follow in the background. When the edited message is the
+current one, the button says **✓ Applied**, in green. While they differ, the
+other tabs say so, with **Continue editing**.
+
+**Scope** has which pull requests get the message, and with it the step labels:
 
 - *Add to these pull requests:* the pull requests of the numbers in the field,
   such as *2166, 2167*, or *collective/icalendar#42* where several repositories
@@ -641,12 +650,12 @@ The scope, at the bottom:
 - *Add to closed and merged pull requests*, in light red: not preferred, as they
   are done and their people get a notification.
 
-**Update X pull requests** saves the message and the scope: the comments are
-written or updated in the background, after an update of the project, and every
-update after it updates those whose text changed. The number follows the
-switches; without JavaScript, **Count** counts them. **Cancel** forgets the
-draft and goes back to the message as it was. The log of the site records every comment written or updated;
-the comment ends with a hidden line that says that the site wrote it.
+**Update X pull requests** saves the scope: the comments are written or updated
+in the background, after an update of the project, and every update after it
+updates those whose text changed. The number follows the switches; without
+JavaScript, **Count** counts them. The log records every comment written or
+updated; the comment ends with a hidden line that says that dashboard.pycal.org
+wrote it.
 
 .. _project-backup:
 

@@ -615,9 +615,16 @@ community: where to start, what waits for a review, who contributes.
 - [x] A group Dashboard of conditions on data of the dashboard: PR Sync is on for a pull request, and a step is
       skipped for it
 - [ ] Sweep: every text that says this site / the site names the site by SITE_NAME ({{ site_name }}), with translations
-- [ ] PR Sync, the message: two messages, the applied one in use and the edited one, saved while it is edited (also
+- [x] PR Sync, the message: two messages, the applied one in use and the edited one, saved while it is edited (also
       when the page is opened again); a notice when they differ that asks to continue editing
-- [ ] The flow 1-4 becomes grouped tabs: "Current Message" (its page with the tabs Markdown and Edit above the
+- [x] The flow 1-4 becomes grouped tabs: "Current Message" (its page with the tabs Markdown and Edit above the
       message; "As the pull request ... gets it" below the message); Edit and Preview (was Review) next to each other,
       both with Apply at the bottom: it makes the edited message the current one; Applied, green with a check mark,
       when they are the same; Scope becomes a tab right of Status Label, as it applies to the labels too
+- [ ] About: the tab About becomes Contact, without Privacy in it and without the line "A dashboard for ...
+      Documentation."; instead the tiles Documentation, Report a problem or leave feedback, and Changelog; Version
+      and GitHub App become tabs like Privacy and Licenses; Licenses without "AGPL-3.0-or-later · All licenses"
+- [x] The Markdown fields are always as wide as possible
+- [ ] Step labels: Save -> Apply; without the column What saving it does; choosing another option shows above Apply
+      what it does: "Create the labels <names> and label <n> pull requests", or for Off "Delete the labels <names>
+      from <n> pull requests" (the second text was cut off in the prompt: check it with the person)

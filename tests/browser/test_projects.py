@@ -596,7 +596,7 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
 
 
 def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
-    """The flow of the message: none yet, edit, review the examples, the scope, saved."""
+    """PR Sync: edit the message (saved while it is written), preview it, the scope, apply."""
     from pycal_dashboard.models import PullRequestFilter, PullRequestMessage, PullRequestStep
 
     project = pull_request_project(github, bob)
@@ -608,9 +608,16 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     page.goto(f"{site}/projects/icalendar/pull-requests/")
     page.get_by_role("link", name="PR Sync").click()
     expect(page.locator("[data-no-message]")).to_be_visible()
-    page.get_by_role("link", name="Create the message").click()  # 2. edit
+    page.get_by_role("link", name="Create the message").click()  # Edit
+    expect(page.locator("form[data-autosaving]")).to_have_count(1)
     page.get_by_role("textbox", name="The message").fill("**{pr_title}**: {tasks_todo}")
-    page.get_by_role("button", name="Next: review →").click()  # 3. review
+    expect(page.locator("[data-save-status]")).to_have_text("✓ Saved", timeout=10000)
+    page.reload()  # it is kept
+    expect(page.get_by_role("textbox", name="The message")).to_have_value(
+        "**{pr_title}**: {tasks_todo}"
+    )
+    tabs = page.locator("[data-sync-tabs]")
+    tabs.get_by_role("link", name="Preview").click()
     label = page.locator("[data-example-label]")
     expect(label).to_have_text("Example 1 of 2: Review, 0 of 1 tasks done")
     expect(page.locator("[data-message-rendered] strong")).to_be_visible()
@@ -623,7 +630,8 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     page.get_by_role("link", name="Edit this step").click()  # the step, and back
     page.get_by_role("link", name="← Back to the review of the message").click()
     expect(page.locator("[data-message-rendered]")).to_contain_text("Ready")
-    page.get_by_role("link", name="Next: scope →").click()  # 4. scope
+    page.locator("[data-sync-tabs]").get_by_role("link", name="Scope").click()
+    expect(page.locator("[data-not-applied]")).to_be_visible()  # edited, not applied
     save = page.locator("[data-save-message]")
     expect(save).to_have_text("Update 0 pull requests")  # off by default
     page.locator("[data-message-scope]").get_by_text("Add to all open pull requests").click()
@@ -631,9 +639,19 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     page.set_viewport_size({"width": 390, "height": 900})
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")  # fits a phone
     save.click()
-    expect(page.get_by_text("The message is saved: 3 pull requests get it")).to_be_visible()
+    expect(page.get_by_text("The scope is saved: 3 pull requests get the message")).to_be_visible()
+    page.locator("[data-not-applied]").get_by_role("link", name="Continue editing").click()
+    page.get_by_role("button", name="Apply").click()
+    expect(page.get_by_text("The message is applied: 3 pull requests get it")).to_be_visible()
     message = PullRequestMessage.objects.get()
     assert message.to_open and message.template.startswith("**{pr_title}**")
+    assert message.draft is None
+    page.locator("[data-sync-tabs]").get_by_role("link", name="Edit").click()
+    expect(page.locator("[data-apply]")).to_have_text("✓ Applied")
+    expect(page.locator("[data-apply]")).to_be_disabled()
+    expect(page.locator("form[data-autosaving]")).to_have_count(1)
+    page.get_by_role("textbox", name="The message").fill("Changed: {pr_title}")
+    expect(page.locator("[data-apply]")).to_have_text("Apply")  # not the current one
 
 
 def test_a_filter_keeps_its_name_from_the_step_to_the_table_and_back(signed_in, site, github, bob):

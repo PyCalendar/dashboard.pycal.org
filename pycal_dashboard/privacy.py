@@ -168,6 +168,7 @@ MODELS = {
             "id",
             "project",
             "template",
+            "draft",
             "listed",
             "to_listed",
             "to_new",

@@ -46,13 +46,17 @@ def update(project):
     assert RepositoryUpdate(project.repositories.get()).run()
 
 
+EDIT = "/projects/icalendar/message/edit/"
+
+
 def save(client, template="Hi {author_handle}: {step_name}\n\n{tasks_all}", **fields):
-    """The flow of editing: the template, then the scope, which saves it."""
-    answer = client.post("/projects/icalendar/message/edit/", {"template": template})
+    """Edit the message (saved as edited), choose the scope, then apply the message."""
+    answer = client.post(EDIT, {"template": template})
     if answer.status_code != 302:
         return answer
-    assert answer["Location"] == "/projects/icalendar/message/review/"
-    return client.post("/projects/icalendar/message/scope/", {"listed": "", "save": "yes"} | fields)
+    assert answer["Location"] == EDIT
+    client.post("/projects/icalendar/message/scope/", {"listed": "", "save": "yes"} | fields)
+    return client.post(EDIT, {"apply": "yes"})
 
 
 def test_the_tab_is_public_and_off_by_default(client, project):
@@ -65,43 +69,64 @@ def test_the_tab_is_public_and_off_by_default(client, project):
     assert client.get("/projects/icalendar/message/edit/").status_code in (302, 403, 404)
 
 
-def test_the_flow_of_editing(client, github, project, bob):
-    """1. none 2. edit 3. review 4. scope; the draft is in the session until saved."""
+def test_the_tabs_of_editing(client, github, project, bob):
+    """Current Message, Edit and Preview together, Status Label and Scope."""
     client.force_login(bob)
     page = client.get("/projects/icalendar/message/").content.decode()
-    assert (
-        "data-no-message" in page
-        and 'aria-current="step"><a href="/projects/icalendar/message/">1.' in page
-    )
-    edit = client.get("/projects/icalendar/message/edit/").content.decode()
+    tabs = page.split("data-sync-tabs")[1].split("</ul>")[0]
+    assert tabs.index("Current Message") < tabs.index("Edit") < tabs.index("Preview")
+    assert tabs.index("Preview") < tabs.index("Status Label") < tabs.index("Scope")
+    assert 'data-tab-group="edit"' in tabs  # Edit and Preview belong together
+    assert "data-no-message" in page
+    edit = client.get(EDIT).content.decode()
     assert "{tasks_all}" in edit and 'data-variable="{tasks_todo}"' in edit  # the default
     assert 'data-markdown-preview="/projects/icalendar/message/preview/"' in edit
-    client.post("/projects/icalendar/message/edit/", {"template": "**{pr_title}** {tasks_todo}"})
+    assert "message-edit.js" in edit and "data-apply" in edit and "data-save-draft" in edit
+
+
+def test_the_edited_message_is_saved_and_applied_later(client, github, project, bob, alice):
+    """The edited message stays, also for the next visit, until Apply uses it."""
+    client.force_login(bob)
+    answer = client.post(
+        EDIT, {"template": "**{pr_title}** {tasks_todo}"}, HTTP_ACCEPT="application/json"
+    )
+    assert answer.json() == {"saved": True, "applied": False}
+    message = PullRequestMessage.objects.get()
+    assert (message.template, message.draft) == ("", "**{pr_title}** {tasks_todo}")
+    client.logout()
+    client.force_login(bob)  # a new session: the edited message is still there
+    edit = client.get(EDIT).content.decode()
+    assert ">**{pr_title}** {tasks_todo}</textarea>" in edit
     review = client.get("/projects/icalendar/message/review/").content.decode()
-    assert "<strong>" in review and "data-example-label" in review
-    assert 'href="/projects/icalendar/message/scope/" data-next' in review
+    assert "<strong>" in review and "data-example-label" in review and "data-apply" in review
     scope = client.get("/projects/icalendar/message/scope/").content.decode()
+    assert "data-not-applied" in scope and "Continue editing" in scope  # the notice
     assert ">Update 0 pull requests<" in scope and 'name="to_listed" value="on" checked' in scope
-    assert not PullRequestMessage.objects.exists()  # nothing saved before the scope
-    assert github.comments == {}
+    assert "data-no-message" in client.get("/projects/icalendar/message/").content.decode()
     client.post(
         "/projects/icalendar/message/scope/", {"listed": "", "to_open": "on", "save": "yes"}
     )
-    assert PullRequestMessage.objects.get().template == "**{pr_title}** {tasks_todo}"
-    page = client.get("/projects/icalendar/message/").content.decode()
-    assert "<strong>" in page and "All open pull requests" in page
-    assert "2 pull requests get it." in page
-
-
-def test_cancel_forgets_the_draft(client, project, bob):
-    client.force_login(bob)
-    save(client, template="Saved", to_open="on")
-    client.post("/projects/icalendar/message/edit/", {"template": "Draft"})
-    answer = client.post("/projects/icalendar/message/scope/", {"cancel": "yes"})
+    assert github.comments == {} and PullRequestMessage.objects.get().template == ""
+    answer = client.post(EDIT, {"apply": "yes"})
     assert answer["Location"] == "/projects/icalendar/message/"
-    assert PullRequestMessage.objects.get().template == "Saved"
-    edit = client.get("/projects/icalendar/message/edit/").content.decode()
-    assert ">Saved</textarea>" in edit  # the draft is gone
+    message.refresh_from_db()
+    assert (message.template, message.draft) == ("**{pr_title}** {tasks_todo}", None)
+    page = client.get("/projects/icalendar/message/").content.decode()
+    assert (
+        "<strong>" in page and "All open pull requests" in page and "data-not-applied" not in page
+    )
+    assert "2 pull requests get it." in page
+    shown = page.split("data-message-preview")[1]
+    assert shown.index("</div>") < shown.index("data-message-pull")  # below the message
+    assert "data-edit-message" in page.split("markdown-tabs")[1].split("</p>")[0]  # a tab
+    edit = client.get(EDIT).content.decode()
+    assert "data-applied data-apply-text" in edit and "✓ Applied" in edit  # nothing to apply
+    answer = client.post(EDIT, {"template": "Changed"}, HTTP_ACCEPT="application/json")
+    assert answer.json()["applied"] is False
+    assert "data-applied data-apply-text" not in client.get(EDIT).content.decode()
+    assert PullRequestMessage.objects.get().template == "**{pr_title}** {tasks_todo}"  # in use
+    client.post(EDIT, {"template": "**{pr_title}** {tasks_todo}"})  # back as it was
+    assert "data-not-applied" not in client.get("/projects/icalendar/message/").content.decode()
 
 
 def test_the_review_steps_through_the_examples(client, project, bob):

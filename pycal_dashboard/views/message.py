@@ -1,9 +1,9 @@
 """The tab PR Sync: the Status Message of a project as a comment on its pull requests.
 
-Editing it is a flow of four pages: the current message (or none), the editor of its
-template, the review of the draft with example pull requests in every state of the steps,
-and the scope: which pull requests get it. The draft stays in the session of the person until
-the scope saves it; then the comments are written in the background, after an update.
+Its tabs: the Current Message (or none); Edit and Preview of the edited message, which is
+saved while it is edited (``PullRequestMessage.draft``) and which Apply makes the current one;
+Status Label, the step labels; and Scope: which pull requests get the message and the labels.
+The comments are written in the background, after an update.
 """
 
 from __future__ import annotations
@@ -34,25 +34,13 @@ from .projects import opened, shown_repositories
 
 # what a new message starts with
 DEFAULT = "{pr_badge}\n\n**{step_name}**\n\n{step_description}\n\n{tasks_all}\n"
-# the pages of editing, in their order: their names and addresses after the project
+# the pages of the message, their names and addresses after the project
 FLOW = (
     ("message", "message/"),
     ("edit", "message/edit/"),
     ("review", "message/review/"),
     ("scope", "message/scope/"),
 )
-
-
-def draft_key(project: Project) -> str:
-    """The key of the draft of the template of a project in the session.
-
-    Parameters:
-        project: The project.
-
-    Returns:
-        The key.
-    """
-    return f"message-draft:{project.pk}"
 
 
 def saved_message(project: Project) -> PullRequestMessage | None:
@@ -67,21 +55,32 @@ def saved_message(project: Project) -> PullRequestMessage | None:
     return PullRequestMessage.objects.filter(project=project).first()
 
 
-def draft_of(request: HttpRequest, project: Project) -> str:
-    """The template being edited: the draft of the session, else the saved one, else the default.
+def draft_of(project: Project) -> str:
+    """The message being edited: the saved draft, else the current one, else the default.
 
     Parameters:
-        request: The request, with the session.
         project: The project.
 
     Returns:
         The template.
     """
-    draft = request.session.get(draft_key(project))
-    if draft is not None:
-        return draft
     message = saved_message(project)
-    return message.template if message else DEFAULT
+    if message is not None and message.draft is not None:
+        return message.draft
+    return message.template if message and message.template else DEFAULT
+
+
+def applied(project: Project) -> bool:
+    """Whether the edited message is the current one: nothing waits to be applied.
+
+    Parameters:
+        project: The project.
+
+    Returns:
+        True without a draft, or with a draft like the current message.
+    """
+    message = saved_message(project)
+    return message is None or message.draft is None or message.draft == message.template
 
 
 def with_scope(message: PullRequestMessage, form: QueryDict) -> PullRequestMessage:
@@ -237,8 +236,9 @@ def flow_page(
             "access": access,
             "flow": [name for name, _address in FLOW],
             "page": page,
+            "sync_tab": page,
             "comments": comments,
-            "editing": draft_key(access.project) in request.session,
+            "applied": applied(access.project),
             "tab": "message",
         }
         | context(access, comments),
@@ -247,7 +247,7 @@ def flow_page(
 
 @require_http_methods(["GET", "HEAD"])
 def project_message(request: HttpRequest, slug: str):
-    """1. The message as a pull request gets it, and its scope; or that there is none.
+    """The Current Message as a pull request gets it, and its scope; or that there is none.
 
     Public like the project, also the examples in every state of the steps; writers and owners
     start editing it.
@@ -263,6 +263,8 @@ def project_message(request: HttpRequest, slug: str):
 
     def context(access: ProjectAccess, comments: MessageComments) -> dict:
         message = saved_message(access.project)
+        if message is not None and not message.template:  # only edited, never applied
+            message = None
         return {
             "message": message,
             "preview": preview(
@@ -279,23 +281,38 @@ def project_message(request: HttpRequest, slug: str):
 
 @require_http_methods(["GET", "HEAD", "POST"])
 def project_message_edit(request: HttpRequest, slug: str):
-    """2. The editor of the template; the next page keeps it as a draft of the session.
+    """Edit: the editor of the message, which saves it as the edited message; Apply uses it.
+
+    The script of the page saves the message while it is edited, as JSON; without JavaScript,
+    Save does it. Apply makes the edited message the current one, which the pull requests of
+    the scope get in the background.
 
     Parameters:
-        request: The request; POST with ``template``.
+        request: The request; POST with ``template``, and ``apply`` to apply it.
         slug: The project.
 
     Returns:
-        The page, or a redirect to the review.
+        The page; after POST, a redirect, or ``saved`` and ``applied`` as JSON for the script.
     """
     if request.method == "POST":
         access, _moved = opened(request, slug, "message/edit/")
         access.require_write()
-        request.session[draft_key(access.project)] = request.POST.get("template", "")
-        return redirect(access.project.path("message/review/"))
+        project = access.project
+        message = saved_message(project) or PullRequestMessage(project=project)
+        if "template" in request.POST:
+            message.draft = request.POST["template"]
+        if "apply" in request.POST:
+            return apply_message(request, project, message)
+        message.updated_by = request.user
+        message.save()
+        is_applied = message.draft == message.template
+        if "application/json" in request.headers.get("Accept", ""):
+            return JsonResponse({"saved": True, "applied": is_applied})
+        messages.success(request, _("The edited message is saved; it is not applied yet."))
+        return redirect(project.path("message/edit/"))
 
     def context(access: ProjectAccess, comments: MessageComments) -> dict:
-        return {"template": draft_of(request, access.project), "variables": GROUPS}
+        return {"template": draft_of(access.project), "variables": GROUPS}
 
     return flow_page(request, slug, "edit", "pycal_dashboard/message/edit.html", context)
 
@@ -303,7 +320,7 @@ def project_message_edit(request: HttpRequest, slug: str):
 @login_required
 @require_http_methods(["GET", "HEAD"])
 def project_message_review(request: HttpRequest, slug: str):
-    """3. The draft as example pull requests get it, from no task done to all of them.
+    """Preview: the edited message as example pull requests get it, from no task done to all.
 
     Parameters:
         request: The request; ``example`` the example from 0, ``pull`` a pull request to see
@@ -316,7 +333,7 @@ def project_message_review(request: HttpRequest, slug: str):
 
     def context(access: ProjectAccess, comments: MessageComments) -> dict:
         message = saved_message(access.project) or PullRequestMessage(project=access.project)
-        message.template = draft_of(request, access.project)
+        message.template = draft_of(access.project)
         shown = preview(comments, message, request.GET.get("example"), request.GET.get("pull", ""))
         back = access.project.path("message/review/") + "?" + request.GET.urlencode()
         return {
@@ -332,25 +349,20 @@ def project_message_review(request: HttpRequest, slug: str):
 @login_required
 @require_http_methods(["GET", "HEAD", "POST"])
 def project_message_scope(request: HttpRequest, slug: str):
-    """4. The scope: which pull requests get the message; saving updates them in the background.
+    """Scope: which pull requests get the message and the step labels; saving updates them.
 
     Parameters:
-        request: The request; POST with the fields of :func:`with_scope` and ``save``, or
-            ``cancel``.
+        request: The request; POST with the fields of :func:`with_scope` and ``save``.
         slug: The project.
 
     Returns:
-        The page, or a redirect to the message.
+        The page, or a redirect to it after saving.
     """
     if request.method == "POST":
         access, _moved = opened(request, slug, "message/scope/")
         access.require_write()
         project = access.project
-        if "cancel" in request.POST:
-            request.session.pop(draft_key(project), None)
-            return redirect(project.path("message/"))
         message = saved_message(project) or PullRequestMessage(project=project)
-        message.template = draft_of(request, project)
         with_scope(message, request.POST)
         wrong = MessageComments.listed(request.POST.get("listed", ""))[1]
         if wrong:
@@ -360,19 +372,18 @@ def project_message_scope(request: HttpRequest, slug: str):
             )
         message.updated_by = request.user
         message.save()
-        request.session.pop(draft_key(project), None)
         count = MessageComments(project).pulls(message).count()
         UpdateQueue.add(project, request.user)  # then the comments, in the background
         messages.success(
             request,
             ngettext(
-                "The message is saved: %(count)s pull request gets it in the background.",
-                "The message is saved: %(count)s pull requests get it in the background.",
+                "The scope is saved: %(count)s pull request gets the message in the background.",
+                "The scope is saved: %(count)s pull requests get the message in the background.",
                 count,
             )
             % {"count": count},
         )
-        return redirect(project.path("message/"))
+        return redirect(project.path("message/scope/"))
 
     def context(access: ProjectAccess, comments: MessageComments) -> dict:
         message = saved_message(access.project) or PullRequestMessage(project=access.project)
@@ -389,6 +400,38 @@ def project_message_scope(request: HttpRequest, slug: str):
         }
 
     return flow_page(request, slug, "scope", "pycal_dashboard/message/scope.html", context)
+
+
+def apply_message(request: HttpRequest, project: Project, message: PullRequestMessage):
+    """Apply the edited message: it becomes the current one, which the pull requests get.
+
+    Parameters:
+        request: The request, of a writer.
+        project: The project.
+        message: The message, with its edited ``draft``.
+
+    Returns:
+        A redirect to the Current Message.
+    """
+    if message.draft is not None:
+        message.template = message.draft
+    if not message.template:
+        message.template = DEFAULT
+    message.draft = None
+    message.updated_by = request.user
+    message.save()
+    count = MessageComments(project).pulls(message).count()
+    UpdateQueue.add(project, request.user)  # then the comments, in the background
+    messages.success(
+        request,
+        ngettext(
+            "The message is applied: %(count)s pull request gets it in the background.",
+            "The message is applied: %(count)s pull requests get it in the background.",
+            count,
+        )
+        % {"count": count},
+    )
+    return redirect(project.path("message/"))
 
 
 @login_required
@@ -479,5 +522,6 @@ def project_sync_labels(request: HttpRequest, slug: str):
             ],
             "tab": "message",
             "sync_tab": "labels",
+            "applied": applied(project),
         },
     )

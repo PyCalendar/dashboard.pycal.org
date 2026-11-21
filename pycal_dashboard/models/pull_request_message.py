@@ -15,6 +15,9 @@ class PullRequestMessage(models.Model):
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="message")
     template = models.TextField(blank=True)  # Markdown with the variables of steps
+    # the message being edited, saved while it is edited; None when it is the template: Apply
+    # makes it the template, which the pull requests get
+    draft = models.TextField(null=True, blank=True)
     # the pull requests by their number, such as "42" or "collective/icalendar#42"
     listed = models.JSONField(default=list, blank=True)
     to_listed = models.BooleanField(default=True)

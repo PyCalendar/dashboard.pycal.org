@@ -163,3 +163,20 @@ def test_delete_the_account(signed_in, site):
     expect(page.get_by_text("Your account is deleted.")).to_be_visible()
     expect(page.get_by_role("link", name="Sign in with GitHub")).to_be_visible()
     assert not get_user_model().objects.filter(username="bob").exists()
+
+
+def test_the_markdown_fields_are_as_wide_as_possible(signed_in, site):
+    """The field of a description fills its form, at a wide screen, too."""
+    from django.contrib.auth import get_user_model
+
+    from pycal_dashboard.services.project_editor import ProjectEditor
+
+    bob = get_user_model().objects.get(username="bob")
+    ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    page = signed_in
+    page.set_viewport_size({"width": 1400, "height": 900})
+    page.goto(f"{site}/projects/icalendar/settings/")
+    field = page.locator("[data-markdown-field] textarea").first
+    form = page.locator("form.stacked").first
+    width = field.bounding_box()["width"]
+    assert width >= form.bounding_box()["width"] - 60, width  # all but the padding of the card

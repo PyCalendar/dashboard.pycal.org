@@ -1,0 +1,1 @@
+The message of PR Sync is not lost while it is edited: the edited message is saved while it is written and stays until Apply makes it the current one, which says Applied in green once they are the same. The tabs are Current Message (with Message, Markdown and Edit above it), Edit and Preview side by side, Status Label and Scope, which is of the message and the step labels.

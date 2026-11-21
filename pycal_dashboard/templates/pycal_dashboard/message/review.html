@@ -1,16 +1,15 @@
 {% extends "pycal_dashboard/base.html" %}
 {% load i18n help %}
-{% block title %}{% translate "Review the message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block title %}{% translate "Preview" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 {% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card message-page" data-message-review>
-<div class="table-head"><h2>{% translate "Review the message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
-{% include "pycal_dashboard/message/_flow.html" %}
+<div class="table-head"><h2>{% translate "Preview of the edited message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 <p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>
 {% include "pycal_dashboard/message/_examples.html" %}
 {% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode %}
 {% if preview.step_id %}<p data-step-of-example>{% blocktranslate with name=preview.step_name %}It is in the step {{ name }}.{% endblocktranslate %} <a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ preview.step_id }}&amp;back={{ back|urlencode }}" data-edit-step-of-example>{% translate "Edit this step" %}</a></p>{% endif %}
-<p class="save-buttons"><a class="button button-quiet" href="{% url 'project_message_edit' project.slug %}">{% translate "← Edit" %}</a> <a class="button" href="{% url 'project_message_scope' project.slug %}" data-next>{% translate "Next: scope →" %}</a></p>
+{% include "pycal_dashboard/message/_apply.html" %}
 </section>
 {% endblock %}
