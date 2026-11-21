@@ -1,1 +1,0 @@
-The browser tests sign in through the OAuth flow with a fake GitHub, and the browser reaches nothing but the site, also on redirects.

@@ -1,1 +1,0 @@
-Each pull request has a badge with its step and tasks done, such as Triage 3/4, at the address of its page with ``badge.svg`` or ``badge.png``; it is drawn once and cached until something changes. The table of pull requests shows it in the new column Step, linked to the page of the pull request.

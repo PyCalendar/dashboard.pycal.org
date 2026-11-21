@@ -1,1 +1,0 @@
-The frame of the dashboard of the PyCalendar community: its GitHub App that only receives webhooks, sign in with GitHub through an OAuth app, the account page with the button to install the app, the Django admin for the administrators and the JSON API.

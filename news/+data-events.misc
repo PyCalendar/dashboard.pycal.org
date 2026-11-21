@@ -1,2 +1,0 @@
-Every kind of data the site keeps of GitHub has the webhooks that tell of its changes, with the
-permissions GitHub needs to send them; a test checks it.

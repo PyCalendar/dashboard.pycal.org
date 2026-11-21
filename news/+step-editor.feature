@@ -1,1 +1,0 @@
-The editor of a step has Edit the filter, a color for the background of the step, and the switch Visible in the page of a pull request, on by default; Preview shows a template with an example pull request.

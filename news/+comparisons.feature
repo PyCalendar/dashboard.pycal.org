@@ -1,1 +1,0 @@
-The conditions of numbers compare above, below, at most, at least or exactly: the columns Reviews (at least by default) and Author (below by default), and the conditions ``reviews`` and ``review_ratio``, which replace ``reviews_at_least`` and ``review_ratio_above``; columns saved before keep working.

@@ -1,1 +1,0 @@
-The background work runs in a process of its own in the container, as in community-insights (FETCH_WORKER, external-http-container by default): webhooks are recorded and answered at once, and the worker handles them, the updates and what follows them; it is started again when it stops, such as out of memory. Both processes share the cache, in files of the data folder.

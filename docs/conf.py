@@ -78,7 +78,8 @@ def unreleased_changes(root: Path = ROOT) -> str:
         The section of the changelog, "" without fragments.
 
     Examples:
-        >>> unreleased_changes().startswith("Unreleased")
+        >>> text = unreleased_changes()  # none right after a release
+        >>> text == "" or text.startswith("Unreleased")
         True
     """
     if not any(not path.name.startswith(".") for path in (root / "news").iterdir()):

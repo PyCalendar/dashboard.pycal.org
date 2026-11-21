@@ -1,1 +1,0 @@
-Status labels of the steps on GitHub, such as Step: Review, on the pull requests with the PR Message: automatic (the site sets them) or manual (people do). A label that a person adds puts the pull request into its step; of several, the one added last stays. Labels renamed or recolored on GitHub rename or recolor their step.

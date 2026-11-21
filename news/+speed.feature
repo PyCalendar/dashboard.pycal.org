@@ -1,1 +1,0 @@
-The tables of pull requests, the filters and the steps are fast also with many pull requests: the conditions read the data loaded once, the results of each column are kept until the next update, and the site prepares those of the saved filters after each update. ``make measure-speed`` measures every condition on the live site.

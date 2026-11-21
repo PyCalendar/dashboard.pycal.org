@@ -1,2 +1,0 @@
-make messages guesses no translations: a new or changed text shows in English until it is
-translated, and the tests allow it.

@@ -1,1 +1,0 @@
-The page shown while the site restarts no longer leads to 405 Method Not Allowed after a form was sent: with JavaScript it waits for the site and opens the page again with GET, or goes back to the page of the form.
