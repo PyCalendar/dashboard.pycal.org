@@ -59,7 +59,10 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     # a new filter: every condition on, also the one that shows both
     assert 'name="on" value="2" checked' in rows[2] and 'class="off"' not in rows[2]
     assert "data-opposite" in rows[1] and "&amp;swap=1" in rows[1]
-    assert "The filter shows a pull request when one of the conditions above is met." in page
+    assert page.index("The filter shows 3 pull requests now:") < page.index(">Quality checks<")
+    assert page.index(">Quality checks<") < page.index(">Skip if<")
+    assert "If any of these conditions apply, the step is skipped" in page
+    assert "&amp;skip=0" in rows[0] and "data-to-skip" in rows[0]  # into Skip if
     assert page.count('<input type="hidden" name="col"') == 3
     # each condition can be inverted and removed
     assert "&amp;invert=0" in rows[0] and "&amp;remove=0" in rows[0]
@@ -368,3 +371,20 @@ def test_the_save_page_links_the_conditions_and_the_step(client, project, bob):
     assert f'href="/projects/icalendar/steps/?step={step.pk}" data-step-link>Step: Review' in page
     new = save_page(client, "status~applies~open")
     assert "data-autosave" not in new and "data-step-link" not in new
+
+
+def test_a_condition_of_skip_if_hides_what_it_applies_to(client, project, bob):
+    """Into Skip if with its button: the filter no longer shows what it applies to."""
+    client.force_login(bob)
+    columns = ["status~applies~open", "labels~applies~present~needs review"]
+    query = "&".join(f"col={c}" for c in columns)
+    answer = client.get(f"/projects/icalendar/filters/save/?{query}&skip=1")
+    assert answer.status_code == 302 and "labels~skip~present~needs+review" in answer["Location"]
+    page = client.get(answer["Location"]).content.decode()
+    skip = page.split("data-filter-skip>")[1].split("</table>")[0]
+    assert "It has the label needs review" in skip and "data-to-checks" in skip
+    assert "The filter shows 1 pull request now:" in page  # open, without the label: Conflict
+    back = client.get(
+        f"/projects/icalendar/filters/save/?{query.replace('applies~present', 'skip~present')}&check=1"
+    )
+    assert "labels~applies~present~needs+review" in back["Location"]

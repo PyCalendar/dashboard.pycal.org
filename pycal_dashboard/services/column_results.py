@@ -150,6 +150,7 @@ class ColumnResults:
         The filters are an OR: a pull request is shown when any column that filters (one that
         shows only the pull requests it applies to, or only those it does not apply to) shows
         it. Columns that show both do not filter; without columns that filter, all are shown.
+        Of those, a pull request that a condition of Skip if applies to is not shown.
 
         Parameters:
             columns: The columns of conditions.
@@ -157,12 +158,13 @@ class ColumnResults:
         Returns:
             The ids of the pull requests.
         """
-        filtering = [column for column in columns if column.filter != "all"]
+        filtering = [column for column in columns if column.checks]
+        skipping = [self.of(column) for column in columns if column.skips]
         ids = self.ids()
-        if not filtering:
-            return ids
-        results = [(column, self.of(column)) for column in filtering]
-        return [pk for pk in ids if any(c.shows(found.get(pk)) for c, found in results)]
+        if filtering:
+            results = [(column, self.of(column)) for column in filtering]
+            ids = [pk for pk in ids if any(c.shows(found.get(pk)) for c, found in results)]
+        return [pk for pk in ids if not any(found.get(pk) is True for found in skipping)]
 
     def count(self, column: Column) -> int:
         """How many pull requests a column applies to.

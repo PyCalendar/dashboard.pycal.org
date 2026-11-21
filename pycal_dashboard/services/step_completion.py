@@ -54,7 +54,7 @@ class StepCompletion:
         return not any(
             column.shows(column.applies(issue, self.assignment.scope))
             for column in columns
-            if column.filter != "all"
+            if column.checks
         )
 
     def observe(self, repository: Repository) -> list[tuple[Issue, PullRequestStep]]:

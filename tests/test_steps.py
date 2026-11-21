@@ -370,3 +370,18 @@ def test_readers_see_which_authors_a_step_skips(client, project, filters, bob):
     assert (
         "Skipped for the pull requests of" in shown and 'data-github-user="niccokunzmann"' in shown
     )
+
+
+def test_the_step_lists_its_conditions_of_skip_if(client, project, filters, bob):
+    _conflict, review = filters
+    review.columns = ["labels~applies~present~needs review", "status~skip~closed"]
+    review.save()
+    client.force_login(bob)
+    make_step(client, review)
+    step = PullRequestStep.objects.get()
+    page = client.get(f"/projects/icalendar/steps/?step_id={step.pk}").content.decode()
+    assert "Skipped if: it is closed" in page
+    tasks = page.split('class="step-conditions"')[1].split("</ul>")[0]
+    assert "closed" not in tasks  # no task
+    client.logout()
+    assert "Skipped if: it is closed" in client.get("/projects/icalendar/steps/").content.decode()

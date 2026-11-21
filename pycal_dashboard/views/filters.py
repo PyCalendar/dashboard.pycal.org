@@ -50,13 +50,17 @@ def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
             "filters": enabled or column.filter != "all",
             "opposite": column.opposite(),
             "inverted": column.inverted(),
+            "skips": column.skips,
         }
         for index, column in enumerate(columns)
     ]
 
 
 def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
-    """The columns after a button of the page of saving: ``swap``, ``invert`` or ``remove``.
+    """The columns after a button of the page of saving, such as ``invert`` or ``skip``.
+
+    The buttons: ``swap``, ``invert``, ``remove``, ``skip`` (into Skip if) or ``check`` (into
+    the quality checks).
 
     Parameters:
         request: The request, with the number of the column of the button.
@@ -65,7 +69,7 @@ def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] |
     Returns:
         The changed columns; None without such a button.
     """
-    for action in ("swap", "invert", "remove"):
+    for action in ("swap", "invert", "remove", "skip", "check"):
         if action not in request.GET:
             continue
         changed = list(columns)
@@ -76,6 +80,10 @@ def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] |
             return changed
         if action == "remove":
             del changed[index]
+        elif action == "skip":  # a condition of Skip if: it applies, the step is skipped
+            changed[index] = Column(column.group, column.choices, "skip")
+        elif action == "check":  # a quality check: the step waits for it
+            changed[index] = Column(column.group, column.choices, "applies")
         elif action == "invert":
             changed[index] = column.inverted() or column
         else:  # a column of crosses for its opposite of check marks

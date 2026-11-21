@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 21:30+0000\n"
+"POT-Creation-Date: 2026-11-21 21:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1722,8 +1722,44 @@ msgstr "Die Spalte hinzufügen"
 msgid "Which reviews count"
 msgstr "Welche Reviews zählen"
 
+msgid "Quality checks"
+msgstr "Qualitätsprüfungen"
+
+msgid ""
+"A pull request is in the step while a quality check is not fulfilled; it "
+"leaves the step when all of them are. The filter shows the pull requests for "
+"which one of them is not fulfilled."
+msgstr ""
+"Ein Pull Request ist im Schritt, solange eine Qualitätsprüfung nicht erfüllt "
+"ist; er verlässt den Schritt, wenn alle erfüllt sind. Der Filter zeigt die "
+"Pull Requests, für die eine davon nicht erfüllt ist."
+
 msgid "Actions"
 msgstr "Aktionen"
+
+msgid "Drop a condition here to make it a quality check."
+msgstr "Lege eine Bedingung hier ab, um sie zur Qualitätsprüfung zu machen."
+
+msgid "Skip if"
+msgstr "Überspringen, wenn"
+
+msgid ""
+"If any of these conditions apply, the step is skipped for the pull request, "
+"and the filter does not show it."
+msgstr ""
+"Wenn eine dieser Bedingungen zutrifft, wird der Schritt für den Pull Request "
+"übersprungen, und der Filter zeigt ihn nicht."
+
+msgid "Drop a condition here to skip the step when it applies."
+msgstr ""
+"Lege eine Bedingung hier ab, um den Schritt zu überspringen, wenn sie "
+"zutrifft."
+
+msgid "A condition that is off stays a column but does not filter."
+msgstr "Eine ausgeschaltete Bedingung bleibt eine Spalte, filtert aber nicht."
+
+msgid "No conditions: all pull requests."
+msgstr "Keine Bedingungen: alle Pull Requests."
 
 #, python-format
 msgid "Filter by %(name)s"
@@ -1742,15 +1778,11 @@ msgstr "Umkehren: %(sentence)s"
 msgid "Invert"
 msgstr "Umkehren"
 
-msgid ""
-"The filter shows a pull request when one of the conditions above is met. A "
-"condition that is off stays a column but does not filter."
-msgstr ""
-"Der Filter zeigt einen Pull Request, wenn eine der Bedingungen oben erfüllt "
-"ist. Eine ausgeschaltete Bedingung bleibt eine Spalte, filtert aber nicht."
+msgid "To the quality checks"
+msgstr "Zu den Qualitätsprüfungen"
 
-msgid "No conditions: all pull requests."
-msgstr "Keine Bedingungen: alle Pull Requests."
+msgid "To Skip if"
+msgstr "Zu Überspringen, wenn"
 
 #, python-format
 msgid ""
@@ -3047,6 +3079,9 @@ msgid ""
 msgstr ""
 "Der Filter hat keine wirksamen Bedingungen: dieser Schritt hat keine "
 "Aufgaben, und kein Pull Request ist in ihm."
+
+msgid "Skipped if:"
+msgstr "Übersprungen, wenn:"
 
 msgid "Skipped for these authors"
 msgstr "Übersprungen für diese Autorinnen und Autoren"

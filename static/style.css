@@ -611,3 +611,8 @@ form:has(input[name="step_labels"][value="off"]:checked:not([data-current])) [da
 .contact-tiles a:hover, .contact-tiles a:focus-visible { border-color: var(--primary); }
 .contact-tiles strong { font-size: 1.1rem; color: var(--primary); }
 .contact-tiles span { color: var(--text-muted); }
+
+/* the page of saving a filter: the quality checks and Skip if, with conditions dragged between */
+tr[data-condition-row][draggable="true"] { cursor: grab; }
+tbody[data-section].dragged-over { outline: 2px dashed var(--primary); outline-offset: -2px; }
+tr.drop-here td { font-size: .85rem; text-align: center; }

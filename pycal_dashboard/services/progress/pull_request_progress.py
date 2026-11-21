@@ -8,6 +8,7 @@ from django.utils.text import capfirst
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
+from pycal_dashboard.models import StepSkip
 from pycal_dashboard.services.step_overrides import StepOverrides
 from pycal_dashboard.step_template import expand, values_of
 
@@ -71,6 +72,12 @@ class PullRequestProgress:
                     result = cached[issue.pk]
                 else:
                     result = column.applies(issue, scope)
+                if column.skips:  # a condition of Skip if: it applies, the step is skipped
+                    if result is True and progress.skip is None:
+                        progress.skip = StepSkip(
+                            step=step, issue=issue, reason=capfirst(str(column.sentence))
+                        )
+                    continue
                 notes = (step.conditions or {}).get(value, {})
                 progress.tasks.append(
                     Task(

@@ -246,9 +246,19 @@ Filters
 as a filter: their order and whether each shows the pull requests it applies
 to, those it does not apply to, or both. The page of saving asks for a name,
 unique in the project, and a description in Markdown, and lists the conditions
-in one table, with their long names, such as *Label needs review: present*, and
-whether each shows the pull requests it applies to or those it does not. They
-filter as an *or*. A switch at each condition turns it off: it is grayed out and
+in two tables, with their long names, such as *Label needs review: present*:
+
+*Quality checks*
+   Whether each shows the pull requests it applies to or those it does not. They
+   filter as an *or*. In a step, they are its tasks: a pull request is in the
+   step while one of them is not fulfilled, and leaves it when all of them are.
+*Skip if*
+   If any of these conditions apply to a pull request, the step is skipped for
+   it, and the filter does not show it. The page of the pull request says
+   *Skipped:* and the condition, and the tab *Steps* lists them as *Skipped if*.
+
+Drag a condition from one table to the other, or use **To Skip if** and **To the
+quality checks**. A switch at each condition turns it off: it is grayed out and
 stays a column of the table without filtering; when a filter is saved the
 first time, every condition is on. **Invert** next to a condition turns it
 into its opposite, such as *it is not auto-merging* for *it is auto-merging*

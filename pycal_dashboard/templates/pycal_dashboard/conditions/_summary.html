@@ -1,11 +1,17 @@
-{% load i18n %}{% if columns %}<div class="table-wrap"><table class="table filter-conditions" data-filter-summary>
+{% load i18n %}{% if columns %}
+<h3 data-section-title="checks">{% translate "Quality checks" %}</h3>
+<p class="muted">{% translate "A pull request is in the step while a quality check is not fulfilled; it leaves the step when all of them are. The filter shows the pull requests for which one of them is not fulfilled." %}</p>
+<div class="table-wrap"><table class="table filter-conditions" data-filter-summary>
   <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th>{% if editable %}<th class="condition-actions">{% translate "Actions" %}</th>{% endif %}</tr></thead>
-  <tbody>{% for item in rows %}<tr data-condition-row="{{ item.index }}"{% if not item.filters %} class="off"{% endif %}>
-    <td class="switch-cell">{% blocktranslate with name=item.column.summary asvar filter_by %}Filter by {{ name }}{% endblocktranslate %}{% include "pycal_dashboard/_switch.html" with name="on" value=item.index checked=item.filters text="" hidden_text=filter_by %}</td>
-    <td class="condition-name">{{ item.column.sentence|capfirst }}{% if item.opposite %}
-      <span class="opposite" data-opposite>{% translate "the same as" %}: {{ item.opposite.sentence }} <a class="button button-quiet button-small" href="{{ address }}&amp;swap={{ item.index }}">{% translate "Use it" %}</a></span>{% endif %}</td>
-    {% if editable %}<td class="condition-actions"><span class="condition-buttons">{% if item.inverted %}<a class="button button-quiet button-small" href="{{ address }}&amp;invert={{ item.index }}" data-invert title="{% blocktranslate with sentence=item.inverted.sentence %}Invert: {{ sentence }}{% endblocktranslate %}">{% translate "Invert" %}</a>{% endif %}<a class="button button-quiet button-small" href="{{ address }}&amp;remove={{ item.index }}" data-remove-condition>{% translate "Remove" %}</a></span></td>{% endif %}
-  </tr>{% endfor %}</tbody>
+  <tbody data-section="checks">{% for item in rows %}{% if not item.skips %}{% include "pycal_dashboard/conditions/_summary_row.html" %}{% endif %}{% endfor %}
+    <tr class="drop-here" data-drop-here><td colspan="3" class="muted">{% translate "Drop a condition here to make it a quality check." %}</td></tr></tbody>
 </table></div>
-<p class="muted">{% translate "The filter shows a pull request when one of the conditions above is met. A condition that is off stays a column but does not filter." %}</p>
+<h3 data-section-title="skip">{% translate "Skip if" %}</h3>
+<p class="muted">{% translate "If any of these conditions apply, the step is skipped for the pull request, and the filter does not show it." %}</p>
+<div class="table-wrap"><table class="table filter-conditions" data-filter-skip>
+  <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th>{% if editable %}<th class="condition-actions">{% translate "Actions" %}</th>{% endif %}</tr></thead>
+  <tbody data-section="skip">{% for item in rows %}{% if item.skips %}{% include "pycal_dashboard/conditions/_summary_row.html" %}{% endif %}{% endfor %}
+    <tr class="drop-here" data-drop-here><td colspan="3" class="muted">{% translate "Drop a condition here to skip the step when it applies." %}</td></tr></tbody>
+</table></div>
+<p class="muted">{% translate "A condition that is off stays a column but does not filter." %}</p>
 {% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}

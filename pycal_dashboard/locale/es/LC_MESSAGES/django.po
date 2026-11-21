@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 21:30+0000\n"
+"POT-Creation-Date: 2026-11-21 21:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1707,8 +1707,42 @@ msgstr "Añadir la columna"
 msgid "Which reviews count"
 msgstr "Qué revisiones cuentan"
 
+msgid "Quality checks"
+msgstr "Controles de calidad"
+
+msgid ""
+"A pull request is in the step while a quality check is not fulfilled; it "
+"leaves the step when all of them are. The filter shows the pull requests for "
+"which one of them is not fulfilled."
+msgstr ""
+"Un pull request está en el paso mientras un control de calidad no se cumple; "
+"sale del paso cuando se cumplen todos. El filtro muestra los pull requests "
+"para los que uno no se cumple."
+
 msgid "Actions"
 msgstr "Acciones"
+
+msgid "Drop a condition here to make it a quality check."
+msgstr "Suelta aquí una condición para hacerla un control de calidad."
+
+msgid "Skip if"
+msgstr "Saltar si"
+
+msgid ""
+"If any of these conditions apply, the step is skipped for the pull request, "
+"and the filter does not show it."
+msgstr ""
+"Si alguna de estas condiciones se cumple, el paso se salta para el pull "
+"request, y el filtro no lo muestra."
+
+msgid "Drop a condition here to skip the step when it applies."
+msgstr "Suelta aquí una condición para saltar el paso cuando se cumpla."
+
+msgid "A condition that is off stays a column but does not filter."
+msgstr "Una condición desactivada sigue siendo una columna, pero no filtra."
+
+msgid "No conditions: all pull requests."
+msgstr "Sin condiciones: todos los pull requests."
 
 #, python-format
 msgid "Filter by %(name)s"
@@ -1727,15 +1761,11 @@ msgstr "Invertir: %(sentence)s"
 msgid "Invert"
 msgstr "Invertir"
 
-msgid ""
-"The filter shows a pull request when one of the conditions above is met. A "
-"condition that is off stays a column but does not filter."
-msgstr ""
-"El filtro muestra un pull request cuando se cumple una de las condiciones de "
-"arriba. Una condición desactivada sigue siendo una columna, pero no filtra."
+msgid "To the quality checks"
+msgstr "A los controles de calidad"
 
-msgid "No conditions: all pull requests."
-msgstr "Sin condiciones: todos los pull requests."
+msgid "To Skip if"
+msgstr "A Saltar si"
 
 #, python-format
 msgid ""
@@ -3017,6 +3047,9 @@ msgid ""
 msgstr ""
 "El filtro no tiene condiciones en vigor: este paso no tiene tareas y ningún "
 "pull request está en él."
+
+msgid "Skipped if:"
+msgstr "Saltado si:"
 
 msgid "Skipped for these authors"
 msgstr "Saltado para estos autores"

@@ -36,9 +36,12 @@ class StepAssignment:
         self.scope = scope or Scope.of(project)
         self.overrides = StepOverrides(project)
         self.steps: list[tuple[PullRequestStep, list[Column]]] = []
+        # the conditions of Skip if of each step: one that applies skips the step
+        self.skipping: dict[int, list[Column]] = {}
         for step in project.steps.select_related("filter"):
             columns = [Column.decode(value) for value in step.filter.columns]
-            self.steps.append((step, [c for c in columns if c.filter != "all"]))
+            self.steps.append((step, [c for c in columns if c.checks]))
+            self.skipping[step.pk] = [c for c in columns if c.skips]
 
     def step_of_all(self, results: ColumnResults) -> dict[int, PullRequestStep | None]:
         """The step of every pull request at once, from the cached results of the columns.
@@ -53,7 +56,10 @@ class StepAssignment:
         logins = dict(Issue.objects.filter(pk__in=list(found)).values_list("pk", "author__login"))
         for step, columns in reversed(self.steps):  # the left-most step comes last and wins
             shown = [(column, results.of(column)) for column in columns]
+            skipped = [results.of(column) for column in self.skipping.get(step.pk, [])]
             for pk in found:
+                if any(cells.get(pk) is True for cells in skipped):
+                    continue
                 if self.overrides.chosen(pk) is not None:
                     continue
                 if self.overrides.skips_step(pk, logins.get(pk) or "", step):
@@ -80,6 +86,8 @@ class StepAssignment:
             return self.overrides.chosen(issue.pk)
         for step, columns in self.steps:
             if self.overrides.skip(issue, step) is not None:
+                continue
+            if any(c.applies(issue, self.scope) is True for c in self.skipping.get(step.pk, [])):
                 continue
             if any(column.shows(column.applies(issue, self.scope)) for column in columns):
                 return step

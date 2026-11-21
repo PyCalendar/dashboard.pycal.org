@@ -121,7 +121,7 @@ def conditions_of(step: PullRequestStep) -> list[dict]:
     found = []
     for index, value in enumerate(step.filter.columns):
         column = Column.decode(value)
-        if column.filter == "all":  # off: no part of the filter
+        if not column.checks:  # off, or a condition of Skip if: no task
             continue
         notes = (step.conditions or {}).get(value, {})
         found.append(
@@ -209,6 +209,13 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             "steps": steps,
             "shown": shown,
             "conditions": conditions_of(shown) if shown else [],
+            "skip_conditions": [
+                column
+                for column in (Column.decode(value) for value in shown.filter.columns)
+                if column.skips
+            ]
+            if shown
+            else [],
             "summary_preview": expand(shown.summary, example(access.project, shown))
             if shown
             else "",

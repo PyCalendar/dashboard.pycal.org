@@ -38,7 +38,9 @@ GROUPS: dict[str, type[ConditionGroup]] = {
     )
 }
 # which pull requests the column shows: all, those it applies to, those it does not apply to
-FILTERS = ("all", "applies", "not")
+# and skip: a condition of Skip if, which skips the step and hides the pull requests from the
+# filter that it applies to
+FILTERS = ("all", "applies", "not", "skip")
 
 
 @dataclass(frozen=True)
@@ -149,6 +151,16 @@ class Column:
         start = {"reviews": 2, "author": 3}.get(self.group.id)
         return checked(self.choices[start:]) if start is not None else ALL
 
+    @property
+    def checks(self) -> bool:
+        """Whether the column is a quality check: a task of a step, which the filter filters by."""
+        return self.filter in ("applies", "not")
+
+    @property
+    def skips(self) -> bool:
+        """Whether the column is a condition of Skip if: it applies, the step is skipped."""
+        return self.filter == "skip"
+
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.
 
@@ -162,7 +174,7 @@ class Column:
             return result is True
         if self.filter == "not":
             return result is False
-        return True
+        return True  # all, and skip, which hides the pull requests it applies to instead
 
     @property
     def summary(self) -> str:
@@ -202,7 +214,7 @@ class Column:
             'all'
         """
         other = "not" if result == "applies" else "applies"
-        if self.filter == "all":
+        if self.filter in ("all", "skip"):
             return other  # switch this one off
         if self.filter == result:
             return other  # the last one that was on: the other one instead
@@ -228,7 +240,7 @@ class Column:
         choices = self.group.invert(self.choices)
         if choices is not None and self.filter != "all":
             return Column(self.group, choices, self.filter)
-        if self.filter == "all":
+        if self.filter in ("all", "skip"):  # a condition of Skip if inverts by its choices only
             return None
         return Column(self.group, self.choices, "not" if self.filter == "applies" else "applies")
 
@@ -261,4 +273,4 @@ class Column:
         Returns:
             True if the column shows the pull requests with this result.
         """
-        return self.filter in ("all", result)
+        return self.filter in ("all", "skip", result)

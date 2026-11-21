@@ -1000,3 +1000,24 @@ def test_the_kinds_of_reviews_on_the_page_of_a_person(page, site, github, bob):
         page.locator(".contributor-tabs a", has_text="Reviews").locator(".tab-count")
     ).to_have_text("1")
     expect(page.locator("[data-contributor-list='reviews'] li")).to_have_count(1)
+
+
+def test_drag_a_condition_into_skip_if(signed_in, site, github, bob):
+    """The page of saving a filter: Quality checks and Skip if; a condition is dragged between."""
+    pull_request_project(github, bob)
+    page = signed_in
+    page.goto(
+        f"{site}/projects/icalendar/filters/save/"
+        "?col=status~applies~open&col=labels~applies~present~needs+review"
+    )
+    checks = page.locator("tbody[data-section='checks']")
+    skip = page.locator("tbody[data-section='skip']")
+    expect(checks.locator("tr[data-condition-row]")).to_have_count(2)
+    expect(skip.locator("tr[data-condition-row]")).to_have_count(0)
+    checks.locator("tr[data-condition-row='1']").drag_to(skip.locator("tr[data-drop-here]"))
+    expect(page).to_have_url(re.compile(r"labels~skip~present"))
+    skip = page.locator("tbody[data-section='skip']")
+    expect(skip.locator("tr[data-condition-row]")).to_contain_text("It has the label needs review")
+    skip.get_by_role("link", name="To the quality checks").click()
+    expect(page).to_have_url(re.compile(r"labels~applies~present"))
+    expect(page.locator("tbody[data-section='skip'] tr[data-condition-row]")).to_have_count(0)

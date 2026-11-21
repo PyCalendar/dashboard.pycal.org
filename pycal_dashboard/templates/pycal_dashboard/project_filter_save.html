@@ -1,7 +1,7 @@
 {% extends "pycal_dashboard/base.html" %}
 {% load i18n static %}
 {% block title %}{% if saved %}{% translate "Edit the filter" %}{% else %}{% translate "Save the filter" %}{% endif %} · {{ project.name }} · {{ site_name }}{% endblock %}
-{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'filter-save.js' %}" defer></script>{% endblock %}
+{% block head %}<script type="module" src="{% static 'vendor/markdown-toolbar-element-2.2.3.js' %}"></script><script src="{% static 'markdown-editor.js' %}" defer></script><script src="{% static 'filter-save.js' %}" defer></script><script src="{% static 'filter-sections.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 <p><a href="{{ back }}" data-back>← {% translate "Back to the pull requests" %}</a></p>

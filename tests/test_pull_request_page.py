@@ -324,3 +324,24 @@ def test_skipping_every_open_step_is_not_outside(project, steps, bob):  # noqa: 
     progress = PullRequestProgress(issue, project)
     assert progress.current is None and not progress.outside
     assert [step.stage for step in progress.steps] == ["past", "past"]
+
+
+def test_a_condition_of_skip_if_skips_the_step(client, project, steps, open_step):  # noqa: F811
+    """Review waits for the label needs review; it is skipped when the pull request is open."""
+    _first, second = steps
+    second.filter.columns = ["labels~applies~present~needs review", "status~skip~open"]
+    second.filter.save()
+    issue = Issue.objects.get(title="Ready")
+    progress = PullRequestProgress(issue, project)
+    review = progress.steps[1]
+    assert review.skip.automatic and review.skip.reason == "It is open"
+    assert [task.value for task in review.tasks] == ["labels~applies~present~needs review"]
+    assert progress.current.step == open_step
+    assert StepAssignment(project).step_of(issue) == open_step
+    page = client.get(f"/projects/icalendar/pull/{issue.number}/").content.decode()
+    box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
+    assert "Skipped: <span data-skip-condition>It is open</span>" in box
+    from pycal_dashboard.services.column_results import ColumnResults
+
+    results = ColumnResults(list(project.repositories.all()), project=project)
+    assert StepAssignment(project).step_of_all(results)[issue.pk] == open_step

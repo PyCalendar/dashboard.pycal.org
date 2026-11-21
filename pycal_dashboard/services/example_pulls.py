@@ -32,7 +32,7 @@ class ExamplePulls:
         """
         self.results = results
         self.steps = [
-            [c for c in (Column.decode(v) for v in step.filter.columns) if c.filter != "all"]
+            [c for c in (Column.decode(v) for v in step.filter.columns) if c.checks]
             for step in project.steps.select_related("filter")
         ]
         self.total = sum(len(columns) for columns in self.steps)
