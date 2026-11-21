@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.2.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- The overview of a project no longer reloads itself while it updates: the box Updating reads itself again every 10 seconds, with a turning circle, and shows a check mark and the new numbers when the update is done.
+
+
 0.1.0 (2026-11-21)
 ------------------
 
