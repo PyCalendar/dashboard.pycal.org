@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.utils.translation import get_language, gettext
 
 from pycal_dashboard import badges
+from pycal_dashboard.badges import LABEL_COLOR
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 
@@ -63,11 +64,12 @@ class PullRequestBadge:
         parts = repr((self.issue.pk, self.issue.changed, repositories, steps))
         return hashlib.sha256(parts.encode()).hexdigest()[:20]
 
-    def texts(self) -> tuple[str, str, str]:
-        """The label, the value and the color of the badge.
+    def texts(self) -> tuple[str, str, str, str]:
+        """The label, the value, the color of the value and the color of the label.
 
         Returns:
-            Such as ``("Triage", "3/4", "#fe7d37")``: the step, its tasks done and all of them;
+            Such as ``("Triage", "3/4", "#fe7d37", "#bbf7d0")``: the step, its tasks done and
+            all of them, with the color of the step behind its name (gray without one);
             ``("Steps", "outside", ...)`` when no task of any step is to do, outside of the
             usual steps; ``("Steps", "none", ...)`` without steps.
         """
@@ -75,10 +77,11 @@ class PullRequestBadge:
         progress = PullRequestProgress(self.issue, self.project, results.scope, results)
         if progress.current:
             current = progress.current
-            return current.step.name, f"{current.done}/{len(current.tasks)}", TODO
+            done = f"{current.done}/{len(current.tasks)}"
+            return current.step.name, done, TODO, current.step.color or LABEL_COLOR
         if progress.steps:  # no task of any step is to do
-            return gettext("Steps"), gettext("outside"), NONE
-        return gettext("Steps"), gettext("none"), NONE
+            return gettext("Steps"), gettext("outside"), NONE, LABEL_COLOR
+        return gettext("Steps"), gettext("none"), NONE, LABEL_COLOR
 
     def render(self, kind: str) -> tuple[bytes, str, str]:
         """The badge, from the cache when nothing changed since it was drawn.

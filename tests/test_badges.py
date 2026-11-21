@@ -141,3 +141,19 @@ def test_markdown_shows_images_of_this_site_only(settings):
     )
     assert '<img src="/x/badge.svg" alt="a">' in html and '<img src="/y/badge.png"' in html
     assert "evil" not in html and html.count("<img") == 2
+
+
+def test_the_color_of_the_step_is_behind_its_name(client, project, steps):  # noqa: F811
+    _first, second = steps
+    second.color = "#bbf7d0"
+    second.save()
+    badge = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/badge.svg").content
+    text = badge.decode()
+    assert '<path fill="#bbf7d0" d="M0 0h' in text  # the left side: the name of the step
+    assert 'fill="#111111"' in text  # dark text on the light color
+    png = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/badge.png").content
+    assert png[1:4] == b"PNG"
+    second.color = ""
+    second.save()
+    text = client.get(f"/projects/icalendar/pull/{number_of('Ready')}/badge.svg").content.decode()
+    assert '<path fill="#555555" d="M0 0h' in text  # gray without a color

@@ -632,7 +632,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The actions of a step: "When a pull request completes the step" -> "When a pull request leaves the step"; they
       also follow when the step is skipped while the pull request is in it
 - [x] Scope -> Synchronization; heading Pull request selection; legend Options; the note without its second half; the button Keep N pull requests synchronized
-- [ ] Apply: "Apply the edited message and synchronise it with <n> pull requests"; next to Apply a button Preview on the
+- [x] Apply: "Apply the edited message and synchronise it with <n> pull requests"; next to Apply a button Preview on the
       page Edit and a button Edit on the page Preview
-- [ ] The badge of a pull request: the color of the step is the background of the name of the step
+- [x] The badge of a pull request: the color of the step is the background of the name of the step
 - [x] Step labels without the prefix Step: — just the name of the step (the labels on GitHub are renamed at the next update)

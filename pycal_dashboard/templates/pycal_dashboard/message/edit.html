@@ -13,6 +13,6 @@
   <p class="save-buttons"><button class="button button-quiet" data-save-draft>{% translate "Save" %}</button>
     <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" aria-live="polite"></span></p>
 </form>
-{% include "pycal_dashboard/message/_apply.html" %}
+{% include "pycal_dashboard/message/_apply.html" with other="preview" %}
 </section>
 {% endblock %}

@@ -239,10 +239,12 @@ def flow_page(
     if page != "message":
         access.require_write()
     comments = MessageComments(access.project, shown_repositories(access))
+    message = saved_message(access.project)
     return render(
         request,
         template,
         {
+            "sync_count": comments.pulls(message).count() if message else 0,
             "project": access.project,
             "access": access,
             "flow": [name for name, _address in FLOW],

@@ -442,7 +442,8 @@ The badge of a pull request
 ---------------------------
 
 Each pull request has a badge with the step it is in and how many of its tasks
-are done of all of them, such as *Triage 3/4*; *Steps: outside* when no task
+are done of all of them, such as *Triage 3/4*, with the color of the step behind
+its name; *Steps: outside* when no task
 of any step applies, and
 *Steps: none* without steps. It is at the address of its page with
 ``badge.svg``, or ``badge.png`` for places that show no SVG, such as
@@ -643,8 +644,10 @@ again later, and which the pull requests do not get before it is applied.
    this step** opens the step that the pull request is in, with **Back to the
    review of the message** at the top.
 
-*Edit* and *Preview* end with **Apply**: it makes the edited message the current
-one, and the comments follow in the background. When the edited message is the
+*Edit* and *Preview* end with **Apply**, which applies the edited message and
+synchronises it with the pull requests of the selection: the comments follow in
+the background. Next to it, **Preview** on *Edit* and **Edit** on *Preview* go to
+the other one. When the edited message is the
 current one, the button says **✓ Applied**, in green. While they differ, the
 other tabs say so, with **Continue editing**.
 

@@ -82,6 +82,12 @@ def test_the_tabs_of_editing(client, github, project, bob):
     assert "{tasks_all}" in edit and 'data-variable="{tasks_todo}"' in edit  # the default
     assert 'data-markdown-preview="/projects/icalendar/message/preview/"' in edit
     assert "message-edit.js" in edit and "data-apply" in edit and "data-save-draft" in edit
+    assert (
+        "data-to-preview" in edit
+        and "Apply the edited message and synchronise it with 0 pull" in edit
+    )
+    review = client.get("/projects/icalendar/message/review/").content.decode()
+    assert "data-to-edit" in review and "data-to-preview" not in review
 
 
 def test_the_edited_message_is_saved_and_applied_later(client, github, project, bob, alice):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 21:12+0000\n"
+"POT-Creation-Date: 2026-11-21 21:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1889,12 +1889,18 @@ msgstr "Aplicar"
 msgid "Applied"
 msgstr "Aplicado"
 
+msgid "Edit"
+msgstr "Editar"
+
+#, python-format
 msgid ""
-"Apply makes the edited message the current one, which the pull requests of "
-"the scope get."
-msgstr ""
-"Aplicar hace del mensaje editado el actual, que reciben los pull requests "
-"del alcance."
+"Apply the edited message and synchronise it with %(counter)s pull request."
+msgid_plural ""
+"Apply the edited message and synchronise it with %(counter)s pull requests."
+msgstr[0] ""
+"Aplicar el mensaje editado y sincronizarlo con %(counter)s pull request."
+msgstr[1] ""
+"Aplicar el mensaje editado y sincronizarlo con %(counter)s pull requests."
 
 msgid "The example before: one task less done"
 msgstr "El ejemplo anterior: una tarea menos hecha"
@@ -1910,9 +1916,6 @@ msgstr "Mostrar"
 
 msgid "Markdown"
 msgstr "Markdown"
-
-msgid "Edit"
-msgstr "Editar"
 
 #, python-format
 msgid "As the pull request %(pull)s gets it."

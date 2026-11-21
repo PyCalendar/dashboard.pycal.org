@@ -24,8 +24,26 @@ PADDING = 6
 FONT_SIZE = 11
 
 
-def svg(label: str, value: str, color: str) -> bytes:
-    """A flat SVG badge: the label on grey, the value on the color.
+def text_color(background: str) -> str:
+    """The color of a text on a background: dark on light colors, else white.
+
+    Parameters:
+        background: Such as ``#bbf7d0`` or ``#555555``.
+
+    Returns:
+        ``#111111`` or ``#ffffff``.
+
+    Examples:
+        >>> text_color("#bbf7d0"), text_color("#555555")
+        ('#111111', '#ffffff')
+    """
+    red, green, blue = (int(background.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4))
+    lightness = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255
+    return "#111111" if lightness > 0.6 else "#ffffff"
+
+
+def svg(label: str, value: str, color: str, label_color: str = LABEL_COLOR) -> bytes:
+    """A flat SVG badge: the label on grey or on its color, the value on the color.
 
     anybadge measures the text, so long and short texts fit; the badge gets one title and one
     label for screen readers. The id of its mask is made of the texts, so that the same badge
@@ -35,6 +53,7 @@ def svg(label: str, value: str, color: str) -> bytes:
         label: The text of the left side, such as the name of a step.
         value: The text of the right side, such as ``3/4``.
         color: The color of the right side, such as ``#fe7d37``.
+        label_color: The color of the left side, such as the color of a step.
 
     Returns:
         The SVG.
@@ -49,12 +68,17 @@ def svg(label: str, value: str, color: str) -> bytes:
     with IMPORT_GUARD:  # see import_guard.py
         import anybadge  # noqa: PLC0415 (only when a badge is drawn)
 
-    drawn = anybadge.Badge(label, value, default_color=color)
+    drawn = anybadge.Badge(
+        label, value, default_color=color, text_color=f"{text_color(label_color)},#fff"
+    )
     spoken = f"{label}: {value}"
-    stable = "badge-" + hashlib.sha256(f"{spoken}\n{color}".encode()).hexdigest()[:12]
+    stable = (
+        "badge-" + hashlib.sha256(f"{spoken}\n{color}\n{label_color}".encode()).hexdigest()[:12]
+    )
     text = drawn.badge_svg_text.replace(f'"{drawn.mask_str}"', f'"{stable}"').replace(
         f"#{drawn.mask_str})", f"#{stable})"
     )
+    text = text.replace('<path fill="#555" d="M0 0h', f'<path fill="{label_color}" d="M0 0h', 1)
     text = OWN_TITLE.sub("", text, count=1)
     return re.sub(
         r"<svg ([^>]*)>",
@@ -67,7 +91,7 @@ def svg(label: str, value: str, color: str) -> bytes:
     ).encode()
 
 
-def png(label: str, value: str, color: str) -> bytes:
+def png(label: str, value: str, color: str, label_color: str = LABEL_COLOR) -> bytes:
     """The same badge as a PNG, for places that show no SVG.
 
     Pillow draws it with its own font, so the server needs no fonts.
@@ -76,6 +100,7 @@ def png(label: str, value: str, color: str) -> bytes:
         label: The text of the left side.
         value: The text of the right side.
         color: The color of the right side.
+        label_color: The color of the left side.
 
     Returns:
         The PNG.
@@ -90,12 +115,12 @@ def png(label: str, value: str, color: str) -> bytes:
     font = ImageFont.load_default(size=FONT_SIZE * SCALE)
     widths = [font.getlength(text) + 2 * PADDING * SCALE for text in (label, value)]
     left, right = (round(width) for width in widths)
-    image = Image.new("RGB", (left + right, HEIGHT * SCALE), LABEL_COLOR)
+    image = Image.new("RGB", (left + right, HEIGHT * SCALE), label_color)
     draw = ImageDraw.Draw(image)
     draw.rectangle((left, 0, left + right, HEIGHT * SCALE), fill=color)
     middle = HEIGHT * SCALE / 2
-    for text, start in ((label, 0), (value, left)):
-        draw.text((start + PADDING * SCALE, middle), text, font=font, fill="#ffffff", anchor="lm")
+    for text, start, fill in ((label, 0, text_color(label_color)), (value, left, "#ffffff")):
+        draw.text((start + PADDING * SCALE, middle), text, font=font, fill=fill, anchor="lm")
     out = io.BytesIO()
     image.save(out, "PNG", optimize=True)
     return out.getvalue()

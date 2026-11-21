@@ -10,6 +10,6 @@
 {% include "pycal_dashboard/message/_examples.html" %}
 {% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode %}
 {% if preview.step_id %}<p data-step-of-example>{% blocktranslate with name=preview.step_name %}It is in the step {{ name }}.{% endblocktranslate %} <a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ preview.step_id }}&amp;back={{ back|urlencode }}" data-edit-step-of-example>{% translate "Edit this step" %}</a></p>{% endif %}
-{% include "pycal_dashboard/message/_apply.html" %}
+{% include "pycal_dashboard/message/_apply.html" with other="edit" %}
 </section>
 {% endblock %}
