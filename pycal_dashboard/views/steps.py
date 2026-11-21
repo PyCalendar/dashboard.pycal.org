@@ -150,8 +150,12 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
     if moved:
         return moved
     steps = list(access.project.steps.select_related("filter"))
+    if not access.can_write:  # who only reads the project sees the steps that are visible
+        steps = [step for step in steps if not step.hidden]
     chosen = number or request.GET.get("step")
     shown = step_of(access.project, chosen) if chosen else (steps[0] if steps else None)
+    if shown is not None and shown not in steps:  # hidden from the person: the first one
+        shown = steps[0] if steps else None
     return render(
         request,
         "pycal_dashboard/project_steps.html",
@@ -168,6 +172,14 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             "back": back_to(access.project, request.GET.get("back", "")),
             "colors": STEP_COLORS,
             "filter_edit": access.project.path("filters/save/")
+            + table_address(
+                [Column.decode(value) for value in shown.filter.columns],
+                PER_PAGE,
+                shown.filter.pk,
+            )
+            if shown
+            else "",
+            "filter_pulls": access.project.path("pull-requests/")
             + table_address(
                 [Column.decode(value) for value in shown.filter.columns],
                 PER_PAGE,

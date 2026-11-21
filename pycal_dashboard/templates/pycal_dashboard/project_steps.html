@@ -55,7 +55,7 @@
     <span class="save-status" hidden data-save-status data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" aria-live="polite"></span></p>
 </form>
 <form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
-{% else %}<h2>{{ shown.name }}</h2>
+{% else %}<div class="table-head step-head"><h2>{{ shown.name }}</h2><a class="button button-quiet button-small" href="{{ filter_pulls }}" data-filter-link>{% blocktranslate with name=shown.filter.name %}Filter: {{ name }}{% endblocktranslate %}</a></div>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
 <dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request completes the step" %}{% endif %}</dt>
   {% if kinds.add %}<dd>{% translate "the GitHub App adds the labels" %} {% for label in kinds.add %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}

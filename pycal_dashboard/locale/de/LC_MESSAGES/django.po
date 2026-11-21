@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 11:12+0000\n"
+"POT-Creation-Date: 2026-11-21 11:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2261,6 +2261,13 @@ msgstr "Zurück zu den Pull Requests"
 msgid "Save the filter %(name)s"
 msgstr "Den Filter %(name)s speichern"
 
+msgid "Edit the conditions"
+msgstr "Die Bedingungen bearbeiten"
+
+#, python-format
+msgid "Step: %(name)s"
+msgstr "Schritt: %(name)s"
+
 msgid "Name"
 msgstr "Name"
 
@@ -2298,6 +2305,18 @@ msgstr "%(name)s speichern"
 msgid "Save as a new filter"
 msgstr "Als neuen Filter speichern"
 
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+msgid "Saved"
+msgstr "Gespeichert"
+
+msgid "Not saved: is the network away? It is tried again."
+msgstr "Nicht gespeichert: ist das Netz weg? Es wird erneut versucht."
+
+msgid "Not saved: another filter has this name."
+msgstr "Nicht gespeichert: Ein anderer Filter hat diesen Namen."
+
 msgid ""
 "A new filter: add its conditions as columns of the table of pull requests"
 msgstr ""
@@ -2309,10 +2328,6 @@ msgstr "Neuer Filter"
 
 msgid "Edit"
 msgstr "Bearbeiten"
-
-#, python-format
-msgid "Step: %(name)s"
-msgstr "Schritt: %(name)s"
 
 msgid "Make it a step"
 msgstr "Zu einem Schritt machen"
@@ -2812,20 +2827,15 @@ msgstr "Labels der Repositorys:"
 msgid "Save the step"
 msgstr "Den Schritt speichern"
 
-msgid "Saving…"
-msgstr "Wird gespeichert…"
-
-msgid "Saved"
-msgstr "Gespeichert"
-
-msgid "Not saved: is the network away? It is tried again."
-msgstr "Nicht gespeichert: ist das Netz weg? Es wird erneut versucht."
-
 msgid "Remove the step"
 msgstr "Den Schritt entfernen"
 
 msgid "The filter stays."
 msgstr "Der Filter bleibt."
+
+#, python-format
+msgid "Filter: %(name)s"
+msgstr "Filter: %(name)s"
 
 msgid "the GitHub App adds the labels"
 msgstr "die GitHub App fügt die Labels hinzu"

@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import FilterNameMissing, FilterNameTaken
-from pycal_dashboard.models import Label, PullRequestFilter
+from pycal_dashboard.models import Label, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.project_access import ProjectAccess
 
@@ -239,7 +239,9 @@ def project_filter_save(request: HttpRequest, slug: str):
         slug: The project.
 
     Returns:
-        The page, or a redirect to the tab Filters after saving.
+        The page, or a redirect to the tab Filters after saving; for the script that saves
+        a saved filter while it is edited (``save=this``, accepting JSON), its JSON, or 409
+        when another filter has the name.
 
     Raises:
         FilterNameMissing: The name is empty.
@@ -265,6 +267,9 @@ def project_filter_save(request: HttpRequest, slug: str):
         target = saved if saved and request.POST.get("save") == "this" else None
         other = access.project.filters.filter(name=name).exclude(pk=target.pk if target else None)
         other = other.first()
+        autosave = "application/json" in request.headers.get("Accept", "") and target is not None
+        if autosave and other is not None:  # saved while editing: no question in between
+            return JsonResponse({"saved": False, "taken": name}, status=409)
         if other is not None and request.POST.get("replace") != str(other.pk):
             return save_page(  # another filter has the name: replace it?
                 request, access, columns, saved, enabled=False, conflict=other, name=name
@@ -281,6 +286,8 @@ def project_filter_save(request: HttpRequest, slug: str):
                 target.save()
         except IntegrityError:
             raise FilterNameTaken(name) from None
+        if autosave:  # saved while editing, by the script of the page
+            return JsonResponse({"saved": True, "filter": target.pk, "name": target.name})
         messages.success(request, _("The filter %(name)s is saved.") % {"name": name})
         return redirect(access.project.path("filters/"))
     return save_page(request, access, columns, saved, enabled=saved is None)
@@ -322,6 +329,12 @@ def save_page(
             "summary": summary(columns, enabled=enabled),
             "saved": saved,
             "conflict": conflict,
+            "step": PullRequestStep.objects.filter(filter=saved).first() if saved else None,
+            "original": [  # the filter as it is saved, to restore it before saving a new one
+                (value, Column.decode(value).filter != "all") for value in saved.columns
+            ]
+            if saved
+            else [],
             "name": saved.name if name is None and saved else (name or ""),
             "description": request.POST.get("description", saved.description if saved else ""),
             "count": len(ColumnResults(repositories).matching(columns)),

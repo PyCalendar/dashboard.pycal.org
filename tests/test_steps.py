@@ -311,3 +311,27 @@ def test_check_lists_the_pull_requests_outside_of_the_steps(client, project, fil
 
 def test_check_without_steps(client, project):
     assert "data-no-steps" in client.get("/projects/icalendar/steps/check/").content.decode()
+
+
+def test_readers_see_the_visible_steps_and_their_filters(client, project, filters, bob):
+    """Who only reads the project sees the steps that are visible, linked to their filters."""
+    conflict, review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    make_step(client, review)
+    hidden, visible = PullRequestStep.objects.order_by("position")
+    PullRequestStep.objects.filter(pk=hidden.pk).update(hidden=True)
+    assert "Conflicts" in client.get("/projects/icalendar/steps/").content.decode()
+    client.logout()
+    page = client.get("/projects/icalendar/steps/").content.decode()
+    assert f'data-step="{visible.pk}"' in page and f'data-step="{hidden.pk}"' not in page
+    assert "Conflicts" not in page  # the first visible one is shown
+    link = page.split(" data-filter-link")[0].rsplit('href="', 1)[1]
+    assert link.startswith("/projects/icalendar/pull-requests/?col=labels")
+    assert link.endswith(f'saved={review.pk}"')
+    page = client.get(f"/projects/icalendar/steps/?step={hidden.pk}").content.decode()
+    assert "Conflicts" not in page and f'data-step-detail="{visible.pk}"' in page
+    filters_page = client.get("/projects/icalendar/filters/").content.decode()
+    assert f'?step={visible.pk}" data-step-link' in filters_page
+    assert f'?step={hidden.pk}" data-step-link' not in filters_page
+    assert "data-make-step" not in filters_page and "data-edit-filter" not in filters_page

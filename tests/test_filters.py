@@ -2,7 +2,7 @@
 
 import pytest
 
-from pycal_dashboard.models import PullRequestFilter, Repository
+from pycal_dashboard.models import PullRequestFilter, PullRequestStep, Repository
 from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.repository_update import RepositoryUpdate
 
@@ -321,3 +321,47 @@ def test_new_filter_opens_the_menu_of_conditions(client, project):
     assert 'id="add-condition" data-add-condition open>' in table
     table = client.get("/projects/icalendar/pull-requests/").content.decode()
     assert 'id="add-condition" data-add-condition>' in table
+
+
+def test_a_saved_filter_saves_itself_for_the_script(client, project, bob):
+    """The script of the page saves an existing filter while it is edited, as JSON."""
+    client.force_login(bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Open", columns=["status~applies~open"]
+    )
+    page = save_page(client, "status~applies~open", saved=saved.pk)
+    assert "data-autosave" in page and "filter-save.js" in page
+    assert "data-original-filter" in page and "data-save-status" in page
+    data = {"col": ["status~applies~open"], "saved": saved.pk, "name": "Still open"}
+    data |= {"on": "0", "save": "this", "description": "Now"}
+    answer = client.post("/projects/icalendar/filters/save/", data, HTTP_ACCEPT="application/json")
+    assert answer.json() == {"saved": True, "filter": saved.pk, "name": "Still open"}
+    saved.refresh_from_db()
+    assert (saved.name, saved.description) == ("Still open", "Now")
+
+
+def test_the_script_does_not_take_the_name_of_another_filter(client, project, bob):
+    client.force_login(bob)
+    saved = PullRequestFilter.objects.create(project=project, name="A", columns=[])
+    PullRequestFilter.objects.create(project=project, name="B", columns=[])
+    data = {"col": ["status~applies~open"], "saved": saved.pk, "name": "B", "save": "this"}
+    answer = client.post("/projects/icalendar/filters/save/", data, HTTP_ACCEPT="application/json")
+    assert answer.status_code == 409 and answer.json() == {"saved": False, "taken": "B"}
+    saved.refresh_from_db()
+    assert saved.name == "A"
+
+
+def test_the_save_page_links_the_conditions_and_the_step(client, project, bob):
+    client.force_login(bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Open", columns=["status~applies~open"]
+    )
+    page = save_page(client, "status~applies~open", saved=saved.pk)
+    edit = page.split(" data-edit-conditions")[0].rsplit('href="', 1)[1]
+    assert edit.startswith("/projects/icalendar/pull-requests/?col=status")
+    assert "data-step-link" not in page
+    step = PullRequestStep.objects.create(project=project, filter=saved, name="Review")
+    page = save_page(client, "status~applies~open", saved=saved.pk)
+    assert f'href="/projects/icalendar/steps/?step={step.pk}" data-step-link>Step: Review' in page
+    new = save_page(client, "status~applies~open")
+    assert "data-autosave" not in new and "data-step-link" not in new

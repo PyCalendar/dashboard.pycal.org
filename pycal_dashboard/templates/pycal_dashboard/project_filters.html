@@ -8,9 +8,9 @@
 {% if filters %}<ul class="filters" data-filters>{% for item in filters %}<li class="card filter" data-filter="{{ item.saved.name }}">
   <div class="table-head"><h2>{{ item.saved.name }}</h2>
   <span class="filter-actions"><a class="button" href="{{ item.path }}" data-filter-pull-requests>{% translate "Pull requests" %}</a>
-  {% if access.can_write %}<a class="button button-quiet" href="{{ item.edit }}" data-edit-filter>{% translate "Edit" %}</a>
-  {% if item.step %}<a class="button button-quiet" href="{% url 'project_steps' project.slug %}?step={{ item.step.pk }}" data-step-link>{% blocktranslate with name=item.step.name %}Step: {{ name }}{% endblocktranslate %}</a>
-  {% else %}<form method="post" action="{% url 'project_step_add' project.slug %}" class="inline" data-make-step data-made-text="{% blocktranslate with name="%(name)s" %}Step: {{ name }}{% endblocktranslate %}">{% csrf_token %}<input type="hidden" name="filter" value="{{ item.saved.pk }}"><button class="button button-quiet">{% translate "Make it a step" %}</button></form>{% endif %}{% endif %}</span></div>
+  {% if access.can_write %}<a class="button button-quiet" href="{{ item.edit }}" data-edit-filter>{% translate "Edit" %}</a>{% endif %}
+  {% if item.step and access.can_write or item.step and not item.step.hidden %}<a class="button button-quiet" href="{% url 'project_steps' project.slug %}?step={{ item.step.pk }}" data-step-link>{% blocktranslate with name=item.step.name %}Step: {{ name }}{% endblocktranslate %}</a>
+  {% elif access.can_write and not item.step %}<form method="post" action="{% url 'project_step_add' project.slug %}" class="inline" data-make-step data-made-text="{% blocktranslate with name="%(name)s" %}Step: {{ name }}{% endblocktranslate %}">{% csrf_token %}<input type="hidden" name="filter" value="{{ item.saved.pk }}"><button class="button button-quiet">{% translate "Make it a step" %}</button></form>{% endif %}</span></div>
   {% if item.saved.description %}<div class="markdown">{{ item.saved.description|markdown }}</div>{% endif %}
   <details class="filter-details" data-filter-details data-numbers="{{ item.counts }}?numbers=1" data-loading-text="{% translate "Counting" %}" data-total-text="{% blocktranslate with count="%(count)s" %}The filter shows {{ count }} pull requests.{% endblocktranslate %}">
     <summary>{% blocktranslate count counter=item.in_force %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>

@@ -551,3 +551,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The page of a pull request shows no number of a step: the name only
 - [x] The page of the message: the stages and a pull request by its number also for visitors
 - [x] CI failing or unknown: 1275 is right (closed and merged pull requests have no checks read); the menu of the column explains unknown
+- [x] The page of a saved filter: Edit the conditions and Step: at the top right; it saves itself
+      like a step (Save as a new filter leaves the saved one as it was)
+- [x] Filters: the link to the step for everyone who can read; Steps: Filter: for readers
+- [x] Steps: who only reads the project sees the visible steps only

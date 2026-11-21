@@ -252,8 +252,12 @@ loading animation while it counts the pull requests it shows and those each of i
 conditions applies to. It shows only the conditions in force: those that are
 off are no part of the filter and appear only in the table of pull requests and
 when the filter is edited. **Pull requests** opens them with the filter, and
-**Edit** opens the page of saving. There it can be changed, and saved
-under its name or as a new filter. The table of pull requests remembers which
+**Edit** opens the page of saving. A filter that is a step has **Step:** and the
+name of the step there, which opens it, for everyone who can read the project. The page of
+saving a saved filter has **Edit the conditions** at the top right, which opens the table of
+pull requests with them, and **Step:** when it is a step. A saved filter saves itself while
+you edit its name, its description and the switches, like a step; **Save as a new filter**
+leaves the saved one as it was. The table of pull requests remembers which
 filter it shows while its columns change, so that **Save** saves that filter
 again, also on the way from a step and back. A name of another filter of the
 project asks whether to replace that filter: **Replace** gives it these
@@ -298,7 +302,8 @@ edit it.
 steps, or none. The switch *Visible in the page of a pull request*, on by
 default, shows the step in the bar of that page; switched off, the step shows
 there only when the pull request is in it, and the bar of the tab *Steps*
-marks it *hidden*.
+marks it *hidden*. Who only reads the project sees the visible steps
+only, each with **Filter:** and the name of its filter, which opens its pull requests.
 
 Below the tasks, *Labels* has the labels that the GitHub App adds and removes
 *when a pull request enters the step* and *when a pull request completes the

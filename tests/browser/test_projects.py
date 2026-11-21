@@ -361,7 +361,8 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     item.get_by_role("link", name="Pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Save", exact=True).click()
-    expect(page.get_by_role("button", name="Save Waiting")).to_be_visible()
+    expect(page.get_by_role("button", name="Save Waiting")).to_be_hidden()  # it saves itself
+    expect(page.locator("[data-save-status]")).not_to_have_attribute("hidden", "")
     page.get_by_role("link", name="← Back to the pull requests").click()
     expect(page.get_by_role("heading", name="Waiting: 3 pull requests")).to_be_visible()
     page.get_by_role("link", name="Filters", exact=True).click()
@@ -656,3 +657,59 @@ def test_a_filter_keeps_its_name_from_the_step_to_the_table_and_back(signed_in, 
     assert PullRequestFilter.objects.get(name="Other").columns == [
         "labels~applies~present~needs docs"
     ]
+
+
+def test_a_saved_filter_saves_itself(signed_in, site, github, bob):
+    """The page of a saved filter: saved while it is edited, linked to its conditions and step."""
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    step = PullRequestStep.objects.create(project=project, filter=saved, name="Peer review")
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/filters/")
+    page.locator("[data-filter='Review']").get_by_role("link", name="Edit").click()
+    expect(page.get_by_role("button", name="Save Review")).to_be_hidden()
+    page.get_by_label("Name", exact=True).fill("Maintainer review")
+    status = page.locator("[data-save-status]")
+    expect(status).to_have_text("✓ Saved", timeout=10000)
+    saved.refresh_from_db()
+    assert saved.name == "Maintainer review"
+    page.get_by_role("link", name="Step: Peer review").click()
+    expect(page.locator(f"[data-step-detail='{step.pk}']")).to_be_visible()
+    page.go_back()
+    page.get_by_role("link", name="Edit the conditions").click()
+    expect(page.get_by_role("heading", name=re.compile("^Maintainer review"))).to_be_visible()
+
+
+def test_saving_as_a_new_filter_leaves_the_saved_one(signed_in, site, github, bob):
+    from pycal_dashboard.models import PullRequestFilter
+
+    project = pull_request_project(github, bob)
+    PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/filters/")
+    page.locator("[data-filter='Review']").get_by_role("link", name="Edit").click()
+    page.get_by_label("Name", exact=True).fill("Copy")
+    page.get_by_role("button", name="Save as a new filter").click()
+    expect(page.get_by_text("The filter Copy is saved.")).to_be_visible()
+    names = sorted(PullRequestFilter.objects.values_list("name", flat=True))
+    assert names == ["Copy", "Review"]
+
+
+def test_readers_go_from_the_filters_to_the_steps_and_back(page, site, github, bob):
+    from pycal_dashboard.models import PullRequestFilter, PullRequestStep
+
+    project = pull_request_project(github, bob)
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Review", columns=["labels~applies~present~needs review"]
+    )
+    PullRequestStep.objects.create(project=project, filter=saved, name="Peer review")
+    page.goto(f"{site}/projects/icalendar/filters/")
+    page.get_by_role("link", name="Step: Peer review").click()
+    page.get_by_role("link", name="Filter: Review").click()
+    expect(page.get_by_role("heading", name=re.compile("^Review"))).to_be_visible()
