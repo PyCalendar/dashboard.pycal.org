@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.5.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- A group of conditions Dashboard, on data of dashboard.pycal.org: PR Sync on (the pull requests with the Status Message) and a skipped step, to filter by them.
+
+
 0.4.0 (2026-11-21)
 ------------------
 
