@@ -451,20 +451,20 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .pull-badge { display: flex; flex-wrap: wrap; align-items: flex-start; gap: .5rem 1rem; margin: .5rem 0; }
 .pull-badge details { flex: 1 1 16rem; }
 .pull-badge input { width: 100%; font-family: var(--mono, monospace); font-size: .85rem; }
-/* the bar of the steps of a pull request: each step is a box of five rows (its name, its
-   tasks, where the pull request is, the skip, the buttons) that line up across the steps, as
+/* the bar of the steps of a pull request: each step is a box of four rows (its name, its
+   tasks, whether the pull request is here or skips it, the buttons) that line up across the steps, as
    in a table: a grid whose boxes share its rows (subgrid) */
 .progress-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0 .5rem; list-style: none; margin: 1rem 0 0; padding: 0; }
-.progress-step { position: relative; display: grid; grid-row: span 5; grid-template-rows: subgrid; justify-items: center; align-items: start; row-gap: .35rem; margin-bottom: .5rem; padding: .5rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); text-align: center; min-width: 0; }
+.progress-step { position: relative; display: grid; grid-row: span 4; grid-template-rows: subgrid; justify-items: center; align-items: start; row-gap: .35rem; margin-bottom: .5rem; padding: .5rem .6rem; border: 2px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); text-align: center; min-width: 0; }
 .progress-step:hover, .progress-step:focus-within { background: var(--surface-tint); }
 .progress-step > .progress-title { display: block; color: inherit; text-decoration: none; }
 .progress-step > .progress-title::after { content: ""; position: absolute; inset: 0; border-radius: .5rem; }  /* the whole box opens the step */
-.progress-step > .progress-skip, .progress-step > .progress-actions { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .25rem; min-width: 0; max-width: 100%; }
-.progress-step .skip-reason { font-size: .85rem; overflow-wrap: anywhere; }
-.progress-step .skip-by { font-size: .85rem; }
-.skip-step > summary { list-style: none; }
-.skip-step > summary::-webkit-details-marker { display: none; }
-.skip-form { margin-top: .4rem; text-align: left; width: 100%; }
+.progress-step > .progress-status, .progress-step > .progress-actions { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .25rem; min-width: 0; max-width: 100%; }
+.progress-skip { font-size: .85rem; overflow-wrap: anywhere; }
+/* the dialog to skip a step pops out over the page (popover: also without JavaScript) */
+.skip-dialog { width: min(28rem, calc(100vw - 2rem)); padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); box-shadow: 0 .6rem 2rem rgba(0, 0, 0, .3); text-align: left; }
+.skip-dialog::backdrop { background: rgba(0, 0, 0, .35); }
+.skip-dialog h3 { margin-top: 0; }
 .skip-form textarea { width: 100%; }
 /* past steps green with a check mark; the current one yellow when partly done, red when
    nothing is done; future steps gray, without numbers; the chosen step has a background;
@@ -489,7 +489,7 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .square { width: .8rem; height: .8rem; border-radius: .15rem; background: var(--danger); }
 .square-done { background: var(--success); }
 .square-unknown { background: var(--border); }
-.progress-here { display: block; color: var(--primary); font-weight: 600; }  /* a block: also empty, it starts its row */
+.progress-here { display: block; color: var(--primary); font-weight: 600; }
 /* outside of the usual steps: all of them gray */
 .progress-bar[data-outside] .progress-step { border-color: var(--border); color: var(--text-muted); }
 .progress-bar[data-outside] .square { background: var(--border); }

@@ -383,11 +383,12 @@ outside of the usual steps it should take, such as a merged pull request.
 The boxes of the steps are aligned in rows, as in a table: the names, the tasks, *The pull
 request is here*, the skip and the buttons.
 
-Writers and owners skip a step for a pull request: **Skip** below the step asks for a
-reason. The pull request is then in the next step that shows it; the skipped step is gray
-with a dashed border and still shows its tasks, and its actions do not follow. Below the
-step, everybody sees *Skipped* and who skipped it, linked to their page in the project; only
-the writers and owners see the reason. **Remove the skip** undoes it. A step also skips itself
+Writers and owners skip a step for a pull request: **Skip** below the step opens a dialog
+that asks for the *Reason for skipping*. The pull request is then in the next step that shows
+it; the skipped step is gray with a dashed border and still shows its tasks, and its actions do
+not follow. In the row of *The pull request is here*, everybody sees *Skipped by* and who
+skipped it, linked to their page in the project; the writers and owners also see the reason,
+such as *Skipped by @niccokunzmann: Reviewed at the meeting*. **Don't skip** undoes it. A step also skips itself
 for the pull requests of the authors that its editor names under *Skipped for these
 authors*, such as the maintainers: such a skip says *Skipped* and names nobody.
 

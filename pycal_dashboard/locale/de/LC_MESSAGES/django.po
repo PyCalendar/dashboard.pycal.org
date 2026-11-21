@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 18:52+0000\n"
+"POT-Creation-Date: 2026-11-21 19:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2625,25 +2625,21 @@ msgstr "Der Pull Request ist hier"
 msgid "Skipped"
 msgstr "Übersprungen"
 
-msgid "Remove the skip"
-msgstr "Nicht mehr überspringen"
+msgid "Skipped by"
+msgstr "Übersprungen von"
+
+msgid "Don't skip"
+msgstr "Nicht überspringen"
 
 msgid "Skip"
 msgstr "Überspringen"
 
-msgid "Why it skips the step"
-msgstr "Warum er den Schritt überspringt"
-
-msgid ""
-"The writers and owners of the project see why; everybody sees that you "
-"skipped it."
-msgstr ""
-"Die Schreibenden und Eigentümer des Projekts sehen warum; alle sehen, dass "
-"du ihn übersprungen hast."
-
 #, python-format
 msgid "Skip %(name)s"
 msgstr "%(name)s überspringen"
+
+msgid "Reason for skipping"
+msgstr "Grund für das Überspringen"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 18:52+0000\n"
+"POT-Creation-Date: 2026-11-21 19:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2606,25 +2606,21 @@ msgstr "El pull request está aquí"
 msgid "Skipped"
 msgstr "Saltado"
 
-msgid "Remove the skip"
-msgstr "Quitar el salto"
+msgid "Skipped by"
+msgstr "Saltado por"
+
+msgid "Don't skip"
+msgstr "No saltar"
 
 msgid "Skip"
 msgstr "Saltar"
 
-msgid "Why it skips the step"
-msgstr "Por qué salta el paso"
-
-msgid ""
-"The writers and owners of the project see why; everybody sees that you "
-"skipped it."
-msgstr ""
-"Los editores y propietarios del proyecto ven por qué; todos ven que lo "
-"saltaste."
-
 #, python-format
 msgid "Skip %(name)s"
 msgstr "Saltar %(name)s"
+
+msgid "Reason for skipping"
+msgstr "Motivo para saltarlo"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no task of "

@@ -798,9 +798,11 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     # the rows line up as in a table: the tasks of both steps at the same height
     tops = row_tops(page, ".progress-tasks")
     assert abs(tops[0] - tops[1]) < 1, tops
-    first.locator("[data-skip-step] summary").click()
-    first.get_by_label("Why it skips the step").fill("Reviewed at the meeting")
-    first.get_by_role("button", name="Skip Peer review of the pull request").click()
+    first.locator("[data-skip-step]").click()  # the dialog pops out
+    dialog = page.locator("[data-skip-dialog]:popover-open")
+    expect(dialog).to_be_visible()
+    dialog.get_by_label("Reason for skipping").fill("Reviewed at the meeting")
+    dialog.get_by_role("button", name="Skip Peer review of the pull request").click()
     expect(page.get_by_text("The step Peer review of the pull request is skipped.")).to_be_visible()
     first = page.locator("[data-progress] [data-step]").nth(0)
     expect(first).to_have_attribute("data-skipped", "")
@@ -810,9 +812,12 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     )
     second = page.locator("[data-progress] [data-step]").nth(1)
     expect(second.locator(".progress-here")).to_have_text("The pull request is here")
-    heres = row_tops(page, ".progress-here")
-    assert abs(heres[0] - heres[1]) < 1, heres
-    first.get_by_role("button", name="Remove the skip").click()
+    # "The pull request is here" and "Skipped by" are in the same row
+    rows = row_tops(page, ".progress-status")
+    assert abs(rows[0] - rows[1]) < 1, rows
+    status = first.locator(".progress-status")
+    expect(status).to_have_text(re.compile(r"^Skipped by\s+@bob: Reviewed at the meeting$"))
+    first.get_by_role("button", name="Don't skip").click()
     expect(page.locator("[data-progress] [data-step]").nth(0)).to_have_attribute("data-current", "")
 
 

@@ -609,3 +609,6 @@ community: where to start, what waits for a review, who contributes.
       on GitHub, assigned by hand or by the PR Status on a pull request; create the labels and label the pull requests)
 - [ ] Rename PR Message to PR Status: the tab has two tabs: Status Message (the PR Message as it is) and Status Label
       (the setting above)
+- [x] Skip: the reason in a dialog that pops out; "Reason for skipping"; without the text about who sees it;
+      "Skipped by @handle: <reason>" without a badge; "Don't skip" looks like the button Skip;
+      "The pull request is here" in the same row as "Skipped by ..."
