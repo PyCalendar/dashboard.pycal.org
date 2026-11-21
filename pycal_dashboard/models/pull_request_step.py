@@ -27,7 +27,7 @@ class PullRequestStep(models.Model):
     hidden = models.BooleanField(default=False)
     # the color of its background, such as #fde68a; "" for none (STEP_COLORS of views/steps.py)
     color = models.CharField(max_length=7, blank=True)
-    # what the site does when a pull request completes the step, such as
+    # what the site does when a pull request enters or leaves the step, such as
     # [{"kind": "add_label", "label": "reviewed"}] (StepCompletion)
     actions = models.JSONField(default=list, blank=True)
     # the GitHub handles of the authors whose pull requests skip the step, such as

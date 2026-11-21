@@ -342,7 +342,7 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
             the page of a pull request, with ``visible_form``), ``color`` (one of
             :data:`STEP_COLORS`), ``enter_add``, ``enter_remove``, ``complete_add`` and
             ``complete_remove`` (the labels separated by commas that the GitHub App adds or
-            removes when a pull request enters or completes the step, with ``actions_form``)
+            removes when a pull request enters or leaves the step, with ``actions_form``)
             and for each condition
             ``value-<i>``, ``summary-<i>`` and ``description-<i>``.
         slug: The project.

@@ -25,8 +25,9 @@ class StepCompletion:
 
     After each update of a repository, the step of each of its open pull requests is compared
     with its place at the last update (``PullRequestPlace``). A pull request that left its step
-    with all tasks of the step done completed it: the actions of the step follow, such as
-    adding a label on GitHub. The first time a pull request is seen, its place is only
+    with all tasks of the step done, or because the step is skipped for it, left it: the actions
+    of the step for leaving it follow (the trigger ``complete``), such as adding a label on
+    GitHub. The first time a pull request is seen, its place is only
     recorded, so that nothing happens for the steps it completed before.
     """
 
@@ -86,7 +87,9 @@ class StepCompletion:
             left = place.step
             if left == step:
                 continue
-            if left is not None and self.complete(left, issue):
+            # it leaves the step with all its tasks done, or because the step is skipped
+            skipped = left is not None and self.assignment.overrides.skip(issue, left) is not None
+            if left is not None and (skipped or self.complete(left, issue)):
                 completed.append((issue, left))
                 self.act(issue, left, "complete")
             if step is not None:

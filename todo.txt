@@ -628,5 +628,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] Step labels: Save -> Apply; without the column What saving it does; choosing another option shows above Apply
       what it does: "Create the labels <names> and label <n> pull requests", or for Off "Delete the labels <names>
       from <repositories>" (the person gave it); With PR Sync -> Synchronize
-- [ ] The actions of a step: "When a pull request completes the step" -> "When a pull request leaves the step"; they
+- [x] The actions of a step: "When a pull request completes the step" -> "When a pull request leaves the step"; they
       also follow when the step is skipped while the pull request is in it

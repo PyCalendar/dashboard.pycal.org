@@ -54,7 +54,7 @@ class LabelRemoved(Action):
                 f"Label {self.label} removed from {self.issue.repository.full_name}#"
                 f"{self.issue.number}: it is not in the step {self.step.name}"
             )
-        why = "entered" if self.trigger == "enter" else "completed"
+        why = "entered" if self.trigger == "enter" else "left"
         return (
             f"Label {self.label} removed from {self.issue.repository.full_name}#"
             f"{self.issue.number}: it {why} the step {self.step.name}"

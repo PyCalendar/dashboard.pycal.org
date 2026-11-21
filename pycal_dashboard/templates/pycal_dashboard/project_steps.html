@@ -51,7 +51,7 @@
     <fieldset><legend>{% translate "When a pull request enters the step" %}</legend>
       <p><label for="enter-add">{% translate "Add the labels" %}</label><input id="enter-add" name="enter_add" maxlength="1000" autocomplete="off" value="{{ actions.enter.add|join:', ' }}" placeholder="triage, needs review" data-action-labels></p>
       <p><label for="enter-remove">{% translate "Remove the labels" %}</label><input id="enter-remove" name="enter_remove" maxlength="1000" autocomplete="off" value="{{ actions.enter.remove|join:', ' }}" data-action-labels></p></fieldset>
-    <fieldset><legend>{% translate "When a pull request completes the step" %}</legend>
+    <fieldset><legend>{% translate "When a pull request leaves the step" %}</legend>
       <p><label for="complete-add">{% translate "Add the labels" %}</label><input id="complete-add" name="complete_add" maxlength="1000" autocomplete="off" value="{{ actions.complete.add|join:', ' }}" data-action-labels></p>
       <p><label for="complete-remove">{% translate "Remove the labels" %}</label><input id="complete-remove" name="complete_remove" maxlength="1000" autocomplete="off" value="{{ actions.complete.remove|join:', ' }}" data-action-labels></p></fieldset>
   </div>
@@ -62,7 +62,7 @@
 <form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
 {% else %}<div class="table-head step-head"><h2>{{ shown.name }}</h2><a class="button button-quiet button-small" href="{{ filter_pulls }}" data-filter-link>{% blocktranslate with name=shown.filter.name %}Filter: {{ name }}{% endblocktranslate %}</a></div>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
-<dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request completes the step" %}{% endif %}</dt>
+<dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request leaves the step" %}{% endif %}</dt>
   {% if kinds.add %}<dd>{% translate "the GitHub App adds the labels" %} {% for label in kinds.add %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}
   {% if kinds.remove %}<dd>{% translate "the GitHub App removes the labels" %} {% for label in kinds.remove %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}{% endif %}{% endfor %}</dl>
 <ul class="step-conditions">{% for condition in conditions %}<li><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}{% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}</li>{% endfor %}</ul>{% endif %}

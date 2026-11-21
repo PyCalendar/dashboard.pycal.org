@@ -320,16 +320,17 @@ marks it *hidden*. Who only reads the project sees the visible steps
 only, each with **Filter:** and the name of its filter, which opens its pull requests.
 
 Below the tasks, *Labels* has the labels that the GitHub App adds and removes
-*when a pull request enters the step* and *when a pull request completes the
+*when a pull request enters the step* and *when a pull request leaves the
 step*: labels of the repositories or new ones, which GitHub then creates,
 separated by commas, such as *triage, needs review*. A label renamed on GitHub
 is renamed there, too. A pull request enters a step when an update finds it in
-the step and it was in another one or in none before; it completes a step when
-an update finds it no longer in the step, with all tasks of the step done,
-while it is open. The site remembers the step of each open pull request at
-every update; the first time it sees a pull request, it only remembers where
-it is, so nothing happens for steps entered or completed before. The log of
-the site records every label added or removed.
+the step and it was in another one or in none before; it leaves a step when an
+update finds it no longer in the step, while it is open, with all tasks of the
+step done, or because the step was skipped for it while it was in it.
+dashboard.pycal.org remembers the step of each open pull request at every
+update; the first time it sees a pull request, it only remembers where it is,
+so nothing happens for steps entered or left before. The log records every
+label added or removed.
 
 .. _status-labels:
 

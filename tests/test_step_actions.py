@@ -74,7 +74,7 @@ def test_a_completed_step_adds_its_label(github, project, step):
     assert b"conflict solved" in write.content
     assert PullRequestPlace.objects.get(issue__title="Conflict").step is None
     assert LogAction.objects.filter(kind="label").get().text == (
-        f"Label conflict solved added to {REPO}#1: it completed the step Conflicts"
+        f"Label conflict solved added to {REPO}#1: it left the step Conflicts"
     )
     update(project)  # once only
     assert len(label_writes(github)) == 1
@@ -180,3 +180,19 @@ def test_a_renamed_label_is_renamed_in_the_actions(project, step):
 def test_the_issue_is_kept_once(project, step):
     update(project)
     assert Issue.objects.filter(places__project=project).count() == 2
+
+
+def test_a_skipped_step_is_left_with_its_actions(github, project, step, bob):
+    """The pull request is in the step with its task to do; a writer skips it: it leaves it."""
+    from pycal_dashboard.models import StepSkip
+
+    update(project)
+    StepSkip.objects.create(
+        step=step, issue=Issue.objects.get(title="Conflict"), user=bob, reason="Met"
+    )
+    github.repositories[REPO]["issues"][0]["updated_at"] = "2026-11-03T11:00:00Z"
+    update(project)
+    (write,) = label_writes(github)
+    assert b"conflict solved" in write.content  # the conflict is still there
+    assert PullRequestPlace.objects.get(issue__title="Conflict").step is None
+    assert LogAction.objects.filter(kind="label").get().text.endswith("it left the step Conflicts")

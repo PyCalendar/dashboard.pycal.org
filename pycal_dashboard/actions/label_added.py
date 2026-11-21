@@ -49,7 +49,7 @@ class LabelAdded(Action):
                 f"Label {self.label} added to {self.issue.repository.full_name}#"
                 f"{self.issue.number}: it is in the step {self.step.name}"
             )
-        why = "entered" if self.trigger == "enter" else "completed"
+        why = "entered" if self.trigger == "enter" else "left"
         return (
             f"Label {self.label} added to {self.issue.repository.full_name}#{self.issue.number}: "
             f"it {why} the step {self.step.name}"
