@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.7.1 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- PR Sync: the tab Scope is Synchronization, with the Pull request selection and its Options, and the button Keep N pull requests synchronized.
+
+
 0.7.0 (2026-11-21)
 ------------------
 
