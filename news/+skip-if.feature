@@ -1,1 +1,0 @@
-Filters and steps have Skip if next to their quality checks: if any of these conditions apply to a pull request, the step is skipped for it and the filter does not show it. Conditions are dragged between the two.

@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.9.0 (2026-11-21)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- Filters and steps have Skip if next to their quality checks: if any of these conditions apply to a pull request, the step is skipped for it and the filter does not show it. Conditions are dragged between the two.
+
+
 0.8.2 (2026-11-21)
 ------------------
 
