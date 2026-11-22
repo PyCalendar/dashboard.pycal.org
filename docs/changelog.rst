@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.15.1 (2026-11-22)
+-------------------
+
+Maintenance
+~~~~~~~~~~~
+
+- Fix a reference of the documentation of the restore plan, which stopped the release 0.15.0.
+
+
 0.15.0 (2026-11-22)
 -------------------
 
