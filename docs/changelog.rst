@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.18.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Snapshots keep the backup of a project on dashboard.pycal.org: *Take a snapshot* on the tab *Settings → Snapshots* keeps one with when it was taken and by whom. Writers download them, as files of backups; the owners restore them, with the page of what they change, and delete them. A project keeps its newest 100.
+- The settings of a project have a second row of tabs: *Display* (name, description, visibility and address), *Collaborators*, which moved into the settings, *Snapshots*, *Backup* and the *Danger zone*, slightly red, which deletes the project. The download of a backup is at ``settings/backup/download/`` now.
+
+
 0.17.0 (2026-11-22)
 -------------------
 
