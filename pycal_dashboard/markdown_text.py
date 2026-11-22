@@ -105,16 +105,42 @@ def own_images(
         return "/" + value[len(site) :]
     if value.startswith("/") and not value.startswith("//"):
         return value
-    if value.startswith("https://") and urlsplit(value).hostname in hosts():
+    if value.startswith("https://") and host_allowed(urlsplit(value).hostname or "", hosts()):
         return value  # a host that the administrators allow, such as for badges
     return None
+
+
+def host_allowed(host: str, hosts: set[str]) -> bool:
+    """Whether the images of a host load: it is one of the hosts, or below a ``*.`` of them.
+
+    Parameters:
+        host: The host of an image, such as ``insight.pycal.org``.
+        hosts: The hosts whose images load (:func:`allowed_hosts`), such as ``*.pycal.org``.
+
+    Returns:
+        Whether it is allowed.
+
+    Examples:
+        >>> host_allowed("insight.pycal.org", {"*.pycal.org"})
+        True
+        >>> host_allowed("pycal.org", {"*.pycal.org"})
+        False
+        >>> host_allowed("evilpycal.org", {"*.pycal.org"})
+        False
+    """
+    if not host:
+        return False
+    if host in hosts:
+        return True
+    return any(found.startswith("*.") and host.endswith(found[1:]) for found in hosts)
 
 
 def allowed_hosts() -> set[str]:
     """The hosts whose images load, as the administrators set them on the page Settings.
 
     Returns:
-        The hosts, such as ``insight.pycal.org``; none by default.
+        The hosts, such as ``insight.pycal.org`` or ``*.pycal.org``; those of
+        ``DEFAULT_IMAGE_HOSTS`` until the administrators save others.
     """
     return set(SiteSettings.current().image_hosts)
 

@@ -134,13 +134,13 @@ def test_text_cannot_make_its_own_checkboxes():
 
 @pytest.mark.django_db
 def test_an_image_of_another_site_shows_its_text():
-    """Such as a badge of insight.pycal.org in a message: seen where it is, but not loaded."""
+    """Such as a badge of a host that is not allowed in a message: seen where it is, not loaded."""
     html = render(
-        "[![Replies of Mrbozz](https://insight.pycal.org/badge/s/x/replies/Mrbozz.svg)]"
-        "(https://insight.pycal.org/s/x/replies/Mrbozz/) ![](https://other.example/a.png)"
+        "[![Replies of Mrbozz](https://insight.example.org/badge/s/x/replies/Mrbozz.svg)]"
+        "(https://insight.example.org/s/x/replies/Mrbozz/) ![](https://other.example/a.png)"
     )
-    assert "<img" not in html and "insight.pycal.org/badge" not in html
-    assert '<span class="foreign-image" title="An image of insight.pycal.org, which ' in html
+    assert "<img" not in html and "insight.example.org/badge" not in html
+    assert '<span class="foreign-image" title="An image of insight.example.org, which ' in html
     assert ">Replies of Mrbozz</span></a>" in html
     assert ">Image of other.example</span>" in html
 

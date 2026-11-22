@@ -17,8 +17,9 @@ from pycal_dashboard.errors import ImageHostInvalid
 from pycal_dashboard.models import SiteSettings
 from pycal_dashboard.services.identity import GitHubIdentity
 
-# the name of a host: labels of letters, digits and hyphens, separated by dots
-HOST = re.compile(r"(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}")
+# the name of a host: labels of letters, digits and hyphens, separated by dots; *. before it
+# stands for all hosts below it, such as *.pycal.org, which needs two labels at least
+HOST = re.compile(r"(\*\.)?(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}")
 MAX_HOSTS = 50
 
 
@@ -27,6 +28,7 @@ def image_hosts(text: str) -> list[str]:
 
     Parameters:
         text: The text of the form; ``https://`` and a slash at the end are taken away.
+            ``*.pycal.org`` stands for all hosts below pycal.org, not pycal.org itself.
 
     Returns:
         The hosts in lower case, each once, in their order.
@@ -37,6 +39,8 @@ def image_hosts(text: str) -> list[str]:
     Examples:
         >>> image_hosts("Insight.pycal.org\n\nhttps://img.shields.io/\ninsight.pycal.org")
         ['insight.pycal.org', 'img.shields.io']
+        >>> image_hosts("*.pycal.org")
+        ['*.pycal.org']
     """
     hosts: list[str] = []
     for line in text.splitlines():

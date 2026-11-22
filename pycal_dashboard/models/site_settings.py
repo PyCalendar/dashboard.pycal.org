@@ -4,17 +4,31 @@ from django.core.cache import cache
 from django.db import models
 
 CACHE_KEY = "site-settings"
+# the hosts whose images load before the administrators change them: the badges of shields.io,
+# the images that people put on GitHub, and the sites of pycal.org, such as insight.pycal.org
+DEFAULT_IMAGE_HOSTS = ("*.shields.io", "github.com", "*.pycal.org")
+
+
+def default_image_hosts() -> list[str]:
+    """The hosts whose images load by default, :data:`DEFAULT_IMAGE_HOSTS`.
+
+    Returns:
+        A new list of them.
+    """
+    return list(DEFAULT_IMAGE_HOSTS)
 
 
 class SiteSettings(models.Model):
     """The settings of the site, one row: what the administrators decide on the page Settings.
 
     ``image_hosts`` are the hosts whose images texts of Markdown show, such as
-    ``insight.pycal.org`` for its badges; images of other sites are not loaded. The privacy
-    policy lists them. The pages read the settings from the cache, which a change renews.
+    ``insight.pycal.org`` for its badges, or ``*.pycal.org`` for all hosts below pycal.org;
+    images of other sites are not loaded. They are :data:`DEFAULT_IMAGE_HOSTS` until the
+    administrators save others. The privacy policy lists them. The pages read the settings from
+    the cache, which a change renews.
     """
 
-    image_hosts = models.JSONField(default=list, blank=True)
+    image_hosts = models.JSONField(default=default_image_hosts, blank=True)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:

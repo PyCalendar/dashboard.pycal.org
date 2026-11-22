@@ -662,15 +662,17 @@ community: where to start, what waits for a review, who contributes.
 - [x] The page of the message: Apply must be clicked twice (the script sent the form without the button while saving)
 - [x] An issue template for feedback: screenshots, version, problem, the copy of an error, ...; and where to get them
       (.github/ISSUE_TEMPLATE/feedback.yml, docs/how-to/report-bug.rst)
-- [ ] The person: create the label feedback on GitHub, which the form puts on its issues
+- [x] The person: create the label feedback on GitHub, which the form puts on its issues
 - [x] GitHub shows the badge it cached after the step changed: the message adds _v=<number> to the address of the badge
 - [x] The backup of a project loses no data; restoring it deletes nothing without confirmation (such as a filter added since): checkboxes for destructive actions
 - [x] A condition whether a pull request is a draft (draft, the switch draft of the column Status; DATA_VERSION 5)
 - [x] Images of hosts that the site administrators allow (a list on a new page Settings of the administration menu), such as insight.pycal.org, load in Markdown
-- [ ] The person: add insight.pycal.org on the page Settings (Administration) of the live site
+- [x] The person: add insight.pycal.org on the page Settings (Administration) of the live site (the default *.pycal.org)
 - [x] The settings of a project get a second row of tabs, as PR Sync: Display (name, description, visibility, address),
       Collaborators (moved into the settings), Snapshots, Backup, Danger zone (the deletion, slightly red)
 - [x] Snapshots: a button makes one (the YAML of a backup, with the date and who made it); a list of all; delete,
       download or restore one; a downloaded snapshot restores as a backup
 - [x] Rule: Sign out stays on the page when visitors can see it; else the first tab of the page that they see, else
       a level higher (such as the settings of a project -> its overview)
+- [x] Sensible defaults of the hosts of images: shields.io (*.shields.io), github.com, *.pycal.org; a host may start
+      with *. for all hosts below it; the migration gives a list saved empty the defaults

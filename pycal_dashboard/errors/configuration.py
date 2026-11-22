@@ -102,7 +102,8 @@ class ImageHostInvalid(DashboardError):
     """A host of images on the page Settings is not the name of a host.
 
     Give one host a line, such as ``insight.pycal.org``: without ``https://``, a path or a
-    port. Its images load in texts of Markdown, over HTTPS only.
+    port. ``*.pycal.org`` stands for all hosts below pycal.org; a ``*.`` needs two labels after
+    it, so ``*.org`` is refused. Its images load in texts of Markdown, over HTTPS only.
     """
 
     title = _("The host of images is not valid")

@@ -113,8 +113,22 @@ Settings
 the description of a project, show images of dashboard.pycal.org only; an image
 of another site shows its text instead, because loading it would tell that
 site who looks at the page. The images of the hosts listed here load, over
-HTTPS only, one host a line, such as ``insight.pycal.org`` for its badges. The
-privacy policy lists them, and the log records each change with who made it.
+HTTPS only, one host a line, such as ``insight.pycal.org`` for its badges.
+``*.pycal.org`` stands for all hosts below pycal.org, such as
+``insight.pycal.org``, but not for ``pycal.org`` itself. The privacy policy
+lists them, and the log records each change with who made it.
+
+Until the administrators save the list, the images of these hosts load:
+
+``*.shields.io``
+   The badges of shields.io, such as ``img.shields.io``.
+``github.com``
+   The images that people put into issues and pull requests on GitHub.
+``*.pycal.org``
+   The sites of the Python Calendaring Ecosystem, such as the badges of
+   ``insight.pycal.org``.
+
+An empty list loads no images of other sites.
 
 Sign out
 ========
