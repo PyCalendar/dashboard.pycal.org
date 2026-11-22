@@ -676,3 +676,5 @@ community: where to start, what waits for a review, who contributes.
       a level higher (such as the settings of a project -> its overview)
 - [x] Sensible defaults of the hosts of images: shields.io (*.shields.io), github.com, *.pycal.org; a host may start
       with *. for all hosts below it; the migration gives a list saved empty the defaults
+- [ ] Later (noted, not done yet): add *.githubusercontent.com to the default hosts of images, and every host whose images
+      GitHub Markdown shows, so that texts move easily between GitHub and the dashboard
