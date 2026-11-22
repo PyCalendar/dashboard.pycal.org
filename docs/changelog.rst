@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.19.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Signing out stays on the page when visitors see it; else it goes to the next page higher that they see, such as the overview of a project from its settings.
+
+
 0.18.0 (2026-11-22)
 -------------------
 
