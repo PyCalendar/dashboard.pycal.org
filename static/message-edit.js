@@ -12,6 +12,7 @@
   var timer = null;
   var saving = false;
   var again = false;
+  var applying = false;
   if (save) { save.hidden = true; }
   status.hidden = false;
   function show(state) {
@@ -28,6 +29,7 @@
   }
   function send(leave) {
     clearTimeout(timer);
+    timer = null;
     if (saving) { again = true; return; }
     saving = true;
     show("saving");
@@ -55,19 +57,27 @@
     if (event.target.closest("markdown-toolbar")) { later(); }
   });
   form.addEventListener("submit", function (event) { event.preventDefault(); send(); });
-  if (apply) {  // the latest text is saved before it is applied
+  function hidden(target, name, value) {
+    var field = document.createElement("input");
+    field.type = "hidden";
+    field.name = name;
+    field.value = value;
+    target.appendChild(field);
+  }
+  if (apply) {  // the latest text goes with Apply, also while it is being saved
     apply.form.addEventListener("submit", function (event) {
       if (!timer && !saving) { return; }
       event.preventDefault();
       clearTimeout(timer);
-      var field = document.createElement("input");
-      field.type = "hidden";
-      field.name = "template";
-      field.value = form.querySelector("[name=template]").value;
-      apply.form.appendChild(field);
+      timer = null;
+      applying = true;
+      hidden(apply.form, "template", form.querySelector("[name=template]").value);
+      hidden(apply.form, "apply", "yes");  // submit() sends no button: it is Apply all the same
       apply.form.submit();
     });
   }
-  window.addEventListener("pagehide", function () { if (timer) { send(true); } });
+  window.addEventListener("pagehide", function () {
+    if (timer && !applying) { send(true); }
+  });
   form.dataset.autosaving = "";  // ready
 }());

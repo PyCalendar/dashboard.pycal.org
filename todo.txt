@@ -659,6 +659,6 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: check that the link of {pr_merge_box} scrolls to the merge box (GitHub shows it only signed in)
 - [x] The tasks in the PR message as a numbered list: ":x:  <title>" or ":heavy_check_mark: <title>", then the
       description indented below
-- [ ] The page of the message: Apply must be clicked twice
+- [x] The page of the message: Apply must be clicked twice (the script sent the form without the button while saving)
 - [ ] An issue template for feedback: screenshots, version, problem, the copy of an error, ...; and where to get them
 - [x] GitHub shows the badge it cached after the step changed: the message adds _v=<number> to the address of the badge

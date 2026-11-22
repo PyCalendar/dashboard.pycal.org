@@ -655,6 +655,10 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     expect(page.locator("form[data-autosaving]")).to_have_count(1)
     page.get_by_role("textbox", name="The message").fill("Changed: {pr_title}")
     expect(page.locator("[data-apply]")).to_have_text("Apply")  # not the current one
+    page.get_by_role("button", name="Apply").click()  # at once, while it is saved: one click
+    expect(page.get_by_text("The message is applied: 3 pull requests get it")).to_be_visible()
+    message.refresh_from_db()
+    assert (message.template, message.draft) == ("Changed: {pr_title}", None)
 
 
 def test_a_filter_keeps_its_name_from_the_step_to_the_table_and_back(signed_in, site, github, bob):
