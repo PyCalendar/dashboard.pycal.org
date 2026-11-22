@@ -228,6 +228,7 @@ def test_the_values_of_a_pull_request(project, filters):
     values = values_of(pull, project, step)
     assert values["author_mention"] == "@octocat" and values["author_name"] == "The Octocat"
     assert values["author_handle"] == "octocat" and values["pr_number"] == "1"
+    assert values["pr_merge_box"] == pull.url + "#partial-pull-merging"
     assert (values["step_name"], values["step_number"], values["step_id"]) == (
         "Review",
         "1",
@@ -385,3 +386,15 @@ def test_the_step_lists_its_conditions_of_skip_if(client, project, filters, bob)
     assert "closed" not in tasks  # no task
     client.logout()
     assert "Skipped if: it is closed" in client.get("/projects/icalendar/steps/").content.decode()
+
+
+def test_the_merge_box_is_a_link_in_markdown(project):
+    """Its value is escaped as text, and still an address in a link of Markdown."""
+    from pycal_dashboard.markdown_text import render
+    from pycal_dashboard.step_template import expand, values_of
+
+    pull = Issue.objects.select_related("author", "repository").get(title="Ready")
+    text = expand("[Merge it]({pr_merge_box})", values_of(pull, project))
+    assert 'href="https://github.com/collective/icalendar/pull/1#partial-pull-merging"' in render(
+        text
+    )

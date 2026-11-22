@@ -19,6 +19,9 @@ from django.utils.translation import gettext_lazy as _
 if TYPE_CHECKING:
     from pycal_dashboard.models import Issue, Project, PullRequestStep
 
+# the anchor of the merge box on the page of a pull request on GitHub, for people who signed in:
+# its checks, its conflicts and the button to merge it, at the end of the conversation
+MERGE_BOX = "#partial-pull-merging"
 # the variables of the templates in their groups, by an id: the title of the group, and each
 # variable with what it is and an example
 GROUPS = {
@@ -30,6 +33,10 @@ GROUPS = {
             "pr_url": (
                 _("the address of the pull request on GitHub"),
                 "https://github.com/collective/icalendar/pull/42",
+            ),
+            "pr_merge_box": (
+                _("the address of the merge box of the pull request on GitHub: checks and merging"),
+                "https://github.com/collective/icalendar/pull/42" + MERGE_BOX,
             ),
         },
     ),
@@ -176,6 +183,7 @@ def values_of(issue: Issue, project: Project, step: PullRequestStep | None = Non
         "pr_title": issue.title,
         "pr_number": str(issue.number),
         "pr_url": issue.url,
+        "pr_merge_box": issue.url + MERGE_BOX,
         **pull_addresses(project, issue.number, repository.full_name),
         "author_mention": f"@{login}" if login else "",
         "author_name": (author.name or login) if author else "",

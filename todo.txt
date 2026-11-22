@@ -655,3 +655,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] A badge of insight.pycal.org is missing in the preview of the message: an image of another site shows its text
       (it is not loaded: nothing is loaded from other sites)
 - [ ] The person: should images of insight.pycal.org be loaded in the previews (EXTERNAL_HOSTS of the privacy policy)?
+- [x] A variable {pr_merge_box}: the address of the merge box of the pull request on GitHub (#partial-pull-merging)
+- [ ] The person: check that the link of {pr_merge_box} scrolls to the merge box (GitHub shows it only signed in)

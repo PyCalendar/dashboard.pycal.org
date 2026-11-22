@@ -512,6 +512,12 @@ in their groups. The examples are those of a pull request of
    * - ``{pr_url}``
      - The address of the pull request on GitHub
      - ``https://github.com/collective/icalendar/pull/42``
+   * - ``{pr_merge_box}``
+     - The address of the merge box of the pull request on GitHub, at the end
+       of its conversation: its checks, its conflicts and the button to merge
+       it, which people who signed in to GitHub see. Such as
+       ``[Merge it]({pr_merge_box})``
+     - ``https://github.com/collective/icalendar/pull/42#partial-pull-merging``
 
 .. list-table:: Badge
    :header-rows: 1
