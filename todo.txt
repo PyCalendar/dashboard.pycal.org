@@ -660,5 +660,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The tasks in the PR message as a numbered list: ":x:  <title>" or ":heavy_check_mark: <title>", then the
       description indented below
 - [x] The page of the message: Apply must be clicked twice (the script sent the form without the button while saving)
-- [ ] An issue template for feedback: screenshots, version, problem, the copy of an error, ...; and where to get them
+- [x] An issue template for feedback: screenshots, version, problem, the copy of an error, ...; and where to get them
+      (.github/ISSUE_TEMPLATE/feedback.yml, docs/how-to/report-bug.rst)
+- [ ] The person: create the label feedback on GitHub, which the form puts on its issues
 - [x] GitHub shows the badge it cached after the step changed: the message adds _v=<number> to the address of the badge

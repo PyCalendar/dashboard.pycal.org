@@ -93,7 +93,7 @@ def site(request: HttpRequest) -> dict:
             "licenses_help": f"{docs}contribute.html#license",
             "changelog": f"{docs}changelog.html",
             "source": settings.SOURCE_URL,
-            "issues": f"{settings.SOURCE_URL.rstrip('/')}/issues/new",
+            "issues": f"{settings.SOURCE_URL.rstrip('/')}/issues/new?template=feedback.yml",
             "organizations": [
                 f"https://github.com/{login}" for login in settings.GITHUB_ORGANIZATIONS
             ],

@@ -1,0 +1,73 @@
+name: Problem or feedback
+description: Something of dashboard.pycal.org does not work, or an idea that would help you.
+title: "[Feedback]: "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for telling us! Fill in what you know; each field says where to find it.
+        The guide: https://docs.dashboard.pycal.org/how-to/report-bug.html
+        Security problems go privately into a security advisory instead:
+        https://github.com/PyCalendar/dashboard.pycal.org/security/advisories/new
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is it about?
+      options:
+        - A problem: something does not work as I expect
+        - An idea or feedback: something that would help me
+        - A question
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened, or what would help you?
+      description: Say what you see and what you expected instead, or what you need it for.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do before?
+      description: The clicks and what you typed, one step a line, so that we can do it again.
+      placeholder: |
+        1. Open the project icalendar
+        2. Click PR Sync, then Edit
+        3. ...
+  - type: input
+    id: page
+    attributes:
+      label: The address of the page
+      description: Copy it from the address bar of the browser.
+      placeholder: https://dashboard.pycal.org/projects/icalendar/message/
+  - type: textarea
+    id: error
+    attributes:
+      label: The details of the error
+      description: >
+        On the page of an error, open "Details to copy" below the buttons, select the text and
+        copy it here. It names the error, the page, the time and the version.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: >
+        At the bottom of each page, About, then the tab Version
+        (https://dashboard.pycal.org/about/version/), such as v0.13.0. The details of an
+        error name it, too.
+      placeholder: v0.13.0
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: >
+        Paste a screenshot here, or drag it in. Take it with Print or Shift+Print on Windows and
+        Linux, Shift+Command+4 on a Mac, or the buttons of your phone. Cover what is private.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: Such as Firefox 140 on Ubuntu, or Safari on an iPhone.
