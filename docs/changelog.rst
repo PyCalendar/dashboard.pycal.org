@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.12.1 (2026-11-22)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- An image of another site in Markdown, such as a badge of insight.pycal.org in the PR Sync message, shows its text in a dashed frame instead of nothing, with a note that dashboard.pycal.org loads nothing from other sites.
+
+
 0.12.0 (2026-11-22)
 -------------------
 
