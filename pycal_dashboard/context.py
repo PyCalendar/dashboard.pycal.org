@@ -12,6 +12,7 @@ from .checks import is_url
 from .import_guard import IMPORT_GUARD
 from .services.app_registration import AppRegistration
 from .services.identity import GitHubIdentity
+from .signed_out import signed_out_address
 from .theme import COOKIE, Theme
 
 # the choices of the menu of the colors: value and title
@@ -114,6 +115,10 @@ def site(request: HttpRequest) -> dict:
         "app_registration_obstacle": None if configured else AppRegistration.obstacle(),
         "github": GitHubIdentity.of(getattr(request, "user", None)),
         "site_admin": GitHubIdentity.is_site_admin(getattr(request, "user", None)),
+        # signing out stays on the page if visitors see it, see signed_out.py
+        "signed_out_next": signed_out_address(
+            getattr(request, "path", "/"), getattr(request, "META", {}).get("QUERY_STRING", "")
+        ),
         "nav": getattr(request.resolver_match, "url_name", "") if request.resolver_match else "",
         "notification_count": unread_notifications(request),
     }

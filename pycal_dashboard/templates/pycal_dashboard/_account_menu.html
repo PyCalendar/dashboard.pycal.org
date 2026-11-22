@@ -11,6 +11,6 @@
     <li><a href="{% url 'site_settings' %}" data-site-settings-link>{% translate "Settings" %}</a></li>
     {% if user.is_staff %}<li><a href="{% url 'admin:index' %}">{% translate "Django admin" %}</a></li>{% endif %}{% endif %}
     <li class="separator" role="separator"></li>
-    <li><form method="post" action="{% url 'account_logout' %}">{% csrf_token %}<button type="submit">{% translate "Sign out" %}</button></form></li>
+    <li><form method="post" action="{% url 'account_logout' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ signed_out_next }}"><button type="submit">{% translate "Sign out" %}</button></form></li>
   </ul>
 </details>

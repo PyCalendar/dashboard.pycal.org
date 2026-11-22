@@ -86,6 +86,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    # after signing out: the page, if visitors see it, else the next one higher that they see
+    "pycal_dashboard.signed_out.SignedOutMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     # the rights of the Django admin follow SITE_ADMINS, also for sessions of before a change

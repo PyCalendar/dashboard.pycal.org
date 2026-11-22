@@ -15,3 +15,16 @@ def test_an_administrator_allows_the_images_of_a_host(signed_in, site, settings,
     expect(page.get_by_text("The settings are saved.")).to_be_visible()
     page.goto(f"{site}/about/privacy/")
     expect(page.locator("[data-image-hosts]")).to_contain_text("insight.pycal.org")
+
+
+def test_signing_out_stays_on_a_public_page(signed_in, site, github, bob):
+    """Sign out from the pull requests of a public project: still there, signed out."""
+    from tests.browser.test_projects import pull_request_project
+
+    pull_request_project(github, bob)
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    page.locator(".account-menu summary").click()
+    page.get_by_role("button", name="Sign out").click()
+    expect(page).to_have_url(f"{site}/projects/icalendar/pull-requests/")
+    expect(page.locator(".account-menu")).to_have_count(0)

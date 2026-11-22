@@ -672,5 +672,5 @@ community: where to start, what waits for a review, who contributes.
       Collaborators (moved into the settings), Snapshots, Backup, Danger zone (the deletion, slightly red)
 - [x] Snapshots: a button makes one (the YAML of a backup, with the date and who made it); a list of all; delete,
       download or restore one; a downloaded snapshot restores as a backup
-- [ ] Rule: Sign out stays on the page when visitors can see it; else the first tab of the page that they see, else
+- [x] Rule: Sign out stays on the page when visitors can see it; else the first tab of the page that they see, else
       a level higher (such as the settings of a project -> its overview)

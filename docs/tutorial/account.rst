@@ -119,7 +119,11 @@ privacy policy lists them, and the log records each change with who made it.
 Sign out
 ========
 
-Choose **Sign out** in the menu of your account.
+Choose **Sign out** in the menu of your account. You stay on the page when
+visitors see it, such as the pull requests of a public project; else you go to
+the next page higher that they see: from the settings of a project to its
+overview, from the tab *Edit* of PR Sync to its *Current Message*, from a private
+project to *Projects*, and from your account to the start page.
 
 .. _notifications:
 
