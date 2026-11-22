@@ -8,6 +8,7 @@ the webhook or the person that caused it. The administrators read the log on ``/
 from .action import Action
 from .admin_rights_changed import AdminRightsChanged
 from .email_sent import EmailSent
+from .image_hosts_saved import ImageHostsSaved
 from .label_added import LabelAdded
 from .label_removed import LabelRemoved
 from .message_written import MessageWritten
@@ -19,6 +20,7 @@ from .trigger import Trigger
 from .webhook_trigger import WebhookTrigger
 
 __all__ = [
+    "ImageHostsSaved",
     "Action",
     "AdminRightsChanged",
     "EmailSent",

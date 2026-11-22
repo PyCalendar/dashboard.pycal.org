@@ -32,6 +32,7 @@ from .conditions import (
 from .configuration import (
     ConfigurationError,
     FaviconNotFound,
+    ImageHostInvalid,
     InvalidColor,
     InvalidFooterLink,
     InvalidOrganizationSetting,
@@ -139,6 +140,7 @@ __all__ = [
     "ConfigurationError",
     "DashboardError",
     "FaviconNotFound",
+    "ImageHostInvalid",
     "GitHubAppNotConfigured",
     "GitHubError",
     "GitHubLoginExpired",

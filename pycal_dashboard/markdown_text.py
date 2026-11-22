@@ -7,7 +7,8 @@ and a preview, and the preview is made here too, so that it looks as the page wi
 
 The HTML is cleaned (nh3): no scripts, styles or raw HTML of the text, links only to http,
 https and mail, and every link with ``rel="nofollow noopener noreferrer"``. Images are shown
-only from this site, such as the badges of pull requests: nothing is loaded from other sites.
+only from this site, such as the badges of pull requests, and from the hosts that the
+administrators allow on the page Settings: nothing else is loaded from other sites.
 An image of another site shows its text instead (:func:`foreign_image`), so that it is seen
 where it is, such as a badge in a message. A few emoji of GitHub, such as ``:x:``, show as on
 GitHub (:func:`emoji`).
@@ -15,7 +16,8 @@ GitHub (:func:`emoji`).
 
 import html as html_text
 import re
-from functools import cache
+from collections.abc import Callable
+from functools import cache, partial
 from urllib.parse import urlsplit
 
 from django.conf import settings
@@ -23,6 +25,7 @@ from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext
 
 from pycal_dashboard.import_guard import IMPORT_GUARD
+from pycal_dashboard.models.site_settings import SiteSettings
 
 # an item of a list of tasks as GitHub writes it: - [ ] or - [x], also in a paragraph of its own
 TASK = re.compile(r"<li>(\s*<p>)?\[( |x|X)\] ")
@@ -70,16 +73,21 @@ def parser():
     )
 
 
-def own_images(element: str, attribute: str, value: str) -> str | None:
-    """Keep the images of this site only, such as the badges of pull requests.
+def own_images(
+    element: str, attribute: str, value: str, hosts: Callable[[], set[str]] = frozenset
+) -> str | None:
+    """Keep the images of this site, such as the badges of pull requests, and of allowed hosts.
 
-    An image of another site would load it when the page is shown, which the site never does
-    (see the privacy policy): its address is removed. The address of this site becomes a path.
+    An image of another site would load it when the page is shown, which the site does only for
+    the hosts that the administrators allow (:func:`allowed_hosts`, over HTTPS; see the privacy
+    policy): else its address is removed. The address of this site becomes a path.
 
     Parameters:
         element: The element, such as ``img``.
         attribute: The attribute, such as ``src``.
         value: Its value.
+        hosts: The hosts whose images load (:func:`allowed_hosts`), asked only for an image
+            of another site; none by default.
 
     Returns:
         The value; the path of an image of this site; None to remove the attribute.
@@ -97,14 +105,26 @@ def own_images(element: str, attribute: str, value: str) -> str | None:
         return "/" + value[len(site) :]
     if value.startswith("/") and not value.startswith("//"):
         return value
+    if value.startswith("https://") and urlsplit(value).hostname in hosts():
+        return value  # a host that the administrators allow, such as for badges
     return None
 
 
-def foreign_image(match: re.Match) -> str:
+def allowed_hosts() -> set[str]:
+    """The hosts whose images load, as the administrators set them on the page Settings.
+
+    Returns:
+        The hosts, such as ``insight.pycal.org``; none by default.
+    """
+    return set(SiteSettings.current().image_hosts)
+
+
+def foreign_image(match: re.Match, hosts: Callable[[], set[str]] = frozenset) -> str:
     """An image of another site as its text, which says why it is not shown; others stay.
 
     Parameters:
         match: An image of the HTML of the parser: its address and its text.
+        hosts: The hosts whose images load, see :func:`own_images`.
 
     Returns:
         The image of this site as it is; else its text, or that of its site, as a ``span``.
@@ -115,12 +135,12 @@ def foreign_image(match: re.Match) -> str:
         True
     """
     address = html_text.unescape(match[1])
-    if own_images("img", "src", address) is not None:
+    if own_images("img", "src", address, hosts) is not None:
         return match[0]
     host = urlsplit(address).hostname or ""
     title = gettext(
-        "An image of %(host)s, which %(site_name)s does not load: nothing is loaded from other "
-        "sites."
+        "An image of %(host)s, which %(site_name)s does not load: its administrators did not "
+        "allow the images of this host."
     ) % {"host": host, "site_name": settings.SITE_NAME}
     text = match[2] or gettext("Image of %(host)s") % {"host": host}
     return f'<span class="foreign-image" title="{html_text.escape(title)}">{text}</span>'
@@ -184,13 +204,20 @@ def render(text: str) -> SafeString:
     with IMPORT_GUARD:  # see import_guard.py
         import nh3
 
+    known: list[set[str]] = []
+
+    def hosts() -> set[str]:  # read once, and only for an image of another site
+        if not known:
+            known.append(allowed_hosts())
+        return known[0]
+
     html = nh3.clean(
-        IMAGE.sub(foreign_image, parser().render(text)),
+        IMAGE.sub(partial(foreign_image, hosts=hosts), parser().render(text)),
         tags=TAGS,
         attributes=ATTRIBUTES,
         url_schemes=SCHEMES,
         link_rel="nofollow noopener noreferrer",
-        attribute_filter=own_images,
+        attribute_filter=partial(own_images, hosts=hosts),
     )
     html = EMPTY_IMAGE.sub("", html)
     html = emoji(TASK.sub(task_box, html))

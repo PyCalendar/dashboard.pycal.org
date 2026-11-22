@@ -24,6 +24,7 @@ from .pull_request_state import PullRequestState
 from .pull_request_step import PullRequestStep
 from .repository import Repository
 from .review import Review
+from .site_settings import SiteSettings
 from .step_label import StepLabel
 from .step_skip import StepSkip
 from .update_job import UpdateJob
@@ -50,6 +51,7 @@ __all__ = [
     "PullRequestStep",
     "Repository",
     "Review",
+    "SiteSettings",
     "StepLabel",
     "StepSkip",
     "UpdateJob",

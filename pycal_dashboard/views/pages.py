@@ -29,7 +29,7 @@ from pycal_dashboard.checks import FAVICON_TYPES, is_url
 from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.json_api import JSON_API, PRIVATE, REPEATED
 from pycal_dashboard.markdown_text import render as render_markdown
-from pycal_dashboard.models import Preferences
+from pycal_dashboard.models import Preferences, SiteSettings
 from pycal_dashboard.privacy import COOKIES, DATA, EXTERNAL_HOSTS, PARTIES
 from pycal_dashboard.public_json import json_address
 from pycal_dashboard.theme import COOKIE, Theme
@@ -194,6 +194,7 @@ def privacy(request: HttpRequest):
             "parties": PARTIES,
             "cookies": COOKIES,
             "external_hosts": sorted(EXTERNAL_HOSTS),
+            "image_hosts": SiteSettings.current().image_hosts,
             "email_host": settings.EMAIL_HOST,
             "admins": settings.SITE_ADMINS,
         },

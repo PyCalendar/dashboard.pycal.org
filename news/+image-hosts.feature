@@ -1,0 +1,1 @@
+The administrators allow the images of other hosts in texts of Markdown, such as the badges of insight.pycal.org, on the new page *Settings* of the menu Administration; the privacy policy lists them, and the log records each change.

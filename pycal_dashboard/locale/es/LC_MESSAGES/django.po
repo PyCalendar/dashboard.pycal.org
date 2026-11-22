@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 11:31+0000\n"
+"POT-Creation-Date: 2026-11-22 11:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -558,6 +558,9 @@ msgstr "El favicon tiene un formato no compatible"
 msgid "A link of the footer is invalid"
 msgstr "Un enlace del pie de página no es válido"
 
+msgid "The host of images is not valid"
+msgstr "El host de imágenes no es válido"
+
 msgid "Not found"
 msgstr "No encontrado"
 
@@ -846,11 +849,11 @@ msgstr "Git push a un repositorio."
 
 #, python-format
 msgid ""
-"An image of %(host)s, which %(site_name)s does not load: nothing is loaded "
-"from other sites."
+"An image of %(host)s, which %(site_name)s does not load: its administrators "
+"did not allow the images of this host."
 msgstr ""
-"Una imagen de %(host)s, que %(site_name)s no carga: no se carga nada de "
-"otros sitios."
+"Una imagen de %(host)s, que %(site_name)s no carga: sus administradores no "
+"permitieron las imágenes de este host."
 
 #, python-format
 msgid "Image of %(host)s"
@@ -2556,6 +2559,14 @@ msgstr ""
 "Nada más: sin analítica, sin publicidad y sin fuentes, scripts ni estilos de "
 "otros sitios. Las páginas cargan de otros sitios solo:"
 
+#, python-format
+msgid ""
+"And images in texts of Markdown, such as badges, of the hosts that the "
+"administrators of %(site_name)s allow:"
+msgstr ""
+"E imágenes en textos de Markdown, como insignias, de los hosts que permiten "
+"los administradores de %(site_name)s:"
+
 msgid "Cookies"
 msgstr "Cookies"
 
@@ -3596,6 +3607,40 @@ msgstr ""
 "href=\"%(about_url)s\">Acerca de</a>) y las direcciones de %(site_name)s: "
 "<code>%(site_url)s</code>."
 
+msgid "The settings of the administrators"
+msgstr "La configuración de los administradores"
+
+#, python-format
+msgid ""
+"The settings of %(site_name)s that its administrators change here. Only they "
+"see this page."
+msgstr ""
+"La configuración de %(site_name)s que sus administradores cambian aquí. Solo "
+"ellos ven esta página."
+
+msgid "Images of other sites"
+msgstr "Imágenes de otros sitios"
+
+#, python-format
+msgid ""
+"Texts of Markdown, such as the message of PR Sync or the description of a "
+"project, show images of %(site_name)s only: an image of another site shows "
+"its text instead, as loading it would tell that site who looks at the page. "
+"The images of these hosts load, over HTTPS, such as the badges of "
+"insight.pycal.org. The privacy policy lists them."
+msgstr ""
+"Los textos de Markdown, como el mensaje de PR Sync o la descripción de un "
+"proyecto, solo muestran imágenes de %(site_name)s: una imagen de otro sitio "
+"muestra su texto en su lugar, ya que cargarla le diría a ese sitio quién "
+"mira la página. Las imágenes de estos hosts se cargan por HTTPS, como las "
+"insignias de insight.pycal.org. La política de privacidad los nombra."
+
+msgid "Hosts whose images load, one a line"
+msgstr "Hosts cuyas imágenes se cargan, uno por línea"
+
+msgid "Save the settings"
+msgstr "Guardar la configuración"
+
 #, python-format
 msgid "Help: %(label)s (opens in a new tab)"
 msgstr "Ayuda: %(label)s (se abre en una pestaña nueva)"
@@ -3854,6 +3899,9 @@ msgstr "El paso %(name)s ya no se salta."
 #, python-format
 msgid "The step %(name)s is skipped."
 msgstr "El paso %(name)s se salta."
+
+msgid "The settings are saved."
+msgstr "La configuración está guardada."
 
 msgid "With an example pull request:"
 msgstr "Con un pull request de ejemplo:"

@@ -96,3 +96,14 @@ class InvalidFooterLink(ConfigurationError):
     """
 
     title = _("A link of the footer is invalid")
+
+
+class ImageHostInvalid(DashboardError):
+    """A host of images on the page Settings is not the name of a host.
+
+    Give one host a line, such as ``insight.pycal.org``: without ``https://``, a path or a
+    port. Its images load in texts of Markdown, over HTTPS only.
+    """
+
+    title = _("The host of images is not valid")
+    status = 400

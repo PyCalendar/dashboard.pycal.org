@@ -20,9 +20,10 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
   **Preview** shows it as the page will. Without JavaScript, you type the
   Markdown yourself, such as ``**bold**`` and ``[a link](https://pycal.org)``.
   Images show only from dashboard.pycal.org, such as the badges of pull
-  requests: it loads nothing from other sites. An image of another site, such
-  as a badge of insight.pycal.org, shows its text in a dashed frame instead;
-  pull requests on GitHub show the image itself.
+  requests, and from the hosts that the administrators allow, see
+  :ref:`site-settings`: it loads nothing else from other sites. An image of
+  another site shows its text in a dashed frame instead; pull requests on
+  GitHub show the image itself.
   Lists of tasks, ``- [ ]`` and ``- [x]``, show checkboxes as on GitHub, which
   show the state but cannot be changed. The emoji of GitHub that the messages
   use, ``:x:``, ``:heavy_check_mark:``, ``:grey_question:``,

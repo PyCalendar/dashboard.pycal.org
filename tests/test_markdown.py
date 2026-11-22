@@ -49,6 +49,7 @@ def test_links_open_safely():
         "<style>body { display: none }</style>",
     ],
 )
+@pytest.mark.django_db  # the hosts whose images load
 def test_nothing_dangerous_or_from_other_sites(text):
     """No scripts, no handlers, no images or frames of other sites: raw HTML stays text."""
     html = render(text)
@@ -131,6 +132,7 @@ def test_text_cannot_make_its_own_checkboxes():
     assert "<input" not in html.replace("&lt;input", "")  # raw HTML stays text
 
 
+@pytest.mark.django_db
 def test_an_image_of_another_site_shows_its_text():
     """Such as a badge of insight.pycal.org in a message: seen where it is, but not loaded."""
     html = render(

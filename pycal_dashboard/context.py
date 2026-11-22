@@ -77,6 +77,7 @@ def site(request: HttpRequest) -> dict:
             "install_help": f"{docs}how-to/install-app.html",
             "oauth_app": f"{docs}how-to/github-app.html#oauth-app",
             "log_help": f"{docs}tutorial/account.html#administrators",
+            "site_settings_help": f"{docs}tutorial/account.html#site-settings",
             "notifications_help": f"{docs}tutorial/account.html#notifications",
             "new_permissions": f"{docs}how-to/install-app.html#new-permissions",
             "step_variables": f"{docs}tutorial/projects.html#step-variables",

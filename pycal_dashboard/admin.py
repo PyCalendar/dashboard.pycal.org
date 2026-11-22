@@ -23,6 +23,7 @@ from .models import (
     PullRequestStep,
     Repository,
     Review,
+    SiteSettings,
     StepLabel,
     StepSkip,
     UpdateJob,
@@ -87,3 +88,4 @@ admin.site.register(
 admin.site.register(
     Review, list_display=["issue", "author", "state", "submitted"], raw_id_fields=["issue"]
 )
+admin.site.register(SiteSettings, list_display=["__str__", "image_hosts", "updated"])

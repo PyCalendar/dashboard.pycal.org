@@ -213,6 +213,7 @@ MODELS = {
             "closed_by",
         },
     ),
+    "pycal_dashboard.SiteSettings": (None, {"id", "image_hosts", "updated"}),
     "pycal_dashboard.Review": (
         "github",
         {"id", "github_id", "issue", "author", "state", "submitted"},

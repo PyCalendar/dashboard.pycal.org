@@ -1,0 +1,14 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Settings" %} · {{ site_name }}{% endblock %}
+{% block main %}
+<h1>{% translate "Settings" %} {% translate "The settings of the administrators" as help %}{% help_link links.site_settings_help help %}</h1>
+<p class="muted">{% blocktranslate %}The settings of {{ site_name }} that its administrators change here. Only they see this page.{% endblocktranslate %}</p>
+<form method="post" class="card stacked" data-site-settings>{% csrf_token %}
+  <h2>{% translate "Images of other sites" %}</h2>
+  <p>{% blocktranslate %}Texts of Markdown, such as the message of PR Sync or the description of a project, show images of {{ site_name }} only: an image of another site shows its text instead, as loading it would tell that site who looks at the page. The images of these hosts load, over HTTPS, such as the badges of insight.pycal.org. The privacy policy lists them.{% endblocktranslate %}</p>
+  <p><label for="image-hosts">{% translate "Hosts whose images load, one a line" %}</label>
+  <textarea id="image-hosts" name="image_hosts" rows="5" spellcheck="false" autocomplete="off" placeholder="insight.pycal.org">{{ image_hosts }}</textarea></p>
+  <p><button class="button">{% translate "Save the settings" %}</button></p>
+</form>
+{% endblock %}

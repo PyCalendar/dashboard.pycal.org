@@ -17,6 +17,7 @@ from .views import (
     pull_request,
     registration,
     setup,
+    site_settings,
     steps,
     webhook,
 )
@@ -174,6 +175,7 @@ urlpatterns = [
     path("account/delete/", account.account_delete, name="account_delete"),
     path("account/notifications/", account.notifications, name="notifications"),
     path("logs/", account.logs, name="logs"),
+    path("setup/settings/", site_settings.site_settings, name="site_settings"),
     path("setup/github-app/", registration.register_app, name="register_app"),
     path("setup/github-app/registered/", registration.app_registered, name="app_registered"),
     path("setup/installed/", setup.installed, name="installed"),

@@ -98,8 +98,23 @@ follow the setting at every request. The menu of their account has:
    apps. Secrets and email addresses are never logged.
 *Webhook deliveries*
    The latest 100 webhooks with their outcome and errors.
+*Settings*
+   The settings of dashboard.pycal.org that its administrators change, see
+   :ref:`site-settings`.
 *Django admin*
    Every table of the site.
+
+.. _site-settings:
+
+Settings
+--------
+
+*Images of other sites*: texts of Markdown, such as the message of PR Sync or
+the description of a project, show images of dashboard.pycal.org only; an image
+of another site shows its text instead, because loading it would tell that
+site who looks at the page. The images of the hosts listed here load, over
+HTTPS only, one host a line, such as ``insight.pycal.org`` for its badges. The
+privacy policy lists them, and the log records each change with who made it.
 
 Sign out
 ========
