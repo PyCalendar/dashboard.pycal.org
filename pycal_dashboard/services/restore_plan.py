@@ -101,7 +101,7 @@ def message_fields(entry: dict) -> dict:
         entry: The message of the file.
 
     Returns:
-        The fields of :data:`MESSAGE_FIELDS`.
+        The fields of ``MESSAGE_FIELDS``.
     """
     draft = entry.get("draft")
     return {
