@@ -55,7 +55,13 @@ Every public page has its information as JSON at the address of the page with
      - ``/projects/<slug>.json``: a public
        project with its ``open_issues``,
        ``open_pull_requests``, when it was ``updated``, and its
-       ``repositories`` with their numbers
+       ``repositories`` with their numbers. The ``app`` of each repository is
+       the installation of the GitHub App on it (``null`` without one): whether
+       it is ``installed`` (neither removed nor suspended), its ``account``, the
+       ``permissions`` and ``events`` that its owners accepted, as GitHub last
+       told, and the ``missing_permissions`` and ``missing_events`` of those
+       that ``app_requires``: the ``permissions`` and ``events`` that
+       dashboard.pycal.org needs, see :doc:`/reference/permissions`
 
 The JSON holds what a visitor who is not signed in sees, also when the request
 carries the cookie of a session. Pages for signed-in people, such as

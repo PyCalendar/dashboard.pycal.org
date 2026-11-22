@@ -28,6 +28,7 @@ from pycal_dashboard.errors import (
     all_errors,
     translate,
 )
+from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.github.person_client import PersonClient
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import (
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.contrib.auth.models import AnonymousUser
 
-    from pycal_dashboard.models import Project
+    from pycal_dashboard.models import Installation, Project
 
 
 # the pages that a change of the address goes back to
@@ -111,9 +112,37 @@ def project_data(access: ProjectAccess, repositories: list[Repository]) -> dict:
                 "open_issues": r.open_issues,
                 "open_pull_requests": r.open_pull_requests,
                 "updated": r.updated.isoformat() if r.updated else None,
+                "app": app_data(r.installation),
             }
             for r in repositories
         ],
+        "app_requires": {"permissions": dict(REQUIRED), "events": list(EVENTS)},
+    }
+
+
+def app_data(installation: Installation | None) -> dict | None:
+    """The installation of the GitHub App on a repository, for the JSON of its project.
+
+    What it was granted and receives, as GitHub last told, and what of ``app_requires``
+    it lacks, so that a missing permission can be found.
+
+    Parameters:
+        installation: The installation; None when the app is not installed on the repository.
+
+    Returns:
+        ``installed`` (active: neither removed nor suspended), ``account``, ``permissions``,
+        ``events``, ``missing_permissions`` and ``missing_events``; None without one.
+    """
+    if installation is None:
+        return None
+    events = list(installation.events or [])
+    return {
+        "installed": not installation.removed and not installation.suspended,
+        "account": installation.account_login,
+        "permissions": dict(sorted((installation.permissions or {}).items())),
+        "events": sorted(events),
+        "missing_permissions": installation.missing_permissions,
+        "missing_events": [event for event in EVENTS if event not in events],
     }
 
 

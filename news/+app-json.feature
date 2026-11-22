@@ -1,0 +1,1 @@
+The JSON of a project, ``/projects/<slug>.json``, shows the installation of the GitHub App on each repository: the permissions and events that its owners accepted, and those that it lacks of what dashboard.pycal.org requires (``app_requires``).

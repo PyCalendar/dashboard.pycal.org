@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 22:41+0000\n"
+"POT-Creation-Date: 2026-11-22 10:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -959,8 +959,12 @@ msgid "People who install the GitHub App"
 msgstr "Personen, die die GitHub App installieren"
 
 #, python-format
-msgid "The people who run %(site_name)s"
-msgstr "Die Personen, die %(site_name)s betreiben"
+msgid ""
+"The people who run %(site_name)s; the account and the permissions of the "
+"installation on a repository: everybody who sees a project with it"
+msgstr ""
+"Die Personen, die %(site_name)s betreiben; das Konto und die Berechtigungen "
+"der Installation auf einem Repository: alle, die ein Projekt damit sehen"
 
 msgid "To email them when the app needs more permissions."
 msgstr "Um ihnen zu schreiben, wenn die App mehr Berechtigungen braucht."
@@ -985,6 +989,10 @@ msgstr ""
 
 msgid "People who sign in or act on the repositories"
 msgstr "Personen, die sich anmelden oder in den Repositorys handeln"
+
+#, python-format
+msgid "The people who run %(site_name)s"
+msgstr "Die Personen, die %(site_name)s betreiben"
 
 msgid "To find and solve errors."
 msgstr "Um Fehler zu finden und zu beheben."

@@ -75,7 +75,10 @@ DATA = {
             "ids of the people who installed or changed it."
         ),
         "whose": _("People who install the GitHub App"),
-        "seen_by": _("The people who run %(site_name)s"),
+        "seen_by": _(
+            "The people who run %(site_name)s; the account and the permissions of the "
+            "installation on a repository: everybody who sees a project with it"
+        ),
         "why": _("To email them when the app needs more permissions."),
     },
     "notifications": {

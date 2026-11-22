@@ -95,3 +95,34 @@ def test_every_page_with_json_exists():
 )
 def test_the_address_of_the_json(page, json):
     assert json_address(page) == json
+
+
+def test_the_project_shows_the_permissions_of_the_app(client, bob):
+    """Each repository with the installation of the app on it, and what the app requires."""
+    from pycal_dashboard.github.permissions import EVENTS, REQUIRED
+    from pycal_dashboard.models import Installation, Repository
+    from pycal_dashboard.services.project_editor import ProjectEditor
+
+    installation = Installation.objects.create(
+        github_id=11,
+        account_login="collective",
+        account_type="Organization",
+        permissions={k: v for k, v in REQUIRED.items() if k != "statuses"}
+        | {"pull_requests": "read"},
+        events=[event for event in EVENTS if event != "push"],
+        admin_github_ids=["42"],
+    )
+    project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    project.repositories.add(
+        Repository.objects.create(full_name="collective/icalendar", installation=installation),
+        Repository.objects.create(full_name="collective/other"),
+    )
+    found = read(client, "/projects/icalendar.json")
+    assert found["app_requires"] == {"permissions": REQUIRED, "events": EVENTS}
+    app, none = (r["app"] for r in sorted(found["repositories"], key=lambda r: r["full_name"]))
+    assert none is None
+    assert app["installed"] is True and app["account"] == "collective"
+    assert app["permissions"]["pull_requests"] == "read" and "statuses" not in app["permissions"]
+    assert app["missing_permissions"] == {"pull_requests": "write", "statuses": "read"}
+    assert app["missing_events"] == ["push"] and "push" not in app["events"]
+    assert "admin_github_ids" not in str(found) and "42" not in str(app)  # who installed it: no

@@ -26,7 +26,8 @@ JSON_API = [
         "page": "/projects/<slug>/",
         "json": "/projects/<slug>.json",
         "holds": "a public project with its open issues and pull requests, when it was "
-        "updated, and its repositories with their numbers",
+        "updated, and its repositories with their numbers and the installation of the GitHub "
+        "App on each (app: its permissions and events, and those of app_requires it lacks)",
     },
     {
         "name": "project_pull_requests",
