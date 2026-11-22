@@ -3,10 +3,12 @@ The backup of a project
 =======================
 
 *Download the backup* in the settings of a project saves a file of YAML with
-the project, its repositories, its filters and its steps; *Restore* reads such a
-file back, see :ref:`project-backup`. Writers and owners of the project download
-backups; only the owners restore them, because a backup replaces the filters and steps. The file starts with a comment that says what it is and links
-this page.
+all that the people of the project decided: the project, its repositories,
+filters, steps with the skips of pull requests, message and roles; *Restore*
+reads such a file back, see :ref:`project-backup`. Writers and owners of the
+project download backups; only the owners restore them, because a backup can
+replace filters and steps. The file starts with a comment that says what it is
+and links this page.
 
 .. code-block:: yaml
 
@@ -21,6 +23,7 @@ this page.
      slug: icalendar
      description: The calendar library of Python.
      public: true
+     step_labels: sync
    repositories:
    - collective/icalendar
    filters:
@@ -47,13 +50,23 @@ this page.
          add: []
          remove: [needs review]
      skip_authors: [niccokunzmann]
+     skips:
+     - repository: collective/icalendar
+       number: 2185
+       by: niccokunzmann
+       reason: Reviewed in the chat.
+       created: '2026-11-19T10:00:00+00:00'
    message:
      template: '{pr_badge} **{step_name}** {tasks_all}'
+     draft: '{pr_badge} **{step_name}**'
      listed: ['2166']
      to_listed: true
      to_new: false
      to_open: true
      to_closed: false
+   members:
+   - handle: niccokunzmann
+     role: owner
 
 The keys
 ========
@@ -66,9 +79,9 @@ The keys
 ``exported``, ``site``
    When and where the backup was made; restoring does not read them.
 ``project``
-   ``name`` and ``description`` (Markdown), which restoring sets, and ``slug``
-   and ``public``, which restoring leaves as they are: the address and the
-   visibility of the project.
+   ``name`` and ``description`` (Markdown), ``step_labels`` (``off`` or
+   ``sync``, see :ref:`pr-message`), and ``slug`` and ``public``, which
+   restoring leaves as they are: the address and the visibility of the project.
 ``repositories``
    The names of the repositories, such as ``collective/icalendar``. Restoring
    adds those that the project lacks, as the tab *Repositories* does, with the
@@ -86,26 +99,57 @@ The keys
    filter, by the column) and its ``actions``: the labels to ``add`` and to
    ``remove`` when a pull request will ``enter`` the step or ``complete`` it, and
    ``skip_authors``, the GitHub handles of the authors whose pull requests skip
-   it. The skips of single pull requests are not in a backup.
+   it. Its ``skips`` are the pull requests that skip it because a person said
+   so: the ``repository`` and ``number`` of the pull request, the GitHub handle
+   of the person (``by``), the ``reason`` and when it was ``created``.
 ``message``
    The Status Message of the tab *PR Sync*, see :ref:`pr-message`: its
-   ``template``, the pull requests ``listed`` by their numbers, and the
+   ``template``, the edited message that is not applied yet (``draft``, empty
+   when there is none), the pull requests ``listed`` by their numbers, and the
    switches of its scope, ``to_listed``, ``to_new``, ``to_open`` and
-   ``to_closed``; empty without a message. Restoring sets it, with new pull
-   requests from the time of restoring, and leaves the message as it is for a
-   file without one.
+   ``to_closed``; empty without a message. New pull requests count from the time
+   of restoring.
+``members``
+   The roles in the project: the GitHub ``handle`` of each person and the
+   ``role``, ``read``, ``write`` or ``owner``.
+
+A backup keeps everything that the people of a project decide;
+``tests/test_backup.py`` checks every field. Left out are the ids and times of
+the database, who made or changed something last, and what GitHub tells, which
+the next update reads again: the labels of the steps on GitHub, which step a
+pull request is in, and the comments of PR Sync.
 
 Restoring
 =========
 
-Restoring replaces all filters and steps of the project with those of the file,
-and the message, and sets its name and description. It forgets which step each open pull request
-was in: the next update only records it, so no label is added or removed
-because of the restored steps. A file that is not a backup, has another version,
+Restoring compares the file with the project first and shows what it changes;
+nothing changes until **Restore the backup** on that page. Filters and steps
+are the same when their names are.
+
+- What only adds is restored: the filters and steps that the project lacks (new
+  steps come last), the message when the project has none, the skips of pull
+  requests that the project knows, and the repositories that it lacks, as the
+  tab *Repositories* adds them.
+- What deletes or replaces something happens only when it is ticked, and
+  nothing is ticked at first: a filter or a step that differs from the backup is
+  replaced, one added after the backup is deleted (a filter with its step), the
+  name, the description, the step labels and the message are replaced, and the
+  steps are ordered as in the backup. A role is given only when it is ticked,
+  too; a person who never signed in gets none.
+
+When steps change, restoring forgets which step each open pull request was in:
+the next update only records it, so no label is added or removed because of the
+restored steps. A file that is not a backup, has another version,
 or has a wrong part, such as a step whose filter is not in the file, changes
 nothing: the page says what is wrong, see
 :class:`~pycal_dashboard.errors.projects.BackupInvalid` and
 :class:`~pycal_dashboard.errors.projects.BackupVersionUnknown`.
 
 .. automodule:: pycal_dashboard.services.project_backup
+   :members:
+
+.. automodule:: pycal_dashboard.services.restore_plan
+   :members:
+
+.. automodule:: pycal_dashboard.services.restore_change
    :members:

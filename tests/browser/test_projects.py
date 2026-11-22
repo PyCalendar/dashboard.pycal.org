@@ -578,7 +578,7 @@ def test_a_form_sent_while_the_site_starts_comes_back(signed_in, site, github, b
 
 
 def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
-    """The settings save the project as YAML and read it back."""
+    """The settings save the project as YAML; restoring shows what it changes, then asks."""
     from pycal_dashboard.models import PullRequestFilter
 
     project = pull_request_project(github, bob)
@@ -591,11 +591,16 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
     download.value.save_as(backup)
     assert "dashboard_backup: 1" in backup.read_text()
     PullRequestFilter.objects.all().delete()
+    PullRequestFilter.objects.create(project=project, name="Later", columns=[])
     page.locator("[data-restore]").get_by_label("A backup of a project").set_input_files(backup)
-    page.get_by_label("Yes, replace the filters and steps").check()
+    page.get_by_role("button", name="Show what the backup changes").click()
+    expect(page.locator("[data-restore-adds]")).to_contain_text("Add the filter “Open”")
+    later = page.get_by_label("Delete the filter “Later”, added after the backup")
+    expect(later).not_to_be_checked()
     page.get_by_role("button", name="Restore the backup").click()
     expect(page.get_by_text("The backup is restored.")).to_be_visible()
-    assert list(PullRequestFilter.objects.values_list("name", flat=True)) == ["Open"]
+    names = sorted(PullRequestFilter.objects.values_list("name", flat=True))
+    assert names == ["Later", "Open"]  # nothing deleted without a tick
 
 
 def test_the_message_of_the_pull_requests(signed_in, site, github, bob):

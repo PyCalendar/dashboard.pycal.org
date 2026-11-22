@@ -1,23 +1,20 @@
-"""The backup of a project as a file of YAML: its settings, repositories, filters and steps."""
+"""The backup of a project as a file of YAML: all that people decided about it.
+
+Its settings, repositories, filters, steps with the skips of pull requests, message and
+roles. Restoring compares it with the project first (:class:`~.restore_plan.RestorePlan`).
+"""
 
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING, Any
 
 from django.conf import settings
-from django.db import transaction
 from django.utils import timezone
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import BackupInvalid, BackupVersionUnknown, DashboardError
 from pycal_dashboard.import_guard import IMPORT_GUARD
-from pycal_dashboard.models import (
-    PullRequestFilter,
-    PullRequestMessage,
-    PullRequestPlace,
-    PullRequestStep,
-)
+from pycal_dashboard.models import ProjectMember, PullRequestMessage, StepSkip
 from pycal_dashboard.step_actions import normalized
 
 if TYPE_CHECKING:
@@ -32,10 +29,11 @@ class ProjectBackup:
     """Export a project as YAML, and restore a project from such a file.
 
     The file has ``dashboard_backup``, the version of its format, ``documentation``, the
-    address of the description of the format, the ``project`` with its name and
-    description, its ``repositories``, its ``filters``, its ``steps`` and its ``message``.
-    Restoring replaces the filters and steps, sets the name, the description and the message,
-    and lists the repositories to add; the visibility and the address stay as they are.
+    address of the description of the format, the ``project`` with its name, description and
+    step labels, its ``repositories``, its ``filters``, its ``steps`` with the skips of pull
+    requests, its ``message`` with the edited one, and the ``members`` with their roles.
+    ``tests/test_backup.py`` checks that every field that people decide is in it. Restoring
+    is :class:`~pycal_dashboard.services.restore_plan.RestorePlan`.
     """
 
     def __init__(self, project: Project):
@@ -68,6 +66,7 @@ class ProjectBackup:
                 "slug": project.slug,
                 "description": project.description,
                 "public": project.public,
+                "step_labels": project.step_labels,
             },
             "repositories": sorted(r.full_name for r in project.repositories.all()),
             "filters": [
@@ -84,11 +83,46 @@ class ProjectBackup:
                     "tasks": step.conditions or {},
                     "actions": normalized(step.actions),
                     "skip_authors": list(step.skip_authors or []),
+                    "skips": self.skips(step.pk),
                 }
                 for step in project.steps.select_related("filter")
             ],
             "message": self.message(),
+            "members": [
+                {"handle": member.user.profile.github_name, "role": member.role}
+                for member in ProjectMember.objects.filter(project=project)
+                .select_related("user__profile")
+                .order_by("added", "pk")
+                if getattr(member.user, "profile", None) and member.user.profile.github_name
+            ],
         }
+
+    @staticmethod
+    def skips(step: int) -> list[dict]:
+        """The skips of a step for pull requests, as the file keeps them.
+
+        Parameters:
+            step: The id of the step.
+
+        Returns:
+            Each with the ``repository`` and ``number`` of the pull request, ``by``, the GitHub
+            handle of who skipped it, the ``reason`` and when it was ``created``.
+        """
+        skips = (
+            StepSkip.objects.filter(step=step)
+            .select_related("issue__repository", "user__profile")
+            .order_by("created", "pk")
+        )
+        return [
+            {
+                "repository": skip.issue.repository.full_name,
+                "number": skip.issue.number,
+                "by": getattr(getattr(skip.user, "profile", None), "github_name", "") or "",
+                "reason": skip.reason,
+                "created": skip.created.isoformat(timespec="seconds"),
+            }
+            for skip in skips
+        ]
 
     def message(self) -> dict | None:
         """The message of the tab PR Sync, as the file keeps it; None without one."""
@@ -97,6 +131,7 @@ class ProjectBackup:
             return None
         return {
             "template": message.template,
+            "draft": message.draft,
             "listed": list(message.listed or []),
             "to_listed": message.to_listed,
             "to_new": message.to_new,
@@ -170,97 +205,6 @@ class ProjectBackup:
             if _get(step, "filter", "steps") not in names:
                 raise BackupInvalid(f"step {step.get('name')!r}: no filter {step['filter']!r}")
         return data
-
-    def restore(self, data: dict) -> list[str]:
-        """Replace the filters and steps, and set the name and the description.
-
-        Where the open pull requests are in the steps is forgotten: the next update only
-        records it, so that no label is added or removed for the restored steps.
-
-        Parameters:
-            data: The data of :meth:`read`.
-
-        Returns:
-            The repositories of the file, for the person to add.
-        """
-        project = self.project
-        with transaction.atomic():
-            project.name = " ".join(str(data["project"]["name"]).split())[:100]
-            project.description = str(data["project"].get("description") or "")
-            project.save(update_fields=["name", "description", "updated"])
-            PullRequestPlace.objects.filter(project=project).delete()
-            project.steps.all().delete()
-            project.filters.all().delete()
-            filters = {}
-            for saved in data.get("filters") or []:
-                name = " ".join(str(saved["name"]).split())[:100]
-                filters[name] = PullRequestFilter.objects.create(
-                    project=project,
-                    name=name,
-                    description=str(saved.get("description") or ""),
-                    columns=[str(value) for value in saved.get("columns") or []],
-                )
-            for position, step in enumerate(data.get("steps") or []):
-                PullRequestStep.objects.create(
-                    project=project,
-                    filter=filters[step["filter"]],
-                    name=" ".join(str(step.get("name") or step["filter"]).split())[:100],
-                    summary=str(step.get("summary") or ""),
-                    hidden=bool(step.get("hidden")),
-                    color=_color(step.get("color")),
-                    conditions=step.get("tasks") or {},
-                    actions=normalized(step.get("actions")),
-                    skip_authors=[str(name) for name in step.get("skip_authors") or []][:100],
-                    position=position,
-                )
-            self.restore_message(data.get("message"))
-        return [str(name) for name in data.get("repositories") or []]
-
-    def restore_message(self, data: dict | None) -> None:
-        """Set the message of the tab PR Sync; a file without one leaves it as it is.
-
-        New pull requests are those opened from now on.
-
-        Parameters:
-            data: The message of the file, or None.
-
-        Raises:
-            BackupInvalid: The message is no mapping.
-        """
-        if data is None:
-            return
-        if not isinstance(data, dict):
-            raise BackupInvalid("message: a mapping with template and the switches")
-        to_new = bool(data.get("to_new"))
-        PullRequestMessage.objects.update_or_create(
-            project=self.project,
-            defaults={
-                "template": str(data.get("template") or ""),
-                "listed": [str(name) for name in data.get("listed") or []],
-                "to_listed": bool(data.get("to_listed", True)),
-                "to_new": to_new,
-                "new_since": timezone.now() if to_new else None,
-                "to_open": bool(data.get("to_open")),
-                "to_closed": bool(data.get("to_closed")),
-            },
-        )
-
-
-def _color(value: Any) -> str:  # noqa: ANN401 - a value of YAML
-    """The color of a step from a file: such as ``#bbf7d0``, else none.
-
-    Parameters:
-        value: The value of the file.
-
-    Returns:
-        The color, or "".
-
-    Examples:
-        >>> _color("#BBF7D0"), _color("red; x"), _color(None)
-        ('#bbf7d0', '', '')
-    """
-    text = str(value or "").lower()
-    return text if re.fullmatch(r"#[0-9a-f]{6}", text) else ""
 
 
 def _get(item: Any, key: str, where: str) -> Any:  # noqa: ANN401 - a value of YAML

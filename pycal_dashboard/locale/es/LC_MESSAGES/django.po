@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 10:22+0000\n"
+"POT-Creation-Date: 2026-11-22 10:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -910,12 +910,14 @@ msgid ""
 "Everybody sees public projects; only the collaborators see the private "
 "projects, and only those who may change a project see who its collaborators "
 "are. Everybody who sees a pull request sees who skipped a step for it; only "
-"those who may change the project see why."
+"those who may change the project see why, and the backups that they download "
+"hold the roles and the reasons, too."
 msgstr ""
 "Todos ven los proyectos públicos; solo los colaboradores ven los proyectos "
-"privados, y solo quienes pueden cambiar un proyecto ven quiénes colaboran en "
-"él. Todos los que ven un pull request ven quién saltó un paso; solo quienes "
-"pueden cambiar el proyecto ven por qué."
+"privados, y solo quienes pueden cambiar un proyecto ven quiénes son sus "
+"colaboradores. Todos los que ven un pull request ven quién omitió un paso "
+"para él; solo quienes pueden cambiar el proyecto ven por qué, y las copias "
+"de seguridad que descargan también contienen los roles y los motivos."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Para mostrar los proyectos y decidir quién puede cambiarlos."
@@ -1094,6 +1096,87 @@ msgstr "fuera"
 
 msgid "none"
 msgstr "ninguno"
+
+#, python-format
+msgid "Add the repositories %(names)s"
+msgstr "Añadir los repositorios %(names)s"
+
+#, python-format
+msgid "Rename the project from “%(old)s” to “%(new)s”"
+msgstr "Renombrar el proyecto de «%(old)s» a «%(new)s»"
+
+msgid "Replace the description of the project with that of the backup"
+msgstr "Reemplazar la descripción del proyecto por la de la copia de seguridad"
+
+msgid "Switch the step labels on"
+msgstr "Activar las etiquetas de los pasos"
+
+msgid "Switch the step labels off: their labels are deleted on GitHub"
+msgstr ""
+"Desactivar las etiquetas de los pasos: sus etiquetas se eliminan en GitHub"
+
+#, python-format
+msgid "Add the filter “%(name)s”"
+msgstr "Añadir el filtro «%(name)s»"
+
+#, python-format
+msgid "Replace the filter “%(name)s” with that of the backup"
+msgstr "Reemplazar el filtro «%(name)s» por el de la copia de seguridad"
+
+#, python-format
+msgid ""
+"Delete the filter “%(name)s” and its step “%(step)s”, added after the backup"
+msgstr ""
+"Eliminar el filtro «%(name)s» y su paso «%(step)s», añadidos después de la "
+"copia de seguridad"
+
+#, python-format
+msgid "Delete the filter “%(name)s”, added after the backup"
+msgstr ""
+"Eliminar el filtro «%(name)s», añadido después de la copia de seguridad"
+
+#, python-format
+msgid "Add the step “%(name)s”"
+msgstr "Añadir el paso «%(name)s»"
+
+#, python-format
+msgid "Replace the step “%(name)s” with that of the backup"
+msgstr "Reemplazar el paso «%(name)s» por el de la copia de seguridad"
+
+#, python-format
+msgid "Delete the step “%(name)s”, added after the backup"
+msgstr "Eliminar el paso «%(name)s», añadido después de la copia de seguridad"
+
+msgid "Order the steps as in the backup"
+msgstr "Ordenar los pasos como en la copia de seguridad"
+
+msgid "Add the message of PR Sync"
+msgstr "Añadir el mensaje de PR Sync"
+
+msgid "Replace the message of PR Sync and its synchronization"
+msgstr "Reemplazar el mensaje de PR Sync y su sincronización"
+
+#, python-format
+msgid "Add %(count)s skip of a step for a pull request"
+msgid_plural "Add %(count)s skips of steps for pull requests"
+msgstr[0] "Añadir %(count)s paso omitido para un pull request"
+msgstr[1] "Añadir %(count)s pasos omitidos para pull requests"
+
+#, python-format
+msgid "@%(handle)s never signed in: no role"
+msgstr "@%(handle)s nunca inició sesión: sin rol"
+
+#, python-format
+msgid "Give @%(handle)s the role %(role)s"
+msgstr "Dar a @%(handle)s el rol %(role)s"
+
+#, python-format
+msgid ""
+"The step “%(name)s” is not restored: its filter “%(filter)s” is that of the "
+"step “%(other)s”."
+msgstr ""
+"El paso «%(name)s» no se restaura: su filtro «%(filter)s» es el del paso "
+"«%(other)s»."
 
 msgid "Pull request"
 msgstr "Pull request"
@@ -2805,11 +2888,13 @@ msgid "The format of a backup"
 msgstr "El formato de una copia de seguridad"
 
 msgid ""
-"The backup is a file of YAML with the name and description of the project, "
-"its repositories, its filters and its steps."
+"The backup is a file of YAML with all that the people of the project "
+"decided: its name and description, repositories, filters, steps with the "
+"skips of pull requests, message and roles."
 msgstr ""
-"La copia de seguridad es un archivo YAML con el nombre y la descripción del "
-"proyecto, sus repositorios, sus filtros y sus pasos."
+"La copia de seguridad es un archivo YAML con todo lo que decidieron las "
+"personas del proyecto: su nombre y descripción, repositorios, filtros, pasos "
+"con los pull requests omitidos, mensaje y roles."
 
 msgid "Download the backup"
 msgstr "Descargar la copia de seguridad"
@@ -2821,26 +2906,21 @@ msgid "A backup of a project"
 msgstr "Una copia de seguridad de un proyecto"
 
 msgid ""
-"Yes, replace the filters and steps of this project with those of the backup"
+"Next, a page shows what the backup adds, and what it would delete or "
+"replace: that happens only when you tick it. The visibility and the address "
+"stay as they are."
 msgstr ""
-"Sí, reemplazar los filtros y pasos de este proyecto por los de la copia de "
-"seguridad"
+"Después, una página muestra lo que añade la copia de seguridad y lo que "
+"eliminaría o reemplazaría: eso solo ocurre si lo marcas. La visibilidad y la "
+"dirección se mantienen."
 
-msgid ""
-"The name and the description come from the backup, and its repositories that "
-"the project lacks are added. The visibility and the address stay as they are."
+msgid "Show what the backup changes"
+msgstr "Mostrar lo que cambia la copia de seguridad"
+
+msgid "Only the owners restore a backup: it can replace filters and steps."
 msgstr ""
-"El nombre y la descripción vienen de la copia de seguridad, y se añaden sus "
-"repositorios que le faltan al proyecto. La visibilidad y la dirección se "
-"quedan como están."
-
-msgid "Restore the backup"
-msgstr "Restaurar la copia de seguridad"
-
-msgid "Only the owners restore a backup: it replaces the filters and steps."
-msgstr ""
-"Solo los propietarios restauran una copia de seguridad: reemplaza los "
-"filtros y los pasos."
+"Solo los propietarios restauran una copia de seguridad: puede reemplazar "
+"filtros y pasos."
 
 msgid "Delete the project"
 msgstr "Eliminar el proyecto"
@@ -3091,6 +3171,31 @@ msgstr "Repositorios privados"
 
 msgid "Go to the overview"
 msgstr "Ir al resumen"
+
+msgid "Restore the backup"
+msgstr "Restaurar la copia de seguridad"
+
+msgid ""
+"The project has everything of the backup already: restoring it changes "
+"nothing."
+msgstr ""
+"El proyecto ya tiene todo lo de la copia de seguridad: restaurarla no cambia "
+"nada."
+
+msgid "What the backup adds"
+msgstr "Lo que añade la copia de seguridad"
+
+msgid "What it deletes or replaces"
+msgstr "Lo que elimina o reemplaza"
+
+msgid ""
+"Nothing of this happens unless you tick it: what the project has now stays."
+msgstr ""
+"Nada de esto ocurre si no lo marcas: lo que el proyecto tiene ahora se "
+"mantiene."
+
+msgid "What it cannot restore"
+msgstr "Lo que no puede restaurar"
 
 #, python-format
 msgid ""
@@ -3732,10 +3837,6 @@ msgstr "cambiar"
 
 msgid "own"
 msgstr "poseer"
-
-msgid "Tick the box to confirm that the backup replaces them."
-msgstr ""
-"Marca la casilla para confirmar que la copia de seguridad los reemplaza."
 
 msgid "The backup is restored."
 msgstr "La copia de seguridad está restaurada."

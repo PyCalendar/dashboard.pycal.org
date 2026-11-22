@@ -186,7 +186,7 @@ ACTIONS = {
         "owner",
         lambda c, w: c.post(
             w.path + "settings/restore/",
-            {"backup": backup_file(w), "confirm": "yes"},
+            {"backup_text": backup_file(w).read().decode(), "confirm": "name"},
         ),
         lambda w: Project.objects.get(pk=w.project.pk).name == "Restored",
     ),

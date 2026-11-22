@@ -49,7 +49,8 @@ DATA = {
             "Everybody sees public projects; only the collaborators see the private projects, "
             "and only those who may change a project see who its collaborators are. Everybody "
             "who sees a pull request sees who skipped a step for it; only those who may change "
-            "the project see why."
+            "the project see why, and the backups that they download hold the roles and the "
+            "reasons, too."
         ),
         "why": _("To show the projects and to decide who may change them."),
     },

@@ -716,12 +716,14 @@ Backup
 ======
 
 The settings of a project have *Backup*, for writers and owners. **Download the
-backup** saves a file of YAML with the name and description of the project, its
-repositories, its filters, its steps and its message, see :doc:`/reference/backup`.
-**Restore the backup**, for the owners only, reads such a file: it replaces the filters and steps of
-the project, sets its name and description, and adds the repositories that the
-project lacks; the visibility and the address stay as they are. A box confirms
-that the filters and steps are replaced.
+backup** saves a file of YAML with all that the people of the project decided:
+its name and description, repositories, filters, steps with the skips of pull
+requests, message and roles, see :doc:`/reference/backup`. **Show what the
+backup changes**, for the owners only, reads such a file and shows what it adds
+and what it would delete or replace, each with a box that is not ticked: a
+filter added after the backup stays unless you tick its deletion. **Restore the
+backup** then adds what the project lacks and makes what you ticked; the
+visibility and the address stay as they are.
 
 .. _project-roles:
 

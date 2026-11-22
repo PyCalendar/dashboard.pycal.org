@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 10:22+0000\n"
+"POT-Creation-Date: 2026-11-22 10:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -918,12 +918,15 @@ msgid ""
 "Everybody sees public projects; only the collaborators see the private "
 "projects, and only those who may change a project see who its collaborators "
 "are. Everybody who sees a pull request sees who skipped a step for it; only "
-"those who may change the project see why."
+"those who may change the project see why, and the backups that they download "
+"hold the roles and the reasons, too."
 msgstr ""
 "Alle sehen öffentliche Projekte; nur die Mitwirkenden sehen die privaten "
-"Projekte, und nur wer ein Projekt ändern darf, sieht, wer daran mitwirkt. "
-"Alle, die einen Pull Request sehen, sehen, wer einen Schritt dafür "
-"übersprungen hat; nur wer das Projekt ändern darf, sieht warum."
+"Projekte, und nur wer ein Projekt ändern darf, sieht, wer seine Mitwirkenden "
+"sind. Alle, die einen Pull Request sehen, sehen, wer einen Schritt für ihn "
+"übersprungen hat; nur wer das Projekt ändern darf, sieht warum, und die "
+"Backups, die diese herunterladen, enthalten die Rollen und die Gründe "
+"ebenfalls."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Um die Projekte zu zeigen und zu entscheiden, wer sie ändern darf."
@@ -1104,6 +1107,86 @@ msgstr "außerhalb"
 
 msgid "none"
 msgstr "keine"
+
+#, python-format
+msgid "Add the repositories %(names)s"
+msgstr "Die Repositorys %(names)s hinzufügen"
+
+#, python-format
+msgid "Rename the project from “%(old)s” to “%(new)s”"
+msgstr "Das Projekt von „%(old)s“ in „%(new)s“ umbenennen"
+
+msgid "Replace the description of the project with that of the backup"
+msgstr "Die Beschreibung des Projekts durch die des Backups ersetzen"
+
+msgid "Switch the step labels on"
+msgstr "Die Labels der Schritte einschalten"
+
+msgid "Switch the step labels off: their labels are deleted on GitHub"
+msgstr ""
+"Die Labels der Schritte ausschalten: Ihre Labels werden auf GitHub gelöscht"
+
+#, python-format
+msgid "Add the filter “%(name)s”"
+msgstr "Den Filter „%(name)s“ hinzufügen"
+
+#, python-format
+msgid "Replace the filter “%(name)s” with that of the backup"
+msgstr "Den Filter „%(name)s“ durch den des Backups ersetzen"
+
+#, python-format
+msgid ""
+"Delete the filter “%(name)s” and its step “%(step)s”, added after the backup"
+msgstr ""
+"Den Filter „%(name)s“ und seinen Schritt „%(step)s“ löschen, die nach dem "
+"Backup hinzugefügt wurden"
+
+#, python-format
+msgid "Delete the filter “%(name)s”, added after the backup"
+msgstr "Den Filter „%(name)s“ löschen, der nach dem Backup hinzugefügt wurde"
+
+#, python-format
+msgid "Add the step “%(name)s”"
+msgstr "Den Schritt „%(name)s“ hinzufügen"
+
+#, python-format
+msgid "Replace the step “%(name)s” with that of the backup"
+msgstr "Den Schritt „%(name)s“ durch den des Backups ersetzen"
+
+#, python-format
+msgid "Delete the step “%(name)s”, added after the backup"
+msgstr "Den Schritt „%(name)s“ löschen, der nach dem Backup hinzugefügt wurde"
+
+msgid "Order the steps as in the backup"
+msgstr "Die Schritte wie im Backup ordnen"
+
+msgid "Add the message of PR Sync"
+msgstr "Die Nachricht von PR Sync hinzufügen"
+
+msgid "Replace the message of PR Sync and its synchronization"
+msgstr "Die Nachricht von PR Sync und ihre Synchronisierung ersetzen"
+
+#, python-format
+msgid "Add %(count)s skip of a step for a pull request"
+msgid_plural "Add %(count)s skips of steps for pull requests"
+msgstr[0] "%(count)s übersprungenen Schritt für einen Pull Request hinzufügen"
+msgstr[1] "%(count)s übersprungene Schritte für Pull Requests hinzufügen"
+
+#, python-format
+msgid "@%(handle)s never signed in: no role"
+msgstr "@%(handle)s hat sich nie angemeldet: keine Rolle"
+
+#, python-format
+msgid "Give @%(handle)s the role %(role)s"
+msgstr "@%(handle)s die Rolle %(role)s geben"
+
+#, python-format
+msgid ""
+"The step “%(name)s” is not restored: its filter “%(filter)s” is that of the "
+"step “%(other)s”."
+msgstr ""
+"Der Schritt „%(name)s“ wird nicht wiederhergestellt: Sein Filter "
+"„%(filter)s“ ist der des Schritts „%(other)s“."
 
 msgid "Pull request"
 msgstr "Pull Request"
@@ -2826,11 +2909,13 @@ msgid "The format of a backup"
 msgstr "Das Format einer Sicherung"
 
 msgid ""
-"The backup is a file of YAML with the name and description of the project, "
-"its repositories, its filters and its steps."
+"The backup is a file of YAML with all that the people of the project "
+"decided: its name and description, repositories, filters, steps with the "
+"skips of pull requests, message and roles."
 msgstr ""
-"Die Sicherung ist eine YAML-Datei mit dem Namen und der Beschreibung des "
-"Projekts, seinen Repositorys, seinen Filtern und seinen Schritten."
+"Das Backup ist eine YAML-Datei mit allem, was die Personen des Projekts "
+"entschieden haben: Name und Beschreibung, Repositorys, Filter, Schritte mit "
+"den übersprungenen Pull Requests, Nachricht und Rollen."
 
 msgid "Download the backup"
 msgstr "Die Sicherung herunterladen"
@@ -2842,25 +2927,21 @@ msgid "A backup of a project"
 msgstr "Eine Sicherung eines Projekts"
 
 msgid ""
-"Yes, replace the filters and steps of this project with those of the backup"
+"Next, a page shows what the backup adds, and what it would delete or "
+"replace: that happens only when you tick it. The visibility and the address "
+"stay as they are."
 msgstr ""
-"Ja, die Filter und Schritte dieses Projekts durch die der Sicherung ersetzen"
-
-msgid ""
-"The name and the description come from the backup, and its repositories that "
-"the project lacks are added. The visibility and the address stay as they are."
-msgstr ""
-"Der Name und die Beschreibung kommen aus der Sicherung, und ihre "
-"Repositorys, die dem Projekt fehlen, werden hinzugefügt. Die Sichtbarkeit "
+"Danach zeigt eine Seite, was das Backup hinzufügt und was es löschen oder "
+"ersetzen würde: Das geschieht nur, wenn Sie es ankreuzen. Die Sichtbarkeit "
 "und die Adresse bleiben, wie sie sind."
 
-msgid "Restore the backup"
-msgstr "Die Sicherung wiederherstellen"
+msgid "Show what the backup changes"
+msgstr "Zeigen, was das Backup ändert"
 
-msgid "Only the owners restore a backup: it replaces the filters and steps."
+msgid "Only the owners restore a backup: it can replace filters and steps."
 msgstr ""
-"Nur die Eigentümer stellen ein Backup wieder her: Es ersetzt die Filter und "
-"Schritte."
+"Nur die Eigentümer stellen ein Backup wieder her: Es kann Filter und "
+"Schritte ersetzen."
 
 msgid "Delete the project"
 msgstr "Das Projekt löschen"
@@ -3118,6 +3199,31 @@ msgstr "Private Repositorys"
 
 msgid "Go to the overview"
 msgstr "Zur Übersicht"
+
+msgid "Restore the backup"
+msgstr "Die Sicherung wiederherstellen"
+
+msgid ""
+"The project has everything of the backup already: restoring it changes "
+"nothing."
+msgstr ""
+"Das Projekt hat bereits alles aus dem Backup: Die Wiederherstellung ändert "
+"nichts."
+
+msgid "What the backup adds"
+msgstr "Was das Backup hinzufügt"
+
+msgid "What it deletes or replaces"
+msgstr "Was es löscht oder ersetzt"
+
+msgid ""
+"Nothing of this happens unless you tick it: what the project has now stays."
+msgstr ""
+"Nichts davon geschieht, wenn Sie es nicht ankreuzen: Was das Projekt jetzt "
+"hat, bleibt."
+
+msgid "What it cannot restore"
+msgstr "Was es nicht wiederherstellen kann"
 
 #, python-format
 msgid ""
@@ -3772,10 +3878,6 @@ msgstr "ändern"
 
 msgid "own"
 msgstr "besitzen"
-
-msgid "Tick the box to confirm that the backup replaces them."
-msgstr ""
-"Hake das Kästchen an, um zu bestätigen, dass die Sicherung sie ersetzt."
 
 msgid "The backup is restored."
 msgstr "Die Sicherung ist wiederhergestellt."

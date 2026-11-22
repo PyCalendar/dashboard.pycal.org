@@ -1,0 +1,19 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Restore the backup" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}
+<form method="post" action="{% url 'project_restore' project.slug %}" class="card stacked" data-restore-plan>{% csrf_token %}
+  <h2>{% translate "Restore the backup" %} {% translate "The format of a backup" as help %}{% help_link links.backup help %}</h2>
+  <textarea name="backup_text" hidden aria-hidden="true">{{ text }}</textarea>
+  {% if not adds and not asks %}<p data-restore-nothing>{% translate "The project has everything of the backup already: restoring it changes nothing." %}</p>{% endif %}
+  {% if adds %}<h3>{% translate "What the backup adds" %}</h3>
+  <ul class="list" data-restore-adds>{% for change in adds %}<li data-change="{{ change.key }}">{{ change.text }}</li>{% endfor %}</ul>{% endif %}
+  {% if asks %}<h3>{% translate "What it deletes or replaces" %}</h3>
+  <p class="muted">{% translate "Nothing of this happens unless you tick it: what the project has now stays." %}</p>
+  <ul class="list restore-asks" data-restore-asks>{% for change in asks %}<li><label class="check"><input type="checkbox" name="confirm" value="{{ change.key }}" data-change="{{ change.key }}"> {{ change.text }}</label></li>{% endfor %}</ul>{% endif %}
+  {% if notes %}<h3>{% translate "What it cannot restore" %}</h3>
+  <ul class="list muted" data-restore-notes>{% for change in notes %}<li>{{ change.text }}</li>{% endfor %}</ul>{% endif %}
+  <p class="form-actions">{% if adds or asks %}<button class="button button-accent" name="restore" value="yes">{% translate "Restore the backup" %}</button> {% endif %}<a class="button button-quiet" href="{% url 'project_edit' project.slug %}#backup">{% translate "Cancel" %}</a></p>
+</form>
+{% endblock %}

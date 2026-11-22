@@ -984,41 +984,59 @@ def project_backup(request: HttpRequest, slug: str):
 @login_required
 @require_POST
 def project_restore(request: HttpRequest, slug: str):
-    """Restore a project from a backup: its filters and steps, name and description.
+    """Restore a project from a backup: first what it changes, then what the person ticked.
 
-    The repositories of the backup that the project lacks are added as on the tab
-    *Repositories*, with the rights of the person.
+    The file ``backup`` shows the page of the plan
+    (:class:`~pycal_dashboard.services.restore_plan.RestorePlan`), with the text of the file
+    in the form. Restoring it (``backup_text``) makes what only adds, and of what deletes or
+    replaces only what is ticked (``confirm``). The repositories of the backup that the
+    project lacks are added as on the tab *Repositories*, with the rights of the person.
 
     Parameters:
-        request: The request, with the file ``backup`` and ``confirm``.
+        request: The request, with the file ``backup``; or ``backup_text`` and ``confirm``.
         slug: The project.
 
     Returns:
-        A redirect to the settings.
+        The page of the plan, or a redirect to the settings.
 
     Raises:
-        ProjectOwnersOnly: Only the owners restore a backup: it replaces the filters and steps.
+        ProjectOwnersOnly: Only the owners restore a backup: it can replace filters and steps.
         BackupInvalid: The file is no backup that the site can restore.
         BackupVersionUnknown: The backup has a version that the site does not know.
     """
     access = ProjectAccess.of(slug, request.user).require_owner()
     with IMPORT_GUARD:  # see import_guard.py
         from pycal_dashboard.services.project_backup import ProjectBackup
+        from pycal_dashboard.services.restore_plan import RestorePlan
 
-    if request.POST.get("confirm") != "yes":
-        messages.error(request, _("Tick the box to confirm that the backup replaces them."))
-        return redirect(access.project.path("settings/") + "#backup")
-    upload = request.FILES.get("backup")
-    if upload is None:
-        raise BackupInvalid("no file")
-    try:
-        text = upload.read(MAX_BACKUP + 1).decode("utf-8")
-    except UnicodeDecodeError:
-        raise BackupInvalid("not a text in UTF-8") from None
-    backup = ProjectBackup(access.project)
-    names = backup.restore(backup.read(text))
-    known = {r.full_name.lower() for r in access.project.repositories.all()}
-    missing = [name for name in names if name.lower() not in known]
+    if "backup_text" in request.POST:
+        text = request.POST["backup_text"]
+    else:
+        upload = request.FILES.get("backup")
+        if upload is None:
+            raise BackupInvalid("no file")
+        try:
+            text = upload.read(MAX_BACKUP + 1).decode("utf-8")
+        except UnicodeDecodeError:
+            raise BackupInvalid("not a text in UTF-8") from None
+    plan = RestorePlan(access.project, ProjectBackup.read(text))
+    if "backup_text" not in request.POST:
+        return render(
+            request,
+            "pycal_dashboard/project_restore.html",
+            {
+                "project": access.project,
+                "access": access,
+                "tab": "settings",
+                "text": text,
+                "adds": [c for c in plan.changes if not c.confirm and not c.note],
+                "asks": [change for change in plan.changes if change.confirm],
+                "notes": [change for change in plan.changes if change.note],
+            },
+        )
+    missing = plan.repositories
+    for note in plan.apply(set(request.POST.getlist("confirm")), request.user):
+        messages.warning(request, note)
     messages.success(request, _("The backup is restored."))
     if missing:
         add_repositories(request, ProjectEditor(access), missing)
