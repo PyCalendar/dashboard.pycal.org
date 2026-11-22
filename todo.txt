@@ -665,3 +665,4 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: create the label feedback on GitHub, which the form puts on its issues
 - [x] GitHub shows the badge it cached after the step changed: the message adds _v=<number> to the address of the badge
 - [x] The backup of a project loses no data; restoring it deletes nothing without confirmation (such as a filter added since): checkboxes for destructive actions
+- [x] A condition whether a pull request is a draft (draft, the switch draft of the column Status; DATA_VERSION 5)

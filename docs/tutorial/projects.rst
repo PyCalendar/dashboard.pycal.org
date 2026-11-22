@@ -196,7 +196,8 @@ check mark, or not, with a red cross, and why:
    CI of closed and merged ones is unknown, as is that of open ones whose checks
    are not read yet or that the GitHub App may not read; the menu says so.
 **Status**
-   Open, closed, merged or auto-merging, with their colors.
+   Open, closed, merged, auto-merging or *draft*, not ready for review yet, with
+   their colors. A draft is open, too; see :doc:`/reference/conditions/draft`.
 **Reviews**
    The pull request has a number of reviews: *at least* (the default), *at
    most*, *more than*, *fewer than* or *exactly*. At least and at most include

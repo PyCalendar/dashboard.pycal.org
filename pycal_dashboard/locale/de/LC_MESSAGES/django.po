@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 10:59+0000\n"
+"POT-Creation-Date: 2026-11-22 11:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -285,6 +285,9 @@ msgstr "gemergt"
 msgid "auto-merging"
 msgstr "automatisches Mergen"
 
+msgid "draft"
+msgstr "Entwurf"
+
 #, python-format
 msgid "it is %(states)s"
 msgstr "er ist %(states)s"
@@ -292,6 +295,9 @@ msgstr "er ist %(states)s"
 #, python-format
 msgid "it is not %(states)s"
 msgstr "er ist nicht %(states)s"
+
+msgid "a draft"
+msgstr "ein Entwurf"
 
 msgid "or"
 msgstr "oder"

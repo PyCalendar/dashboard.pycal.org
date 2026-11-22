@@ -129,6 +129,9 @@ Conditions
 .. automodule:: pycal_dashboard.conditions.condition.open
    :no-members:
 
+.. automodule:: pycal_dashboard.conditions.condition.draft
+   :no-members:
+
 .. automodule:: pycal_dashboard.conditions.condition.merged
    :no-members:
 

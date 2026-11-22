@@ -23,6 +23,7 @@ from pycal_dashboard.conditions.condition.ci_fails import CiFails
 from pycal_dashboard.conditions.condition.ci_passes import CiPasses
 from pycal_dashboard.conditions.condition.ci_unknown import CiUnknown
 from pycal_dashboard.conditions.condition.closed import Closed
+from pycal_dashboard.conditions.condition.draft import Draft
 from pycal_dashboard.conditions.condition.label_absent import LabelAbsent
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
@@ -58,6 +59,7 @@ CONDITIONS: dict[str, type[Condition]] = {
         BranchUpToDate,
         AutoMergeEnabled,
         Open,
+        Draft,
         Merged,
         Closed,
         Reviews,

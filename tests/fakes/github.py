@@ -127,6 +127,7 @@ class FakeGitHub:
         auto_merge: bool = False,
         closed_by: dict | None = None,
         association: str = "CONTRIBUTOR",
+        draft: bool = False,
     ) -> dict:
         """An issue or a pull request of a repository of the fake GitHub.
 
@@ -143,6 +144,8 @@ class FakeGitHub:
             mergeable_state: Of a pull request: clean, dirty, behind, unknown ...
             auto_merge: Whether a pull request has auto-merge enabled.
             closed_by: Who closed it, as GitHub describes accounts; its author by default.
+            association: How its author is associated with the repository, such as MEMBER.
+            draft: Whether a pull request is a draft.
 
         Returns:
             The issue as GitHub lists it.
@@ -165,6 +168,7 @@ class FakeGitHub:
             "closed_by": dict(closed_by or user or self.OCTOCAT) if state == "closed" else None,
         }
         if pull_request:
+            issue["draft"] = draft
             issue["pull_request"] = {
                 "url": f"https://api.github.com/repos/{full_name}/pulls/{number}",
                 "merged_at": "2026-11-01T09:00:00Z" if merged else None,

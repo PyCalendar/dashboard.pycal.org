@@ -29,6 +29,8 @@ class Issue(models.Model):
     # the association of the author with the repository, as GitHub names it, such as MEMBER or
     # FIRST_TIME_CONTRIBUTOR; "" when not read yet (DATA_VERSION 4)
     author_association = models.CharField(max_length=30, blank=True)
+    # whether the pull request is a draft, which is not ready for review (DATA_VERSION 5)
+    draft = models.BooleanField(default=False)
     labels = models.ManyToManyField("Label", blank=True, related_name="issues")
     state = models.CharField(max_length=10, choices=STATES, default=OPEN)
     created = models.DateTimeField()

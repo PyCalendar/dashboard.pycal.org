@@ -11,4 +11,5 @@ prepare`` queues the updates of its projects at the start after the migration, a
 # 2: the labels of the repositories and of the issues; the state of open pull requests
 # 3: the reviews of all pull requests and who closed them
 # 4: the association of the author with the repository (author_association), for its type
-DATA_VERSION = 4
+# 5: whether a pull request is a draft (draft)
+DATA_VERSION = 5

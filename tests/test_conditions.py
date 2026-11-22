@@ -28,6 +28,7 @@ IDS = [
     "branch_up_to_date",
     "auto_merge_enabled",
     "open",
+    "draft",
     "merged",
     "closed",
     "reviews",
@@ -214,7 +215,7 @@ def repository(github):
     github.add_issue(REPO, "An issue", labels=("bug",))
     github.add_issue(REPO, "Ready", pull_request=True, labels=("needs review",), auto_merge=True)
     github.add_issue(REPO, "Conflict", pull_request=True, mergeable_state="dirty")
-    github.add_issue(REPO, "Behind", pull_request=True, mergeable_state="behind")
+    github.add_issue(REPO, "Behind", pull_request=True, mergeable_state="behind", draft=True)
     github.add_issue(REPO, "Computing", pull_request=True, mergeable_state="unknown")
     github.add_issue(REPO, "Closed", pull_request=True, state="closed", merged=True)
     github.add_issue(REPO, "Refused", pull_request=True, state="closed")
@@ -265,6 +266,7 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
         ("ci_fails", {}, {"Ready": False}),
         ("label_exists", {"label": "bug"}, {"An issue": None}),  # pull requests only
         ("open", {}, {"Ready": True, "Closed": False}),
+        ("draft", {}, {"Behind": True, "Ready": False, "An issue": None}),
         ("merged", {}, {"Closed": True, "Ready": False}),
         ("closed", {}, {"Closed": False, "Ready": False, "Refused": True}),
     ],
@@ -364,3 +366,16 @@ def test_removed_labels_are_removed(repository, github):
     ]
     RepositoryUpdate(repository).run()
     assert not repository.labels.filter(name="unused").exists()
+
+
+@pytest.mark.django_db
+def test_a_draft_in_the_column_status(repository):
+    from pycal_dashboard.conditions.group.column import Column
+
+    column = Column.decode("status~applies~draft")
+    assert column.applies(pull("Behind")) is True and column.applies(pull("Ready")) is False
+    assert column.sentence == "it is a draft"
+    assert column.inverted().sentence == "it is not a draft"
+    assert {"text": "draft", "kind": "draft"} in column.group.cell(pull("Behind"), column.choices)
+    Repository.objects.update(data_version=4)  # read before the drafts: not known
+    assert CONDITIONS["draft"].check(pull("Behind"), {}) is None

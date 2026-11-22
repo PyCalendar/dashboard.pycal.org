@@ -191,6 +191,7 @@ class RepositoryUpdate:
                 "author": self.author(item.get("user") or {}),
                 "description": str(item.get("body") or ""),
                 "author_association": str(item.get("author_association") or "")[:30],
+                "draft": bool(item.get("draft")),
                 "state": Issue.CLOSED if item.get("state") == "closed" else Issue.OPEN,
                 "created": parse_datetime(item["created_at"]),
                 "closed": parse_datetime(item["closed_at"]) if item.get("closed_at") else None,

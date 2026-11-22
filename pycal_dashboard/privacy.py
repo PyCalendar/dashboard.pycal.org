@@ -204,6 +204,7 @@ MODELS = {
             "author",
             "description",
             "author_association",
+            "draft",
             "state",
             "created",
             "closed",

@@ -41,6 +41,8 @@ condition chooses the least of them
      - Auto-merge is enabled on a pull request.
    * - :doc:`open`
      - A pull request is open.
+   * - :doc:`draft`
+     - A pull request is a draft: not ready for review yet.
    * - :doc:`merged`
      - A pull request was merged.
    * - :doc:`closed`
@@ -71,6 +73,7 @@ condition chooses the least of them
    branch_up_to_date
    auto_merge_enabled
    open
+   draft
    merged
    closed
    reviews
