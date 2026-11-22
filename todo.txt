@@ -343,7 +343,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] The question marks say why: closed, the permissions checks and statuses not accepted yet,
       or not read yet. Live: the installation of PyCalendar has not accepted checks and statuses
       (the branch is read, the checks are not), and closed pull requests have no checks
-- [ ] The person: accept the permissions checks and statuses for the installation on PyCalendar
+- [x] The person: accept the permissions checks and statuses for the installation on PyCalendar (done: the JSON of the project shows nothing missing, 2026-11-22)
 - [x] Notifications as on the sign platform: the count at the account menu, the page
       Notifications (mark as read, done); an installation that needs permissions notifies its
       people, the app that lacks permissions notifies the administrators; both steps explained
