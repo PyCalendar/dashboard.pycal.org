@@ -83,6 +83,7 @@ from .projects import (
     RepositoryNameInvalid,
     RepositoryNotFound,
     SkipReasonMissing,
+    SnapshotNotFound,
     StepNotFound,
     UnknownRole,
 )
@@ -174,6 +175,7 @@ __all__ = [
     "ProjectSlugInvalid",
     "ProjectSlugTaken",
     "SkipReasonMissing",
+    "SnapshotNotFound",
     "TextPatternInvalid",
     "RegistrationCodeMissing",
     "RegistrationError",

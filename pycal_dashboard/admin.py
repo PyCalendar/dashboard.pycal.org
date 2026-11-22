@@ -15,6 +15,7 @@ from .models import (
     Project,
     ProjectMember,
     ProjectSlug,
+    ProjectSnapshot,
     PullRequestComment,
     PullRequestFilter,
     PullRequestMessage,
@@ -89,3 +90,6 @@ admin.site.register(
     Review, list_display=["issue", "author", "state", "submitted"], raw_id_fields=["issue"]
 )
 admin.site.register(SiteSettings, list_display=["__str__", "image_hosts", "updated"])
+admin.site.register(
+    ProjectSnapshot, list_display=["project", "created", "created_by"], raw_id_fields=["project"]
+)

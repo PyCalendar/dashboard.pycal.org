@@ -2,13 +2,14 @@
 The backup of a project
 =======================
 
-*Download the backup* in the settings of a project saves a file of YAML with
+*Download the backup* on the tab *Settings → Backup* of a project saves a file of YAML with
 all that the people of the project decided: the project, its repositories,
 filters, steps with the skips of pull requests, message and roles; *Restore*
 reads such a file back, see :ref:`project-backup`. Writers and owners of the
 project download backups; only the owners restore them, because a backup can
 replace filters and steps. The file starts with a comment that says what it is
-and links this page.
+and links this page. A snapshot keeps the same file on dashboard.pycal.org, see
+:ref:`snapshots`; downloaded, it restores as a backup.
 
 .. code-block:: yaml
 

@@ -239,6 +239,17 @@ class StepNotFound(ProjectError):
     status = 404
 
 
+class SnapshotNotFound(ProjectError):
+    """The project has no snapshot of this id.
+
+    It may have been deleted, or the project kept only its newest snapshots. Open the tab
+    *Snapshots* of the settings of the project for those it has.
+    """
+
+    title = _("Snapshot not found")
+    status = 404
+
+
 class SkipReasonMissing(ProjectError):
     """A step is skipped for a pull request only with a reason.
 

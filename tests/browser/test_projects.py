@@ -585,6 +585,7 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
     PullRequestFilter.objects.create(project=project, name="Open", columns=["status~applies~open"])
     page = signed_in
     page.goto(f"{site}/projects/icalendar/settings/")
+    page.locator("[data-settings-tabs]").get_by_role("link", name="Backup").click()
     with page.expect_download() as download:
         page.get_by_role("link", name="Download the backup").click()
     backup = tmp_path / "backup.yaml"
@@ -601,6 +602,29 @@ def test_download_and_restore_a_backup(signed_in, site, github, bob, tmp_path):
     expect(page.get_by_text("The backup is restored.")).to_be_visible()
     names = sorted(PullRequestFilter.objects.values_list("name", flat=True))
     assert names == ["Later", "Open"]  # nothing deleted without a tick
+
+
+def test_take_and_restore_a_snapshot(signed_in, site, github, bob):
+    """Settings -> Snapshots: take one, then restore it; what came after stays unless ticked."""
+    from pycal_dashboard.models import PullRequestFilter
+
+    project = pull_request_project(github, bob)
+    PullRequestFilter.objects.create(project=project, name="Open", columns=["status~applies~open"])
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/settings/")
+    page.locator("[data-settings-tabs]").get_by_role("link", name="Snapshots").click()
+    page.get_by_role("button", name="Take a snapshot").click()
+    expect(page.get_by_text("The snapshot is taken.")).to_be_visible()
+    expect(page.locator("[data-snapshot-list] tbody tr")).to_have_count(1)
+    PullRequestFilter.objects.all().delete()
+    PullRequestFilter.objects.create(project=project, name="Later", columns=[])
+    page.get_by_role("button", name="Restore").click()
+    expect(page.locator("[data-restore-adds]")).to_contain_text("Add the filter “Open”")
+    page.get_by_role("button", name="Restore the backup").click()
+    expect(page.get_by_text("The backup is restored.")).to_be_visible()
+    assert sorted(PullRequestFilter.objects.values_list("name", flat=True)) == ["Later", "Open"]
+    page.locator("[data-settings-tabs]").get_by_role("link", name="Danger zone").click()
+    expect(page.get_by_role("button", name="Delete the project")).to_be_visible()
 
 
 def test_the_message_of_the_pull_requests(signed_in, site, github, bob):

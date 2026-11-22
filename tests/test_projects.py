@@ -157,9 +157,8 @@ def test_a_project_needs_a_name(client, bob):
 
 def test_change_and_delete_a_project(client, project, bob):
     client.force_login(bob)
-    assert (
-        "Delete the project" in client.get(f"/projects/{project.slug}/settings/").content.decode()
-    )
+    danger = client.get(f"/projects/{project.slug}/settings/danger/").content.decode()
+    assert "Delete the project" in danger and "data-delete-project" in danger
     client.post(
         f"/projects/{project.slug}/settings/",
         {"name": "New", "description": "Other", "visibility": "private"},
@@ -168,6 +167,7 @@ def test_change_and_delete_a_project(client, project, bob):
     assert (project.name, project.description, project.public) == ("New", "Other", False)
     page = client.post(f"/projects/{project.slug}/settings/", {"delete": "yes"}, follow=True)
     assert "Tick the box" in page.content.decode() and Project.objects.exists()
+    assert page.redirect_chain[-1][0] == f"/projects/{project.slug}/settings/danger/"
     client.post(f"/projects/{project.slug}/settings/", {"delete": "yes", "confirm": "yes"})
     assert not Project.objects.exists()
 

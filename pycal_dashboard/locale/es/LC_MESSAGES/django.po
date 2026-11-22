@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 11:57+0000\n"
+"POT-Creation-Date: 2026-11-22 12:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -683,6 +683,9 @@ msgstr "El proyecto tiene un filtro con este nombre"
 
 msgid "Step not found"
 msgstr "Paso no encontrado"
+
+msgid "Snapshot not found"
+msgstr "Instantánea no encontrada"
 
 msgid "The reason to skip the step is missing"
 msgstr "Falta el motivo para saltar el paso"
@@ -1486,6 +1489,18 @@ msgstr "Repositorios"
 
 msgid "Collaborators"
 msgstr "Colaboradores"
+
+msgid "Display"
+msgstr "Mostrar"
+
+msgid "Snapshots"
+msgstr "Instantáneas"
+
+msgid "Backup"
+msgstr "Copia de seguridad"
+
+msgid "Danger zone"
+msgstr "Zona de peligro"
 
 msgid "What this error means and how to solve it"
 msgstr "Qué significa este error y cómo resolverlo"
@@ -2668,6 +2683,44 @@ msgstr "Desactualizado"
 msgid "The collaborators of the project update it."
 msgstr "Los colaboradores del proyecto lo actualizan."
 
+msgid "The format of a backup"
+msgstr "El formato de una copia de seguridad"
+
+msgid ""
+"The backup is a file of YAML with all that the people of the project "
+"decided: its name and description, repositories, filters, steps with the "
+"skips of pull requests, message and roles."
+msgstr ""
+"La copia de seguridad es un archivo YAML con todo lo que decidieron las "
+"personas del proyecto: su nombre y descripción, repositorios, filtros, pasos "
+"con los pull requests omitidos, mensaje y roles."
+
+msgid "Download the backup"
+msgstr "Descargar la copia de seguridad"
+
+msgid "Restore"
+msgstr "Restaurar"
+
+msgid "A backup of a project"
+msgstr "Una copia de seguridad de un proyecto"
+
+msgid ""
+"A backup or a downloaded snapshot. Next, a page shows what it adds, and what "
+"it would delete or replace: that happens only when you tick it. The "
+"visibility and the address stay as they are."
+msgstr ""
+"Una copia de seguridad o una instantánea descargada. Después, una página "
+"muestra lo que añade y lo que eliminaría o reemplazaría: eso solo ocurre si "
+"lo marcas. La visibilidad y la dirección se mantienen."
+
+msgid "Show what the backup changes"
+msgstr "Mostrar lo que cambia la copia de seguridad"
+
+msgid "Only the owners restore a backup: it can replace filters and steps."
+msgstr ""
+"Solo los propietarios restauran una copia de seguridad: puede reemplazar "
+"filtros y pasos."
+
 msgid "Collaborators of the project"
 msgstr "Colaboradores del proyecto"
 
@@ -2735,6 +2788,23 @@ msgstr "Después →"
 
 msgid "None in the repositories of the project."
 msgstr "Ninguno en los repositorios del proyecto."
+
+msgid "Delete the project"
+msgstr "Eliminar el proyecto"
+
+msgid ""
+"Its repositories stay on GitHub and in other projects. Its filters, steps, "
+"message and snapshots are deleted; download a backup before, to keep them."
+msgstr ""
+"Sus repositorios se mantienen en GitHub y en otros proyectos. Sus filtros, "
+"pasos, mensaje e instantáneas se eliminan; descarga antes una copia de "
+"seguridad para conservarlos."
+
+msgid "Yes, delete this project"
+msgstr "Sí, eliminar este proyecto"
+
+msgid "Only the owners delete the project."
+msgstr "Solo los propietarios eliminan el proyecto."
 
 msgid "Back to the filters"
 msgstr "Volver a los filtros"
@@ -2898,56 +2968,6 @@ msgstr ""
 msgid "Old addresses"
 msgstr "Direcciones antiguas"
 
-msgid "Backup"
-msgstr "Copia de seguridad"
-
-msgid "The format of a backup"
-msgstr "El formato de una copia de seguridad"
-
-msgid ""
-"The backup is a file of YAML with all that the people of the project "
-"decided: its name and description, repositories, filters, steps with the "
-"skips of pull requests, message and roles."
-msgstr ""
-"La copia de seguridad es un archivo YAML con todo lo que decidieron las "
-"personas del proyecto: su nombre y descripción, repositorios, filtros, pasos "
-"con los pull requests omitidos, mensaje y roles."
-
-msgid "Download the backup"
-msgstr "Descargar la copia de seguridad"
-
-msgid "Restore"
-msgstr "Restaurar"
-
-msgid "A backup of a project"
-msgstr "Una copia de seguridad de un proyecto"
-
-msgid ""
-"Next, a page shows what the backup adds, and what it would delete or "
-"replace: that happens only when you tick it. The visibility and the address "
-"stay as they are."
-msgstr ""
-"Después, una página muestra lo que añade la copia de seguridad y lo que "
-"eliminaría o reemplazaría: eso solo ocurre si lo marcas. La visibilidad y la "
-"dirección se mantienen."
-
-msgid "Show what the backup changes"
-msgstr "Mostrar lo que cambia la copia de seguridad"
-
-msgid "Only the owners restore a backup: it can replace filters and steps."
-msgstr ""
-"Solo los propietarios restauran una copia de seguridad: puede reemplazar "
-"filtros y pasos."
-
-msgid "Delete the project"
-msgstr "Eliminar el proyecto"
-
-msgid "Its repositories stay on GitHub and in other projects."
-msgstr "Sus repositorios siguen en GitHub y en otros proyectos."
-
-msgid "Yes, delete this project"
-msgstr "Sí, eliminar este proyecto"
-
 #, python-format
 msgid "Pull requests #%(number)s"
 msgstr "Pull requests #%(number)s"
@@ -3026,9 +3046,6 @@ msgstr[1] "%(counter)s pull requests"
 
 msgid "Per page"
 msgstr "Por página"
-
-msgid "Display"
-msgstr "Mostrar"
 
 msgid "On GitHub"
 msgstr "En GitHub"
@@ -3213,6 +3230,39 @@ msgstr ""
 
 msgid "What it cannot restore"
 msgstr "Lo que no puede restaurar"
+
+msgid "Snapshots of a project"
+msgstr "Instantáneas de un proyecto"
+
+#, python-format
+msgid ""
+"A snapshot is the backup of the project at a moment, kept on %(site_name)s: "
+"restore it as a backup, or download it as one."
+msgstr ""
+"Una instantánea es la copia de seguridad del proyecto en un momento, "
+"guardada en %(site_name)s: restáurala como una copia de seguridad o "
+"descárgala como tal."
+
+msgid "Take a snapshot"
+msgstr "Tomar una instantánea"
+
+msgid "Taken"
+msgstr "Tomada"
+
+msgid "By"
+msgstr "Por"
+
+msgid "Download"
+msgstr "Descargar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Only the owners restore or delete a snapshot."
+msgstr "Solo los propietarios restauran o eliminan una instantánea."
+
+msgid "No snapshot yet."
+msgstr "Aún no hay instantáneas."
 
 #, python-format
 msgid ""
@@ -3835,6 +3885,12 @@ msgstr ""
 
 msgid "People now sign in with the OAuth app."
 msgstr "Ahora las personas inician sesión con la aplicación OAuth."
+
+msgid "The snapshot is deleted."
+msgstr "La instantánea está eliminada."
+
+msgid "The snapshot is taken."
+msgstr "La instantánea está tomada."
 
 #, python-format
 msgid "The project %(name)s is created. Add its repositories."

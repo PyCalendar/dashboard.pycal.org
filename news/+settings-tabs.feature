@@ -1,0 +1,1 @@
+The settings of a project have a second row of tabs: *Display* (name, description, visibility and address), *Collaborators*, which moved into the settings, *Snapshots*, *Backup* and the *Danger zone*, slightly red, which deletes the project. The download of a backup is at ``settings/backup/download/`` now.

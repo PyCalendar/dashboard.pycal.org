@@ -1,0 +1,22 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help github times %}
+{% block title %}{% translate "Snapshots" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}{% include "pycal_dashboard/_settings_tabs.html" %}
+<section class="card" data-snapshots><h2>{% translate "Snapshots" %} {% translate "Snapshots of a project" as help %}{% help_link links.snapshots help %}</h2>
+  <p>{% blocktranslate %}A snapshot is the backup of the project at a moment, kept on {{ site_name }}: restore it as a backup, or download it as one.{% endblocktranslate %}</p>
+  <form method="post" data-take-snapshot>{% csrf_token %}<p><button class="button button-accent" name="take" value="yes">{% translate "Take a snapshot" %}</button></p></form>
+  {% if snapshots %}<div class="table-wrap"><table class="table" data-snapshot-list>
+    <thead><tr><th>{% translate "Taken" %}</th><th>{% translate "By" %}</th><th></th></tr></thead>
+    <tbody>{% for snapshot in snapshots %}<tr data-snapshot="{{ snapshot.pk }}">
+      <td>{% when snapshot.created %}</td>
+      <td>{% if snapshot.created_by %}{% github_user snapshot.created_by.profile.github_name|default:snapshot.created_by.username %}{% else %}<span class="muted">{% translate "a deleted account" %}</span>{% endif %}</td>
+      <td class="snapshot-actions"><a class="button button-quiet button-small" href="{% url 'project_snapshot_download' project.slug snapshot.pk %}" download>{% translate "Download" %}</a>
+        {% if access.is_owner %}<form method="post" action="{% url 'project_restore' project.slug %}" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="snapshot" value="{{ snapshot.pk }}">{% translate "Restore" %}</button></form>
+        <form method="post" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="delete" value="{{ snapshot.pk }}">{% translate "Delete" %}</button></form>{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  {% if not access.is_owner %}<p class="muted" data-snapshot-owners>{% translate "Only the owners restore or delete a snapshot." %}</p>{% endif %}
+  {% else %}<p class="muted empty" data-no-snapshots>{% translate "No snapshot yet." %}</p>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n help %}
+{% block title %}{% translate "Backup" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}{% include "pycal_dashboard/_settings_tabs.html" %}
+<section class="card" id="backup" data-backup><h2>{% translate "Backup" %} {% translate "The format of a backup" as help %}{% help_link links.backup help %}</h2>
+  <p>{% translate "The backup is a file of YAML with all that the people of the project decided: its name and description, repositories, filters, steps with the skips of pull requests, message and roles." %}</p>
+  <p><a class="button" href="{% url 'project_backup' project.slug %}" data-download-backup download>{% translate "Download the backup" %}</a></p>
+  {% if access.is_owner %}<form method="post" action="{% url 'project_restore' project.slug %}" enctype="multipart/form-data" class="stacked" data-restore>{% csrf_token %}
+    <h3>{% translate "Restore" %}</h3>
+    <p><label for="backup-file">{% translate "A backup of a project" %}</label><input id="backup-file" name="backup" type="file" accept=".yaml,.yml,application/yaml,text/yaml" required></p>
+    <p class="muted">{% translate "A backup or a downloaded snapshot. Next, a page shows what it adds, and what it would delete or replace: that happens only when you tick it. The visibility and the address stay as they are." %}</p>
+    <p><button class="button">{% translate "Show what the backup changes" %}</button></p>
+  </form>{% else %}<p class="muted" data-restore-owners>{% translate "Only the owners restore a backup: it can replace filters and steps." %}</p>{% endif %}
+</section>
+{% endblock %}

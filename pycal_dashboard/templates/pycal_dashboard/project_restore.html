@@ -14,6 +14,6 @@
   <ul class="list restore-asks" data-restore-asks>{% for change in asks %}<li><label class="check"><input type="checkbox" name="confirm" value="{{ change.key }}" data-change="{{ change.key }}"> {{ change.text }}</label></li>{% endfor %}</ul>{% endif %}
   {% if notes %}<h3>{% translate "What it cannot restore" %}</h3>
   <ul class="list muted" data-restore-notes>{% for change in notes %}<li>{{ change.text }}</li>{% endfor %}</ul>{% endif %}
-  <p class="form-actions">{% if adds or asks %}<button class="button button-accent" name="restore" value="yes">{% translate "Restore the backup" %}</button> {% endif %}<a class="button button-quiet" href="{% url 'project_edit' project.slug %}#backup">{% translate "Cancel" %}</a></p>
+  <p class="form-actions">{% if adds or asks %}<button class="button button-accent" name="restore" value="yes">{% translate "Restore the backup" %}</button> {% endif %}<a class="button button-quiet" href="{% url 'project_backup_page' project.slug %}">{% translate "Cancel" %}</a></p>
 </form>
 {% endblock %}

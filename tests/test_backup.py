@@ -26,7 +26,7 @@ def step(project, filters):  # noqa: F811
 
 
 def download(client) -> str:
-    answer = client.get("/projects/icalendar/settings/backup/")
+    answer = client.get("/projects/icalendar/settings/backup/download/")
     assert answer.status_code == 200, answer.status_code
     assert answer["Content-Type"] == "application/yaml; charset=utf-8"
     assert 'filename="icalendar-backup-' in answer["Content-Disposition"]
@@ -65,7 +65,7 @@ def test_the_backup_has_the_project(client, project, step, bob, settings):  # no
     (saved,) = data["steps"]
     assert saved["filter"] == "Review" and saved["color"] == "#bfdbfe"
     assert saved["actions"]["enter"]["add"] == ["needs review"]
-    page = client.get("/projects/icalendar/settings/").content.decode()
+    page = client.get("/projects/icalendar/settings/backup/").content.decode()
     assert "data-backup" in page and "reference/backup.html" in page
 
 
@@ -88,7 +88,7 @@ def test_restore_adds_and_asks_before_it_deletes_or_replaces(client, project, st
     assert "checked" not in asks  # nothing destructive is ticked
     assert project.filters.count() == 3  # the page changes nothing
     answer = client.post(RESTORE, {"backup_text": text, "restore": "yes"})
-    assert answer["Location"] == "/projects/icalendar/settings/#backup"
+    assert answer["Location"] == "/projects/icalendar/settings/backup/"
     project.refresh_from_db()
     assert project.name == "iCalendar"  # not ticked
     names = sorted(project.filters.values_list("name", flat=True))
@@ -242,6 +242,7 @@ def test_every_field_that_people_decide_is_in_the_backup():
         assert not missing, (name, missing)
     # and all models of a project that people decide are listed; what GitHub tells is read again
     derived = {"PullRequestPlace", "PullRequestComment", "StepLabel", "UpdateJob", "ProjectSlug"}
+    derived.add("ProjectSnapshot")  # a snapshot is a backup kept on the site, not in one
     for model in apps.get_app_config("pycal_dashboard").get_models():
         related = {
             field.related_model.__name__
@@ -279,7 +280,7 @@ def test_restore_needs_the_rights(client, project, step, bob, alice):  # noqa: F
     client.force_login(bob)
     text = download(client)
     client.force_login(alice)  # no collaborator
-    assert client.get("/projects/icalendar/settings/backup/").status_code in (403, 404)
+    assert client.get("/projects/icalendar/settings/backup/download/").status_code in (403, 404)
     assert restore(client, text).status_code in (403, 404)
 
 

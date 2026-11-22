@@ -47,6 +47,7 @@ from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.project_status import ProjectStatus
 from pycal_dashboard.services.repository_lookup import RepositoryLookup
+from pycal_dashboard.services.snapshot_editor import SnapshotEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.services.update_worker import UpdateWorker
 from pycal_dashboard.templatetags.github import avatar_url
@@ -622,7 +623,7 @@ def project_edit(request: HttpRequest, slug: str):
             access.require_owner()
             if request.POST.get("confirm") != "yes":
                 messages.error(request, _("Tick the box to confirm that the project is deleted."))
-                return redirect(project.path("settings/"))
+                return redirect(project.path("settings/danger/"))
             editor.delete()
             messages.success(request, _("The project %(name)s is deleted.") % {"name": project})
             return redirect("projects")
@@ -645,6 +646,7 @@ def project_edit(request: HttpRequest, slug: str):
             "project": project,
             "access": access,
             "tab": "settings",
+            "settings_tab": "display",
             "suggestion": ProjectEditor(access).suggestion() if access.is_owner else None,
             "old_slugs": project.slugs.exclude(slug=project.slug),
         },
@@ -921,7 +923,8 @@ def project_collaborators(request: HttpRequest, slug: str):
             # a project always has an owner: the only one keeps the role and stays
             "only_owner": owners[0].pk if len(owners) == 1 else None,
             "roles": [(value, role_title(value)) for value, _title in ProjectMember.ROLES],
-            "tab": "collaborators",
+            "tab": "settings",
+            "settings_tab": "collaborators",
         },
     )
 
@@ -993,7 +996,8 @@ def project_restore(request: HttpRequest, slug: str):
     project lacks are added as on the tab *Repositories*, with the rights of the person.
 
     Parameters:
-        request: The request, with the file ``backup``; or ``backup_text`` and ``confirm``.
+        request: The request, with the file ``backup`` or the id of a ``snapshot``; or
+            ``backup_text`` and ``confirm``.
         slug: The project.
 
     Returns:
@@ -1003,6 +1007,7 @@ def project_restore(request: HttpRequest, slug: str):
         ProjectOwnersOnly: Only the owners restore a backup: it can replace filters and steps.
         BackupInvalid: The file is no backup that the site can restore.
         BackupVersionUnknown: The backup has a version that the site does not know.
+        SnapshotNotFound: The project has no snapshot of the id.
     """
     access = ProjectAccess.of(slug, request.user).require_owner()
     with IMPORT_GUARD:  # see import_guard.py
@@ -1011,6 +1016,8 @@ def project_restore(request: HttpRequest, slug: str):
 
     if "backup_text" in request.POST:
         text = request.POST["backup_text"]
+    elif "snapshot" in request.POST:  # a snapshot is restored as its backup
+        text = SnapshotEditor(access).find(int(request.POST.get("snapshot") or 0)).text
     else:
         upload = request.FILES.get("backup")
         if upload is None:
@@ -1040,4 +1047,4 @@ def project_restore(request: HttpRequest, slug: str):
     messages.success(request, _("The backup is restored."))
     if missing:
         add_repositories(request, ProjectEditor(access), missing)
-    return redirect(access.project.path("settings/") + "#backup")
+    return redirect(access.project.path("settings/backup/"))

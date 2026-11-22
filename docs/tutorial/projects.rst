@@ -52,8 +52,8 @@ before, with the name of the project after the address, lead there.
 - When the project has one repository, the site suggests an address after it:
   the name of the repository, such as ``icalendar``; if another project has it,
   ``collective~icalendar``; then ``collective~icalendar-2``, ``-3`` and so on.
-  Press *Use it* on the tab *Repositories* or *Settings*.
-- The owners change the address on the tab *Settings*. Old links keep working:
+  Press *Use it* on the tab *Repositories* or *Settings → Display*.
+- The owners change the address on the tab *Settings → Display*. Old links keep working:
   the old address leads to the new one. Every address a project had is kept
   with the time it was used, listed under *Old addresses*, and no other project
   ever gets it, also after the project was deleted. A project may go back to an
@@ -712,6 +712,38 @@ JavaScript, **Count** counts them. The log records every comment written or
 updated; the comment ends with a hidden line that says that dashboard.pycal.org
 wrote it.
 
+.. _project-settings:
+
+Settings
+========
+
+The tab *Settings*, for writers and owners, has a second row of tabs:
+
+*Display*
+   The name, the description, the visibility and the address of the project.
+*Collaborators*
+   Who may do what in the project, see :ref:`project-roles`.
+*Snapshots*
+   Backups kept on dashboard.pycal.org, see :ref:`snapshots`.
+*Backup*
+   Download a backup, or restore one, see :ref:`project-backup`.
+*Danger zone*
+   In red: the owners delete the project. Its repositories stay on GitHub and
+   in other projects; download a backup before, to keep the rest.
+
+.. _snapshots:
+
+Snapshots
+=========
+
+A snapshot is the backup of the project at a moment, kept on
+dashboard.pycal.org. **Take a snapshot** on the tab *Settings → Snapshots*
+keeps one; the list shows each with when it was taken and by whom, the newest
+first, and the project keeps the newest 100. **Download** saves it as the file
+of a backup, which restores as one. The owners **Restore** a snapshot as a
+backup, with the same page of what it changes, and **Delete** it. Writers take
+and download snapshots; deleting a project deletes its snapshots.
+
 .. _project-backup:
 
 Backup
@@ -732,7 +764,7 @@ visibility and the address stay as they are.
 Roles in a project
 ==================
 
-On the tab *Collaborators*, the owners share the project with other people by
+On the tab *Settings → Collaborators*, the owners share the project with other people by
 their GitHub handle, such as *niccokunzmann*: the field proposes the people who
 signed in, by their GitHub handle or GitHub name, such as *Nicco Kunzmann*,
 with their avatar. The person must have signed in to the site once. What each role may do:
@@ -770,7 +802,8 @@ with their avatar. The person must have signed in to the site once. What each ro
      - no
      - yes
      - yes
-   * - See the collaborators and the settings, download a backup
+   * - See the collaborators and the settings, download a backup, take and download
+       snapshots
      - no
      - no
      - yes
@@ -785,14 +818,14 @@ with their avatar. The person must have signed in to the site once. What each ro
      - no
      - no
      - yes
-   * - Restore a backup, delete it
+   * - Restore a backup or a snapshot, delete a snapshot, delete the project
      - no
      - no
      - no
      - yes
 
 Readers change nothing in the project, but update it from GitHub. Writers see
-the tabs *Collaborators* and *Settings*: they see who the collaborators are but
+the tab *Settings*: they see who the collaborators are, take snapshots, but
 invite nobody, and they do nothing destructive. Only the owners add
 collaborators, change or remove their roles, decide who sees the project, and
 delete it or replace its filters and steps with a backup. A project always has an owner: the only owner can neither change their role
@@ -819,4 +852,5 @@ Public projects have their JSON, such as ``/projects.json`` and
    * - Collaborators
      - ``/projects/<address>/collaborators/``
    * - Settings
-     - ``/projects/<address>/settings/``
+     - ``/projects/<address>/settings/``, and its tabs ``settings/snapshots/``,
+       ``settings/backup/`` and ``settings/danger/``

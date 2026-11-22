@@ -140,6 +140,10 @@ MODELS = {
     ),
     "pycal_dashboard.ProjectMember": ("projects", {"id", "project", "user", "role", "added"}),
     "pycal_dashboard.ProjectSlug": (None, {"id", "slug", "project", "since", "until"}),
+    "pycal_dashboard.ProjectSnapshot": (
+        "projects",
+        {"id", "project", "text", "created", "created_by"},
+    ),
     "pycal_dashboard.PullRequestStep": (
         None,
         {

@@ -1,0 +1,12 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n %}
+{% block title %}{% translate "Danger zone" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+{% include "pycal_dashboard/_project_tabs.html" %}{% include "pycal_dashboard/_settings_tabs.html" %}
+{% if access.is_owner %}<form method="post" action="{% url 'project_edit' project.slug %}" class="card danger-card" data-delete-project>{% csrf_token %}
+  <h2>{% translate "Delete the project" %}</h2>
+  <p>{% translate "Its repositories stay on GitHub and in other projects. Its filters, steps, message and snapshots are deleted; download a backup before, to keep them." %}</p>
+  <p><label class="check"><input type="checkbox" name="confirm" value="yes"> {% translate "Yes, delete this project" %}</label></p>
+  <p><button class="button button-danger" name="delete" value="yes">{% translate "Delete the project" %}</button></p>
+</form>{% else %}<section class="card danger-card"><h2>{% translate "Delete the project" %}</h2><p class="muted" data-delete-owners>{% translate "Only the owners delete the project." %}</p></section>{% endif %}
+{% endblock %}

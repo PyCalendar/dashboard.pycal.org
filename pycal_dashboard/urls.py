@@ -13,6 +13,7 @@ from .views import (
     message,
     oauth_app,
     pages,
+    project_settings,
     projects,
     pull_request,
     registration,
@@ -145,8 +146,28 @@ urlpatterns = [
     path("projects/<project_slug:slug>/settings/", projects.project_edit, name="project_edit"),
     path(
         "projects/<project_slug:slug>/settings/backup/",
+        project_settings.project_backup_page,
+        name="project_backup_page",
+    ),
+    path(
+        "projects/<project_slug:slug>/settings/backup/download/",
         projects.project_backup,
         name="project_backup",
+    ),
+    path(
+        "projects/<project_slug:slug>/settings/snapshots/",
+        project_settings.project_snapshots,
+        name="project_snapshots",
+    ),
+    path(
+        "projects/<project_slug:slug>/settings/snapshots/<int:pk>/download/",
+        project_settings.project_snapshot_download,
+        name="project_snapshot_download",
+    ),
+    path(
+        "projects/<project_slug:slug>/settings/danger/",
+        project_settings.project_danger,
+        name="project_danger",
     ),
     path(
         "projects/<project_slug:slug>/settings/restore/",

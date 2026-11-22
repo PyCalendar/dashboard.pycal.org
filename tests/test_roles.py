@@ -19,6 +19,7 @@ from pycal_dashboard.models import (
     Issue,
     Project,
     ProjectMember,
+    ProjectSnapshot,
     PullRequestFilter,
     PullRequestStep,
     Repository,
@@ -46,6 +47,7 @@ class World:
     carol: object
     pull: Issue
     backup: str = ""
+    snapshot: object = None
     path: str = field(init=False)
 
     def __post_init__(self):
@@ -76,6 +78,9 @@ def world(bob):
     StepSkip.objects.create(step=step, issue=pull, user=bob, reason="Before")  # to remove
     found = World(project, repository, saved, step, carol, pull)
     found.backup = ProjectBackup(project).export()
+    found.snapshot = ProjectSnapshot.objects.create(
+        project=project, text=found.backup, created_by=bob
+    )
     return found
 
 
@@ -114,6 +119,26 @@ ACTIONS = {
         "read",
         lambda c, w: c.post(w.path + "update/"),
         lambda w: UpdateJob.objects.filter(project=w.project).exists(),
+    ),
+    "take a snapshot": (
+        "write",
+        lambda c, w: c.post(w.path + "settings/snapshots/", {"take": "yes"}),
+        lambda w: ProjectSnapshot.objects.filter(project=w.project).count() == 2,
+    ),
+    "download a snapshot": (
+        "write",
+        lambda c, w: c.get(w.path + f"settings/snapshots/{w.snapshot.pk}/download/"),
+        lambda w: True,
+    ),
+    "delete a snapshot": (
+        "owner",
+        lambda c, w: c.post(w.path + "settings/snapshots/", {"delete": w.snapshot.pk}),
+        lambda w: not ProjectSnapshot.objects.filter(pk=w.snapshot.pk).exists(),
+    ),
+    "restore a snapshot": (
+        "owner",
+        lambda c, w: c.post(w.path + "settings/restore/", {"snapshot": w.snapshot.pk}),
+        lambda w: True,  # the page of what it changes
     ),
     "see the settings": (
         "write",
@@ -279,14 +304,22 @@ def test_the_tabs_and_buttons_of_each_role(client, world, signed_in):
     overview = client.get(world.path).content.decode()
     settings = client.get(world.path + "settings/").content.decode()
     assert ("data-update" in overview) is (rank >= RANK["read"])
-    assert (f"{world.path}collaborators/" in overview) is (rank >= RANK["write"])
     assert (f"{world.path}settings/" in overview) is (rank >= RANK["write"])
     assert (f"{world.path}repositories/" in overview) is (rank >= RANK["write"])
     if rank >= RANK["write"]:
-        assert "data-download-backup" in settings
-        assert ("data-restore>" in settings) is (rank >= RANK["owner"])
-        assert ("data-restore-owners" in settings) is (rank < RANK["owner"])
-        assert ("data-delete-project" in settings) is (rank >= RANK["owner"])
+        assert f"{world.path}collaborators/" in settings  # a tab of the settings
+        backup = client.get(world.path + "settings/backup/").content.decode()
+        assert "data-download-backup" in backup
+        assert ("data-restore>" in backup) is (rank >= RANK["owner"])
+        assert ("data-restore-owners" in backup) is (rank < RANK["owner"])
+        danger = client.get(world.path + "settings/danger/").content.decode()
+        assert ("data-delete-project" in danger) is (rank >= RANK["owner"])
+        assert ("data-delete-owners" in danger) is (rank < RANK["owner"])
+        client.post(world.path + "settings/snapshots/", {"take": "yes"})
+        snapshots = client.get(world.path + "settings/snapshots/").content.decode()
+        assert "data-take-snapshot" in snapshots and "/download/" in snapshots
+        assert ('name="delete"' in snapshots) is (rank >= RANK["owner"])
+        assert ('name="snapshot"' in snapshots) is (rank >= RANK["owner"])
         assert ('class="visibility" disabled' in settings) is (rank < RANK["owner"])
         assert ("data-address" in settings) is (rank >= RANK["owner"])
         collaborators = client.get(world.path + "collaborators/").content.decode()
