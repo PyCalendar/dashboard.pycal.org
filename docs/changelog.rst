@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.17.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- The administrators allow the images of other hosts in texts of Markdown, such as the badges of insight.pycal.org, on the new page *Settings* of the menu Administration; the privacy policy lists them, and the log records each change.
+
+
 0.16.0 (2026-11-22)
 -------------------
 
