@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.15.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- A backup keeps all that the people of a project decided, now also the step labels, the edited message, the skips of pull requests and the roles. Restoring shows first what the backup adds and what it would delete or replace: it adds what the project lacks, and deletes or replaces something, such as a filter added after the backup, only when it is ticked.
+
+
 0.14.0 (2026-11-22)
 -------------------
 
