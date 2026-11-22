@@ -9,6 +9,21 @@ Changelog
 
 .. towncrier release notes start
 
+0.12.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- The JSON of a project, ``/projects/<slug>.json``, shows the installation of the GitHub App on each repository: the permissions and events that its owners accepted, and those that it lacks of what dashboard.pycal.org requires (``app_requires``).
+
+
+Bug fixes
+~~~~~~~~~
+
+- The writers and owners of a project get the notification that the GitHub App needs more permissions at once when they get their role or the project adds a repository of the installation, not only at the next check. Readers do not get it, and a person who becomes a reader or loses their role no longer has it.
+
+
 0.11.0 (2026-11-21)
 -------------------
 
