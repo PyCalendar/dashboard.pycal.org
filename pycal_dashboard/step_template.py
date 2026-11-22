@@ -98,15 +98,15 @@ GROUPS = {
             ),
             "tasks_all": (
                 _("all tasks of the step, those to do first, those done at the bottom"),
-                "- [ ] Solve the conflict\n- [x] Review it",
+                "1. :x: Solve the conflict\n2. :heavy_check_mark: Review it",
             ),
             "tasks_todo": (
                 _("the tasks to do; a sentence when there is nothing to do"),
-                "- [ ] Solve the conflict",
+                "1. :x: Solve the conflict",
             ),
             "tasks_done": (
                 _("the tasks done; a sentence when nothing is done"),
-                "- [x] Review it",
+                "1. :heavy_check_mark: Review it",
             ),
         },
     ),

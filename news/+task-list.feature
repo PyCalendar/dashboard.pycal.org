@@ -1,0 +1,1 @@
+The tasks in the PR Sync message are a numbered list with the emoji of GitHub of their state: ``:x:`` to do, ``:grey_question:`` not known yet, ``:heavy_check_mark:`` done, each with its description below. The previews of dashboard.pycal.org show these emoji, as GitHub does.

@@ -29,6 +29,9 @@ log = logging.getLogger(__name__)
 # a pull request by its number, or with its repository: 42, #42, collective/icalendar#42
 LISTED = re.compile(r"^(?:([\w.-]+/[\w.-]+))?#?(\d+)$")
 
+# the emoji of GitHub of the state of a task in the message: to do, not known yet, done
+STATES = {"todo": ":x:", "unknown": ":grey_question:", "done": ":heavy_check_mark:"}
+
 
 class MessageComments:
     """The comments of the message of a project on its pull requests.
@@ -116,28 +119,42 @@ class MessageComments:
         )
 
     @staticmethod
-    def task_line(task: Task, done: bool) -> str:
-        """A task as an item of a list of tasks of GitHub, checked when it is done.
+    def task_line(task: Task, number: int) -> str:
+        """A task as an item of a numbered list, with the emoji of GitHub of its state.
 
-        Its description follows on the next lines, indented by two spaces, so that it belongs
-        to the item, after a line break (two spaces after the title); its empty lines stay
-        empty.
+        ``:x:`` to do, ``:grey_question:`` not known yet, ``:heavy_check_mark:`` done (see
+        :data:`STATES`). Its description follows on the next lines, indented as far as the
+        title, so that it belongs to the item, after a line break (two spaces after the
+        title); its empty lines stay empty.
 
         Parameters:
             task: The task.
-            done: Whether it is done.
+            number: Its number in the list, from 1.
 
         Returns:
-            Such as ``- [x] Review it`` and ``  Ask in the chat.`` below it.
+            Such as ``1. :x:  Review it`` and ``   Ask in the chat.`` below it.
         """
         text = " ".join((task.summary or capfirst(str(task.column.sentence))).split())
-        lines = [f"- [{'x' if done else ' '}] {text}"]
+        marker = f"{number}. "
+        lines = [f"{marker}{STATES.get(task.state, STATES['unknown'])} {text}"]
         description = (task.description or "").strip().splitlines()
         if description:  # two spaces: a line break after the title, not one line with it
             lines[0] += "  "
         for line in description:
-            lines.append(f"  {line}".rstrip())
+            lines.append(f"{' ' * len(marker)}{line}".rstrip())
         return "\n".join(lines)
+
+    @classmethod
+    def task_list(cls, tasks: list[Task]) -> str:
+        """Tasks as a numbered list, see :meth:`task_line`.
+
+        Parameters:
+            tasks: The tasks, in their order.
+
+        Returns:
+            The Markdown; "" without tasks.
+        """
+        return "\n".join(cls.task_line(task, number) for number, task in enumerate(tasks, 1))
 
     def values(self, issue: Issue) -> dict[str, str]:
         """The values of the variables for a pull request: those of steps and of the message.
@@ -158,15 +175,15 @@ class MessageComments:
             issue, self.project, current.step if current else None
         )  # in no step: empty
         tasks = current.tasks if current else []
-        todo = [self.task_line(task, False) for task in tasks if task.state == "todo"]
-        unknown = [self.task_line(task, False) for task in tasks if task.state == "unknown"]
-        done = [self.task_line(task, True) for task in tasks if task.state == "done"]
+        todo = [task for task in tasks if task.state == "todo"]
+        unknown = [task for task in tasks if task.state == "unknown"]
+        done = [task for task in tasks if task.state == "done"]
         summary = expand(current.step.summary, values) if current else ""
         return values | {
             "step_description": summary,
-            "tasks_all": "\n".join(todo + unknown + done),
-            "tasks_todo": "\n".join(todo) or gettext("Nothing to do."),
-            "tasks_done": "\n".join(done) or gettext("Nothing is done yet."),
+            "tasks_all": self.task_list(todo + unknown + done),
+            "tasks_todo": self.task_list(todo) or gettext("Nothing to do."),
+            "tasks_done": self.task_list(done) or gettext("Nothing is done yet."),
         }
 
     def body(self, issue: Issue, template: str) -> str:

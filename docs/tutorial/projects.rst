@@ -24,7 +24,9 @@ Sign in with GitHub, open *Projects* and press **+ Create a project**. Enter:
   as a badge of insight.pycal.org, shows its text in a dashed frame instead;
   pull requests on GitHub show the image itself.
   Lists of tasks, ``- [ ]`` and ``- [x]``, show checkboxes as on GitHub, which
-  show the state but cannot be changed.
+  show the state but cannot be changed. The emoji of GitHub that the messages
+  use, ``:x:``, ``:heavy_check_mark:``, ``:grey_question:``,
+  ``:white_check_mark:`` and ``:warning:``, show as on GitHub.
 - the **visibility**: *Public*, the default, for everybody, or *Private*, only
   for its collaborators, see :ref:`project-roles`,
 - optionally its **address**, see :ref:`project-address`.
@@ -618,17 +620,19 @@ number.
        variables
      - ``Thanks, @niccokunzmann! A person reviews it soon.``
    * - ``{tasks_all}``
-     - All tasks of the step, as a list of tasks of GitHub: those to do first,
-       those done at the bottom, checked; the description of each task on the
-       lines below it, indented, so that it belongs to its item
-     - | ``- [ ] Solve the conflict``
-       | ``- [x] Review it``
+     - All tasks of the step, as a numbered list: those to do first, with
+       ``:x:``, those not known yet with ``:grey_question:``, those done at the
+       bottom, with ``:heavy_check_mark:``, emoji that GitHub shows; the
+       description of each task on the lines below it, indented, so that it
+       belongs to its item
+     - | ``1. :x: Solve the conflict``
+       | ``2. :heavy_check_mark: Review it``
    * - ``{tasks_todo}``
      - The tasks to do; *Nothing to do.* when there are none
-     - ``- [ ] Solve the conflict``
+     - ``1. :x: Solve the conflict``
    * - ``{tasks_done}``
      - The tasks done; *Nothing is done yet.* when there are none
-     - ``- [x] Review it``
+     - ``1. :heavy_check_mark: Review it``
 
 The variables of the group *Message* are for the message of the tab
 *PR Sync* only, see :ref:`pr-message`; in a pull request in no step, the

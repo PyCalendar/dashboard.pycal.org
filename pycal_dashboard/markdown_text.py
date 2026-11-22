@@ -9,7 +9,8 @@ The HTML is cleaned (nh3): no scripts, styles or raw HTML of the text, links onl
 https and mail, and every link with ``rel="nofollow noopener noreferrer"``. Images are shown
 only from this site, such as the badges of pull requests: nothing is loaded from other sites.
 An image of another site shows its text instead (:func:`foreign_image`), so that it is seen
-where it is, such as a badge in a message.
+where it is, such as a badge in a message. A few emoji of GitHub, such as ``:x:``, show as on
+GitHub (:func:`emoji`).
 """
 
 import html as html_text
@@ -27,6 +28,17 @@ from pycal_dashboard.import_guard import IMPORT_GUARD
 TASK = re.compile(r"<li>(\s*<p>)?\[( |x|X)\] ")
 # an image whose address was removed: it shows nothing
 EMPTY_IMAGE = re.compile(r"<img(?![^>]*\ssrc=)[^>]*>")
+# the emoji of GitHub that the messages use, such as for the states of tasks, as GitHub shows them
+EMOJI = {
+    "x": "❌",
+    "heavy_check_mark": "✔️",
+    "grey_question": "❔",
+    "white_check_mark": "✅",
+    "warning": "⚠️",
+}
+SHORTCODE = re.compile(r":(" + "|".join(EMOJI) + r"):")
+# the code of the HTML, whose text stays as it is
+CODE = re.compile(r"(<pre>.*?</pre>|<code>.*?</code>)", re.DOTALL)
 # an image as the parser writes it, before the HTML is cleaned
 IMAGE = re.compile(r'<img src="([^"]*)" alt="([^"]*)"(?: title="[^"]*")? />')
 
@@ -114,6 +126,26 @@ def foreign_image(match: re.Match) -> str:
     return f'<span class="foreign-image" title="{html_text.escape(title)}">{text}</span>'
 
 
+def emoji(html: str) -> str:
+    """The emoji of GitHub of :data:`EMOJI` in the HTML, such as ``:x:``, except in code.
+
+    Parameters:
+        html: The HTML.
+
+    Returns:
+        The HTML with the emoji.
+
+    Examples:
+        >>> emoji("<p>:x: no</p><code>:x:</code>")
+        '<p>❌ no</p><code>:x:</code>'
+    """
+    parts = CODE.split(html)
+    return "".join(
+        part if index % 2 else SHORTCODE.sub(lambda found: EMOJI[found[1]], part)
+        for index, part in enumerate(parts)
+    )
+
+
 def task_box(match: re.Match) -> str:
     """An item of a list of tasks with a checkbox, as GitHub shows it: checked or not, fixed.
 
@@ -161,5 +193,5 @@ def render(text: str) -> SafeString:
         attribute_filter=own_images,
     )
     html = EMPTY_IMAGE.sub("", html)
-    html = TASK.sub(task_box, html)
+    html = emoji(TASK.sub(task_box, html))
     return mark_safe(html.strip())  # noqa: S308 - cleaned by nh3

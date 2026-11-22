@@ -147,3 +147,9 @@ def test_the_images_of_the_site_stay(settings):
     settings.SITE_URL = "https://dashboard.example.org"
     html = render("![a & b](https://dashboard.example.org/p/badge.svg)")
     assert '<img src="/p/badge.svg" alt="a &amp; b">' in html and "foreign-image" not in html
+
+
+def test_the_emoji_of_github_show_except_in_code():
+    html = render(":x: no, :heavy_check_mark: yes, :unknown: `:x:`\n\n    :warning:")
+    assert html.startswith("<p>❌ no, ✔️ yes, :unknown: <code>:x:</code></p>")
+    assert "<pre><code>:warning:" in html

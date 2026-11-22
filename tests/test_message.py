@@ -178,7 +178,7 @@ def test_save_writes_the_message_on_the_listed_pull_requests(client, github, pro
     update(project)  # the background: the update and its receivers
     bodies = {c["issue"]: c["body"] for c in github.comments.values()}
     assert set(bodies) == {f"{REPO}#1", f"{REPO}#2"}
-    assert bodies[f"{REPO}#1"].startswith("Hi octocat: Review\n\n- [ ] A person reviews it")
+    assert bodies[f"{REPO}#1"].startswith("Hi octocat: Review\n\n1. :x: A person reviews it")
     assert (
         "<!-- dashboard.pycal.org: the message of the project icalendar -->" in bodies[f"{REPO}#1"]
     )
@@ -237,7 +237,7 @@ def test_the_tasks_of_the_message(project):
 
     comments = MessageComments(project)
     values = comments.values(Issue.objects.get(title="Ready"))
-    assert values["tasks_todo"] == "- [ ] A person reviews it"
+    assert values["tasks_todo"] == "1. :x: A person reviews it"
     assert values["tasks_done"] == "Nothing is done yet."
     assert values["step_description"] == "Thanks, @octocat!"
     outside = comments.values(Issue.objects.get(title="Conflict"))
@@ -300,13 +300,12 @@ def test_a_task_has_its_description_below_it(project):
     step.save()
     values = MessageComments(project).values(Issue.objects.get(title="Ready"))
     assert values["tasks_todo"] == (
-        "- [ ] A person reviews it  \n  Ask @octocat in the chat.\n\n  - the guide\n  - the FAQ"
+        "1. :x: A person reviews it  \n   Ask @octocat in the chat.\n\n   - the guide\n   - the FAQ"
     )
     html = render(values["tasks_all"])  # the description and its list are in the item
     assert html == (
-        '<ul>\n<li class="task-item">\n<p><input type="checkbox" class="task-box" disabled>'
-        " A person reviews it<br>\nAsk @octocat in the chat.</p>\n"
-        "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ul>"
+        "<ol>\n<li>\n<p>❌ A person reviews it<br>\nAsk @octocat in the chat.</p>\n"
+        "<ul>\n<li>the guide</li>\n<li>the FAQ</li>\n</ul>\n</li>\n</ol>"
     )
 
 
@@ -322,3 +321,29 @@ def test_visitors_step_through_the_stages(client, project):
     assert "Conflict: " in chosen
     assert "data-edit-step-of-example" not in first  # editing the steps is for writers
     assert client.get("/projects/icalendar/message/review/").status_code == 302  # the draft
+
+
+def test_the_tasks_are_numbered_with_the_emoji_of_their_state():
+    """As GitHub shows them: :x: to do, :grey_question: not known, :heavy_check_mark: done."""
+    from types import SimpleNamespace
+
+    from pycal_dashboard.markdown_text import render
+    from pycal_dashboard.services.message_comments import MessageComments
+
+    def task(state, summary, description=""):
+        return SimpleNamespace(state=state, summary=summary, description=description)
+
+    tasks = [task("todo", "Ask for a review", "Assign the label."), task("done", "CI passes")]
+    tasks += [task("unknown", f"Task {n}") for n in range(3, 11)]
+    text = MessageComments.task_list(tasks)
+    lines = text.splitlines()
+    assert lines[:3] == [
+        "1. :x: Ask for a review  ",
+        "   Assign the label.",
+        "2. :heavy_check_mark: CI passes",
+    ]
+    assert lines[-1] == "10. :grey_question: Task 10"
+    html = render(text)
+    assert html.startswith("<ol>\n<li>❌ Ask for a review<br>\nAssign the label.</li>\n<li>✔️ CI")
+    assert html.count("<li>") == 10 and "❔ Task 10" in html
+    assert MessageComments.task_list([]) == ""
