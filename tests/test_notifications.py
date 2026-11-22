@@ -124,6 +124,57 @@ def test_a_writer_of_a_project_is_notified_too(installation, bob):
     assert Notification.objects.filter(user=carol).exists()
 
 
+def test_writers_get_it_at_once_and_readers_never(installation, bob):
+    """A role that changes changes who has the notification, without asking GitHub."""
+    from tests.conftest import person
+
+    PermissionNotice(installation).send_if_needed()
+    carol, dave = person(44, "carol"), person(45, "dave")
+    project = installation.repositories.get().projects.get()
+    editor = ProjectEditor(ProjectAccess(project, bob))
+    editor.share("dave", "read")
+    assert not Notification.objects.filter(user=dave).exists()  # readers are not told
+    member = editor.share("carol", "write")
+    told = Notification.objects.get(user=carol)  # at once, as the others have it
+    assert told.params == Notification.objects.get(user=bob).params and told.read is None
+    editor.share("carol", "owner")
+    assert Notification.objects.filter(user=carol).exists()
+    editor.share("carol", "read")
+    assert not Notification.objects.filter(user=carol).exists()  # a reader no longer
+    editor.share("carol", "write")
+    editor.unshare(member.pk)
+    assert not Notification.objects.filter(user=carol).exists()  # no role any more
+    alice = Notification.objects.get(user__username="alice")
+    assert alice.resolved is None  # who installed it keeps it
+
+
+def test_a_repository_added_or_removed_changes_who_is_told(installation, bob, alice):
+    from tests.conftest import person
+
+    PermissionNotice(installation).send_if_needed()
+    carol = person(44, "carol")
+    other = ProjectEditor.create(carol, "Other")
+    editor = ProjectEditor(ProjectAccess(other, carol))
+    repository = installation.repositories.get()
+    editor.add(repository)
+    assert Notification.objects.filter(user=carol).exists()
+    editor.remove(repository.pk)
+    assert not Notification.objects.filter(user=carol).exists()
+    editor.add(repository)
+    editor.delete()
+    assert not Notification.objects.filter(user=carol).exists()
+    assert Notification.objects.filter(user=bob).exists()  # of the other project
+
+
+def test_nothing_is_told_while_nothing_is_missing(installation, bob):
+    from tests.conftest import person
+
+    person(44, "carol")
+    project = installation.repositories.get().projects.get()
+    ProjectEditor(ProjectAccess(project, bob)).share("carol", "write")
+    assert not Notification.objects.exists()  # no check yet: nothing to tell
+
+
 def test_visitors_have_no_notifications(client, db):
     assert client.get("/account/notifications/").status_code == 302
 

@@ -1,6 +1,9 @@
 """Tell the people of an installation by email when it lacks permissions that the site needs."""
 
+from __future__ import annotations
+
 import logging
+from collections.abc import Iterable
 from itertools import groupby
 
 from allauth.socialaccount.models import SocialAccount
@@ -92,6 +95,30 @@ class PermissionNotice:
             return
         params = {"account": installation.account_login, "missing": dict(sorted(missing.items()))}
         notifier.notify(self.user_ids(), params, installation.settings_url)
+
+    def follow_people(self) -> None:
+        """The people who are told changed: tell the new ones, and nothing more to the others.
+
+        After a role or a repository of a project changed: a new writer or owner of a project
+        gets the notification at once, as the others have it; a person who is told no longer,
+        such as a writer who became a reader, loses it. Nothing is asked of GitHub.
+        """
+        notifier = Notifier(Notification.PERMISSIONS, self.installation.github_id)
+        users = self.user_ids()
+        notifier.only(users)
+        active = notifier.active()
+        if active is not None:
+            notifier.notify(users, active.params, active.url)
+
+    @classmethod
+    def follow(cls, github_ids: Iterable[int]) -> None:
+        """Follow the people of some installations, see :meth:`follow_people`.
+
+        Parameters:
+            github_ids: The GitHub ids of the installations.
+        """
+        for installation in Installation.objects.filter(github_id__in=set(github_ids)):
+            cls(installation).follow_people()
 
     def send_if_needed(self) -> int:
         """Email the people of the installation if it lacks permissions nobody was told about.

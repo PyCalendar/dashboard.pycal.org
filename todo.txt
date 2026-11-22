@@ -647,3 +647,6 @@ community: where to start, what waits for a review, who contributes.
       ..." (as the insights platform does, without its bot classification)
       (author_type, the column Type of author; the association of GitHub, DATA_VERSION 4)
 - [x] Answer: on which pages the person sees that the permissions of the GitHub App need updating
+- [x] The writers and owners of a project receive the notification that the app needs more permissions, not
+      its readers: at once when their role changes or a repository is added; a reader or a person without a
+      role loses it

@@ -116,7 +116,10 @@ account: a number next to your GitHub handle counts those you have not read.
 For now, a notification says that the GitHub App needs more permissions on an
 account, with the permissions and a link to accept them on GitHub. You get it
 if you installed or changed the installation, or write or own a project with a
-repository of it, also if you switched the emails off.
+repository of it, also if you switched the emails off; readers of a project do
+not get it. A new role counts at once: when you become a writer or an owner of
+such a project, or it adds a repository of the installation, you get the
+notification; when you become a reader or lose your role, it is gone.
 
 **Mark as read** removes it from the number; it stays on the page until it is
 done. When the owners accepted the permissions, it moves to *Done* by itself.

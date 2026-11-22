@@ -55,6 +55,29 @@ class Notifier:
                 changed += 1
         return changed
 
+    def active(self) -> Notification | None:
+        """A notification of the thing that still asks for something.
+
+        Returns:
+            The notification of one of the people; None when none is active.
+        """
+        return Notification.objects.filter(
+            kind=self.kind, key=self.key, resolved__isnull=True
+        ).first()
+
+    def only(self, user_ids: Iterable[int]) -> int:
+        """Keep the notifications of the thing only for some people; delete those of others.
+
+        Parameters:
+            user_ids: The people who are still told about it.
+
+        Returns:
+            How many were deleted.
+        """
+        found = Notification.objects.filter(kind=self.kind, key=self.key)
+        deleted, _kinds = found.exclude(user_id__in=set(user_ids)).delete()
+        return deleted
+
     def resolve(self) -> int:
         """The thing is done: its notifications no longer ask for anything.
 

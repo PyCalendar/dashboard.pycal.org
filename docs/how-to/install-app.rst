@@ -71,6 +71,8 @@ needs a permission that an installation lacks:
   set of missing permissions, in their language, with the link to the page on
   GitHub where the permissions are accepted. They switch these emails off on
   their page *Account*;
+- they get a notification in the menu of their account; a writer or owner who
+  joins a project later gets it at once, and readers of the projects never;
 - their page *Account* lists the installation as *needs more permissions*, with
   the missing permissions and the button *Accept the permissions on GitHub*.
 

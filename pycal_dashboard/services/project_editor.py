@@ -17,9 +17,18 @@ from pycal_dashboard.errors import (
     ProjectSlugTaken,
     UnknownRole,
 )
-from pycal_dashboard.models import Profile, Project, ProjectMember, ProjectSlug, Repository
+from pycal_dashboard.models import (
+    Installation,
+    Notification,
+    Profile,
+    Project,
+    ProjectMember,
+    ProjectSlug,
+    Repository,
+)
 from pycal_dashboard.models.project import random_slug
 
+from .permission_notice import PermissionNotice
 from .project_access import ProjectAccess
 
 if TYPE_CHECKING:
@@ -228,6 +237,7 @@ class ProjectEditor:
         if self.project.repositories.filter(pk=repository.pk).exists():
             return False
         self.project.repositories.add(repository)
+        self.follow_notices(repositories=[repository])
         return True
 
     def remove(self, repository_id: int) -> Repository | None:
@@ -246,6 +256,7 @@ class ProjectEditor:
         repository = self.project.repositories.filter(pk=repository_id).first()
         if repository is not None:
             self.project.repositories.remove(repository)
+            self.follow_notices(repositories=[repository])
         return repository
 
     def share(self, github_name: str, role: str) -> ProjectMember:
@@ -276,6 +287,7 @@ class ProjectEditor:
         member = member or ProjectMember(project=self.project, user=profile.user)
         member.role = role
         member.save()
+        self.follow_notices(users=[member.user_id])
         return member
 
     def unshare(self, member_id: int) -> ProjectMember | None:
@@ -298,6 +310,7 @@ class ProjectEditor:
         if member.role == ProjectMember.OWNER:
             self.keep_an_owner(member)
         member.delete()
+        self.follow_notices(users=[member.user_id])
         return member
 
     def keep_an_owner(self, member: ProjectMember) -> None:
@@ -320,4 +333,37 @@ class ProjectEditor:
             ProjectOwnersOnly: The person does not own the project.
         """
         self.access.require_owner()
+        users = list(self.project.members.values_list("user", flat=True))
+        repositories = list(self.project.repositories.all())
         self.project.delete()
+        self.follow_notices(repositories=repositories, users=users, project=False)
+
+    def follow_notices(
+        self,
+        repositories: list[Repository] | None = None,
+        users: list[int] | None = None,
+        project: bool = True,
+    ) -> None:
+        """Tell the writers and owners of the project about the installations that lack permissions.
+
+        After a role or a repository changed: those who are writers or owners now get the
+        notifications of the installations on the repositories of the project at once; those who
+        are no longer lose them (:meth:`PermissionNotice.follow_people
+        <pycal_dashboard.services.permission_notice.PermissionNotice.follow_people>`).
+
+        Parameters:
+            repositories: Repositories that were added or removed.
+            users: The ids of the people whose role changed or was taken away.
+            project: Whether the repositories of the project count, too; False once it is deleted.
+        """
+        found = {repository.installation_id for repository in repositories or ()}
+        if project:
+            found |= set(self.project.repositories.values_list("installation", flat=True))
+        github_ids = set(
+            Installation.objects.filter(pk__in=found - {None}).values_list("github_id", flat=True)
+        )
+        keys = Notification.objects.filter(
+            user__in=users or (), kind=Notification.PERMISSIONS
+        ).values_list("key", flat=True)
+        github_ids |= {int(key) for key in keys if key.isdigit()}
+        PermissionNotice.follow(github_ids)
