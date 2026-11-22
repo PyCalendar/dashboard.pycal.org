@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.13.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- The new variable ``{pr_merge_box}`` of the messages and steps links the merge box of a pull request on GitHub, such as ``[Merge it]({pr_merge_box})``.
+
+
 0.12.1 (2026-11-22)
 -------------------
 
