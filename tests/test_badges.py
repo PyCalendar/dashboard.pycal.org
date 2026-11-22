@@ -140,7 +140,9 @@ def test_markdown_shows_images_of_this_site_only(settings):
         " ![c](/y/badge.png) ![d](//evil.example/z.png)"
     )
     assert '<img src="/x/badge.svg" alt="a">' in html and '<img src="/y/badge.png"' in html
-    assert "evil" not in html and html.count("<img") == 2
+    assert 'src="https://evil' not in html and 'src="//evil' not in html
+    assert html.count("<img") == 2  # the others show their text, see test_markdown.py
+    assert ">b</span>" in html and ">d</span>" in html
 
 
 def test_the_color_of_the_step_is_behind_its_name(client, project, steps):  # noqa: F811

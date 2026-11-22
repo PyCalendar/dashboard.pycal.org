@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 10:04+0000\n"
+"POT-Creation-Date: 2026-11-22 10:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -842,6 +842,18 @@ msgstr "Status eines Commits über die API aktualisiert."
 
 msgid "Git push to a repository."
 msgstr "Git-Push in ein Repository."
+
+#, python-format
+msgid ""
+"An image of %(host)s, which %(site_name)s does not load: nothing is loaded "
+"from other sites."
+msgstr ""
+"Ein Bild von %(host)s, das %(site_name)s nicht lädt: Von anderen Websites "
+"wird nichts geladen."
+
+#, python-format
+msgid "Image of %(host)s"
+msgstr "Bild von %(host)s"
 
 msgid ""
 "Your account on GitHub as GitHub describes it when you sign in: your GitHub "

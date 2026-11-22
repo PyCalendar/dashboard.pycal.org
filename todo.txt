@@ -652,3 +652,6 @@ community: where to start, what waits for a review, who contributes.
       role loses it
 - [x] The JSON of a project shows the permissions and events of the installation on each repository, what the
       app requires and what is missing; compared with the live site
+- [x] A badge of insight.pycal.org is missing in the preview of the message: an image of another site shows its text
+      (it is not loaded: nothing is loaded from other sites)
+- [ ] The person: should images of insight.pycal.org be loaded in the previews (EXTERNAL_HOSTS of the privacy policy)?

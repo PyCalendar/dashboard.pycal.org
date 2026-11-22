@@ -576,6 +576,8 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 /* the lists of tasks as GitHub shows them: a checkbox that shows the state, without a bullet */
 .markdown li.task-item { list-style: none; }
 .markdown li.task-item > .task-box, .markdown li.task-item > p > .task-box { margin: 0 .35rem 0 -1.35rem; vertical-align: middle; }
+/* an image of another site, which is not loaded: its text, as a badge would stand */
+.markdown .foreign-image { display: inline-block; padding: 0 .4rem; border: 1px dashed var(--border); border-radius: .25rem; font-size: .85em; vertical-align: middle; }
 
 /* the page of a person in a project */
 .contributor-tabs { margin-top: .5rem; }

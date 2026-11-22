@@ -129,3 +129,21 @@ def test_text_cannot_make_its_own_checkboxes():
 
     html = render('<input type="checkbox" checked> <li>[x] raw</li>')
     assert "<input" not in html.replace("&lt;input", "")  # raw HTML stays text
+
+
+def test_an_image_of_another_site_shows_its_text():
+    """Such as a badge of insight.pycal.org in a message: seen where it is, but not loaded."""
+    html = render(
+        "[![Replies of Mrbozz](https://insight.pycal.org/badge/s/x/replies/Mrbozz.svg)]"
+        "(https://insight.pycal.org/s/x/replies/Mrbozz/) ![](https://other.example/a.png)"
+    )
+    assert "<img" not in html and "insight.pycal.org/badge" not in html
+    assert '<span class="foreign-image" title="An image of insight.pycal.org, which ' in html
+    assert ">Replies of Mrbozz</span></a>" in html
+    assert ">Image of other.example</span>" in html
+
+
+def test_the_images_of_the_site_stay(settings):
+    settings.SITE_URL = "https://dashboard.example.org"
+    html = render("![a & b](https://dashboard.example.org/p/badge.svg)")
+    assert '<img src="/p/badge.svg" alt="a &amp; b">' in html and "foreign-image" not in html
