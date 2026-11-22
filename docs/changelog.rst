@@ -9,6 +9,23 @@ Changelog
 
 .. towncrier release notes start
 
+0.14.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- A form of GitHub for problems and feedback asks for the page, the details of the error, the version, screenshots and the browser, and says where to find each; *Report a problem or leave feedback* and the pages of errors open it. The guide *Report a problem or give feedback* of the documentation explains them.
+- The tasks in the PR Sync message are a numbered list with the emoji of GitHub of their state: ``:x:`` to do, ``:grey_question:`` not known yet, ``:heavy_check_mark:`` done, each with its description below. The previews of dashboard.pycal.org show these emoji, as GitHub does.
+
+
+Bug fixes
+~~~~~~~~~
+
+- Apply on the page Edit of the PR Sync applies the message with one click, also right after typing: before, it only saved the edited message while it was being saved, so Apply had to be clicked again.
+- GitHub shows the new badge in the PR Sync message when the step or the tasks done of a pull request change: the address of the badge ends with ``&_v=`` and a number that changes with it, so GitHub does not show the image it kept.
+
+
 0.13.0 (2026-11-22)
 -------------------
 

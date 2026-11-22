@@ -1,1 +1,0 @@
-A form of GitHub for problems and feedback asks for the page, the details of the error, the version, screenshots and the browser, and says where to find each; *Report a problem or leave feedback* and the pages of errors open it. The guide *Report a problem or give feedback* of the documentation explains them.
