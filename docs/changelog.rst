@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.20.0 (2026-11-22)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Images of ``*.shields.io``, ``github.com`` and ``*.pycal.org`` load in texts of Markdown by default; a
+  host of the page Settings may start with ``*.`` for all hosts below it.
+
+
 0.19.0 (2026-11-22)
 -------------------
 
