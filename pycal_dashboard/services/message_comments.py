@@ -17,7 +17,7 @@ from pycal_dashboard.models import Issue, PullRequestComment, PullRequestMessage
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.step_overrides import StepOverrides
-from pycal_dashboard.step_template import expand, values_of
+from pycal_dashboard.step_template import badge_version, expand, pull_addresses, values_of
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
@@ -178,6 +178,15 @@ class MessageComments:
         todo = [task for task in tasks if task.state == "todo"]
         unknown = [task for task in tasks if task.state == "unknown"]
         done = [task for task in tasks if task.state == "done"]
+        # the address of the badge changes with what it shows: GitHub loads it again
+        version = (
+            badge_version(current.step, current.done, len(current.tasks))
+            if current
+            else badge_version(None)
+        )
+        values |= pull_addresses(
+            self.project, issue.number, issue.repository.full_name, version=version
+        )
         summary = expand(current.step.summary, values) if current else ""
         return values | {
             "step_description": summary,

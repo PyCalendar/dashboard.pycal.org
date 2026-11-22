@@ -10,6 +10,7 @@ Markdown; the result is shown with the filter ``|markdown``, cleaned by nh3.
 from __future__ import annotations
 
 import re
+import zlib
 from typing import TYPE_CHECKING
 from urllib.parse import urlencode
 
@@ -196,6 +197,25 @@ def values_of(issue: Issue, project: Project, step: PullRequestStep | None = Non
     return values | step_values(step)
 
 
+def badge_version(step: PullRequestStep | None, done: int = 0, tasks: int = 0) -> int:
+    """What the badge of a pull request shows, as a number, for the ``_v`` of its address.
+
+    Parameters:
+        step: The step that the pull request is in; None for none.
+        done: How many of its tasks are done.
+        tasks: How many tasks it has.
+
+    Returns:
+        A checksum of the step, its name and color and the tasks: it changes with the badge.
+
+    Examples:
+        >>> badge_version(None) == badge_version(None)
+        True
+    """
+    shown = (step.pk, step.name, step.color, done, tasks) if step else ()
+    return zlib.crc32(repr(shown).encode())
+
+
 def step_values(step: PullRequestStep | None) -> dict[str, str]:
     """The values of the variables of a step.
 
@@ -251,13 +271,18 @@ def steps_url(project: Project, number: int, repository: str = "", page: str = "
     return address
 
 
-def pull_addresses(project: Project, number: int, repository: str = "") -> dict[str, str]:
+def pull_addresses(
+    project: Project, number: int, repository: str = "", version: int | None = None
+) -> dict[str, str]:
     """The variables of the addresses of a pull request on this site, and its badge.
 
     Parameters:
         project: The project.
         number: The number of the pull request.
         repository: Its repository, see :func:`steps_url`.
+        version: What the badge shows, as a number (:func:`badge_version`): added to the
+            address of the badge as ``_v``, so that GitHub, which keeps images by their
+            address, loads the badge again when it changes; None for none.
 
     Returns:
         ``pr_steps_url``, ``pr_badge_url`` and ``pr_badge``, the badge in Markdown linked to
@@ -265,4 +290,6 @@ def pull_addresses(project: Project, number: int, repository: str = "") -> dict[
     """
     page = steps_url(project, number, repository)
     badge = steps_url(project, number, repository, "badge.svg")
+    if version is not None:
+        badge += ("&" if "?" in badge else "?") + f"_v={version}"
     return {"pr_steps_url": page, "pr_badge_url": badge, "pr_badge": f"[![]({badge})]({page})"}

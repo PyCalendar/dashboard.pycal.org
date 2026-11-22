@@ -1,0 +1,1 @@
+GitHub shows the new badge in the PR Sync message when the step or the tasks done of a pull request change: the address of the badge ends with ``&_v=`` and a number that changes with it, so GitHub does not show the image it kept.

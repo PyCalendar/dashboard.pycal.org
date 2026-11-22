@@ -347,3 +347,20 @@ def test_the_tasks_are_numbered_with_the_emoji_of_their_state():
     assert html.startswith("<ol>\n<li>❌ Ask for a review<br>\nAssign the label.</li>\n<li>✔️ CI")
     assert html.count("<li>") == 10 and "❔ Task 10" in html
     assert MessageComments.task_list([]) == ""
+
+
+def test_the_address_of_the_badge_changes_with_the_badge(project):
+    """GitHub keeps images by their address: the message names the badge with what it shows."""
+    from pycal_dashboard.models import Issue, PullRequestStep
+    from pycal_dashboard.services.message_comments import MessageComments
+
+    ready = Issue.objects.get(title="Ready")
+    values = MessageComments(project).values(ready)
+    first = values["pr_badge_url"]
+    assert "badge.svg?repository=collective%2Ficalendar&_v=" in first
+    assert values["pr_badge"].startswith(f"[![]({first})](")
+    assert values == MessageComments(project).values(ready)  # the same: the same address
+    step = PullRequestStep.objects.get()
+    step.name = "Peer review"
+    step.save()
+    assert MessageComments(project).values(ready)["pr_badge_url"] != first

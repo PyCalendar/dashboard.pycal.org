@@ -544,7 +544,10 @@ in their groups. The examples are those of a pull request of
 
 The addresses always name the repository of the pull request, so they stay the
 same when the project gets another repository with a pull request of the same
-number.
+number. In the message of the PR Sync, the address of the badge ends with
+``&_v=`` and a number that changes with what the badge shows, its step and the
+tasks done: GitHub keeps images by their address, so it loads the badge again
+when the step changes.
 
 .. list-table:: Author
    :header-rows: 1

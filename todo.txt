@@ -661,3 +661,4 @@ community: where to start, what waits for a review, who contributes.
       description indented below
 - [ ] The page of the message: Apply must be clicked twice
 - [ ] An issue template for feedback: screenshots, version, problem, the copy of an error, ...; and where to get them
+- [x] GitHub shows the badge it cached after the step changed: the message adds _v=<number> to the address of the badge
