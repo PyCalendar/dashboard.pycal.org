@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.20.1 (2026-11-23)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Dragging a condition on the page of saving a filter, and its buttons Invert, Remove, Use it,
+  To Skip if and To the quality checks, keep the name, the description and the switches typed.
+
+
 0.20.0 (2026-11-22)
 -------------------
 
