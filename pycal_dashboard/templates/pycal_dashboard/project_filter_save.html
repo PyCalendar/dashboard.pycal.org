@@ -5,7 +5,8 @@
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 <p><a href="{{ back }}" data-back>← {% translate "Back to the pull requests" %}</a></p>
-<form method="post" class="stacked card" data-save-filter{% if saved and not conflict %} data-autosave{% endif %}>{% csrf_token %}
+<form method="post" class="stacked card" data-save-filter data-address="{{ page_address }}"{% if saved and not conflict %} data-autosave{% endif %}>{% csrf_token %}
+  {% if not saved %}<button class="visually-hidden" name="save" value="new" tabindex="-1" aria-hidden="true">{% translate "Save the filter" %}</button>{% endif %}
   <div class="table-head"><h2>{% if saved %}{% blocktranslate with name=saved.name %}Edit the filter {{ name }}{% endblocktranslate %} <button class="button button-small save-indicator" name="save" value="this" data-save-indicator data-state="{% if unsaved %}unsaved{% else %}saved{% endif %}" data-unsaved="{% translate "Save" %}" data-saving="{% translate "Saving…" %}" data-saved="{% translate "Saved" %}" data-failed="{% translate "Not saved: is the network away? It is tried again." %}" data-taken="{% translate "Not saved: another filter has this name." %}" aria-live="polite">{% if unsaved %}{% translate "Save" %}{% else %}✓ {% translate "Saved" %}{% endif %}</button>{% else %}{% translate "Save the filter" %}{% endif %}</h2>
   <span class="filter-actions"><a class="button button-quiet button-small" href="{{ back }}" data-edit-conditions>{% translate "Edit the conditions" %}</a>
   {% if step %}<a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ step.pk }}" data-step-link>{% blocktranslate with name=step.name %}Step: {{ name }}{% endblocktranslate %}</a>{% endif %}</span></div>

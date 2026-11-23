@@ -678,3 +678,5 @@ community: where to start, what waits for a review, who contributes.
       with *. for all hosts below it; the migration gives a list saved empty the defaults
 - [ ] Later (noted, not done yet): add *.githubusercontent.com to the default hosts of images, and every host whose images
       GitHub Markdown shows, so that texts move easily between GitHub and the dashboard
+- [x] The page of saving a filter: dragging a condition (and its buttons Invert, Remove, Use it, To Skip if, To the
+      quality checks) lost the name, the description and the switches typed; the buttons now send the form

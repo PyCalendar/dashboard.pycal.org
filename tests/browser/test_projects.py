@@ -333,7 +333,7 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.locator("[data-pull-request]")).to_have_count(3)  # open, or without the label
     page.get_by_role("link", name="Save", exact=True).click()
     expect(page.get_by_role("link", name="Filters")).to_have_attribute("aria-current", "page")
-    page.locator("[data-opposite]").get_by_role("link", name="Use it").click()
+    page.locator("[data-opposite]").get_by_role("button", name="Use it").click()
     expect(page.locator("[data-condition-row='0']")).to_contain_text(
         "It does not have the label needs review"
     )
@@ -1079,9 +1079,34 @@ def test_drag_a_condition_into_skip_if(signed_in, site, github, bob):
     expect(page).to_have_url(re.compile(r"labels~skip~present"))
     skip = page.locator("tbody[data-section='skip']")
     expect(skip.locator("tr[data-condition-row]")).to_contain_text("It has the label needs review")
-    skip.get_by_role("link", name="To the quality checks").click()
+    skip.get_by_role("button", name="To the quality checks").click()
     expect(page).to_have_url(re.compile(r"labels~applies~present"))
     expect(page.locator("tbody[data-section='skip'] tr[data-condition-row]")).to_have_count(0)
+
+
+def test_drag_a_condition_keeps_what_was_typed(signed_in, site, github, bob):
+    """The name, the description and the switches stay when a condition is dragged or moved."""
+    pull_request_project(github, bob)
+    page = signed_in
+    page.goto(
+        f"{site}/projects/icalendar/filters/save/"
+        "?col=status~applies~draft&col=status~applies~closed~merged~auto_merge&per_page=25"
+    )
+    page.get_by_label("Name").fill("Ready")
+    page.locator("textarea#description").fill("Open *ones*")
+    page.locator("tr[data-condition-row='0'] label.switch").click()  # off
+    checks = page.locator("tbody[data-section='checks']")
+    skip = page.locator("tbody[data-section='skip']")
+    checks.locator("tr[data-condition-row='1']").drag_to(skip.locator("tr[data-drop-here]"))
+    expect(page).to_have_url(re.compile(r"status~skip~closed~merged~auto_merge"))
+    expect(page.locator("tbody[data-section='skip'] tr[data-condition-row]")).to_have_count(1)
+    expect(page.get_by_label("Name")).to_have_value("Ready")
+    expect(page.locator("textarea#description")).to_have_value("Open *ones*")
+    expect(page.locator("input[name=on][value='0']")).not_to_be_checked()
+    expect(page.locator("input[name=on][value='1']")).to_be_checked()
+    page.get_by_role("button", name="Remove").first.click()  # a button keeps them, too
+    expect(page.get_by_label("Name")).to_have_value("Ready")
+    expect(page.locator("tr[data-condition-row]")).to_have_count(1)
 
 
 def test_a_column_of_text(page, site, github, bob):

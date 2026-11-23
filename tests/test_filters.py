@@ -58,14 +58,14 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     assert 'name="on" value="0" checked' in rows[0] and 'name="on" value="1" checked' in rows[1]
     # a new filter: every condition on, also the one that shows both
     assert 'name="on" value="2" checked' in rows[2] and 'class="off"' not in rows[2]
-    assert "data-opposite" in rows[1] and "&amp;swap=1" in rows[1]
+    assert "data-opposite" in rows[1] and 'name="swap" value="1" formnovalidate' in rows[1]
     assert page.index("The filter shows 3 pull requests now:") < page.index(">Quality checks<")
     assert page.index(">Quality checks<") < page.index(">Skip if<")
     assert "If any of these conditions apply, the step is skipped" in page
-    assert "&amp;skip=0" in rows[0] and "data-to-skip" in rows[0]  # into Skip if
+    assert 'name="skip" value="0" formnovalidate data-to-skip' in rows[0]  # into Skip if
     assert page.count('<input type="hidden" name="col"') == 3
     # each condition can be inverted and removed
-    assert "&amp;invert=0" in rows[0] and "&amp;remove=0" in rows[0]
+    assert 'name="invert" value="0"' in rows[0] and 'name="remove" value="0"' in rows[0]
     assert 'title="Invert: it is closed or merged"' in rows[0]
 
 
@@ -88,6 +88,61 @@ def test_invert_and_remove_a_condition(client, project, bob):
     assert "needs" not in removed and removed.count("col=") == 2
     auto = "/projects/icalendar/filters/save/?col=status~applies~auto_merge&invert=0"
     assert "col=status~not~auto_merge" in client.get(auto)["Location"].replace("%7E", "~")
+
+
+def test_a_button_of_a_condition_keeps_what_was_typed(client, project, bob):
+    """The buttons of a condition send the form: the name, the description, the switches stay."""
+    client.force_login(bob)
+    data = {
+        "col": COLUMNS,
+        "name": "Ready",
+        "description": "**Open** ones",
+        "on": ["0", "2"],  # the label is switched off
+        "skip": "2",  # its button To Skip if, also what a drop presses
+    }
+    answer = client.post("/projects/icalendar/filters/save/", data)
+    assert answer.status_code == 200 and not PullRequestFilter.objects.exists()  # not saved
+    page = answer.content.decode()
+    assert 'name="name" maxlength="100" required value="Ready"' in page
+    assert "**Open** ones</textarea>" in page
+    assert 'name="on" value="0" checked' in page and 'name="on" value="1">' in page
+    assert '<input type="hidden" name="col" value="branch~skip~conflict">' in page
+    assert '<input type="hidden" name="col" value="labels~all~present~needs review">' in page
+    skip = page.split("data-filter-skip>")[1].split("</table>")[0]
+    assert "data-to-checks" in skip and 'name="on" value="2" checked' in skip
+    # the script shows the address of these conditions
+    assert 'data-address="/projects/icalendar/filters/save/?col=status~applies~open' in page
+    removed = client.post("/projects/icalendar/filters/save/", {**data, "skip": [], "remove": "0"})
+    page = removed.content.decode()
+    assert page.count('<input type="hidden" name="col"') == 2 and 'value="Ready"' in page
+
+
+def test_enter_saves_a_new_filter(client, project, bob):
+    """The first button of the form saves: Enter in the name moves no condition."""
+    client.force_login(bob)
+    page = save_page(client, *COLUMNS)
+    form = page.split("data-save-filter")[1]
+    first = form.split("<button", 1)[1].split(">", 1)[0]
+    assert 'name="save" value="new"' in first and "visually-hidden" in first
+    saved = PullRequestFilter.objects.create(project=project, name="Open", columns=COLUMNS)
+    page = save_page(client, *COLUMNS, saved=saved.pk)
+    first = page.split("data-save-filter")[1].split("<button", 1)[1].split(">", 1)[0]
+    assert 'name="save" value="this"' in first and "data-save-indicator" in first
+
+
+def test_a_button_of_a_condition_of_a_saved_filter_shows_it_unsaved(client, project, bob):
+    """A saved filter whose description was typed shows Save after a button of a condition."""
+    saved = PullRequestFilter.objects.create(
+        project=project, name="Open", columns=COLUMNS[:1], description="old"
+    )
+    client.force_login(bob)
+    data = {"col": COLUMNS[:1], "saved": saved.pk, "name": "Open", "on": "0"}
+    page = client.post(
+        "/projects/icalendar/filters/save/", {**data, "description": "new", "invert": "0"}
+    ).content.decode()
+    assert 'data-state="unsaved"' in page and ">new</textarea>" in page
+    saved.refresh_from_db()
+    assert saved.columns == COLUMNS[:1] and saved.description == "old"
 
 
 def test_a_condition_switched_off_does_not_filter(client, project, bob):

@@ -9,7 +9,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
@@ -56,25 +56,25 @@ def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
     ]
 
 
-def saved_columns(request: HttpRequest, columns: list[Column]) -> list[Column] | None:
+def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None:
     """The columns after a button of the page of saving, such as ``invert`` or ``skip``.
 
     The buttons: ``swap``, ``invert``, ``remove``, ``skip`` (into Skip if) or ``check`` (into
     the quality checks).
 
     Parameters:
-        request: The request, with the number of the column of the button.
+        form: The address or the form sent, with the number of the column of the button.
         columns: The columns of conditions.
 
     Returns:
         The changed columns; None without such a button.
     """
     for action in ("swap", "invert", "remove", "skip", "check"):
-        if action not in request.GET:
+        if action not in form:
             continue
         changed = list(columns)
         try:
-            index = int(request.GET[action])
+            index = int(form[action])
             column = changed[index]
         except (ValueError, IndexError):
             return changed
@@ -239,6 +239,8 @@ def project_filter_save(request: HttpRequest, slug: str):
     The columns come in the address, as the table has them (``col``), with ``saved``, the
     filter that the table shows, if any. The page shows them in three groups and suggests the
     opposite of a column that shows only those it does not apply to, where there is one.
+    The buttons of a condition (such as ``skip``) send the form, which a drop presses, too:
+    the page comes again with what was typed. Its first button saves, for Enter.
 
     Parameters:
         request: The request; POST with ``name``, ``description``, the columns and ``save``:
@@ -261,16 +263,20 @@ def project_filter_save(request: HttpRequest, slug: str):
     form = request.POST if request.method == "POST" else request.GET
     columns = [Column.decode(value) for value in form.getlist("col")]
     saved = saved_filter(access.project, form.get("saved"))
-    changed = saved_columns(request, columns)
+    if request.method == "POST":  # the switches as they are on the page
+        on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
+        columns = switched(columns, on)
+    changed = saved_columns(form, columns)
     if changed is not None:  # a button of a condition: use the opposite, invert or remove it
+        if request.method == "POST":  # a button of the form: what was typed stays
+            name = request.POST.get("name", "")
+            return save_page(request, access, changed, saved, enabled=False, name=name)
         address = table_address(changed, PER_PAGE, saved.pk if saved else None)
         return redirect(access.project.path("filters/save/") + address)
     if request.method == "POST":
         name = " ".join(request.POST.get("name", "").split())[:100]
         if not name:
             raise FilterNameMissing("")
-        on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
-        columns = switched(columns, on)
         target = saved if saved and request.POST.get("save") == "this" else None
         other = access.project.filters.filter(name=name).exclude(pk=target.pk if target else None)
         other = other.first()
@@ -337,11 +343,12 @@ def save_page(
             "saved": saved,
             "conflict": conflict,
             "step": PullRequestStep.objects.filter(filter=saved).first() if saved else None,
-            # the conditions or the name differ from the filter as it is saved
+            # the conditions, the name or the description differ from the filter as it is saved
             "unsaved": saved is not None
             and (
                 [column.encode() for column in columns] != list(saved.columns)
                 or (name is not None and name != saved.name)
+                or request.POST.get("description", saved.description) != saved.description
             ),
             "original": [  # the filter as it is saved, to restore it before saving a new one
                 (value, Column.decode(value).active) for value in saved.columns
@@ -354,6 +361,8 @@ def save_page(
             "back": access.project.path("pull-requests/")
             + table_address(columns, PER_PAGE, saved.pk if saved else None),
             "address": table_address(columns, PER_PAGE, saved.pk if saved else None),
+            "page_address": access.project.path("filters/save/")
+            + table_address(columns, PER_PAGE, saved.pk if saved else None),
             "label_colors": {label.name.lower(): label.color for label in labels},
             "tab": "filters",
         },

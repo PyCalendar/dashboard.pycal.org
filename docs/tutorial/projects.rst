@@ -288,6 +288,9 @@ or *fewer than 2 reviews* for *at least 2*, and **Remove** removes it. For a con
 what it does not apply to, the page suggests its opposite where it is the same,
 such as *label absent* for not *label present*; **Use it** switches it.
 
+Dragging a condition and these buttons keep the name, the description and the
+switches as you typed them, until you save.
+
 The tab *Filters*, public like the project, lists the saved filters with their
 description. **+ New filter** opens the table of pull requests with its menu **+**
 open, to add the first condition of a new filter. Opening a filter shows a
