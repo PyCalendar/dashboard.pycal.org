@@ -680,3 +680,8 @@ community: where to start, what waits for a review, who contributes.
       GitHub Markdown shows, so that texts move easily between GitHub and the dashboard
 - [x] The page of saving a filter: dragging a condition (and its buttons Invert, Remove, Use it, To Skip if, To the
       quality checks) lost the name, the description and the switches typed; the buttons now send the form
+- [x] The filter Synchronized (saved=8) shows 475 pull requests, the scope of the message 6: checked on the live site,
+      the condition PR Sync on alone shows 6 (it works); the filter is dashboard~applies~sync~skipped, PR Sync on *or*
+      a skipped step, and 472 pull requests skip a step (Peer review skips itself for some authors)
+- [ ] The person: switch off "a skipped step" in the column of the filter Synchronized (live data), so that it is
+      dashboard~applies~sync
