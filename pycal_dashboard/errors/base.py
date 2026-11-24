@@ -13,8 +13,12 @@ from pycal_dashboard.import_guard import IMPORT_GUARD
 class DashboardError(Exception):
     """Something went wrong.
 
-    This is the base of all errors. If you see it, please report a bug with
-    "Report a bug" at the bottom of the page.
+    Resolve:
+        Please report a bug with *Report a bug* at the bottom of the page.
+
+    Context:
+        This is the base of all errors: the dashboard shows a more specific one, so seeing it
+        is a bug.
     """
 
     title = _("Something went wrong")
@@ -103,10 +107,18 @@ class DashboardError(Exception):
 
 
 class UnexpectedError(DashboardError):
-    """An error that this site does not know.
+    """An error happened that the dashboard does not know.
 
-    This is a bug. Please report it with "Report a bug" at the bottom of the
-    page and include the details of the page.
+    Resolve:
+        Please report a bug with *Report a bug* at the bottom of the page, and include the
+        *Details to copy* of the page.
+
+    Context:
+        This is a bug: every error that the dashboard expects has its own name and description.
+        The dashboard logs the error for the people who run it.
+
+    Note:
+        The detail names the kind of the error, such as ``ValueError``, and its message.
     """
 
     title = _("Unexpected error")

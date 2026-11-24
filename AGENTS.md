@@ -89,8 +89,11 @@ after a change, follow the rule it names instead of changing the test.
   errors are the exception: they are grouped by topic in
   `pycal_dashboard/errors/`. `tests/quality/test_structure.py` checks this.
 - Errors are split up as finely as possible: one class per cause, with a title
-  and a docstring that says what happened and how to solve it. They are shown
-  with a link to their documentation (`docs/reference/errors.rst`).
+  and a docstring in this order: one sentence why it appears, maybe followed by the cases
+  that lead to it; `Resolve:` with the actions alone, split up as "When X, do Y."; `Context:`
+  (optional) that explains it; `Note:` (optional) with what fits nowhere else. They are shown
+  with a link to their documentation (`docs/reference/errors.rst`); `tests/test_errors.py`
+  checks the order.
 - Every class and function has a docstring in the Google style, whose section of the
   arguments is `Parameters:`, never `Args:`; every argument has a type. `make lint` and
   `tests/quality/test_docstrings.py` check it.

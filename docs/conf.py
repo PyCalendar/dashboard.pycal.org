@@ -114,13 +114,20 @@ def write_unreleased_changes(path: Path = ROOT / "docs" / "_build" / "unreleased
 write_unreleased_changes()
 
 
+# the sections of the docstring of an error after why it appears, in their order, with their
+# headings in the documentation; "Note:" becomes a note (napoleon makes it ".. note::")
+ERROR_SECTIONS = {"Resolve:": "How to resolve it:", "Context:": "Context:"}
+
+
 def error_facts(
     app: Sphinx, what: str, name: str, obj: object, options: dict, lines: list[str]
 ) -> None:
     """Show the title and HTTP status of each error, why it appears and how to resolve it.
 
-    The first paragraph of the docstring of an error says why it appears, the rest how to
-    resolve it.
+    The docstring of an error has, in this order: one sentence why it appears, maybe followed
+    by the cases that lead to it; ``Resolve:`` with the actions alone; ``Context:`` (optional)
+    that explains it; ``Note:`` (optional) with what fits nowhere else. See
+    ``tests/test_errors.py``.
 
     Parameters:
         app: Sphinx.
@@ -130,17 +137,31 @@ def error_facts(
         options: Of autodoc.
         lines: The lines of the docstring, changed in place.
     """
+    import textwrap
+
     from pycal_dashboard.errors import DashboardError
 
     if what not in ("class", "exception") or not isinstance(obj, type):
         return
     if not issubclass(obj, DashboardError) or not lines:
         return
-    split = lines.index("") if "" in lines else len(lines)
-    why, how = lines[:split], [line for line in lines[split + 1 :]]
-    lines[:] = [f"**{obj.title}** · HTTP {obj.status}", "", "**Why it appears:**", *why]
-    if any(line.strip() for line in how):
-        lines += ["", "**How to resolve it:**", *how]
+    parts: dict[str, list[str]] = {"why": []}
+    part = "why"
+    for line in lines:
+        if line in ERROR_SECTIONS or line.startswith(".. note::") or line == "Note:":
+            part = line
+            parts[part] = [line] if part not in ERROR_SECTIONS else []
+            continue
+        parts[part].append(line)
+    result = [f"**{obj.title}** · HTTP {obj.status}", "", "**Why it appears:**", "", *parts["why"]]
+    for section, heading in ERROR_SECTIONS.items():
+        if section in parts:
+            body = textwrap.dedent("\n".join(parts[section])).strip("\n").splitlines()
+            result += ["", f"**{heading}**", "", *body]
+    for section, body in parts.items():
+        if section not in ERROR_SECTIONS and section != "why":
+            result += ["", *body]
+    lines[:] = result
 
 
 def setup(app: Sphinx) -> None:

@@ -6,10 +6,15 @@ from .base import DashboardError
 
 
 class GitHubError(DashboardError):
-    """GitHub answered a request of the site with an error.
+    """GitHub answered a request of the dashboard with an error.
 
-    The detail shows the request and the answer of GitHub. If it happens again,
-    check https://www.githubstatus.com/ and report a bug.
+    Resolve:
+        - When it happens again, check https://www.githubstatus.com/ for a problem of GitHub.
+        - When GitHub has none, report a bug with the details, see :doc:`/how-to/report-bug`.
+
+    Note:
+        The detail shows the request and the answer of GitHub. The GitHub request in it
+        identifies the request at GitHub, such as for its support.
     """
 
     title = _("GitHub answered with an error")
@@ -17,11 +22,12 @@ class GitHubError(DashboardError):
 
 
 class GitHubUnreachable(GitHubError):
-    """The site could not reach GitHub.
+    """The dashboard could not reach GitHub, because its network or GitHub is down.
 
-    The network of the site or GitHub is down. Try again in a few minutes. The
-    people who run the site check that the container can reach
-    ``api.github.com``.
+    Resolve:
+        - Try again in a few minutes.
+        - When it stays, the people who run the dashboard check that the container can reach
+          ``api.github.com``, or the address of ``GITHUB_API``.
     """
 
     title = _("GitHub could not be reached")
@@ -29,10 +35,18 @@ class GitHubUnreachable(GitHubError):
 
 
 class GitHubNotFound(GitHubError):
-    """GitHub does not know what the site asked for.
+    """GitHub does not know what the dashboard asked for.
 
-    The repository, pull request or installation was deleted, renamed or is
-    not visible to the GitHub App.
+    This happens when the repository, pull request or installation:
+
+    - was deleted,
+    - was renamed, or
+    - is not visible to the GitHub App.
+
+    Resolve:
+        - When it was deleted or renamed, check its name on GitHub.
+        - When the GitHub App does not see it, install the app on the repository, see
+          :doc:`/how-to/install-app`.
     """
 
     title = _("Not found on GitHub")
@@ -40,11 +54,22 @@ class GitHubNotFound(GitHubError):
 
 
 class GitHubLoginExpired(GitHubError):
-    """GitHub did not accept the token of the site.
+    """GitHub did not accept the token of the dashboard.
 
-    The GitHub App was deleted, its private key was revoked, or the clock of
-    the server is wrong. Check the settings of the GitHub App and the time of
-    the server.
+    This happens when:
+
+    - the GitHub App was deleted,
+    - its private key was revoked, or
+    - the clock of the server is wrong.
+
+    Resolve:
+        - When the clock of the server is wrong, correct its time.
+        - Otherwise, check the settings of the GitHub App on GitHub. When its private key was
+          revoked, generate a new one there and set it, as :doc:`/how-to/github-app` describes.
+
+    Context:
+        The dashboard signs its token with the private key of the GitHub App, for a few minutes
+        from the time of the server.
     """
 
     title = _("GitHub did not accept the token")
@@ -52,10 +77,14 @@ class GitHubLoginExpired(GitHubError):
 
 
 class GitHubRateLimited(GitHubError):
-    """The site sent too many requests to GitHub.
+    """The dashboard sent more requests to GitHub than GitHub allows in an hour.
 
-    GitHub allows a number of requests per hour. Wait until the limit is reset,
-    usually within an hour. The dashboard keeps showing what it read before.
+    Resolve:
+        Wait until GitHub resets the limit, usually within an hour.
+
+    Context:
+        GitHub allows a number of requests per hour. Meanwhile the dashboard keeps showing what
+        it read before.
     """
 
     title = _("Too many requests to GitHub")
@@ -63,11 +92,20 @@ class GitHubRateLimited(GitHubError):
 
 
 class GitHubUnavailable(GitHubError):
-    """GitHub did not answer in time, or was busy, after the site asked it again.
+    """GitHub did not answer in time, or was busy, also after the dashboard asked it again.
 
-    GitHub answers 502, 503 or 504 when it is overloaded, or when a query takes too long. The
-    site asks again a few times, with smaller pages of GraphQL; the next update tries again.
-    If it stays, check https://www.githubstatus.com/.
+    This happens when:
+
+    - GitHub is overloaded, or
+    - a query takes GitHub too long.
+
+    Resolve:
+        - Wait: the next update tries again.
+        - When it stays, check https://www.githubstatus.com/.
+
+    Context:
+        GitHub then answers 502, 503 or 504. The dashboard asks again a few times, with smaller
+        pages of GraphQL.
     """
 
     title = _("GitHub did not answer in time")
@@ -75,21 +113,28 @@ class GitHubUnavailable(GitHubError):
 
 
 class GitHubQueryFailed(GitHubError):
-    """GitHub answered a query of GraphQL with an error.
+    """GitHub answered a query of GraphQL of the dashboard with an error.
 
-    The detail shows the type and message of GitHub, such as a field it does not know. If it
-    happens again, report a bug: the query of the site does not fit the API of GitHub.
+    Resolve:
+        When it happens again, report a bug with the details, see :doc:`/how-to/report-bug`.
+
+    Context:
+        The query of the dashboard does not fit the API of GitHub, such as with a field that
+        GitHub does not know.
+
+    Note:
+        The detail shows the type and the message of GitHub.
     """
 
     title = _("GitHub refused the query")
 
 
 class MissingPermissions(GitHubError):
-    """The GitHub App may not do what the site needs.
+    """An installation of the GitHub App lacks a permission that a request of the dashboard needs.
 
-    An installation lacks a permission that a request of the site needs. An
-    owner of the organization accepts the new permissions in the settings of the
-    installation on GitHub; :doc:`/reference/permissions` lists them.
+    Resolve:
+        An owner of the organization accepts the new permissions in the settings of the
+        installation on GitHub. :doc:`/reference/permissions` lists them.
     """
 
     title = _("The GitHub App lacks a permission")
@@ -99,13 +144,17 @@ class MissingPermissions(GitHubError):
 
 
 class SignInNotConfigured(GitHubError):
-    """Nobody can sign in: the site has no OAuth app.
+    """Nobody can sign in, because the dashboard has no OAuth app.
 
-    People sign in with a separate OAuth app of ``GITHUB_OAUTH_CLIENT_ID`` and
-    ``GITHUB_OAUTH_SECRET``. The people who run the site create it on GitHub
-    and enter it on ``/setup/oauth-app/``, which the button *Set up signing in*
-    of the page of the error opens, with the setup code of the log, as
-    :ref:`oauth-app` describes.
+    Resolve:
+        The people who run the dashboard create the OAuth app on GitHub, as :ref:`oauth-app`
+        describes. Then they enter it, with the setup code of the log, on
+        ``/setup/oauth-app/``, which the button *Set up signing in* of the page of the error
+        opens.
+
+    Context:
+        People sign in with a separate OAuth app, of ``GITHUB_OAUTH_CLIENT_ID`` and
+        ``GITHUB_OAUTH_SECRET``, not with the GitHub App.
     """
 
     title = _("Signing in is not set up")
@@ -117,13 +166,18 @@ class SignInNotConfigured(GitHubError):
 
 
 class GitHubAppNotConfigured(GitHubError):
-    """The site has no GitHub App yet.
+    """The dashboard has no GitHub App yet, or no private key of it.
 
-    The site needs its GitHub App to receive the webhooks and to read what GitHub
-    knows about the app. Register it on the page *Register the GitHub App*
-    (``/setup/github-app/``), which the button of the page of the error opens,
-    with the setup code from the log of the site, as :doc:`/how-to/github-app`
-    describes.
+    Resolve:
+        - When the dashboard has no app, register it on the page *Register the GitHub App*
+          (``/setup/github-app/``), which the button of the page of the error opens, with the
+          setup code from the log of the dashboard, as :doc:`/how-to/github-app` describes.
+        - When ``GITHUB_APP_ID`` is set, set the private key of the app: the file of
+          ``GITHUB_APP_PRIVATE_KEY_FILE``, or ``GITHUB_APP_PRIVATE_KEY``.
+
+    Context:
+        The dashboard needs its GitHub App to receive the webhooks and to read what GitHub knows
+        about the app.
     """
 
     title = _("The site has no GitHub App")
@@ -135,11 +189,19 @@ class GitHubAppNotConfigured(GitHubError):
 
 
 class InvalidPrivateKey(GitHubError):
-    """The private key of the GitHub App cannot sign.
+    r"""The private key of the GitHub App cannot sign: it is not the PEM key that GitHub generated.
 
-    ``GITHUB_APP_PRIVATE_KEY`` or the file of ``GITHUB_APP_PRIVATE_KEY_FILE``
-    is not the PEM key that GitHub generated for the app. Generate a new key in
-    the settings of the app on GitHub and set it.
+    Resolve:
+        Generate a new private key in the settings of the app on GitHub. Save it as the file of
+        ``GITHUB_APP_PRIVATE_KEY_FILE``, or set it as ``GITHUB_APP_PRIVATE_KEY``, with ``\n``
+        for the line breaks, and restart the dashboard.
+
+    Context:
+        ``GITHUB_APP_PRIVATE_KEY`` takes precedence over the file of
+        ``GITHUB_APP_PRIVATE_KEY_FILE``.
+
+    Note:
+        The detail shows the error of signing.
     """
 
     title = _("The private key of the GitHub App is invalid")

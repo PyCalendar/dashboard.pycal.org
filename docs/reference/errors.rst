@@ -7,8 +7,13 @@ shows its title, what happened and a button *What this error means and how to
 solve it*, which leads to its entry. Each entry gives:
 
 - the **title** and the **HTTP status** of the page,
-- in its first sentence, **why the error appears**,
-- after it, **how to resolve it**.
+- **why it appears**: in one sentence, then the cases that lead to it, if there
+  are several,
+- **how to resolve it**: only what to do, split up by the cases, such as
+  *When X, do Y*,
+- the **context**, if it helps to understand the error,
+- a **note** with what fits nowhere else, such as what to give in a report of
+  a bug.
 
 The JSON of the pages and the webhooks answer errors as JSON with the same name,
 title and link:
