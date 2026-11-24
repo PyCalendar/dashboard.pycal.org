@@ -699,3 +699,7 @@ community: where to start, what waits for a review, who contributes.
       a person; RESULTS_VERSION makes the cached results be computed again
 - [x] A static link of the PR message: the address /projects/<slug>/pull/<number>/message/ redirects to the message
       on GitHub, else to the pull request; the variable {pr_message_url} is that address
+- [x] Self-reviews counted toward the two reviews of Peer review (PyCalendar/icalendar#2101): solved since 0.21.0; a test
+      replicates its five reviews (three of its author SemTiOne, two of niccokunzmann)
+- [ ] The person: do two reviews of the same person count as two (#2101 has two of niccokunzmann: Peer review done),
+      or should "at least 2 reviews from others" count different reviewers?

@@ -197,3 +197,53 @@ def test_the_reviews_of_a_person_on_their_own_pull_requests(client, github, proj
     every = "reviews~applies~at_least~9~approved~changes_requested~commented~dismissed"
     assert "Review by anna: commented" not in {text for text, _url in evidence(every, 1)}
     assert "Review by anna: commented" in {text for text, _url in evidence(every + "~own", 1)}
+
+
+# the reviews of PyCalendar/icalendar#2101 on GitHub, as they were on 2026-11-24
+REVIEWS_2101 = [
+    (5875519810, "niccokunzmann", "CHANGES_REQUESTED", "2026-11-12T13:54:50Z"),
+    (5905674606, "SemTiOne", "COMMENTED", "2026-11-14T16:05:23Z"),
+    (5905704374, "SemTiOne", "COMMENTED", "2026-11-14T16:10:20Z"),
+    (6030173776, "niccokunzmann", "COMMENTED", "2026-11-23T22:08:10Z"),
+    (6033323629, "SemTiOne", "COMMENTED", "2026-11-24T03:42:51Z"),
+]
+
+
+def test_the_reviews_of_the_author_do_not_count_as_in_2101(github, bob):
+    """PyCalendar/icalendar#2101: its author SemTiOne commented three times as reviews, and
+    niccokunzmann reviewed twice. Only the two reviews of niccokunzmann count for the task
+    *fewer than 2 reviews* of the step Peer review; before, the own reviews counted, too."""
+    repo = "PyCalendar/icalendar"
+    people = {
+        "SemTiOne": {"id": 201, "login": "SemTiOne", "avatar_url": "", "type": "User"},
+        "niccokunzmann": {"id": 202, "login": "niccokunzmann", "avatar_url": "", "type": "User"},
+    }
+    github.add_repository(repo, installation=11)
+    title = " Fix dateutil timezone detection and add Alpine Linux CI coverage"
+    github.add_issue(repo, title, pull_request=True, user=people["SemTiOne"])
+    for github_id, login, state, submitted in REVIEWS_2101:
+        review = github.add_review(repo, 1, people[login], state)
+        review["databaseId"], review["submittedAt"] = github_id, submitted
+    repository = Repository.objects.create(full_name=repo)
+    project = ProjectEditor.create(bob, "iCalendar", slug="icalendar")
+    project.repositories.add(repository)
+    assert RepositoryUpdate(repository).run()
+    pull = Issue.objects.get(repository=repository, number=1)
+    assert pull.reviews.count() == 5
+    peer = Column.decode("reviews~applies~below~2")  # the task of the step Peer review
+    evidence = [(str(e.text), e.url) for e in peer.evidence(pull, None, project)]
+    url = f"https://github.com/{repo}/pull/1#pullrequestreview-"
+    assert evidence == [
+        ("Review by niccokunzmann: changes requested", f"{url}5875519810"),
+        ("Review by niccokunzmann: commented", f"{url}6030173776"),
+    ]  # not "Review by SemTiOne: commented", as before
+    assert peer.group.cell(pull, peer.choices)[0]["text"] == "2 reviews"
+    assert peer.applies(pull) is False  # 2 reviews of others: the task is done
+    # with the switch of the reviews of the author, all five count
+    own = Column.decode(
+        "reviews~applies~below~2~approved~changes_requested~commented~dismissed~own"
+    )
+    assert own.group.cell(pull, own.choices)[0]["text"] == "5 reviews"
+    # SemTiOne gave no review on the pull requests of others
+    ratio = Column.decode("author~applies~reviews_given~above~0")
+    assert ratio.applies(pull) is False
