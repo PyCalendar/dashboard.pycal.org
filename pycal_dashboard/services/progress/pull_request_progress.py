@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from django.utils.text import capfirst
+from django.utils.translation import gettext
 
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
@@ -36,6 +37,7 @@ class PullRequestProgress:
         scope: Scope | None = None,
         results: ColumnResults | None = None,
         overrides: StepOverrides | None = None,
+        badge_alt: str | None = None,
     ):
         """Find the tasks of every step of the project for a pull request.
 
@@ -48,6 +50,9 @@ class PullRequestProgress:
                 has them; else each condition is evaluated for the pull request.
             overrides: The skips of the steps, read once for many pull requests; those of this
                 pull request when None.
+            badge_alt: The alternative text of the badge in the texts of the steps
+                (``{pr_badge}``); None for the text of the badge, such as ``Triage 3/4``, where
+                the texts are made again when the badge changes, as on the pages.
         """
         scope = scope or Scope.of(project)
         overrides = overrides or StepOverrides(project, [issue])
@@ -55,13 +60,9 @@ class PullRequestProgress:
         self.project = project
         self.scope = scope
         self.steps: list[StepProgress] = []
-        base = values_of(issue, project)  # the same for every step, with its own after it
+        self._values: dict[str, str] | None = None  # see values(), once the step is known
+        self.badge_alt = badge_alt
         for number, step in enumerate(project.steps.select_related("filter"), 1):
-            values = base | {
-                "step_name": step.name,
-                "step_number": str(number),
-                "step_id": str(step.pk),
-            }
             progress = StepProgress(step, number, skip=overrides.skip(issue, step))
             for value in step.filter.columns:
                 column = Column.decode(value)
@@ -85,8 +86,8 @@ class PullRequestProgress:
                         column,
                         result,
                         column.shows(result),
-                        expand(notes.get("summary", ""), values),
-                        expand(notes.get("description", ""), values),
+                        notes.get("summary", ""),  # expanded below, with the badge
+                        notes.get("description", ""),
                     )
                 )
             progress.tasks.sort(key=lambda task: not task.todo)  # stable: to do first
@@ -99,6 +100,11 @@ class PullRequestProgress:
         )
         if self.current:
             self.current.current = True
+        for step in self.steps:  # the badge is known now: the texts of the tasks with it
+            values = self.values(step)
+            for task in step.tasks:
+                task.summary = expand(task.summary, values)
+                task.description = expand(task.description, values)
         # it went through all steps when it skipped those with tasks to do
         self.skipped_open = any(not step.complete and step.skip for step in self.steps)
         stage = "past" if self.current or self.skipped_open else "outside"
@@ -108,6 +114,41 @@ class PullRequestProgress:
             step.stage = stage
             if stage == "current":
                 stage = "future"
+
+    def badge_text(self) -> tuple[str, str]:
+        """What the badge of the pull request shows.
+
+        Returns:
+            Such as ``("Triage", "3/4")``: the step it is in, with its tasks done and all of
+            them; ``("Steps", "outside")`` when no task of any step is to do, outside of the
+            usual steps; ``("Steps", "none")`` without steps.
+        """
+        if self.current:
+            return self.current.step.name, f"{self.current.done}/{len(self.current.tasks)}"
+        if self.steps:
+            return gettext("Steps"), gettext("outside")
+        return gettext("Steps"), gettext("none")
+
+    def values(self, step: StepProgress | None = None) -> dict[str, str]:
+        """The values of the variables of the texts of a step for the pull request.
+
+        Parameters:
+            step: The step; None for the texts of no step.
+
+        Returns:
+            The values, with the alternative text of ``pr_badge``: ``badge_alt``, else the
+            text of the badge.
+        """
+        if self._values is None:
+            alt = " ".join(self.badge_text()) if self.badge_alt is None else self.badge_alt
+            self._values = values_of(self.issue, self.project, alt=alt)
+        if step is None:
+            return self._values
+        return self._values | {
+            "step_name": step.step.name,
+            "step_number": str(step.number),
+            "step_id": str(step.step.pk),
+        }
 
     @property
     def visible(self) -> list[StepProgress]:

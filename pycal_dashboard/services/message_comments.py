@@ -17,7 +17,13 @@ from pycal_dashboard.models import Issue, PullRequestComment, PullRequestMessage
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.step_overrides import StepOverrides
-from pycal_dashboard.step_template import badge_version, expand, pull_addresses, values_of
+from pycal_dashboard.step_template import (
+    BADGE_ALT,
+    badge_version,
+    expand,
+    pull_addresses,
+    values_of,
+)
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
@@ -174,7 +180,7 @@ class MessageComments:
         if self._overrides is None:
             self._overrides = StepOverrides(self.project)
         progress = PullRequestProgress(
-            issue, self.project, self.scope, self.results, self._overrides
+            issue, self.project, self.scope, self.results, self._overrides, str(BADGE_ALT)
         )
         current = progress.current
         values = {"step_name": "", "step_number": "", "step_id": ""} | values_of(
@@ -191,7 +197,12 @@ class MessageComments:
             else badge_version(None)
         )
         values |= pull_addresses(
-            self.project, issue.number, issue.repository.full_name, version=version
+            self.project,
+            issue.number,
+            issue.repository.full_name,
+            version=version,
+            # the comment stays when its pull request leaves the scope, while the badge changes
+            alt=str(BADGE_ALT),
         )
         summary = expand(current.step.summary, values) if current else ""
         return values | {

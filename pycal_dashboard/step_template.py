@@ -46,7 +46,7 @@ GROUPS = {
         {
             "pr_badge": (
                 _("the badge of the pull request, linked to its page with its steps"),
-                "[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)]"
+                "[![View progress](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)]"
                 "(https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)",
             ),
             "pr_badge_url": (
@@ -124,6 +124,9 @@ STEP_GROUPS = {key: group for key, group in GROUPS.items() if key != "message"}
 # every variable with what it is, in the order of the groups
 # the variables whose values are Markdown that the site makes of its own addresses: not escaped
 # and the description and tasks of a step in the message, written by the writers of the project
+# the alternative text of the badge where it is not written again when the badge changes, such
+# as in the PR message on a pull request that left the scope of the message: it would lie
+BADGE_ALT = _("View progress")
 MARKDOWN_VALUES = {"pr_badge", "step_description", "tasks_all", "tasks_todo", "tasks_done"}
 VARIABLES = {
     name: about[0] for _title, members in GROUPS.values() for name, about in members.items()
@@ -173,13 +176,18 @@ def expand(template: str, values: dict[str, str]) -> str:
     return VARIABLE.sub(replace, template or "")
 
 
-def values_of(issue: Issue, project: Project, step: PullRequestStep | None = None) -> dict:
+def values_of(
+    issue: Issue, project: Project, step: PullRequestStep | None = None, alt: str = ""
+) -> dict:
     """The values of the variables for a pull request.
 
     Parameters:
         issue: The pull request.
         project: The project.
         step: The step, if the template is of one.
+        alt: The text of the badge, its alternative text in ``pr_badge``, such as
+            ``Triage 3/4`` (:meth:`PullRequestProgress.badge_text
+            <pycal_dashboard.services.progress.pull_request_progress.PullRequestProgress.badge_text>`).
 
     Returns:
         The values by the names of the variables.
@@ -192,7 +200,7 @@ def values_of(issue: Issue, project: Project, step: PullRequestStep | None = Non
         "pr_number": str(issue.number),
         "pr_url": issue.url,
         "pr_merge_box": issue.url + MERGE_BOX,
-        **pull_addresses(project, issue.number, repository.full_name),
+        **pull_addresses(project, issue.number, repository.full_name, alt=alt),
         "author_mention": f"@{login}" if login else "",
         "author_name": (author.name or login) if author else "",
         "author_handle": login,
@@ -253,7 +261,10 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
     }
     return (
         values
-        | {"project_name": project.name, **pull_addresses(project, 42, "collective/icalendar")}
+        | {
+            "project_name": project.name,
+            **pull_addresses(project, 42, "collective/icalendar", alt=str(BADGE_ALT)),
+        }
         | step_values(step)
     )
 
@@ -279,7 +290,11 @@ def steps_url(project: Project, number: int, repository: str = "", page: str = "
 
 
 def pull_addresses(
-    project: Project, number: int, repository: str = "", version: int | None = None
+    project: Project,
+    number: int,
+    repository: str = "",
+    version: int | None = None,
+    alt: str = "",
 ) -> dict[str, str]:
     """The variables of the addresses of a pull request on this site, and its badge.
 
@@ -290,11 +305,13 @@ def pull_addresses(
         version: What the badge shows, as a number (:func:`badge_version`): added to the
             address of the badge as ``_v``, so that GitHub, which keeps images by their
             address, loads the badge again when it changes; None for none.
+        alt: The text of the badge, such as ``Triage 3/4``: the alternative text of its image,
+            which screen readers read.
 
     Returns:
         ``pr_steps_url``, ``pr_message_url`` (the fixed address of the PR message),
         ``pr_badge_url`` and ``pr_badge``, the badge in Markdown linked to the page: made of
-        the addresses of the site only, so it is not escaped.
+        the addresses of the site and its text escaped, so it is not escaped again.
     """
     page = steps_url(project, number, repository)
     badge = steps_url(project, number, repository, "badge.svg")
@@ -304,5 +321,5 @@ def pull_addresses(
         "pr_steps_url": page,
         "pr_message_url": steps_url(project, number, repository, "message/"),
         "pr_badge_url": badge,
-        "pr_badge": f"[![]({badge})]({page})",
+        "pr_badge": f"[![{escape(alt)}]({badge})]({page})",
     }

@@ -29,7 +29,7 @@ from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
 from pycal_dashboard.services.update_queue import UpdateQueue
-from pycal_dashboard.step_template import expand, values_of
+from pycal_dashboard.step_template import expand
 
 from .json_page import page, wants_json
 from .projects import issue_data, opened, pull_requests_of, shown_repositories
@@ -113,9 +113,7 @@ def project_pull_request(request: HttpRequest, slug: str, number: int):
             "shown": shown,
             "step_query": "?" + urlencode(keep) + "&step=" if keep else "?step=",
             "repository_query": bool(name),
-            "step_summary": expand(shown.step.summary, values_of(issue, access.project, shown.step))
-            if shown
-            else "",
+            "step_summary": expand(shown.step.summary, progress.values(shown)) if shown else "",
         },
         lambda: {**issue_data(issue), **evidence_data(progress)},
     )

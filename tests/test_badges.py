@@ -100,6 +100,8 @@ def test_the_variables_of_the_badge(project, settings):  # noqa: F811
     query = "?repository=collective%2Ficalendar"  # always: the address stays the same
     assert values["pr_badge_url"] == page + "badge.svg" + query
     assert expand("{pr_badge}", values) == f"[![]({page}badge.svg{query})]({page}{query})"
+    alt = values_of(pull, project, alt="Review 1/2")["pr_badge"]
+    assert alt.startswith("[![Review 1/2](")  # read by screen readers
     assert expand("{pr_badge_url}", values) != values["pr_badge_url"]  # escaped as text
 
 
@@ -129,6 +131,12 @@ def test_a_step_description_shows_the_badge(client, project, steps, settings):  
     address = f"https://dashboard.example.org/projects/icalendar/pull/{number}/{query}"
     path = re.escape(f"/projects/icalendar/pull/{number}/badge.svg{query}")  # from this site
     assert re.search(rf'<a href="{re.escape(address)}"[^>]*><img src="{path}"', shown)
+    # the alternative text is what the badge shows: the page is made again when it changes
+    from pycal_dashboard.services.pull_request_badge import PullRequestBadge
+
+    issue = Issue.objects.get(number=number)
+    label, value, *_colors = PullRequestBadge(issue, project, [issue.repository]).texts()
+    assert label == "Review" and f'alt="Review {value}"' in shown
 
 
 def test_markdown_shows_images_of_this_site_only(settings):

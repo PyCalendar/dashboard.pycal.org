@@ -364,7 +364,7 @@ def test_the_address_of_the_badge_changes_with_the_badge(project):
     values = MessageComments(project).values(ready)
     first = values["pr_badge_url"]
     assert "badge.svg?repository=collective%2Ficalendar&_v=" in first
-    assert values["pr_badge"].startswith(f"[![]({first})](")
+    assert values["pr_badge"].startswith(f"[![View progress]({first})](")  # stays: no state
     assert values == MessageComments(project).values(ready)  # the same: the same address
     step = PullRequestStep.objects.get()
     step.name = "Peer review"

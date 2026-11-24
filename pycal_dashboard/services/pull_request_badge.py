@@ -6,7 +6,7 @@ import hashlib
 from typing import TYPE_CHECKING
 
 from django.core.cache import cache
-from django.utils.translation import get_language, gettext
+from django.utils.translation import get_language
 
 from pycal_dashboard import badges
 from pycal_dashboard.badges import LABEL_COLOR
@@ -76,13 +76,10 @@ class PullRequestBadge:
         """
         results = ColumnResults(self.repositories, project=self.project)
         progress = PullRequestProgress(self.issue, self.project, results.scope, results)
+        label, value = progress.badge_text()  # also the alternative text of {pr_badge}
         if progress.current:
-            current = progress.current
-            done = f"{current.done}/{len(current.tasks)}"
-            return current.step.name, done, TODO, current.step.color or LABEL_COLOR
-        if progress.steps:  # no task of any step is to do
-            return gettext("Steps"), gettext("outside"), NONE, LABEL_COLOR
-        return gettext("Steps"), gettext("none"), NONE, LABEL_COLOR
+            return label, value, TODO, progress.current.step.color or LABEL_COLOR
+        return label, value, NONE, LABEL_COLOR
 
     def render(self, kind: str) -> tuple[bytes, str, str]:
         """The badge, from the cache when nothing changed since it was drawn.

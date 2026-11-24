@@ -558,9 +558,13 @@ in their groups. The examples are those of a pull request of
      - Example
    * - ``{pr_badge}``
      - The badge of the pull request in Markdown, linked to its page with its
-       steps: ``[![]({pr_badge_url})]({pr_steps_url})``, made of the
-       addresses of the site, which are not escaped
-     - ``[![](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)](https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)``
+       steps: ``[![View progress]({pr_badge_url})]({pr_steps_url})``, made of
+       the addresses of the site, which are not escaped. Its alternative text,
+       which screen readers read, is that of the badge on the pages of the
+       dashboard, such as *Triage 3/4*; in the PR message it is *View
+       progress*, as the comment stays on a pull request that leaves its scope
+       while the badge goes on changing
+     - ``[![View progress](https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar)](https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)``
    * - ``{pr_badge_url}``
      - The address of the badge of the pull request, see
        :ref:`pull-request-badge`

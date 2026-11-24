@@ -718,3 +718,6 @@ community: where to start, what waits for a review, who contributes.
 - [x] The steps page: "Tasks" are "Quality checks", in every text that people read (the code, the JSON keys and the
       variables keep "tasks"); below them, the new heading "Skip conditions" has "Skipped if" and the field
       "Skipped for these authors"
+- [x] {pr_badge} has an alternative text: on the pages of the dashboard the text of the badge (such as Triage 3/4),
+      made again when it changes; in the PR message "View progress", as the comment stays on a pull request that
+      leaves the scope while the badge changes
