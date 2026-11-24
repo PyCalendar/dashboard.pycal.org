@@ -9,6 +9,22 @@ Changelog
 
 .. towncrier release notes start
 
+0.21.0 (2026-11-24)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Backups and snapshots are sorted inside, so that two of them compare line by line (diff): the members,
+  skips, GitHub handles, numbers of pull requests, labels and tasks; restoring counts no different order as a change.
+- Below the Status Message: "This is the message as it would appear in pull request ...", linked to the message
+  on that pull request on GitHub (the pull request while it does not have it), to check it there.
+- By default, a review counts only when its author is not the author of the pull request, such as a comment
+  of the author as a review; the switch "by the author of the pull request" of Which reviews count counts those, too.
+- PR Sync for people: the open pull requests of the GitHub handles in the scope, old and new, get the
+  Status Message and the step labels; the field proposes the authors of the pull requests of the project.
+
+
 0.20.1 (2026-11-23)
 -------------------
 
