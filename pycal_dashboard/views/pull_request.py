@@ -24,7 +24,7 @@ from pycal_dashboard.errors import (
     SkipReasonMissing,
     StepNotFound,
 )
-from pycal_dashboard.models import PullRequestStep, StepSkip
+from pycal_dashboard.models import PullRequestComment, PullRequestStep, StepSkip
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 from pycal_dashboard.services.pull_request_badge import PullRequestBadge
@@ -160,6 +160,39 @@ def project_pull_request_badge(request: HttpRequest, slug: str, number: int, kin
     answer["ETag"] = etag
     answer["Cache-Control"] = f"{'private' if private else 'public'}, max-age={BADGE_SECONDS}"
     return answer
+
+
+@require_http_methods(["GET", "HEAD"])
+def project_pull_request_message(request: HttpRequest, slug: str, number: int):
+    """The fixed address of the PR message of a pull request (``{pr_message_url}``).
+
+    It leads to the comment of the Status Message of the project on the pull request on GitHub;
+    while the pull request does not have it, to the pull request. So the address stays the
+    same, also when the comment is written again.
+
+    Parameters:
+        request: The request; ``repository`` names the repository of the pull request.
+        slug: The project.
+        number: The number of the pull request on GitHub.
+
+    Returns:
+        A redirect to GitHub.
+
+    Raises:
+        PullRequestNotFound: No repository of the project that the person sees has it.
+        PullRequestNumberAmbiguous: Several have it, and the address names none.
+    """
+    access, moved = opened(request, slug, f"pull/{number}/message/")
+    if moved:
+        return moved
+    found = numbered(shown_repositories(access), number, request.GET.get("repository"))
+    if len(found) > 1:
+        raise PullRequestNumberAmbiguous(str(number))
+    issue = found[0]
+    comment = PullRequestComment.objects.filter(project=access.project, issue=issue).first()
+    if comment is None:
+        return redirect(issue.url)
+    return redirect(f"{issue.url}#issuecomment-{comment.github_id}")
 
 
 def evidence_data(progress: PullRequestProgress) -> dict:

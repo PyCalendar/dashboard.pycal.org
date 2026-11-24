@@ -57,6 +57,13 @@ GROUPS = {
                 _("the address of the page of the pull request with its steps on %(site_name)s"),
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar",
             ),
+            "pr_message_url": (
+                _(
+                    "the fixed address of the PR message on %(site_name)s: it leads to the "
+                    "message on the pull request on GitHub, else to the pull request"
+                ),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/message/?repository=collective%2Ficalendar",
+            ),
         },
     ),
     "author": (
@@ -260,7 +267,7 @@ def steps_url(project: Project, number: int, repository: str = "", page: str = "
         repository: Its repository, such as ``collective/icalendar``: always named in the
             address, so that it stays the same when the project gets another repository with
             a pull request of the same number.
-        page: ``badge.svg`` for the badge; "" for the page.
+        page: ``badge.svg`` for the badge, ``message/`` for the PR message; "" for the page.
 
     Returns:
         Such as ``https://dashboard.pycal.org/projects/icalendar/pull/42/``.
@@ -285,11 +292,17 @@ def pull_addresses(
             address, loads the badge again when it changes; None for none.
 
     Returns:
-        ``pr_steps_url``, ``pr_badge_url`` and ``pr_badge``, the badge in Markdown linked to
-        the page: made of the addresses of the site only, so it is not escaped.
+        ``pr_steps_url``, ``pr_message_url`` (the fixed address of the PR message),
+        ``pr_badge_url`` and ``pr_badge``, the badge in Markdown linked to the page: made of
+        the addresses of the site only, so it is not escaped.
     """
     page = steps_url(project, number, repository)
     badge = steps_url(project, number, repository, "badge.svg")
     if version is not None:
         badge += ("&" if "?" in badge else "?") + f"_v={version}"
-    return {"pr_steps_url": page, "pr_badge_url": badge, "pr_badge": f"[![]({badge})]({page})"}
+    return {
+        "pr_steps_url": page,
+        "pr_message_url": steps_url(project, number, repository, "message/"),
+        "pr_badge_url": badge,
+        "pr_badge": f"[![]({badge})]({page})",
+    }

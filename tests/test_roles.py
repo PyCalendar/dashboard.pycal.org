@@ -116,6 +116,11 @@ ACTIONS = {
         lambda c, w: c.get(w.path),
         lambda w: True,
     ),
+    "open the fixed address of the PR message": (
+        "anonymous",
+        lambda c, w: c.get(w.path + f"pull/{w.pull.number}/message/"),
+        lambda w: True,
+    ),
     "update it from GitHub": (
         "read",
         lambda c, w: c.post(w.path + "update/"),

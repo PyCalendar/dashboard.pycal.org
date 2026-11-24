@@ -548,6 +548,13 @@ in their groups. The examples are those of a pull request of
      - The address of the page of the pull request with its steps on
        dashboard.pycal.org, see :ref:`pull-request-page`
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar``
+   * - ``{pr_message_url}``
+     - The fixed address of the PR message on dashboard.pycal.org: it leads to
+       the Status Message on the pull request on GitHub, see :ref:`pr-message`,
+       and to the pull request while it does not have the message. It stays the
+       same, also when the comment is written again. Such as
+       ``[The status]({pr_message_url})``
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/message/?repository=collective%2Ficalendar``
 
 The addresses always name the repository of the pull request, so they stay the
 same when the project gets another repository with a pull request of the same

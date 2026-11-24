@@ -79,6 +79,7 @@ REPEATED = [
     "/*?tab=",
     "/*/badge.svg",
     "/*/badge.png",
+    "/projects/*/pull/*/message/",
     "/projects/*/message/review/",
 ]
 

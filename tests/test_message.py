@@ -443,3 +443,35 @@ def test_the_preview_links_the_message_on_github(client, github, project, bob):
     line = page.split("data-message-pull>")[1].split("</p>")[0]
     url = f"https://github.com/{REPO}/pull/1#issuecomment-{comment.github_id}"
     assert f'<a href="{url}" data-message-pull-link>{REPO}#1</a>' in line
+
+
+def test_the_fixed_address_of_the_message(client, github, project, bob, settings):
+    """{pr_message_url}: the message on GitHub, else the pull request; the address stays."""
+    from pycal_dashboard.models import Issue
+    from pycal_dashboard.step_template import values_of
+
+    settings.SITE_URL = "https://dashboard.example.org"
+    pull = Issue.objects.select_related("author", "repository").get(number=1)
+    url = values_of(pull, project)["pr_message_url"]
+    assert url == (
+        "https://dashboard.example.org/projects/icalendar/pull/1/message/"
+        "?repository=collective%2Ficalendar"
+    )
+    address = url.removeprefix(settings.SITE_URL)
+    answer = client.get(address)  # public, like the project; no message yet: the pull request
+    assert answer.status_code == 302 and answer["Location"] == f"https://github.com/{REPO}/pull/1"
+    client.force_login(bob)
+    save(client, to_listed="on", listed="1", template="[The status]({pr_message_url})")
+    update(project)
+    comment = PullRequestComment.objects.get()
+    (written,) = github.comments.values()
+    from pycal_dashboard.markdown_text import render
+
+    assert f'href="{url.replace("&", "&amp;")}"' in render(written["body"])  # a link to it
+    client.logout()
+    answer = client.get(address)
+    assert (
+        answer["Location"] == f"https://github.com/{REPO}/pull/1#issuecomment-{comment.github_id}"
+    )
+    assert client.get("/projects/icalendar/pull/1/message/")["Location"] == answer["Location"]
+    assert client.get("/projects/icalendar/pull/99/message/").status_code == 404
