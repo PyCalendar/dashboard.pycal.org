@@ -1,0 +1,1 @@
+``make messages`` without gettext builds a small image with gettext and the packages once, and again only when ``uv.lock`` changes: it takes seconds instead of minutes.

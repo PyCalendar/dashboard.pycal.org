@@ -722,3 +722,5 @@ community: where to start, what waits for a review, who contributes.
       made again when it changes; in the PR message "View progress", as the comment stays on a pull request that
       leaves the scope while the badge changes
 - [x] Translate the 39 new texts into German and Spanish (the person: "translate when you have time")
+- [x] Faster make messages without gettext: a cached image (docker/messages.Dockerfile) instead of installing gettext
+      and the packages at every run; 6 s instead of over 10 minutes
