@@ -29,9 +29,9 @@ from pycal_dashboard.models import (
     PullRequestStep,
     StepSkip,
 )
-from pycal_dashboard.step_actions import normalized
 
 from .project_access import ProjectAccess
+from .project_backup import ProjectBackup
 from .project_editor import ProjectEditor
 from .restore_change import RestoreChange
 
@@ -82,15 +82,16 @@ def step_fields(entry: dict) -> dict:
         entry: The step of the file.
 
     Returns:
-        ``summary``, ``hidden``, ``color``, ``conditions``, ``actions`` and ``skip_authors``.
+        ``summary``, ``hidden``, ``color``, ``conditions``, ``actions`` and ``skip_authors``;
+        the labels and the handles sorted as in a backup, so that their order changes nothing.
     """
     return {
         "summary": str(entry.get("summary") or ""),
         "hidden": bool(entry.get("hidden")),
         "color": color(entry.get("color")),
         "conditions": entry.get("tasks") or {},
-        "actions": normalized(entry.get("actions")),
-        "skip_authors": [str(name) for name in entry.get("skip_authors") or []][:100],
+        "actions": ProjectBackup.actions(entry.get("actions")),
+        "skip_authors": ProjectBackup.handles(entry.get("skip_authors"))[:100],
     }
 
 
@@ -269,7 +270,8 @@ class RestorePlan:
                 continue
             fields = step_fields(entry)
             now = {field: getattr(step, field) for field in fields}
-            now["actions"] = normalized(step.actions)
+            now["actions"] = ProjectBackup.actions(step.actions)
+            now["skip_authors"] = ProjectBackup.handles(step.skip_authors)
             if now != fields or step.filter.name != clean_name(entry["filter"]):
                 text = gettext("Replace the step “%(name)s” with that of the backup")
                 changes.append(
@@ -303,7 +305,10 @@ class RestorePlan:
         fields = message_fields(entry)
         if "draft" not in entry:  # a backup of before the drafts: the draft stays
             fields["draft"] = message.draft
-        if {field: getattr(message, field) for field in fields} == fields:
+        now = {field: getattr(message, field) for field in fields}
+        now["listed"] = ProjectBackup.listed(message.listed)  # their order changes nothing
+        fields["listed"] = ProjectBackup.listed(fields["listed"])
+        if now == fields:
             return []
         text = gettext("Replace the message of PR Sync and its synchronization")
         return [RestoreChange("message", text, confirm=True)]

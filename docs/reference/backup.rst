@@ -114,6 +114,16 @@ The keys
    The roles in the project: the GitHub ``handle`` of each person and the
    ``role``, ``read``, ``write`` or ``owner``.
 
+The file is sorted inside, so that the same project always gives the same
+file and two backups or snapshots compare line by line, such as with ``diff``:
+the repositories, the filters and the members by their names, the skips by
+the repository and the number of the pull request, and the GitHub handles,
+the numbers of pull requests (``listed``), the labels of the ``actions`` and
+the keys of the ``tasks``. Only ``exported`` differs between two backups of an
+unchanged project. The steps keep their order from left to right, and the
+``columns`` of a filter theirs, as the order of both means something. Restoring
+does not count a different order of the rest as a change.
+
 A backup keeps everything that the people of a project decide;
 ``tests/test_backup.py`` checks every field. Left out are the ids and times of
 the database, who made or changed something last, and what GitHub tells, which

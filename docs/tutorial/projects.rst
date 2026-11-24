@@ -747,6 +747,9 @@ of a backup, which restores as one. The owners **Restore** a snapshot as a
 backup, with the same page of what it changes, and **Delete** it. Writers take
 and download snapshots; deleting a project deletes its snapshots.
 
+Two snapshots compare line by line, such as with ``diff old.yaml new.yaml``:
+the file is sorted inside, so only what changed differs.
+
 .. _project-backup:
 
 Backup

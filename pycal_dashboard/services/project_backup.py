@@ -2,6 +2,7 @@
 
 Its settings, repositories, filters, steps with the skips of pull requests, message and
 roles. Restoring compares it with the project first (:class:`~.restore_plan.RestorePlan`).
+The file is sorted inside, so that two backups or snapshots compare line by line (``diff``).
 """
 
 from __future__ import annotations
@@ -34,6 +35,11 @@ class ProjectBackup:
     requests, its ``message`` with the edited one, and the ``members`` with their roles.
     ``tests/test_backup.py`` checks that every field that people decide is in it. Restoring
     is :class:`~pycal_dashboard.services.restore_plan.RestorePlan`.
+
+    What has no order of its own is sorted, so that the same project always gives the same
+    file: the repositories, filters, members, skips, GitHub handles, numbers of pull requests,
+    labels and the keys of the tasks. The steps keep their order from left to right, and the
+    columns of a filter theirs, as both mean something.
     """
 
     def __init__(self, project: Project):
@@ -48,6 +54,82 @@ class ProjectBackup:
     def documentation() -> str:
         """The address of the description of the format."""
         return f"{settings.DOCS_URL.rstrip('/')}/reference/backup.html"
+
+    @staticmethod
+    def handles(names: list | None) -> list[str]:
+        """GitHub handles as the file keeps them: sorted, whatever the case.
+
+        Parameters:
+            names: The handles, such as the authors whose pull requests skip a step.
+
+        Returns:
+            The handles, sorted.
+
+        Examples:
+            >>> ProjectBackup.handles(["octocat", "Monalisa", "bob"])
+            ['bob', 'Monalisa', 'octocat']
+        """
+        return sorted((str(name) for name in names or []), key=lambda name: (name.lower(), name))
+
+    @staticmethod
+    def listed(names: list | None) -> list[str]:
+        """Numbers of pull requests as the file keeps them: by repository, then by number.
+
+        Parameters:
+            names: Such as ``42`` and ``collective/icalendar#7``.
+
+        Returns:
+            The numbers alone first, then those with their repository.
+
+        Examples:
+            >>> ProjectBackup.listed(["100", "a/b#3", "9"])
+            ['9', '100', 'a/b#3']
+        """
+
+        def key(name: str) -> tuple:
+            repository, _hash, number = name.rpartition("#")
+            return (repository.lower(), int(number) if number.isdigit() else 0, name)
+
+        return sorted((str(name) for name in names or []), key=key)
+
+    @staticmethod
+    def actions(actions: dict | list | None) -> dict[str, dict[str, list[str]]]:
+        """The actions of a step as the file keeps them: the labels of each sorted.
+
+        Parameters:
+            actions: As the step keeps them.
+
+        Returns:
+            For each trigger, the labels to ``add`` and to ``remove``.
+
+        Examples:
+            >>> ProjectBackup.actions({"enter": {"add": ["b", "A"]}})["enter"]["add"]
+            ['A', 'b']
+        """
+        return {
+            trigger: {kind: ProjectBackup.handles(labels) for kind, labels in kinds.items()}
+            for trigger, kinds in normalized(actions).items()
+        }
+
+    @staticmethod
+    def ordered(value: Any) -> Any:  # noqa: ANN401 - a value of JSON
+        """A value of JSON with the keys of each mapping sorted, such as the tasks of a step.
+
+        Parameters:
+            value: The value.
+
+        Returns:
+            The same value, its mappings sorted by their keys.
+
+        Examples:
+            >>> ProjectBackup.ordered({"b": 1, "a": {"d": 2, "c": 3}})
+            {'a': {'c': 3, 'd': 2}, 'b': 1}
+        """
+        if isinstance(value, dict):
+            return {key: ProjectBackup.ordered(value[key]) for key in sorted(value, key=str)}
+        if isinstance(value, list):
+            return [ProjectBackup.ordered(item) for item in value]
+        return value
 
     def data(self) -> dict:
         """The project as the file keeps it.
@@ -69,9 +151,9 @@ class ProjectBackup:
                 "step_labels": project.step_labels,
             },
             "repositories": sorted(r.full_name for r in project.repositories.all()),
-            "filters": [
+            "filters": [  # the columns keep their order: that of the table
                 {"name": saved.name, "description": saved.description, "columns": saved.columns}
-                for saved in project.filters.order_by("name")
+                for saved in sorted(project.filters.all(), key=lambda f: (f.name.lower(), f.name))
             ],
             "steps": [
                 {
@@ -80,21 +162,24 @@ class ProjectBackup:
                     "summary": step.summary,
                     "hidden": step.hidden,
                     "color": step.color,
-                    "tasks": step.conditions or {},
-                    "actions": normalized(step.actions),
-                    "skip_authors": list(step.skip_authors or []),
+                    "tasks": self.ordered(step.conditions or {}),
+                    "actions": self.actions(step.actions),
+                    "skip_authors": self.handles(step.skip_authors),
                     "skips": self.skips(step.pk),
                 }
-                for step in project.steps.select_related("filter")
+                for step in project.steps.select_related("filter")  # from left to right
             ],
             "message": self.message(),
-            "members": [
-                {"handle": member.user.profile.github_name, "role": member.role}
-                for member in ProjectMember.objects.filter(project=project)
-                .select_related("user__profile")
-                .order_by("added", "pk")
-                if getattr(member.user, "profile", None) and member.user.profile.github_name
-            ],
+            "members": sorted(
+                (
+                    {"handle": member.user.profile.github_name, "role": member.role}
+                    for member in ProjectMember.objects.filter(project=project).select_related(
+                        "user__profile"
+                    )
+                    if getattr(member.user, "profile", None) and member.user.profile.github_name
+                ),
+                key=lambda member: (member["handle"].lower(), member["handle"]),
+            ),
         }
 
     @staticmethod
@@ -106,14 +191,13 @@ class ProjectBackup:
 
         Returns:
             Each with the ``repository`` and ``number`` of the pull request, ``by``, the GitHub
-            handle of who skipped it, the ``reason`` and when it was ``created``.
+            handle of who skipped it, the ``reason`` and when it was ``created``; sorted by the
+            repository and the number.
         """
-        skips = (
-            StepSkip.objects.filter(step=step)
-            .select_related("issue__repository", "user__profile")
-            .order_by("created", "pk")
+        skips = StepSkip.objects.filter(step=step).select_related(
+            "issue__repository", "user__profile"
         )
-        return [
+        found = [
             {
                 "repository": skip.issue.repository.full_name,
                 "number": skip.issue.number,
@@ -123,6 +207,9 @@ class ProjectBackup:
             }
             for skip in skips
         ]
+        return sorted(
+            found, key=lambda skip: (skip["repository"].lower(), skip["number"], skip["created"])
+        )
 
     def message(self) -> dict | None:
         """The message of the tab PR Sync, as the file keeps it; None without one."""
@@ -132,7 +219,7 @@ class ProjectBackup:
         return {
             "template": message.template,
             "draft": message.draft,
-            "listed": list(message.listed or []),
+            "listed": self.listed(message.listed),
             "to_listed": message.to_listed,
             "to_new": message.to_new,
             "to_open": message.to_open,

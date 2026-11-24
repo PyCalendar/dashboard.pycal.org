@@ -326,3 +326,42 @@ def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
     restore(client, yaml.safe_dump(data), ["message"])
     message = PullRequestMessage.objects.get()
     assert message.template == "Changed" and message.new_since is not None
+
+
+def test_the_backup_is_sorted_inside(client, project, step, bob):  # noqa: F811
+    """The same project gives the same file, whatever the order in which it was made: diff."""
+    from pycal_dashboard.models import PullRequestMessage, StepSkip
+    from pycal_dashboard.services.project_access import ProjectAccess
+    from pycal_dashboard.services.project_editor import ProjectEditor
+    from tests.conftest import person
+
+    for login in ("zoe", "Anna"):
+        person(len(login) + 50, login)
+        ProjectEditor(ProjectAccess(project, bob)).share(login, "read")
+    step.skip_authors = ["octocat", "Monalisa", "bob"]
+    step.actions = {"enter": {"add": ["needs review", "Awaiting"], "remove": []}}
+    step.conditions = {"z~all": {"summary": "Z"}, "a~all": {"summary": "A"}}
+    step.save()
+    issues = project.repositories.get().issues.order_by("number")
+    for issue in reversed(issues):  # the newest skip first
+        StepSkip.objects.create(step=step, issue=issue, user=bob, reason="")
+    PullRequestMessage.objects.create(project=project, listed=["100", "a/b#3", "9"])
+    client.force_login(bob)
+    text = download(client)
+    data = yaml.safe_load(text)
+    (saved,) = data["steps"]
+    assert saved["skip_authors"] == ["bob", "Monalisa", "octocat"]
+    assert saved["actions"]["enter"]["add"] == ["Awaiting", "needs review"]
+    assert list(saved["tasks"]) == ["a~all", "z~all"]
+    assert [skip["number"] for skip in saved["skips"]] == [issue.number for issue in issues]
+    assert [m["handle"] for m in data["members"]] == ["Anna", "bob", "zoe"]
+    assert data["message"]["listed"] == ["9", "100", "a/b#3"]
+    assert text.index("a~all:") < text.index("z~all:")
+    # the order alone is no change: restoring it changes nothing
+    page = plan(client, text).content.decode()
+    assert "step-replace" not in page and 'value="message"' not in page
+
+    def without_time(backup: str) -> list[str]:
+        return [line for line in backup.splitlines() if not line.startswith("exported:")]
+
+    assert without_time(download(client)) == without_time(text)

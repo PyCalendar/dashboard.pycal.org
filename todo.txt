@@ -685,3 +685,5 @@ community: where to start, what waits for a review, who contributes.
       a skipped step, and 472 pull requests skip a step (Peer review skips itself for some authors)
 - [ ] The person: switch off "a skipped step" in the column of the filter Synchronized (live data), so that it is
       dashboard~applies~sync
+- [x] Snapshots (and backups) are sorted inside, so that two of them diff line by line; the steps and the columns of a
+      filter keep their order, which means something; restoring counts no different order as a change
