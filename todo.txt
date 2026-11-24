@@ -711,7 +711,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Every GitHub handle leads to the page of the person on the dashboard (in a project: their page in the project;
       else /people/<handle>/, the projects they took part in that the visitor sees), and the mark of GitHub next to
       it to their profile on GitHub; the completion of handles moved to /complete/people/ for the handle "complete"
-- [ ] The person: translate "@{handle} on GitHub", the page of a person and the changed text of the privacy policy
+- [x] The person: translate "@{handle} on GitHub", the page of a person and the changed text of the privacy policy
       into German and Spanish?
 - [x] The documentation of every error: why it appears in one sentence, then its cases; how to resolve it with
       the actions alone (When X, do Y); the context; a note with the rest
@@ -721,3 +721,4 @@ community: where to start, what waits for a review, who contributes.
 - [x] {pr_badge} has an alternative text: on the pages of the dashboard the text of the badge (such as Triage 3/4),
       made again when it changes; in the PR message "View progress", as the comment stays on a pull request that
       leaves the scope while the badge changes
+- [x] Translate the 39 new texts into German and Spanish (the person: "translate when you have time")
