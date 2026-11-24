@@ -9,6 +9,19 @@ Changelog
 
 .. towncrier release notes start
 
+0.22.0 (2026-11-24)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Every field of GitHub handles proposes people the same way: in a project, the authors of its pull
+  requests first, then the people the dashboard knows, then the accounts of all of GitHub; the roles only
+  the people who signed in.
+- The variable {pr_message_url} is the fixed address of the PR message on the dashboard: it leads to the
+  Status Message on the pull request on GitHub, and to the pull request while it does not have the message.
+
+
 0.21.0 (2026-11-24)
 -------------------
 
