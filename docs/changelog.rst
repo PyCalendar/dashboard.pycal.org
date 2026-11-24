@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.22.1 (2026-11-24)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- The page of a contributor links to their profile on GitHub with the mark of GitHub next to their name, instead of a line below.
+
+
 0.22.0 (2026-11-24)
 -------------------
 
