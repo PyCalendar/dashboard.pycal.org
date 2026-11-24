@@ -642,6 +642,7 @@ def test_sync_the_pull_requests_of_people(signed_in, site, github, bob):
     mona = {"id": 777, "login": "monalisa", "avatar_url": "", "type": "User", "name": "Mona"}
     github.add_issue("collective/icalendar", "Hers", pull_request=True, user=mona)
     github.add_issue("collective/icalendar", "Done", pull_request=True, user=mona, state="closed")
+    github.add_account("monafromgithub", 888)  # of GitHub only: proposed after those known
     RepositoryUpdate(project.repositories.get()).run()
     page = signed_in
     page.goto(f"{site}/projects/icalendar/message/scope/")
@@ -652,6 +653,9 @@ def test_sync_the_pull_requests_of_people(signed_in, site, github, bob):
     field.press_sequentially("mon")
     proposal = page.get_by_role("option", name="@monalisa")
     expect(proposal).to_contain_text("Mona")
+    options = page.get_by_role("option")
+    expect(options).to_have_count(2)
+    expect(options.nth(1)).to_have_text("@monafromgithub")
     proposal.click()
     expect(field).to_have_value("monalisa, ")
     expect(save).to_have_text("Keep 1 pull request synchronized")  # the open one, on by default

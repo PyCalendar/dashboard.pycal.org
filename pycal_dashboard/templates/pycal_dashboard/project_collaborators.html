@@ -18,7 +18,7 @@
 </section>
 {% if access.is_owner %}<section class="card"><h2>{% translate "Share the project" %}</h2>
 <form method="post" class="inline-form" data-share>{% csrf_token %}
-  <label for="github_name">{% translate "GitHub handle" %}</label><span class="completion-field"><input id="github_name" name="github_name" placeholder="octocat" required autocomplete="off" data-complete-people="{% url 'people_complete' %}"></span>
+  <label for="github_name">{% translate "GitHub handle" %}</label><span class="completion-field"><input id="github_name" name="github_name" placeholder="octocat" required autocomplete="off" data-complete-people="{% url 'people_complete' %}?signed_in=1"></span>
   <label for="role">{% translate "Role" %}</label><select id="role" name="role">{% for value, title in roles %}<option value="{{ value }}">{{ title }}</option>{% endfor %}</select>{% translate "What each role may do" as roles_help %}{% help_link links.project_roles roles_help %}
   <button class="button">{% translate "Share" %}</button>
 </form>

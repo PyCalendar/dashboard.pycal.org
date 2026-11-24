@@ -263,6 +263,41 @@ class FakeGitHub:
         issue["updated_at"] = f"2026-11-02T{min(self.review_count, 59):02d}:00:00Z"
         return review
 
+    def add_account(self, login: str, github_id: int) -> dict:
+        """An account of GitHub that nothing of the repositories names, for the search.
+
+        Parameters:
+            login: Its GitHub handle.
+            github_id: Its id.
+
+        Returns:
+            The account as GitHub describes it.
+        """
+        account = {"id": github_id, "login": login, "avatar_url": "", "type": "User"}
+        self.accounts = [*getattr(self, "accounts", []), account]
+        return account
+
+    def known_accounts(self) -> list[tuple[str, dict]]:
+        """The accounts of the fake by their GitHub handle in lower case, sorted.
+
+        Returns:
+            The authors of the issues and the reviews, and those of :meth:`add_account`.
+        """
+        found = {self.OCTOCAT["login"]: self.OCTOCAT}
+        for repository in self.repositories.values():
+            for issue in repository["issues"]:
+                found.setdefault(issue["user"]["login"].lower(), issue["user"])
+                for review in issue["reviews"]:
+                    author = review["author"]
+                    if author:
+                        found.setdefault(
+                            author["login"].lower(),
+                            {"id": author["databaseId"], "login": author["login"], "type": "User"},
+                        )
+        for account in getattr(self, "accounts", []):
+            found.setdefault(account["login"].lower(), account)
+        return sorted(found.items())
+
     @staticmethod
     def actor(user: dict | None) -> dict | None:
         """An account of the REST API as GraphQL describes it."""
@@ -567,6 +602,10 @@ class FakeGitHub:
             if path.startswith("/orgs/") and match[1] not in self.organizations:
                 return httpx.Response(404, json={"message": "Not Found"})
             return httpx.Response(200, json=self.repositories_of(match[1]))
+        if path == "/search/users":  # the accounts of the fake: of issues, reviews, add_account
+            text = request.url.params.get("q", "").split()[0].lower()
+            items = [account for login, account in self.known_accounts() if text in login]
+            return httpx.Response(200, json={"total_count": len(items), "items": items[:10]})
         if path == "/search/repositories":
             words = request.url.params.get("q", "").split()
             text = next((w for w in words if ":" not in w), "").lower()

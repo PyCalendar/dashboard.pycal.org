@@ -689,8 +689,8 @@ community: where to start, what waits for a review, who contributes.
       filter keep their order, which means something; restoring counts no different order as a change
 - [x] PR Sync for people: a switch and a field of GitHub handles (proposing the authors of the pull requests of the
       project) on the page Synchronization; their open pull requests, old and new, get the message, not the closed
-- [ ] The person: should the field of the authors whose pull requests skip a step (Steps) propose the authors of the
-      pull requests of the project too, as the scope of PR Sync does, instead of only people who signed in?
+- [x] The person: should the field of the authors whose pull requests skip a step (Steps) propose the authors of the
+      pull requests of the project too? Yes: every field of GitHub handles completes the same
 - [x] "As the pull request PyCalendar/icalendar#2200 gets it." -> "This is the message as it would appear in pull
       request PyCalendar/icalendar#2200", linked to the message on GitHub (#issuecomment-...), else the pull request
 - [x] The person: a static link of the PR message: an address of the dashboard that redirects, and {pr_message_url}
@@ -703,3 +703,6 @@ community: where to start, what waits for a review, who contributes.
       replicates its five reviews (three of its author SemTiOne, two of niccokunzmann)
 - [ ] The person: do two reviews of the same person count as two (#2101 has two of niccokunzmann: Peer review done),
       or should "at least 2 reviews from others" count different reviewers?
+- [x] The completion of GitHub handles is the same in every field (steps, PR Sync, roles): the authors of the pull
+      requests of the project first, the people the site knows that the person may see, then all of GitHub (the
+      search of users with the token of the person); the roles only the people who signed in, as only they get one

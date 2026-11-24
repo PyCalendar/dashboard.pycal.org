@@ -442,7 +442,8 @@ not follow. In the row of *The pull request is here*, everybody sees *Skipped by
 skipped it, linked to their page in the project; the writers and owners also see the reason,
 such as *Skipped by @niccokunzmann: Reviewed at the meeting*. **Don't skip** undoes it. A step also skips itself
 for the pull requests of the authors that its editor names under *Skipped for these
-authors*, such as the maintainers: such a skip says *Skipped* and names nobody.
+authors*, such as the maintainers, see :ref:`github-handles`: such a skip says *Skipped*
+and names nobody.
 
 A click on a step shows its summary and its tasks below the bar. The tasks to do
 come first, marked *TODO* and open, with their description; the tasks done have
@@ -718,8 +719,8 @@ the message, and with it the step labels. Its *Options*:
 - *Add to the open pull requests of these people:* the pull requests of the
   GitHub handles in the field, such as ``octocat, monalisa``: those open now and
   those they open later, but not the closed and merged ones. While you type,
-  the field proposes the authors of the pull requests of the project. On by
-  default;
+  the field proposes GitHub handles, the authors of the pull requests of the
+  project first, see :ref:`github-handles`. On by default;
 - *Add to all new pull requests*: those opened after the switch was switched on;
 - *Add to all open pull requests*;
 - *Add to closed and merged pull requests*, in light red: not preferred, as they
@@ -731,6 +732,22 @@ updates those whose text changed. The number follows the switches; without
 JavaScript, **Count** counts them. The log records every comment written or
 updated; the comment ends with a hidden line that says that dashboard.pycal.org
 wrote it.
+
+.. _github-handles:
+
+GitHub handles
+==============
+
+Every field of GitHub handles proposes people the same way while you type, by
+their GitHub handle or GitHub name, with their avatar: in a project, the authors
+of its pull requests first; then the people that dashboard.pycal.org knows and
+that you may see: those who signed in, and the authors and reviewers of the
+repositories of public projects and of your projects; then, from two
+characters on and while fewer than ten are found, the accounts of all of
+GitHub, which dashboard.pycal.org asks with your sign-in of GitHub and does not
+keep. The field of the roles proposes only the people who signed in, as only
+they can get a role, see :ref:`project-roles`. Without JavaScript, a field takes
+the GitHub handles as you type them.
 
 .. _project-settings:
 
@@ -790,7 +807,8 @@ Roles in a project
 On the tab *Settings → Collaborators*, the owners share the project with other people by
 their GitHub handle, such as *niccokunzmann*: the field proposes the people who
 signed in, by their GitHub handle or GitHub name, such as *Nicco Kunzmann*,
-with their avatar. The person must have signed in to the site once. What each role may do:
+with their avatar, see :ref:`github-handles`. The person must have signed in to
+dashboard.pycal.org once. What each role may do:
 
 .. list-table::
    :header-rows: 1

@@ -299,17 +299,23 @@ def test_the_collaborators_have_their_avatar(client, project, bob):
     assert "data-complete-people=" in page and "person-complete.js" in page
 
 
-def test_complete_the_people_to_share_with(client, bob, alice):
+def test_complete_the_people_to_share_with(client, github, bob, alice):
+    """The roles: only the people who signed in, who can get one; GitHub is not searched."""
     GitHubUser.objects.filter(login="alice").update(
         name="Alice Liddell", avatar_url="https://a.x/1"
     )
     GitHubUser.record({"id": 999, "login": "alicia"})  # never signed in: no role possible
-    assert client.get("/people/complete/?q=al").status_code == 302  # sign in first
+    github.add_account("alicia", 999)
+    assert client.get("/people/complete/?signed_in=1&q=al").status_code == 302  # sign in first
     client.force_login(bob)
-    people = client.get("/people/complete/?q=@AL").json()["people"]
+    people = client.get("/people/complete/?signed_in=1&q=@AL").json()["people"]
     assert people == [{"login": "alice", "name": "Alice Liddell", "avatar": "https://a.x/1?s=40"}]
-    assert client.get("/people/complete/?q=liddell").json()["people"][0]["login"] == "alice"
-    assert client.get("/people/complete/?q=").json()["people"] == []
+    found = client.get("/people/complete/?signed_in=1&q=liddell").json()["people"]
+    assert found[0]["login"] == "alice"
+    assert client.get("/people/complete/?signed_in=1&q=").json()["people"] == []
+    # the other fields of GitHub handles propose all of GitHub, too
+    others = client.get("/people/complete/?q=al").json()["people"]
+    assert [person["login"] for person in others] == ["alice", "alicia"]
 
 
 def test_a_repository_without_issues_is_read_completely_once(github):

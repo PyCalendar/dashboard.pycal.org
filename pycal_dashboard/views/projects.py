@@ -32,16 +32,15 @@ from pycal_dashboard.github.permissions import EVENTS, REQUIRED
 from pycal_dashboard.github.person_client import PersonClient
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import (
-    GitHubUser,
     Issue,
     Label,
-    Profile,
     Project,
     ProjectMember,
     PullRequestFilter,
     Repository,
 )
 from pycal_dashboard.services.column_results import ColumnResults
+from pycal_dashboard.services.handle_completion import HandleCompletion
 from pycal_dashboard.services.identity import GitHubIdentity
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
@@ -50,7 +49,6 @@ from pycal_dashboard.services.repository_lookup import RepositoryLookup
 from pycal_dashboard.services.snapshot_editor import SnapshotEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.services.update_worker import UpdateWorker
-from pycal_dashboard.templatetags.github import avatar_url
 
 from .json_page import page
 
@@ -816,39 +814,34 @@ def project_repositories(request: HttpRequest, slug: str):
 @login_required
 @require_http_methods(["GET"])
 def people_complete(request: HttpRequest):
-    """The people whose GitHub handle or name is like what an owner types, to share a project.
+    """The people whose GitHub handle or name is like what a person types: every such field.
 
-    Only people who signed in to the site can get a role, so only they are proposed: those
-    with a profile of GitHub, also those whose account of GitHub the site does not keep yet.
+    See :class:`~pycal_dashboard.services.handle_completion.HandleCompletion`: in a project
+    (``project``), the authors of its pull requests first; then the people the site knows; then
+    the accounts of GitHub. ``signed_in=1`` proposes only the people who signed in, who can get
+    a role.
 
     Parameters:
-        request: The request, with ``q``.
+        request: The request, with ``q``, and ``project`` and ``signed_in`` if any.
 
     Returns:
-        The people as JSON: their GitHub handle (``login``), GitHub name and avatar.
+        The people as JSON: their GitHub handle (``login``), GitHub name and avatar; with
+        ``error`` when GitHub could not be searched.
+
+    Raises:
+        ProjectNotFound: The person does not see the project.
     """
-    text = request.GET.get("q", "").strip().removeprefix("@")
-    if not text:
-        return JsonResponse({"people": []})
-    people = {
-        person.login.lower(): person
-        for person in GitHubUser.objects.filter(user__isnull=False).filter(
-            Q(login__istartswith=text) | Q(name__icontains=text)
-        )
-    }
-    for profile in Profile.objects.filter(github_name__istartswith=text).exclude(github_name=""):
-        people.setdefault(profile.github_name.lower(), profile.github_name)
-    found = sorted(people.values(), key=lambda p: (p if isinstance(p, str) else p.login).lower())
-    return JsonResponse(
-        {
-            "people": [
-                {"login": person, "name": "", "avatar": avatar_url(person, 20)}
-                if isinstance(person, str)
-                else {"login": person.login, "name": person.name, "avatar": avatar_url(person, 20)}
-                for person in found[:10]
-            ]
-        }
-    )
+    slug = request.GET.get("project", "")
+    access = ProjectAccess.of(slug, request.user) if slug else None
+    completion = HandleCompletion(request.user, access, request.GET.get("signed_in") == "1")
+    text = request.GET.get("q", "")
+    people = completion.known(text)
+    if completion.searches(text, people):
+        try:
+            people = completion.github(text, person_client(request), people)
+        except DashboardError as error:
+            return JsonResponse({"people": people, "error": error.code})
+    return JsonResponse({"people": people})
 
 
 @login_required

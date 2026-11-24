@@ -359,7 +359,9 @@ PARTIES = [
         "gets": _(
             "When you sign in, GitHub tells %(site_name)s who you are; %(site_name)s asks GitHub "
             "for "
-            "repositories, issues and pull requests with your token or that of the GitHub App. "
+            "repositories, issues and pull requests with your token or that of the GitHub App, "
+            "and, while you type a GitHub handle, for the accounts whose GitHub handle is like "
+            "what you typed, with your token. "
             "The GitHub App adds and removes labels on pull requests that enter or complete a "
             "step of a project, and writes the message of a project as a comment on its pull "
             "requests, as the writers of the project set them. "

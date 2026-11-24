@@ -171,6 +171,22 @@ class PersonClient:
         ).json()
         return [item["full_name"] for item in answer.get("items", [])]
 
+    def users(self, text: str) -> list[str]:
+        """Accounts of all of GitHub whose GitHub handle is like the text.
+
+        Parameters:
+            text: What the person typed, such as ``nicco``.
+
+        Returns:
+            Their GitHub handles, as GitHub orders them: the best match first.
+        """
+        answer = self.request(
+            "GET",
+            "/search/users",
+            params={"q": f"{text} in:login", "per_page": SEARCH_RESULTS},
+        ).json()
+        return [item["login"] for item in answer.get("items", [])]
+
     def repository(self, full_name: str) -> dict | None:
         """A repository as the person sees it.
 

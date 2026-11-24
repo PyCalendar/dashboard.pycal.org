@@ -391,7 +391,7 @@ def test_the_open_pull_requests_of_authors(client, github, project, bob):
     assert "The open pull requests of" in summary and 'data-github-user="Monalisa"' in summary
     scope = client.get("/projects/icalendar/message/scope/").content.decode()
     assert 'name="authors" value="Monalisa"' in scope
-    assert 'data-complete-people="/projects/icalendar/message/scope/authors/"' in scope
+    assert 'data-complete-people="/people/complete/?project=icalendar"' in scope
 
 
 @pytest.mark.parametrize(
@@ -410,27 +410,21 @@ def test_the_count_of_authors(client, project, bob, fields, count):
     assert found["count"] == count
 
 
-def test_the_authors_are_proposed(client, github, project, bob, alice):
-    """Typing a GitHub handle proposes the authors of the pull requests of the project."""
-    github.add_issue(REPO, "Hers", pull_request=True, user=MONALISA)
+def test_the_authors_are_proposed(client, github, project, bob):
+    """Typing a GitHub handle proposes the authors of the pull requests of the project first."""
     github.add_issue(REPO, "An issue", user={**MONALISA, "id": 778, "login": "monaissue"})
+    github.add_issue(REPO, "Hers", pull_request=True, user=MONALISA)
     update(project)
-    address = "/projects/icalendar/message/scope/authors/"
+    address = "/people/complete/?project=icalendar"
     client.force_login(bob)
-    assert client.get(address + "?q=mon").json() == {
-        "people": [
-            {
-                "login": "monalisa",
-                "name": "Mona",
-                "avatar": "https://avatars.githubusercontent.com/monalisa?s=40",
-            }
-        ]
-    }  # not the author of an issue only
-    assert [p["login"] for p in client.get(address + "?q=@Oct").json()["people"]] == ["octocat"]
-    assert client.get(address + "?q=bob").json() == {"people": []}  # signed in, no PR
-    assert client.get(address + "?q=").json() == {"people": []}
-    client.force_login(alice)  # no collaborator
-    assert client.get(address + "?q=mon").status_code in (403, 404)
+    found = client.get(address + "&q=mon").json()["people"]
+    assert found[0] == {
+        "login": "monalisa",
+        "name": "Mona",
+        "avatar": "https://avatars.githubusercontent.com/monalisa?s=40",
+    }
+    assert [p["login"] for p in found] == ["monalisa", "monaissue"]  # the author of a PR first
+    assert [p["login"] for p in client.get(address + "&q=@Oct").json()["people"]] == ["octocat"]
 
 
 def test_the_preview_links_the_message_on_github(client, github, project, bob):

@@ -271,9 +271,9 @@ ACTIONS = {
         lambda c, w: c.get(w.path + "message/edit/"),
         lambda w: True,
     ),
-    "propose the authors of pull requests for the scope": (
-        "write",
-        lambda c, w: c.get(w.path + "message/scope/authors/?q=oct"),
+    "propose GitHub handles in the project": (
+        "visitor",
+        lambda c, w: c.get(f"/people/complete/?project={w.project.slug}&q=oct"),
         lambda w: True,
     ),
     "sync the open pull requests of authors": (

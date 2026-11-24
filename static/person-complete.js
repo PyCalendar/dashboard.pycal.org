@@ -1,6 +1,7 @@
-// Proposes the people who signed in while an owner types a GitHub name to share a project with
-// (input[data-complete-people]): their avatar, GitHub name and full name. Without JavaScript,
-// the field takes the GitHub name as typed. A field of several names separated by commas
+// Proposes people while a GitHub handle is typed, the same in every field of GitHub handles
+// (input[data-complete-people], the address of /people/complete/ with the project or
+// signed_in=1): their avatar, GitHub handle and GitHub name. Without JavaScript, the field
+// takes the GitHub handle as typed. A field of several handles separated by commas
 // (data-complete-list) proposes for the last one.
 (function () {
   "use strict";
@@ -89,7 +90,9 @@
       var text = typed();
       if (!text) { close(); return; }
       timer = setTimeout(function () {
-        fetch(input.dataset.completePeople + "?q=" + encodeURIComponent(text), {credentials: "same-origin"})
+        var address = input.dataset.completePeople;
+        address += (address.indexOf("?") < 0 ? "?" : "&") + "q=" + encodeURIComponent(text);
+        fetch(address, {credentials: "same-origin"})
           .then(function (answer) { return answer.ok ? answer.json() : {people: []}; })
           .then(function (data) { if (typed() === text) { show(data.people); } })
           .catch(function () {});

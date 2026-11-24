@@ -43,7 +43,7 @@
   {% if skip_conditions %}<p class="muted step-skip-if" data-step-skip-if>{% translate "Skipped if:" %} {% for column in skip_conditions %}{{ column.sentence }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
   <h3>{% translate "Skipped for these authors" %}</h3>
   <input type="hidden" name="skip_form" value="1">
-  <p class="step-skip-authors" data-step-skip-authors><label for="skip-authors">{% translate "GitHub handles of authors" %}</label><span class="completion-field"><input id="skip-authors" name="skip_authors" maxlength="2000" autocomplete="off" value="{{ shown.skip_authors|join:', ' }}" placeholder="octocat, monalisa" data-complete-people="{% url 'people_complete' %}" data-complete-list></span>
+  <p class="step-skip-authors" data-step-skip-authors><label for="skip-authors">{% translate "GitHub handles of authors" %}</label><span class="completion-field"><input id="skip-authors" name="skip_authors" maxlength="2000" autocomplete="off" value="{{ shown.skip_authors|join:', ' }}" placeholder="octocat, monalisa" data-complete-people="{% url 'people_complete' %}?project={{ project.slug|urlencode }}" data-complete-list></span>
     <small class="muted">{% translate "The pull requests of these authors skip the step: they are in the next one. The page of such a pull request says that the step is skipped. Separated by commas." %}</small></p>
   <h3>{% translate "Labels" %}</h3>
   <p class="muted">{% translate "The GitHub App adds and removes these labels when a pull request enters the step, and when it completes it: it leaves the step with all its tasks done. Labels of the repositories or new ones, separated by commas; they follow a rename on GitHub." %}</p>
