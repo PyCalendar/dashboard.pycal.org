@@ -221,6 +221,8 @@ class ProjectBackup:
             "draft": message.draft,
             "listed": self.listed(message.listed),
             "to_listed": message.to_listed,
+            "authors": self.handles(message.authors),
+            "to_authors": message.to_authors,
             "to_new": message.to_new,
             "to_open": message.to_open,
             "to_closed": message.to_closed,

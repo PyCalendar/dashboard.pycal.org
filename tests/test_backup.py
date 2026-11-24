@@ -212,6 +212,8 @@ KEPT = {
         "draft",
         "listed",
         "to_listed",
+        "authors",
+        "to_authors",
         "to_new",
         "to_open",
         "to_closed",
@@ -307,7 +309,11 @@ def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
     from pycal_dashboard.models import PullRequestMessage
 
     PullRequestMessage.objects.create(
-        project=project, template="Hi {author_handle}", listed=["1"], to_open=True
+        project=project,
+        template="Hi {author_handle}",
+        listed=["1"],
+        authors=["octocat", "Monalisa"],
+        to_open=True,
     )
     client.force_login(bob)
     data = yaml.safe_load(download(client))
@@ -316,16 +322,19 @@ def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
         "draft": None,
         "listed": ["1"],
         "to_listed": True,
+        "authors": ["Monalisa", "octocat"],
+        "to_authors": True,
         "to_new": False,
         "to_open": True,
         "to_closed": False,
     }
-    data["message"].update(template="Changed", to_new=True)
+    data["message"].update(template="Changed", to_new=True, authors=["bob"], to_authors=False)
     restore(client, yaml.safe_dump(data))
     assert PullRequestMessage.objects.get().template == "Hi {author_handle}"  # not ticked
     restore(client, yaml.safe_dump(data), ["message"])
     message = PullRequestMessage.objects.get()
     assert message.template == "Changed" and message.new_since is not None
+    assert (message.authors, message.to_authors) == (["bob"], False)
 
 
 def test_the_backup_is_sorted_inside(client, project, step, bob):  # noqa: F811

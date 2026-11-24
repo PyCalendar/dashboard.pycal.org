@@ -8,9 +8,10 @@ class PullRequestMessage(models.Model):
     """A template of a message that the GitHub App writes as a comment on pull requests.
 
     It is off until a scope is switched on: the pull requests ``listed`` by their numbers (on
-    by default, without numbers none), all new ones (opened after ``new_since``), all open ones,
-    or the closed and merged ones too. A pull request with the message has it updated whenever
-    the message or its values change (``MessageComments``).
+    by default, without numbers none), the open pull requests of the ``authors`` by their GitHub
+    handles (on by default, without handles none), all new ones (opened after ``new_since``),
+    all open ones, or the closed and merged ones too. A pull request with the message has it
+    updated whenever the message or its values change (``MessageComments``).
     """
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="message")
@@ -21,6 +22,9 @@ class PullRequestMessage(models.Model):
     # the pull requests by their number, such as "42" or "collective/icalendar#42"
     listed = models.JSONField(default=list, blank=True)
     to_listed = models.BooleanField(default=True)
+    # the GitHub handles of the authors whose open pull requests get it, such as ["octocat"]
+    authors = models.JSONField(default=list, blank=True)
+    to_authors = models.BooleanField(default=True)
     to_new = models.BooleanField(default=False)
     new_since = models.DateTimeField(null=True, blank=True)  # when to_new was switched on
     to_open = models.BooleanField(default=False)

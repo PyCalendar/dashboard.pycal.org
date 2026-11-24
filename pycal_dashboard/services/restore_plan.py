@@ -39,7 +39,17 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractBaseUser
 
 # the fields of the message in a backup, which restoring compares and sets
-MESSAGE_FIELDS = ("template", "draft", "listed", "to_listed", "to_new", "to_open", "to_closed")
+MESSAGE_FIELDS = (
+    "template",
+    "draft",
+    "listed",
+    "to_listed",
+    "authors",
+    "to_authors",
+    "to_new",
+    "to_open",
+    "to_closed",
+)
 
 
 def clean_name(value: Any) -> str:  # noqa: ANN401 - a value of YAML
@@ -110,6 +120,8 @@ def message_fields(entry: dict) -> dict:
         "draft": None if draft is None else str(draft),
         "listed": [str(name) for name in entry.get("listed") or []],
         "to_listed": bool(entry.get("to_listed", True)),
+        "authors": ProjectBackup.handles(entry.get("authors"))[:100],
+        "to_authors": bool(entry.get("to_authors", True)),
         "to_new": bool(entry.get("to_new")),
         "to_open": bool(entry.get("to_open")),
         "to_closed": bool(entry.get("to_closed")),
@@ -308,6 +320,7 @@ class RestorePlan:
         now = {field: getattr(message, field) for field in fields}
         now["listed"] = ProjectBackup.listed(message.listed)  # their order changes nothing
         fields["listed"] = ProjectBackup.listed(fields["listed"])
+        now["authors"] = ProjectBackup.handles(message.authors)
         if now == fields:
             return []
         text = gettext("Replace the message of PR Sync and its synchronization")

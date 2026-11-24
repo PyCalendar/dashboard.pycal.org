@@ -364,3 +364,67 @@ def test_the_address_of_the_badge_changes_with_the_badge(project):
     step.name = "Peer review"
     step.save()
     assert MessageComments(project).values(ready)["pr_badge_url"] != first
+
+
+MONALISA = {"id": 777, "login": "monalisa", "avatar_url": "", "type": "User", "name": "Mona"}
+
+
+def test_the_open_pull_requests_of_authors(client, github, project, bob):
+    """The pull requests of people by their GitHub handles: the open ones, old and new."""
+    client.force_login(bob)
+    github.add_issue(REPO, "Hers", pull_request=True, user=MONALISA)  # #4, open
+    github.add_issue(REPO, "Done", pull_request=True, user=MONALISA, state="closed")  # #5
+    update(project)
+    save(client, to_authors="on", authors="@Monalisa, not/valid")
+    message = PullRequestMessage.objects.get()
+    assert message.authors == ["Monalisa"] and message.to_authors
+    update(project)
+    assert {c["issue"] for c in github.comments.values()} == {f"{REPO}#4"}  # not the closed
+    github.add_issue(REPO, "Later", pull_request=True, user=MONALISA)  # #6, opened later
+    update(project)
+    assert {c["issue"] for c in github.comments.values()} == {f"{REPO}#4", f"{REPO}#6"}
+    page = client.get("/projects/icalendar/message/").content.decode()
+    summary = page.split("data-scope-authors>")[1].split("</li>")[0]
+    assert "The open pull requests of" in summary and 'data-github-user="Monalisa"' in summary
+    scope = client.get("/projects/icalendar/message/scope/").content.decode()
+    assert 'name="authors" value="Monalisa"' in scope
+    assert 'data-complete-people="/projects/icalendar/message/scope/authors/"' in scope
+
+
+@pytest.mark.parametrize(
+    ("fields", "count"),
+    [
+        ({"to_authors": "on", "authors": "octocat"}, 2),  # #1 and #2; #3 is closed
+        ({"to_authors": "on", "authors": "OCTOCAT octocat"}, 2),  # whatever the case, once
+        ({"authors": "octocat"}, 0),  # the switch is off
+        ({"to_authors": "on", "authors": ""}, 0),  # nobody
+        ({"to_authors": "on", "authors": "octocat", "to_closed": "on"}, 3),
+    ],
+)
+def test_the_count_of_authors(client, project, bob, fields, count):
+    client.force_login(bob)
+    found = client.post("/projects/icalendar/message/preview/", {"listed": ""} | fields).json()
+    assert found["count"] == count
+
+
+def test_the_authors_are_proposed(client, github, project, bob, alice):
+    """Typing a GitHub handle proposes the authors of the pull requests of the project."""
+    github.add_issue(REPO, "Hers", pull_request=True, user=MONALISA)
+    github.add_issue(REPO, "An issue", user={**MONALISA, "id": 778, "login": "monaissue"})
+    update(project)
+    address = "/projects/icalendar/message/scope/authors/"
+    client.force_login(bob)
+    assert client.get(address + "?q=mon").json() == {
+        "people": [
+            {
+                "login": "monalisa",
+                "name": "Mona",
+                "avatar": "https://avatars.githubusercontent.com/monalisa?s=40",
+            }
+        ]
+    }  # not the author of an issue only
+    assert [p["login"] for p in client.get(address + "?q=@Oct").json()["people"]] == ["octocat"]
+    assert client.get(address + "?q=bob").json() == {"people": []}  # signed in, no PR
+    assert client.get(address + "?q=").json() == {"people": []}
+    client.force_login(alice)  # no collaborator
+    assert client.get(address + "?q=mon").status_code in (403, 404)

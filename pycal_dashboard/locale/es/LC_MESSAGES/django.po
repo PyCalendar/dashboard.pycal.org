@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 16:35+0000\n"
+"POT-Creation-Date: 2026-11-24 16:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -910,10 +910,9 @@ msgstr "Para mostrarte %(site_name)s como te gusta en cada dispositivo."
 
 msgid ""
 "The projects you create, the role of each collaborator with their GitHub "
-"handle, and who skipped a step for a pull request, when, and why."
+"handle, who skipped a step for a pull request, when, and why, and the GitHub "
+"handles of the authors whose pull requests get the message of PR Sync."
 msgstr ""
-"Los proyectos que creas, el rol de cada colaborador con su identificador de "
-"GitHub, y quién saltó un paso de un pull request, cuándo y por qué."
 
 msgid "Collaborators of projects"
 msgstr "Colaboradores de proyectos"
@@ -2339,6 +2338,17 @@ msgstr "Añadir a estos pull requests:"
 msgid "The numbers of the pull requests"
 msgstr "Los números de los pull requests"
 
+msgid "Add to the open pull requests of these people:"
+msgstr ""
+
+msgid "GitHub handles of authors"
+msgstr "Identificadores de GitHub de los autores"
+
+msgid ""
+"Their pull requests that are open now and those they open later; closed ones "
+"are left out."
+msgstr ""
+
 msgid "Add to all new pull requests"
 msgstr "Añadir a todos los pull requests nuevos"
 
@@ -2375,6 +2385,9 @@ msgstr "Qué pull requests lo reciben"
 
 msgid "These pull requests:"
 msgstr "Estos pull requests:"
+
+msgid "The open pull requests of"
+msgstr ""
 
 msgid "All new pull requests"
 msgstr "Todos los pull requests nuevos"
@@ -3368,9 +3381,6 @@ msgstr "Saltado si:"
 
 msgid "Skipped for these authors"
 msgstr "Saltado para estos autores"
-
-msgid "GitHub handles of authors"
-msgstr "Identificadores de GitHub de los autores"
 
 msgid ""
 "The pull requests of these authors skip the step: they are in the next one. "

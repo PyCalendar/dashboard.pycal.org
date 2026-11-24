@@ -37,10 +37,11 @@ class MessageComments:
     """The comments of the message of a project on its pull requests.
 
     The scope of the message says which pull requests get it: those listed by their numbers,
-    the new ones (opened after their switch was switched on), the open ones, and the closed
-    and merged ones. After each update of a repository (a receiver of ``repository_updated``),
-    :meth:`sync` writes the message on those of its pull requests that lack it and updates
-    those whose text changed, with the variables of steps and those of the message.
+    the open ones of the authors listed by their GitHub handles, the new ones (opened after
+    their switch was switched on), the open ones, and the closed and merged ones. After each
+    update of a repository (a receiver of ``repository_updated``), :meth:`sync` writes the
+    message on those of its pull requests that lack it and updates those whose text changed,
+    with the variables of steps and those of the message.
     """
 
     def __init__(self, project: Project, repositories: list[Repository] | None = None):
@@ -106,6 +107,11 @@ class MessageComments:
                 if repository:
                     one &= Q(repository__full_name__iexact=repository)
                 wanted |= one
+        if message.to_authors and message.authors:  # their open ones, old and new
+            authors = Q(pk__in=[])
+            for handle in message.authors:
+                authors |= Q(author__login__iexact=str(handle))
+            wanted |= authors & Q(state=Issue.OPEN)
         if message.to_open:
             wanted |= Q(state=Issue.OPEN)
         if message.to_new and message.new_since:

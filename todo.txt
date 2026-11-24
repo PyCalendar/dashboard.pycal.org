@@ -687,3 +687,7 @@ community: where to start, what waits for a review, who contributes.
       dashboard~applies~sync
 - [x] Snapshots (and backups) are sorted inside, so that two of them diff line by line; the steps and the columns of a
       filter keep their order, which means something; restoring counts no different order as a change
+- [x] PR Sync for people: a switch and a field of GitHub handles (proposing the authors of the pull requests of the
+      project) on the page Synchronization; their open pull requests, old and new, get the message, not the closed
+- [ ] The person: should the field of the authors whose pull requests skip a step (Steps) propose the authors of the
+      pull requests of the project too, as the scope of PR Sync does, instead of only people who signed in?

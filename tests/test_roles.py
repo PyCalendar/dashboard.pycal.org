@@ -21,6 +21,7 @@ from pycal_dashboard.models import (
     ProjectMember,
     ProjectSnapshot,
     PullRequestFilter,
+    PullRequestMessage,
     PullRequestStep,
     Repository,
     StepSkip,
@@ -264,6 +265,18 @@ ACTIONS = {
         "write",
         lambda c, w: c.get(w.path + "message/edit/"),
         lambda w: True,
+    ),
+    "propose the authors of pull requests for the scope": (
+        "write",
+        lambda c, w: c.get(w.path + "message/scope/authors/?q=oct"),
+        lambda w: True,
+    ),
+    "sync the open pull requests of authors": (
+        "write",
+        lambda c, w: c.post(
+            w.path + "message/scope/", {"to_authors": "on", "authors": "octocat", "save": "yes"}
+        ),
+        lambda w: PullRequestMessage.objects.get(project=w.project).authors == ["octocat"],
     ),
 }
 

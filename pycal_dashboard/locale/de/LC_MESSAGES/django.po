@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 16:35+0000\n"
+"POT-Creation-Date: 2026-11-24 16:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -917,11 +917,9 @@ msgstr "Um dir %(site_name)s auf jedem Gerät so zu zeigen, wie du es magst."
 
 msgid ""
 "The projects you create, the role of each collaborator with their GitHub "
-"handle, and who skipped a step for a pull request, when, and why."
+"handle, who skipped a step for a pull request, when, and why, and the GitHub "
+"handles of the authors whose pull requests get the message of PR Sync."
 msgstr ""
-"Die Projekte, die du erstellst, die Rolle jedes Mitwirkenden mit seinem "
-"GitHub-Handle, und wer einen Schritt für einen Pull Request übersprungen "
-"hat, wann und warum."
 
 msgid "Collaborators of projects"
 msgstr "Mitwirkende von Projekten"
@@ -2359,6 +2357,17 @@ msgstr "Zu diesen Pull Requests hinzufügen:"
 msgid "The numbers of the pull requests"
 msgstr "Die Nummern der Pull Requests"
 
+msgid "Add to the open pull requests of these people:"
+msgstr ""
+
+msgid "GitHub handles of authors"
+msgstr "GitHub-Handles der Autorinnen und Autoren"
+
+msgid ""
+"Their pull requests that are open now and those they open later; closed ones "
+"are left out."
+msgstr ""
+
 msgid "Add to all new pull requests"
 msgstr "Zu allen neuen Pull Requests hinzufügen"
 
@@ -2396,6 +2405,9 @@ msgstr "Welche Pull Requests sie bekommen"
 
 msgid "These pull requests:"
 msgstr "Diese Pull Requests:"
+
+msgid "The open pull requests of"
+msgstr ""
 
 msgid "All new pull requests"
 msgstr "Alle neuen Pull Requests"
@@ -3401,9 +3413,6 @@ msgstr "Übersprungen, wenn:"
 
 msgid "Skipped for these authors"
 msgstr "Übersprungen für diese Autorinnen und Autoren"
-
-msgid "GitHub handles of authors"
-msgstr "GitHub-Handles der Autorinnen und Autoren"
 
 msgid ""
 "The pull requests of these authors skip the step: they are in the next one. "

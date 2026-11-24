@@ -101,6 +101,11 @@ urlpatterns = [
         name="project_message_scope",
     ),
     path(
+        "projects/<project_slug:slug>/message/scope/authors/",
+        message.project_message_authors,
+        name="project_message_authors",
+    ),
+    path(
         "projects/<project_slug:slug>/message/preview/",
         message.project_message_preview,
         name="project_message_preview",

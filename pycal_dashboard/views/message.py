@@ -13,6 +13,7 @@ from collections.abc import Callable
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -23,6 +24,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import (
+    GitHubUser,
     Issue,
     Project,
     PullRequestComment,
@@ -36,8 +38,10 @@ from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
 from pycal_dashboard.step_label_names import label_name
 from pycal_dashboard.step_template import GROUPS, example, expand
+from pycal_dashboard.templatetags.github import avatar_url
 
 from .projects import opened, shown_repositories
+from .steps import handles
 
 # what a new message starts with
 DEFAULT = "{pr_badge}\n\n**{step_name}**\n\n{step_description}\n\n{tasks_all}\n"
@@ -91,17 +95,20 @@ def applied(project: Project) -> bool:
 
 
 def with_scope(message: PullRequestMessage, form: QueryDict) -> PullRequestMessage:
-    """The message with the scope of a form: ``listed`` and the switches; not saved.
+    """The message with the scope of a form: ``listed``, ``authors`` and the switches; not saved.
 
     Parameters:
         message: The message.
-        form: ``listed``, ``to_listed``, ``to_new``, ``to_open`` and ``to_closed``.
+        form: ``listed``, ``to_listed``, ``authors`` (GitHub handles), ``to_authors``,
+            ``to_new``, ``to_open`` and ``to_closed``.
 
     Returns:
         The message.
     """
     message.listed = MessageComments.listed(form.get("listed", ""))[0]
     message.to_listed = form.get("to_listed") == "on"
+    message.authors = handles(form.get("authors", ""))
+    message.to_authors = form.get("to_authors") == "on"
     message.to_open = form.get("to_open") == "on"
     message.to_closed = form.get("to_closed") == "on"
     to_new = form.get("to_new") == "on"
@@ -406,6 +413,7 @@ def project_message_scope(request: HttpRequest, slug: str):
         return {
             "message": message,
             "listed": ", ".join(message.listed or []),
+            "authors": ", ".join(message.authors or []),
             "button": ngettext(
                 "Keep %(count)s pull request synchronized",
                 "Keep %(count)s pull requests synchronized",
@@ -415,6 +423,45 @@ def project_message_scope(request: HttpRequest, slug: str):
         }
 
     return flow_page(request, slug, "scope", "pycal_dashboard/message/scope.html", context)
+
+
+@login_required
+@require_http_methods(["GET", "HEAD"])
+def project_message_authors(request: HttpRequest, slug: str):
+    """The authors of pull requests of a project like what a writer types into the scope.
+
+    Those whose GitHub handle starts with the text, or whose GitHub name has it, among the
+    authors of the pull requests of the repositories the person sees.
+
+    Parameters:
+        request: The request, with ``q``.
+        slug: The project.
+
+    Returns:
+        The people as JSON, as the field of people proposes them: their GitHub handle
+        (``login``), GitHub name and avatar.
+    """
+    access, _moved = opened(request, slug, "message/scope/")
+    access.require_write()
+    text = request.GET.get("q", "").strip().removeprefix("@")
+    if not text:
+        return JsonResponse({"people": []})
+    people = (
+        GitHubUser.objects.filter(
+            issues__repository__in=shown_repositories(access), issues__pull_request=True
+        )
+        .filter(Q(login__istartswith=text) | Q(name__icontains=text))
+        .distinct()
+        .order_by("login")[:10]
+    )
+    return JsonResponse(
+        {
+            "people": [
+                {"login": person.login, "name": person.name, "avatar": avatar_url(person, 20)}
+                for person in people
+            ]
+        }
+    )
 
 
 def apply_message(request: HttpRequest, project: Project, message: PullRequestMessage):

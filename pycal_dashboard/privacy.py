@@ -42,7 +42,8 @@ DATA = {
     "projects": {
         "what": _(
             "The projects you create, the role of each collaborator with their GitHub handle, "
-            "and who skipped a step for a pull request, when, and why."
+            "who skipped a step for a pull request, when, and why, and the GitHub handles of "
+            "the authors whose pull requests get the message of PR Sync."
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
@@ -180,6 +181,8 @@ MODELS = {
             "draft",
             "listed",
             "to_listed",
+            "authors",
+            "to_authors",
             "to_new",
             "new_since",
             "to_open",

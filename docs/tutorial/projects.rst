@@ -703,6 +703,11 @@ the message, and with it the step labels. Its *Options*:
 - *Add to these pull requests:* the pull requests of the numbers in the field,
   such as *2166, 2167*, or *collective/icalendar#42* where several repositories
   have the number; on by default;
+- *Add to the open pull requests of these people:* the pull requests of the
+  GitHub handles in the field, such as ``octocat, monalisa``: those open now and
+  those they open later, but not the closed and merged ones. While you type,
+  the field proposes the authors of the pull requests of the project. On by
+  default;
 - *Add to all new pull requests*: those opened after the switch was switched on;
 - *Add to all open pull requests*;
 - *Add to closed and merged pull requests*, in light red: not preferred, as they

@@ -627,6 +627,40 @@ def test_take_and_restore_a_snapshot(signed_in, site, github, bob):
     expect(page.get_by_role("button", name="Delete the project")).to_be_visible()
 
 
+def test_sync_the_pull_requests_of_people(signed_in, site, github, bob):
+    """PR Sync for people: their GitHub handles, which the field proposes; their open PRs."""
+    from pycal_dashboard.models import PullRequestMessage
+    from pycal_dashboard.services.repository_update import RepositoryUpdate
+
+    project = pull_request_project(github, bob)  # three open pull requests of octocat
+    mona = {"id": 777, "login": "monalisa", "avatar_url": "", "type": "User", "name": "Mona"}
+    github.add_issue("collective/icalendar", "Hers", pull_request=True, user=mona)
+    github.add_issue("collective/icalendar", "Done", pull_request=True, user=mona, state="closed")
+    RepositoryUpdate(project.repositories.get()).run()
+    page = signed_in
+    page.goto(f"{site}/projects/icalendar/message/scope/")
+    save = page.locator("[data-save-message]")
+    expect(save).to_have_text("Keep 0 pull requests synchronized")
+    field = page.get_by_label("GitHub handles of authors")
+    expect(field).to_have_attribute("data-complete-connected", "")
+    field.press_sequentially("mon")
+    proposal = page.get_by_role("option", name="@monalisa")
+    expect(proposal).to_contain_text("Mona")
+    proposal.click()
+    expect(field).to_have_value("monalisa, ")
+    expect(save).to_have_text("Keep 1 pull request synchronized")  # the open one, on by default
+    field.press_sequentially("octo")
+    page.get_by_role("option", name="@octocat").click()
+    expect(save).to_have_text("Keep 4 pull requests synchronized")
+    save.click()
+    expect(page.get_by_text("The scope is saved: 4 pull requests get the message")).to_be_visible()
+    message = PullRequestMessage.objects.get()
+    assert (message.authors, message.to_authors) == (["monalisa", "octocat"], True)
+    expect(field).to_have_value("monalisa, octocat")
+    page.locator("[data-scope-authors]").get_by_text("Add to the open pull requests of").click()
+    expect(save).to_have_text("Keep 0 pull requests synchronized")  # switched off
+
+
 def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     """PR Sync: edit the message (saved while it is written), preview it, the scope, apply."""
     from pycal_dashboard.models import PullRequestFilter, PullRequestMessage, PullRequestStep

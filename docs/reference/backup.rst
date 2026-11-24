@@ -62,6 +62,8 @@ and links this page. A snapshot keeps the same file on dashboard.pycal.org, see
      draft: '{pr_badge} **{step_name}**'
      listed: ['2166']
      to_listed: true
+     authors: [monalisa, octocat]
+     to_authors: true
      to_new: false
      to_open: true
      to_closed: false
@@ -106,8 +108,9 @@ The keys
 ``message``
    The Status Message of the tab *PR Sync*, see :ref:`pr-message`: its
    ``template``, the edited message that is not applied yet (``draft``, empty
-   when there is none), the pull requests ``listed`` by their numbers, and the
-   switches of its scope, ``to_listed``, ``to_new``, ``to_open`` and
+   when there is none), the pull requests ``listed`` by their numbers, the
+   ``authors`` by their GitHub handles, whose open pull requests get it, and the
+   switches of its scope, ``to_listed``, ``to_authors``, ``to_new``, ``to_open`` and
    ``to_closed``; empty without a message. New pull requests count from the time
    of restoring.
 ``members``
@@ -118,7 +121,7 @@ The file is sorted inside, so that the same project always gives the same
 file and two backups or snapshots compare line by line, such as with ``diff``:
 the repositories, the filters and the members by their names, the skips by
 the repository and the number of the pull request, and the GitHub handles,
-the numbers of pull requests (``listed``), the labels of the ``actions`` and
+the numbers of pull requests (``listed``), the ``authors``, the labels of the ``actions`` and
 the keys of the ``tasks``. Only ``exported`` differs between two backups of an
 unchanged project. The steps keep their order from left to right, and the
 ``columns`` of a filter theirs, as the order of both means something. Restoring
