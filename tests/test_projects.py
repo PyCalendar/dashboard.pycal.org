@@ -686,7 +686,9 @@ def test_the_status_reads_the_update_after_the_job(project, repositories):
 
 def test_the_account_names_the_github_name(client, bob):
     client.force_login(bob)
-    assert "GitHub handle: <strong>@bob</strong>" in client.get("/account/").content.decode()
+    page = client.get("/account/").content.decode()
+    shown = page.split("data-github-name>")[1].split("</p>")[0]
+    assert "GitHub handle:" in shown and 'href="/people/bob/"' in shown and "@bob" in shown
 
 
 @pytest.mark.django_db

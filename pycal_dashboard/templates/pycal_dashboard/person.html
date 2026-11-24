@@ -1,0 +1,14 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n github help %}
+{% block title %}@{{ person.login }} · {{ site_name }}{% endblock %}
+{% block main %}
+<section class="card contributor" data-person="{{ person.login }}">
+<h1>{% github_user person size=40 name=person.name %} {% translate "The page of a person" as help %}{% help_link links.person help %}</h1>
+{% if projects %}<p class="muted">{% translate "The projects that you see in which the person opened issues or pull requests, reviewed the pull requests of others or skipped a step." %}</p>
+<ul class="list person-projects" data-person-projects>{% for found in projects %}<li data-person-project="{{ found.project.slug }}">
+  <a href="{% url 'project_contributor' found.project.slug person.login %}">{{ found.project.name }}</a>{% if not found.project.public %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
+  <span class="muted">{% blocktranslate count counter=found.pull_requests %}{{ counter }} pull request{% plural %}{{ counter }} pull requests{% endblocktranslate %} · {% blocktranslate count counter=found.issues %}{{ counter }} issue{% plural %}{{ counter }} issues{% endblocktranslate %} · {% blocktranslate count counter=found.reviews %}{{ counter }} review{% plural %}{{ counter }} reviews{% endblocktranslate %}</span>
+</li>{% endfor %}</ul>
+{% else %}<p class="muted" data-person-none>{% blocktranslate %}The person took part in no project that you see on {{ site_name }}.{% endblocktranslate %}</p>{% endif %}
+</section>
+{% endblock %}

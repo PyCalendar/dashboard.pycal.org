@@ -907,7 +907,7 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     first = page.locator("[data-progress] [data-step]").nth(0)
     expect(first).to_have_attribute("data-skipped", "")
     expect(first.locator("[data-skip-reason]")).to_have_text("Reviewed at the meeting")
-    expect(first.locator("[data-skipped-by] a")).to_have_attribute(
+    expect(first.locator("[data-skipped-by] .github-user")).to_have_attribute(
         "href", "/projects/icalendar/contributors/bob/"
     )
     second = page.locator("[data-progress] [data-step]").nth(1)
@@ -1180,3 +1180,25 @@ def test_a_column_of_text(page, site, github, bob):
     expect(conflict).to_have_attribute("data-result", "yes")
     ready = page.locator("[data-pull-request='collective/icalendar#1'] .col-condition")
     expect(ready).to_have_attribute("data-result", "no")
+
+
+def test_a_github_handle_leads_to_the_pages_of_the_person(page, site, github, bob):
+    """The handle of an author opens their page in the project, whose heading opens their page
+    in all projects; the mark of GitHub next to every handle leads to GitHub."""
+    pull_request_project(github, bob)
+    page.goto(f"{site}/projects/icalendar/pull-requests/")
+    author = page.locator("[data-pull-request] .github-person").first
+    expect(author.locator(".github-link-icon")).to_have_attribute(
+        "href", "https://github.com/octocat"
+    )
+    author.locator("[data-github-user='octocat']").click()
+    expect(page).to_have_url(f"{site}/projects/icalendar/contributors/octocat/")
+    heading = page.locator("[data-contributor] h2")
+    expect(heading.locator(".github-link-icon")).to_have_attribute(
+        "href", "https://github.com/octocat"
+    )
+    heading.locator("[data-github-user='octocat']").click()
+    expect(page).to_have_url(f"{site}/people/octocat/")
+    expect(page.locator("[data-person-project='icalendar']")).to_contain_text("3 pull requests")
+    page.locator("[data-person-project='icalendar'] a").click()
+    expect(page).to_have_url(f"{site}/projects/icalendar/contributors/octocat/")

@@ -1,0 +1,1 @@
+Every GitHub handle leads to the page of the person on the dashboard: in a project to their page in the project, else to the new page ``/people/<handle>/`` with the projects they took part in. The mark of GitHub next to each handle leads to their profile on GitHub.

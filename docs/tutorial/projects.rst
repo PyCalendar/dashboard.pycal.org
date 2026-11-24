@@ -472,7 +472,25 @@ person of GitHub in the repositories of the project that you see, with tabs:
 *Profile* has what the conditions of the author count (reviews given, pull
 requests opened, own pull requests closed and the review to pull request
 ratio), and *Reviews*, *Issues* and *Pull requests* list them with their
-counts, the newest first. The handle is that of GitHub, in any case.
+counts, the newest first. The handle is that of GitHub, in any case. When the
+person took no part in the project, the address leads to their page in all
+projects.
+
+.. _person-page:
+
+The page of a person
+--------------------
+
+Every GitHub handle on the pages of the dashboard, such as the author of a
+pull request, leads to the page of the person: in a project, to their page in
+the project, else to ``/people/<handle>/``. The mark of GitHub right after the
+handle leads to their profile on GitHub instead.
+
+``/people/<handle>/`` lists the projects that you see in which the person
+opened issues or pull requests, reviewed the pull requests of others or skipped
+a step, with how many of each, and links to their page in each project. Every
+GitHub handle has this page: one that took part in none of your projects shows
+no GitHub name, so that it tells nothing of private repositories.
 
 .. _pull-request-badge:
 

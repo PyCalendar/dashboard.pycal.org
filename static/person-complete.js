@@ -1,5 +1,5 @@
 // Proposes people while a GitHub handle is typed, the same in every field of GitHub handles
-// (input[data-complete-people], the address of /people/complete/ with the project or
+// (input[data-complete-people], the address of /complete/people/ with the project or
 // signed_in=1): their avatar, GitHub handle and GitHub name. Without JavaScript, the field
 // takes the GitHub handle as typed. A field of several handles separated by commas
 // (data-complete-list) proposes for the last one.

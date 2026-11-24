@@ -145,8 +145,10 @@ def test_the_page_of_a_contributor(client, project):
     assert 'data-contributor="ben"' in page and "data-contributor-states" in page
     assert "Review to pull request ratio" in page and "∞" in page  # 3 reviews, no pull requests
     assert '<span class="tab-count">4</span>' in page  # reviews, of all kinds
+    heading = page.split("<h2>")[1].split("</h2>")[0]  # the page of ben in all projects
+    assert 'class="github-user" href="/people/ben/"' in heading
     profile = 'class="github-link github-link-icon" href="https://github.com/ben"'
-    assert profile in page and 'aria-label="@ben on GitHub"' in page  # the mark by the name
+    assert profile in heading and 'aria-label="@ben on GitHub"' in heading  # the mark after it
     assert "The profile on GitHub" not in page
     reviews = client.get("/projects/icalendar/contributors/BEN/?tab=reviews").content.decode()
     assert f'href="{URL}/1#pullrequestreview-50001"' in reviews and "50003" in reviews  # all kinds
@@ -159,9 +161,9 @@ def test_the_page_of_a_contributor(client, project):
 
 
 def test_a_contributor_not_in_the_project(client, project):
+    """Who took no part in the project has their page in all projects instead."""
     answer = client.get("/projects/icalendar/contributors/nobody/")
-    assert answer.status_code == 404
-    assert "Person not found in the project" in answer.content.decode()
+    assert answer.status_code == 302 and answer["Location"] == "/people/nobody/"
 
 
 def test_the_page_of_a_contributor_chooses_the_kinds_of_reviews(client, project):

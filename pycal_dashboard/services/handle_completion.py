@@ -28,7 +28,7 @@ class HandleCompletion:
     """The people proposed for what a person types into a field of GitHub handles.
 
     Every field of GitHub handles proposes the same way (``person-complete.js`` and
-    ``/people/complete/``): first, in a project, the authors of its pull requests; then the
+    ``/complete/people/``): first, in a project, the authors of its pull requests; then the
     people that dashboard.pycal.org knows and the person may see: those who signed in, and
     the authors and reviewers of the repositories of public projects and of the projects of the
     person; then, while fewer than :data:`LIMIT` are found, the accounts of all of GitHub,

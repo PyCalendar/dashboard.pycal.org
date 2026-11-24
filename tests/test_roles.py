@@ -273,7 +273,7 @@ ACTIONS = {
     ),
     "propose GitHub handles in the project": (
         "visitor",
-        lambda c, w: c.get(f"/people/complete/?project={w.project.slug}&q=oct"),
+        lambda c, w: c.get(f"/complete/people/?project={w.project.slug}&q=oct"),
         lambda w: True,
     ),
     "sync the open pull requests of authors": (

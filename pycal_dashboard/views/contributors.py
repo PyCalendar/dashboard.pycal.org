@@ -1,4 +1,4 @@
-"""The page of a person in a project: what the states of the author count, with tabs."""
+"""The pages of a person of GitHub: in all projects, and in a project with tabs."""
 
 from __future__ import annotations
 
@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.author import number_text
@@ -24,8 +25,8 @@ from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOp
 from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
 from pycal_dashboard.conditions.state.reviews_given import ReviewsGiven
 from pycal_dashboard.conditions.state.scope import Scope
-from pycal_dashboard.errors import ContributorNotFound
 from pycal_dashboard.models import GitHubUser, Issue, Review
+from pycal_dashboard.services.person_page import PersonPage
 
 from .projects import opened, shown_repositories
 
@@ -52,9 +53,9 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
     Returns:
         The page.
 
-    Raises:
-        ContributorNotFound: Nobody of this handle opened an issue or a pull request, or
-            reviewed one, in the repositories of the project, or skipped one of its steps.
+        When nobody of this handle opened an issue or a pull request, or reviewed one, in the
+        repositories of the project, or skipped one of its steps, the page of the person in all
+        projects (:func:`person`).
     """
     access, moved = opened(request, slug, f"contributors/{login}/")
     if moved:
@@ -73,7 +74,7 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
         .first()
     )
     if person is None:
-        raise ContributorNotFound(login)
+        return redirect(reverse("person", args=[login]))
     issues = issues.filter(author=person)
     kinds = checked(request.GET.getlist("kinds"))  # the kinds of reviews that count
     reviews = reviews.filter(author=person, state__in=states(kinds))
@@ -129,4 +130,30 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
             "kinds_query": "" if kinds == ALL else "".join(f"&kinds={kind}" for kind in kinds),
             "kinds_help": DISMISSED_HELP,
         },
+    )
+
+
+@require_http_methods(["GET", "HEAD"])
+def person(request: HttpRequest, login: str):
+    """A person of GitHub: the projects they took part in that the visitor sees.
+
+    Every GitHub handle that the pages show links to the page of the person: in a project, to
+    the page of the person in the project, which leads here when they took no part in it.
+
+    Parameters:
+        request: The request.
+        login: The GitHub handle, in any case.
+
+    Returns:
+        The page.
+
+    Raises:
+        GitHubHandleInvalid: The address has no GitHub handle.
+    """
+    shown = PersonPage(login, request.user)
+    projects = shown.projects()
+    return render(
+        request,
+        "pycal_dashboard/person.html",
+        {"person": shown.person(bool(projects)), "projects": projects},
     )

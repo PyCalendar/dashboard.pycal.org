@@ -33,3 +33,17 @@ class InvalidInstallationId(DashboardError):
     status = 400
     guide = "how-to/github-app.html"
     guide_title = _("Register the GitHub App")
+
+
+class GitHubHandleInvalid(DashboardError):
+    """The address of the page of a person has no GitHub handle.
+
+    A GitHub handle has up to 39 letters a to z, digits and hyphens, such as
+    ``niccokunzmann`` in ``/people/niccokunzmann/``. Check the address; every
+    GitHub handle that dashboard.pycal.org shows links to this page.
+    """
+
+    title = _("Not a GitHub handle")
+    status = 404
+    guide = "tutorial/projects.html#person-page"
+    guide_title = _("The page of a person")

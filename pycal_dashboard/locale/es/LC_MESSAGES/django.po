@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 18:51+0000\n"
+"POT-Creation-Date: 2026-11-24 19:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -576,6 +576,12 @@ msgstr "Instalación no válida"
 msgid "Register the GitHub App"
 msgstr "Registrar la GitHub App"
 
+msgid "Not a GitHub handle"
+msgstr ""
+
+msgid "The page of a person"
+msgstr ""
+
 msgid "GitHub answered with an error"
 msgstr "GitHub respondió con un error"
 
@@ -695,9 +701,6 @@ msgstr "Falta el motivo para saltar el paso"
 
 msgid "The filter is a step already"
 msgstr "El filtro ya es un paso"
-
-msgid "Person not found in the project"
-msgstr "Persona no encontrada en el proyecto"
 
 msgid "Pull request not found"
 msgstr "Pull request no encontrado"
@@ -944,15 +947,9 @@ msgid ""
 "approved; of these people their GitHub handle, id, GitHub name and the "
 "address of their avatar. %(site_name)s counts with them how many pull "
 "requests a person opened and reviewed in a project, and shows them on the "
-"page of the person in the project."
+"page of the person in the project and, for all projects that a visitor sees, "
+"on the page of the person."
 msgstr ""
-"Los issues y pull requests de los repositorios de los proyectos: su título, "
-"descripción y fechas, quién los creó y quién los cerró, y las revisiones de "
-"los pull requests: quién las dio, cuándo y si aprobaron; de estas personas, "
-"su identificador de GitHub, su id, su nombre de GitHub y la dirección de su "
-"avatar. Con ellos, %(site_name)s cuenta cuántos pull requests abrió y revisó "
-"una persona en un proyecto, y los muestra en la página de la persona en el "
-"proyecto."
 
 #, python-format
 msgid "People on GitHub, also those who never use %(site_name)s"
@@ -1418,6 +1415,10 @@ msgstr "Administración de Django"
 
 msgid "Sign out"
 msgstr "Cerrar sesión"
+
+#, python-format
+msgid "@%(handle)s on GitHub"
+msgstr ""
 
 msgid "Language"
 msgstr "Idioma"
@@ -2544,6 +2545,33 @@ msgstr ""
 "Se guardan en el volumen de %(site_name)s (<code>DATA_DIR/.env</code>); los "
 "ajustes del entorno tienen prioridad."
 
+msgid ""
+"The projects that you see in which the person opened issues or pull "
+"requests, reviewed the pull requests of others or skipped a step."
+msgstr ""
+
+#, python-format
+msgid "%(counter)s pull request"
+msgid_plural "%(counter)s pull requests"
+msgstr[0] "%(counter)s pull request"
+msgstr[1] "%(counter)s pull requests"
+
+#, python-format
+msgid "%(counter)s issue"
+msgid_plural "%(counter)s issues"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(counter)s review"
+msgid_plural "%(counter)s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "The person took part in no project that you see on %(site_name)s."
+msgstr ""
+
 #, python-format
 msgid ""
 "Which data of people %(site_name)s keeps, who sees it, and who else gets it. "
@@ -2777,10 +2805,6 @@ msgstr ""
 
 msgid "The owners of the project share it."
 msgstr "Los propietarios del proyecto lo comparten."
-
-#, python-format
-msgid "@%(handle)s on GitHub"
-msgstr ""
 
 msgid "Of the person"
 msgstr "De la persona"
@@ -3055,12 +3079,6 @@ msgstr "Este paso no tiene tareas."
 
 msgid "switch one on"
 msgstr "activa una"
-
-#, python-format
-msgid "%(counter)s pull request"
-msgid_plural "%(counter)s pull requests"
-msgstr[0] "%(counter)s pull request"
-msgstr[1] "%(counter)s pull requests"
 
 msgid "Per page"
 msgstr "Por página"

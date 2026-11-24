@@ -391,7 +391,7 @@ def test_the_open_pull_requests_of_authors(client, github, project, bob):
     assert "The open pull requests of" in summary and 'data-github-user="Monalisa"' in summary
     scope = client.get("/projects/icalendar/message/scope/").content.decode()
     assert 'name="authors" value="Monalisa"' in scope
-    assert 'data-complete-people="/people/complete/?project=icalendar"' in scope
+    assert 'data-complete-people="/complete/people/?project=icalendar"' in scope
 
 
 @pytest.mark.parametrize(
@@ -415,7 +415,7 @@ def test_the_authors_are_proposed(client, github, project, bob):
     github.add_issue(REPO, "An issue", user={**MONALISA, "id": 778, "login": "monaissue"})
     github.add_issue(REPO, "Hers", pull_request=True, user=MONALISA)
     update(project)
-    address = "/people/complete/?project=icalendar"
+    address = "/complete/people/?project=icalendar"
     client.force_login(bob)
     found = client.get(address + "&q=mon").json()["people"]
     assert found[0] == {

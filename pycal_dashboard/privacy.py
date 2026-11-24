@@ -62,7 +62,8 @@ DATA = {
             "requests: who gave them, when, and whether they approved; of these people their "
             "GitHub handle, id, GitHub name and the address of their avatar. %(site_name)s counts "
             "with them how many pull requests a person opened and reviewed in a project, and "
-            "shows them on the page of the person in the project."
+            "shows them on the page of the person in the project and, for all projects that a "
+            "visitor sees, on the page of the person."
         ),
         "whose": _("People on GitHub, also those who never use %(site_name)s"),
         "seen_by": _(

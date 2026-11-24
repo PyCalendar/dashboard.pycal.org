@@ -1,4 +1,4 @@
-"""The GitHub handles proposed while a person types, the same in every field (/people/complete/)."""
+"""The GitHub handles proposed while a person types, the same in every field (/complete/people/)."""
 
 import pytest
 from allauth.socialaccount.models import SocialToken
@@ -8,7 +8,7 @@ from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.repository_update import RepositoryUpdate
 
 pytestmark = pytest.mark.django_db
-COMPLETE = "/people/complete/"
+COMPLETE = "/complete/people/"
 
 
 def account(github_id: int, login: str) -> dict:

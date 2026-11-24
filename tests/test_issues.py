@@ -281,10 +281,17 @@ def test_private_repositories_hide_their_pull_requests(client, project, reposito
 def test_a_person_without_a_github_user_is_unknown():
     from pycal_dashboard.templatetags.github import github_user
 
-    assert github_user(None)["login"] == ""
-    assert github_user("octocat")["avatar"] == "https://avatars.githubusercontent.com/octocat?s=40"
+    assert github_user({}, None)["login"] == ""
+    octocat = github_user({}, "octocat")
+    assert octocat["avatar"] == "https://avatars.githubusercontent.com/octocat?s=40"
+    assert (
+        octocat["href"] == "/people/octocat/" and octocat["github"] == "https://github.com/octocat"
+    )
     without_avatar = GitHubUser(login="bob", github_id=1)
-    assert github_user(without_avatar)["avatar"] == "https://avatars.githubusercontent.com/bob?s=40"
+    assert (
+        github_user({}, without_avatar)["avatar"]
+        == "https://avatars.githubusercontent.com/bob?s=40"
+    )
 
 
 # the people of GitHub with their avatar, and the completion when sharing
@@ -306,15 +313,15 @@ def test_complete_the_people_to_share_with(client, github, bob, alice):
     )
     GitHubUser.record({"id": 999, "login": "alicia"})  # never signed in: no role possible
     github.add_account("alicia", 999)
-    assert client.get("/people/complete/?signed_in=1&q=al").status_code == 302  # sign in first
+    assert client.get("/complete/people/?signed_in=1&q=al").status_code == 302  # sign in first
     client.force_login(bob)
-    people = client.get("/people/complete/?signed_in=1&q=@AL").json()["people"]
+    people = client.get("/complete/people/?signed_in=1&q=@AL").json()["people"]
     assert people == [{"login": "alice", "name": "Alice Liddell", "avatar": "https://a.x/1?s=40"}]
-    found = client.get("/people/complete/?signed_in=1&q=liddell").json()["people"]
+    found = client.get("/complete/people/?signed_in=1&q=liddell").json()["people"]
     assert found[0]["login"] == "alice"
-    assert client.get("/people/complete/?signed_in=1&q=").json()["people"] == []
+    assert client.get("/complete/people/?signed_in=1&q=").json()["people"] == []
     # the other fields of GitHub handles propose all of GitHub, too
-    others = client.get("/people/complete/?q=al").json()["people"]
+    others = client.get("/complete/people/?q=al").json()["people"]
     assert [person["login"] for person in others] == ["alice", "alicia"]
 
 
@@ -366,7 +373,7 @@ def test_people_who_signed_in_before_their_github_account_was_kept(client, bob):
     Profile.objects.update_or_create(user=carol, defaults={"github_name": "carolyn"})
     assert not GitHubUser.objects.filter(login="carolyn").exists()
     client.force_login(bob)
-    people = client.get("/people/complete/?q=car").json()["people"]
+    people = client.get("/complete/people/?q=car").json()["people"]
     assert people == [
         {
             "login": "carolyn",

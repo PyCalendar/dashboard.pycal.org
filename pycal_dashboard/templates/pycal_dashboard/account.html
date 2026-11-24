@@ -4,7 +4,7 @@
 {% block main %}
 <h1>{% translate "Account" %} · @{{ identity.login }} {% translate "Your profile on GitHub" as profile_label %}{% github_link "https://github.com/"|add:identity.login profile_label %} {% translate "Your account" as help %}{% help_link links.account help %}</h1>
 <p class="muted">{% translate "Only you see this page." %}</p>
-<p data-github-name>{% translate "GitHub handle" %}: <strong>@{{ identity.login }}</strong></p>
+<p data-github-name>{% translate "GitHub handle" %}: {% github_user identity.login %}</p>
 <nav aria-label="{% translate "Account" %}"><ul class="tabs" data-account-tabs>{% for name, title in tabs %}
   <li><a href="?tab={{ name }}"{% if tab == name %} aria-current="page"{% endif %} data-account-tab="{{ name }}">{{ title }}</a></li>{% endfor %}
 </ul></nav>

@@ -5,7 +5,7 @@
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 <section class="card contributor" data-contributor="{{ person.login }}">
-<div class="table-head"><h2>{% github_user person size=32 name=person.name %} {% blocktranslate with handle=person.login asvar profile_label %}@{{ handle }} on GitHub{% endblocktranslate %}{% github_link person.url profile_label %}</h2>
+<div class="table-head"><h2>{% url 'person' person.login as all_projects %}{% github_user person size=32 name=person.name href=all_projects %}</h2>
 <details class="column-menu kinds-menu" data-kinds-menu><summary class="button button-quiet button-small" title="{% translate "Which reviews count" %}" aria-label="{% translate "Which reviews count" %}"><span aria-hidden="true">⚙</span></summary>
   <form method="get" class="menu-panel stacked" data-kinds-form>{% if shown_tab != "profile" %}<input type="hidden" name="tab" value="{{ shown_tab }}">{% endif %}
     <fieldset class="review-kinds"><legend>{% translate "Which reviews count" %}</legend>

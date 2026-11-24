@@ -3,9 +3,12 @@
 ``{% github_link url label %}`` is the mark alone, for places where it is clear what it links
 to, such as next to the title of a repository; ``label`` is its text for screen readers and
 on hover. ``{% github_link url label text "button" %}`` shows the mark before ``text``.
+``{% github_user person %}`` shows a person: their GitHub handle leads to their page on the
+dashboard, the mark of GitHub after it to their profile on GitHub.
 """
 
 from django import template
+from django.urls import reverse
 from django.utils.html import format_html
 
 from pycal_dashboard.github_mark import PATH
@@ -82,27 +85,42 @@ def avatar_url(person: GitHubUser | str, size: int) -> str:
     return f"{url}{'&' if '?' in url else '?'}s={2 * size}"
 
 
-@register.inclusion_tag("pycal_dashboard/_github_user.html")
+@register.inclusion_tag("pycal_dashboard/_github_user.html", takes_context=True)
 def github_user(
-    person: GitHubUser | str | None, size: int = 20, name: str = "", href: str = ""
+    context: template.Context,
+    person: GitHubUser | str | None,
+    size: int = 20,
+    name: str = "",
+    href: str = "",
 ) -> dict:
-    """A person of GitHub: their avatar from GitHub before their name, linked to GitHub.
+    """A person of GitHub: their avatar before their GitHub handle, then the mark of GitHub.
+
+    The GitHub handle leads to the page of the person on the dashboard: in a project (the
+    ``project`` of the page), to their page in the project, else to their page in all projects;
+    the mark of GitHub after it leads to their profile on GitHub.
 
     Parameters:
-        person: A ``GitHubUser``, a GitHub name, or None when GitHub does not say who.
+        context: The context of the page, with its ``project``, if any.
+        person: A ``GitHubUser``, a GitHub handle, or None when GitHub does not say who.
         size: The width of the avatar, in CSS pixels.
-        name: A full name to show after the GitHub name; "" for none: the pages show the GitHub
-            name alone.
-        href: Another address to link, such as the page of the person in a project; ""
-            for their profile on GitHub.
+        name: A full name to show after the GitHub handle; "" for none: the pages show the
+            GitHub handle alone.
+        href: Another address to link the GitHub handle to; "" for the page of the person.
 
     Returns:
         The context of the partial.
     """
     login = getattr(person, "login", None) or (str(person) if person else "")
+    if login and not href:
+        project = context.get("project")
+        if isinstance(getattr(project, "slug", None), str):
+            href = reverse("project_contributor", args=[project.slug, login])
+        else:
+            href = reverse("person", args=[login])
     return {
         "login": login,
-        "href": href or f"https://github.com/{login}",
+        "href": href,
+        "github": f"https://github.com/{login}",
         "name": name,
         "avatar": avatar_url(person, size) if login else "",
         "size": size,

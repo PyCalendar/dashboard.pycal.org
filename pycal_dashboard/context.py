@@ -86,6 +86,7 @@ def site(request: HttpRequest) -> dict:
             "delete_account": f"{docs}tutorial/account.html#delete-account",
             "json": f"{docs}reference/json.html",
             "projects": f"{docs}tutorial/projects.html",
+            "person": f"{docs}tutorial/projects.html#person-page",
             "project_roles": f"{docs}tutorial/projects.html#project-roles",
             "project_address": f"{docs}tutorial/projects.html#project-address",
             "backup": f"{docs}reference/backup.html",

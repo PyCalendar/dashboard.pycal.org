@@ -41,6 +41,7 @@ from .configuration import (
     UnsupportedFavicon,
 )
 from .dashboard import (
+    GitHubHandleInvalid,
     InvalidInstallationId,
     LookupFailed,
 )
@@ -60,7 +61,6 @@ from .github import (
 from .projects import (
     BackupInvalid,
     BackupVersionUnknown,
-    ContributorNotFound,
     FilterIsAStep,
     FilterNameMissing,
     FilterNameTaken,
@@ -115,7 +115,7 @@ __all__ = [
     "BackupVersionUnknown",
     "FilterIsAStep",
     "StepNotFound",
-    "ContributorNotFound",
+    "GitHubHandleInvalid",
     "PullRequestNotFound",
     "GitHubSignInExpired",
     "PullRequestNumberAmbiguous",
