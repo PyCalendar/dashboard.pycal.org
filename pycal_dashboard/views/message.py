@@ -162,10 +162,12 @@ def preview(
 
     Returns:
         ``markdown``, ``pull`` (such as ``collective/icalendar#42``, "" for examples),
-        ``count`` and ``button`` (the text of the button that saves), ``example`` and
-        ``examples`` (its place and how many there are), ``label`` (what the example is)
-        ``missing`` (the pull request asked for that the project lacks, else ""), and the
-        ``step_id`` and ``step_name`` of the step the pull request is in, "" for none.
+        ``pull_url`` (the message on the pull request on GitHub, where it has it, else the
+        pull request, so that people check it there; "" for examples), ``count`` and
+        ``button`` (the text of the button that saves), ``example`` and ``examples`` (its
+        place and how many there are), ``label`` (what the example is), ``missing`` (the
+        pull request asked for that the project lacks, else ""), and the ``step_id`` and
+        ``step_name`` of the step the pull request is in, "" for none.
     """
     pulls = comments.pulls(message)
     count = pulls.count()
@@ -201,9 +203,17 @@ def preview(
         )
     values = comments.values(pull) if pull else example(comments.project)
     markdown = expand(message.template, values)
+    written = (
+        PullRequestComment.objects.filter(project=comments.project, issue=pull).first()
+        if pull
+        else None
+    )
     return {
         "markdown": markdown.strip(),
         "pull": f"{pull.repository.full_name}#{pull.number}" if pull else "",
+        "pull_url": (f"{pull.url}#issuecomment-{written.github_id}" if written else pull.url)
+        if pull
+        else "",
         "count": count,
         "button": ngettext(
             "Keep %(count)s pull request synchronized",

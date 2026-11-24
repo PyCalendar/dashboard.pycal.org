@@ -691,3 +691,7 @@ community: where to start, what waits for a review, who contributes.
       project) on the page Synchronization; their open pull requests, old and new, get the message, not the closed
 - [ ] The person: should the field of the authors whose pull requests skip a step (Steps) propose the authors of the
       pull requests of the project too, as the scope of PR Sync does, instead of only people who signed in?
+- [x] "As the pull request PyCalendar/icalendar#2200 gets it." -> "This is the message as it would appear in pull
+      request PyCalendar/icalendar#2200", linked to the message on GitHub (#issuecomment-...), else the pull request
+- [ ] The person: a static link of the PR message: a variable {pr_message_url} (the address of the comment on GitHub,
+      known after it was written) or an address of the dashboard that redirects to the comment?

@@ -672,8 +672,11 @@ again later, and which the pull requests do not get before it is applied.
 
 **Current Message**
    The message as a pull request gets it, with the tabs *Message*, *Markdown*
-   and *Edit* above it, and below it which pull request it is of, and which pull
-   requests get it; or that there is none yet. Everybody who sees the project
+   and *Edit* above it, and below it which pull request it is of, such as *This
+   is the message as it would appear in pull request collective/icalendar#42*,
+   which links the message on that pull request on GitHub to check it there (the
+   pull request while it does not have the message yet); and which pull requests
+   get it; or that there is none yet. Everybody who sees the project
    steps through its examples here, as on *Preview*, and sees the message of a
    pull request by its number.
 **Edit**

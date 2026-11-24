@@ -127,6 +127,9 @@ def test_the_edited_message_is_saved_and_applied_later(client, github, project, 
     assert "2 pull requests get it." in page
     shown = page.split("data-message-preview")[1]
     assert shown.index("</div>") < shown.index("data-message-pull")  # below the message
+    line = shown.split("data-message-pull>")[1].split("</p>")[0]
+    assert line.startswith("This is the message as it would appear in pull request <a href=")
+    assert f'href="https://github.com/{REPO}/pull/1" data-message-pull-link>{REPO}#1</a>' in line
     assert "data-edit-message" in page.split("markdown-tabs")[1].split("</p>")[0]  # a tab
     edit = client.get(EDIT).content.decode()
     assert "data-applied data-apply-text" in edit and "✓ Applied" in edit  # nothing to apply
@@ -428,3 +431,15 @@ def test_the_authors_are_proposed(client, github, project, bob, alice):
     assert client.get(address + "?q=").json() == {"people": []}
     client.force_login(alice)  # no collaborator
     assert client.get(address + "?q=mon").status_code in (403, 404)
+
+
+def test_the_preview_links_the_message_on_github(client, github, project, bob):
+    """Below the message: the pull request it is of, linked to its message on GitHub."""
+    client.force_login(bob)
+    save(client, to_listed="on", listed="1")
+    update(project)
+    comment = PullRequestComment.objects.get()
+    page = client.get("/projects/icalendar/message/?pull=1").content.decode()
+    line = page.split("data-message-pull>")[1].split("</p>")[0]
+    url = f"https://github.com/{REPO}/pull/1#issuecomment-{comment.github_id}"
+    assert f'<a href="{url}" data-message-pull-link>{REPO}#1</a>' in line
