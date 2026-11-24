@@ -44,7 +44,7 @@ Every public page has its information as JSON at the address of the page with
        ``author``, ``status`` and times, ``step``, the id of the step it is in
        (``null`` in none), and the ``steps`` of the project, see
        :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
-       whether it is ``complete``, how many tasks are ``done`` of the
+       whether it is ``complete``, how many quality checks are ``done`` of the
        ``total``, and its ``tasks``, each with its ``condition``,
        ``sentence``, ``state`` (``todo``, ``done`` or ``unknown``),
        ``summary`` and ``evidence``, the links that show why its condition

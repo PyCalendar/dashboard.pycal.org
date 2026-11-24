@@ -7,7 +7,7 @@
 {% if missing %}<p class="message message-warning" role="alert" data-missing-step>{% blocktranslate with id=missing %}The project has no step {{ id }}: it may have been removed. These are the steps it has.{% endblocktranslate %}</p>{% endif %}
 <section class="card steps" data-steps>
 <div class="table-head"><h2>{% translate "Steps of a pull request" %}</h2>
-<span class="steps-tools">{% if steps %}<a class="button button-quiet button-small" href="{% url 'project_steps_check' project.slug %}" data-check-steps title="{% translate "The pull requests outside of the steps: no task of any step applies to them" %}">{% translate "Check" %}</a>{% endif %}
+<span class="steps-tools">{% if steps %}<a class="button button-quiet button-small" href="{% url 'project_steps_check' project.slug %}" data-check-steps title="{% translate "The pull requests outside of the steps: no quality check of any step applies to them" %}">{% translate "Check" %}</a>{% endif %}
 {% if access.can_write %}<details class="column-menu" data-add-step><summary class="button button-small" title="{% translate "Add a filter as a step" %}" aria-label="{% translate "Add a filter as a step" %}"><span aria-hidden="true">+</span></summary>
   <div class="menu-panel"><a class="menu-close button button-quiet button-small" href="{% url 'project_steps' project.slug %}" role="button" data-menu-close title="{% translate "Close" %}" aria-label="{% translate "Close" %}"><span aria-hidden="true">×</span></a>
   <h3>{% translate "Add a filter as a step" %}</h3>
@@ -19,7 +19,7 @@
   <button class="button button-quiet button-small step-move" name="direction" value="right" title="{% translate "Move right: later" %}" aria-label="{% translate "Move right: later" %}"{% if forloop.last %} disabled{% endif %}>→</button></form>
   {% else %}<span class="step-box"{% if step.color %} style="--step-color: {{ step.color }}"{% endif %}><a href="?step={{ step.pk }}"{% if step == shown %} aria-current="step"{% endif %}><small class="muted step-number">{% blocktranslate with number=forloop.counter %}Step {{ number }}{% endblocktranslate %}</small> <span class="step-name">{{ step.name }}</span>{% if step.hidden %} <small class="muted step-hidden-mark" data-hidden-mark>{% translate "hidden" %}</small>{% endif %}</a></span>{% endif %}
 </li>{% endfor %}</ol>
-<p class="muted">{% translate "Each step has tasks to complete. A pull request advances to the next step only if all tasks in a step are completed. Click on a step and find out what there is to do at each step." %}</p>
+<p class="muted">{% translate "Each step has quality checks to complete. A pull request advances to the next step only if all quality checks in a step are completed. Click on a step and find out what there is to do at each step." %}</p>
 {% else %}<p data-no-steps>{% url 'project_filters' project.slug as filters_url %}{% blocktranslate %}No steps yet. Make a saved filter a step on the tab <a href="{{ filters_url }}">Filters</a>, or add one with the button +.{% endblocktranslate %}</p>{% endif %}
 </section>
 {% if shown %}<section class="card step-detail" data-step-detail="{{ shown.pk }}">
@@ -31,22 +31,22 @@
   <input type="hidden" name="visible_form" value="1">
   <div class="step-visible" data-step-visible>{% translate "Visible in the page of a pull request" as visible_label %}{% include "pycal_dashboard/_switch.html" with name="visible" value="on" checked=shown.hidden|yesno:",checked" text=visible_label hidden_text="" %}<small class="muted">{% translate "A hidden step shows there only when the pull request is in it." %}</small></div>
   {% translate "Summary" as summary_label %}{% include "pycal_dashboard/_markdown_field.html" with id="summary" name="summary" label=summary_label value=shown.summary rows=4 variables=variables preview_url=step_preview %}
-  <h3>{% translate "Tasks" %}</h3>
-  <p class="muted">{% blocktranslate with name=shown.filter.name %}The tasks of this step are the conditions of the filter {{ name }} that keep a pull request in it. Guide people to do each one.{% endblocktranslate %}</p>
+  <h3>{% translate "Quality checks" %}</h3>
+  <p class="muted">{% blocktranslate with name=shown.filter.name %}The quality checks of this step are the conditions of the filter {{ name }} that keep a pull request in it. Guide people to do each one.{% endblocktranslate %}</p>
   <ul class="step-conditions">{% for condition in conditions %}<li data-step-condition="{{ condition.index }}">
     <input type="hidden" name="value-{{ condition.index }}" value="{{ condition.value }}">
     <details class="condition-edit"><summary><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}</summary>
       <p><label for="summary-{{ condition.index }}">{% translate "Summary" %}</label><input id="summary-{{ condition.index }}" name="summary-{{ condition.index }}" maxlength="200" value="{{ condition.summary }}"></p>
       {% translate "Description: how to do it" as description_label %}{% include "pycal_dashboard/_markdown_field.html" with id=condition.target name=condition.target label=description_label value=condition.description rows=4 variables=variables preview_url=step_preview %}
     </details>
-  </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: this step has no tasks, and no pull request is in it." %}</li>{% endfor %}</ul>
+  </li>{% empty %}<li class="muted">{% translate "The filter has no conditions in force: this step has no quality checks, and no pull request is in it." %}</li>{% endfor %}</ul>
+  <h3>{% translate "Skip conditions" %}</h3>
   {% if skip_conditions %}<p class="muted step-skip-if" data-step-skip-if>{% translate "Skipped if:" %} {% for column in skip_conditions %}{{ column.sentence }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
-  <h3>{% translate "Skipped for these authors" %}</h3>
   <input type="hidden" name="skip_form" value="1">
-  <p class="step-skip-authors" data-step-skip-authors><label for="skip-authors">{% translate "GitHub handles of authors" %}</label><span class="completion-field"><input id="skip-authors" name="skip_authors" maxlength="2000" autocomplete="off" value="{{ shown.skip_authors|join:', ' }}" placeholder="octocat, monalisa" data-complete-people="{% url 'people_complete' %}?project={{ project.slug|urlencode }}" data-complete-list></span>
+  <p class="step-skip-authors" data-step-skip-authors><label for="skip-authors">{% translate "Skipped for these authors: their GitHub handles" %}</label><span class="completion-field"><input id="skip-authors" name="skip_authors" maxlength="2000" autocomplete="off" value="{{ shown.skip_authors|join:', ' }}" placeholder="octocat, monalisa" data-complete-people="{% url 'people_complete' %}?project={{ project.slug|urlencode }}" data-complete-list></span>
     <small class="muted">{% translate "The pull requests of these authors skip the step: they are in the next one. The page of such a pull request says that the step is skipped. Separated by commas." %}</small></p>
   <h3>{% translate "Labels" %}</h3>
-  <p class="muted">{% translate "The GitHub App adds and removes these labels when a pull request enters the step, and when it completes it: it leaves the step with all its tasks done. Labels of the repositories or new ones, separated by commas; they follow a rename on GitHub." %}</p>
+  <p class="muted">{% translate "The GitHub App adds and removes these labels when a pull request enters the step, and when it completes it: it leaves the step with all its quality checks done. Labels of the repositories or new ones, separated by commas; they follow a rename on GitHub." %}</p>
   <input type="hidden" name="actions_form" value="1">
   <div class="step-actions" data-step-actions>
     <fieldset><legend>{% translate "When a pull request enters the step" %}</legend>
@@ -63,11 +63,14 @@
 <form method="post" action="{% url 'project_step_remove' project.slug shown.pk %}">{% csrf_token %}<button class="button button-danger button-small" data-remove-step>{% translate "Remove the step" %}</button> <small class="muted">{% translate "The filter stays." %}</small></form>
 {% else %}<div class="table-head step-head"><h2>{{ shown.name }}</h2><a class="button button-quiet button-small" href="{{ filter_pulls }}" data-filter-link>{% blocktranslate with name=shown.filter.name %}Filter: {{ name }}{% endblocktranslate %}</a></div>
 {% if summary_preview %}<div class="markdown">{{ summary_preview|markdown }}</div>{% endif %}
-{% if shown.skip_authors %}<p class="muted" data-skip-authors>{% translate "Skipped for the pull requests of" %} {% for handle in shown.skip_authors %}{% github_user handle size=16 %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
-{% if skip_conditions %}<p class="muted step-skip-if" data-step-skip-if>{% translate "Skipped if:" %} {% for column in skip_conditions %}{{ column.sentence }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
 <dl class="step-action-list muted" data-step-action-list>{% for trigger, kinds in actions.items %}{% if kinds.add or kinds.remove %}<dt>{% if trigger == "enter" %}{% translate "When a pull request enters the step" %}{% else %}{% translate "When a pull request leaves the step" %}{% endif %}</dt>
   {% if kinds.add %}<dd>{% translate "the GitHub App adds the labels" %} {% for label in kinds.add %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}
   {% if kinds.remove %}<dd>{% translate "the GitHub App removes the labels" %} {% for label in kinds.remove %}<span class="label-chip">{{ label }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>{% endif %}{% endif %}{% endfor %}</dl>
-<ul class="step-conditions">{% for condition in conditions %}<li><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}{% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}</li>{% endfor %}</ul>{% endif %}
+<h3>{% translate "Quality checks" %}</h3>
+<ul class="step-conditions">{% for condition in conditions %}<li><span class="condition-name">{{ condition.column.sentence|capfirst }}</span>{% if condition.summary %}: <strong>{{ condition.summary }}</strong>{% endif %}{% if condition.preview %}<div class="markdown condition-description">{{ condition.preview|markdown }}</div>{% endif %}</li>{% empty %}<li class="muted">{% translate "This step has no quality checks." %}</li>{% endfor %}</ul>
+{% if shown.skip_authors or skip_conditions %}<h3>{% translate "Skip conditions" %}</h3>
+{% if shown.skip_authors %}<p class="muted" data-skip-authors>{% translate "Skipped for the pull requests of" %} {% for handle in shown.skip_authors %}{% github_user handle size=16 %}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+{% if skip_conditions %}<p class="muted step-skip-if" data-step-skip-if>{% translate "Skipped if:" %} {% for column in skip_conditions %}{{ column.sentence }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
+{% endif %}{% endif %}
 </section>{% endif %}
 {% endblock %}

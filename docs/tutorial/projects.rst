@@ -273,7 +273,7 @@ in two tables, with their long names, such as *Label needs review: present*:
 
 *Quality checks*
    Whether each shows the pull requests it applies to or those it does not. They
-   filter as an *or*. In a step, they are its tasks: a pull request is in the
+   filter as an *or*. In a step, they are its quality checks: a pull request is in the
    step while one of them is not fulfilled, and leaves it when all of them are.
 *Skip if*
    If any of these conditions apply to a pull request, the step is skipped for
@@ -327,9 +327,9 @@ Steps
 
 The tab *Steps*, right of *Filters*, shows the steps that a pull request goes
 through, from left to right: *Step 1 → Step 2 → Step 3*. Each step is a saved
-filter. In a step, the conditions of its filter are called its *tasks*: what
+filter. In a step, the conditions of its filter are called its *quality checks*: what
 keeps a pull request in it, such as a conflict or a missing review, to be done
-before it can be merged. A pull request is in the left-most step with a task
+before it can be merged. A pull request is in the left-most step with a quality check
 for it, a condition of the filter that applies, and in no step when none does.
 
 There are no steps until they are made: **Make it a step** next to a filter on
@@ -345,7 +345,7 @@ and shows the steps it has.
 A click on a step shows it below the bar, with **Edit the filter** at the top
 right, which opens the page of saving its filter. Its name is that of its filter
 until you change it, and its summary is a template in Markdown. A click on a
-task opens its summary, a line of text, and its description, which guides
+quality check opens its summary, a line of text, and its description, which guides
 people to do it, such as with a link to the documentation; the description is
 written in the editor of Markdown, too. They take variables: the menu
 **Variables** in the bar of the editor inserts the one you click where the
@@ -360,13 +360,15 @@ there only when the pull request is in it, and the bar of the tab *Steps*
 marks it *hidden*. Who only reads the project sees the visible steps
 only, each with **Filter:** and the name of its filter, which opens its pull requests.
 
-Below the tasks, *Labels* has the labels that the GitHub App adds and removes
+Below the quality checks, *Skip conditions* has what makes a pull request skip
+the step: the conditions *Skip if* of its filter, as *Skipped if*, and the
+field *Skipped for these authors*, see below. After them, *Labels* has the labels that the GitHub App adds and removes
 *when a pull request enters the step* and *when a pull request leaves the
 step*: labels of the repositories or new ones, which GitHub then creates,
 separated by commas, such as *triage, needs review*. A label renamed on GitHub
 is renamed there, too. A pull request enters a step when an update finds it in
 the step and it was in another one or in none before; it leaves a step when an
-update finds it no longer in the step, while it is open, with all tasks of the
+update finds it no longer in the step, while it is open, with all quality checks of the
 step done, or because the step was skipped for it while it was in it.
 dashboard.pycal.org remembers the step of each open pull request at every
 update; the first time it sees a pull request, it only remembers where it is,
@@ -409,7 +411,7 @@ the log records every label created, added, removed or deleted. A removed step
 keeps its label on GitHub.
 
 **Check** next to the button **+** lists the pull requests outside of the
-steps: no task of any step applies to them, so a filter of a step may lack a
+steps: no quality check of any step applies to them, so a filter of a step may lack a
 condition for them. It lists the open pull requests, or all of them, also the
 closed and merged ones, which are mostly outside as they are done.
 
@@ -422,35 +424,35 @@ The title of a pull request in the table opens its page,
 ``/projects/<slug>/pull/<number>/``, public like the project. When several
 repositories of the project have a pull request of the number, it asks which.
 At the top, a bar shows every step of the project in its order, with its name
-and a square for each task. The steps the pull request went through, left of
+and a square for each quality check. The steps the pull request went through, left of
 the step it is in, have a green border and a check mark. The step it is in, the
-left-most one with a task to do, says so and shows how many of its tasks are
-done, such as *1/3*: its squares are green for a task done, on the left, and red
-for a task to do, on the right, gray while its data is not known yet; its
-border is yellow when some tasks are done and red when none is. The steps after
+left-most one with a quality check to do, says so and shows how many of its quality checks are
+done, such as *1/3*: its squares are green for a quality check done, on the left, and red
+for a quality check to do, on the right, gray while its data is not known yet; its
+border is yellow when some quality checks are done and red when none is. The steps after
 it are gray, without numbers. Hidden steps are left out, unless the pull request
-is in one. The step shown below the bar has a darker background. When no task of any
+is in one. The step shown below the bar has a darker background. When no quality check of any
 step applies to the pull request, all steps are gray and a note says that it is
 outside of the usual steps it should take, such as a merged pull request.
-The boxes of the steps are aligned in rows, as in a table: the names, the tasks, *The pull
+The boxes of the steps are aligned in rows, as in a table: the names, the quality checks, *The pull
 request is here*, the skip and the buttons.
 
 Writers and owners skip a step for a pull request: **Skip** below the step opens a dialog
 that asks for the *Reason for skipping*. The pull request is then in the next step that shows
-it; the skipped step is gray with a dashed border and still shows its tasks, and its actions do
+it; the skipped step is gray with a dashed border and still shows its quality checks, and its actions do
 not follow. In the row of *The pull request is here*, everybody sees *Skipped by* and who
 skipped it, linked to their page in the project; the writers and owners also see the reason,
 such as *Skipped by @niccokunzmann: Reviewed at the meeting*. **Don't skip** undoes it. A step also skips itself
-for the pull requests of the authors that its editor names under *Skipped for these
-authors*, such as the maintainers, see :ref:`github-handles`: such a skip says *Skipped*
+for the pull requests of the authors that its editor names under *Skip conditions*, in
+*Skipped for these authors*, such as the maintainers, see :ref:`github-handles`: such a skip says *Skipped*
 and names nobody.
 
-A click on a step shows its summary and its tasks below the bar. The tasks to do
-come first, marked *TODO* and open, with their description; the tasks done have
+A click on a step shows its summary and its quality checks below the bar. The quality checks to do
+come first, marked *TODO* and open, with their description; the quality checks done have
 a green check mark and are closed. The summaries and descriptions show the
 values of the pull request in place of the variables.
 
-Each task shows the evidence of its condition: the least that shows why it holds
+Each quality check shows the evidence of its condition: the least that shows why it holds
 or not, as links. The checks of a passing or failing CI open on GitHub
 (``/checks``); for an unknown CI, the reason, such as that the pull request is
 closed or merged, and the pull request. A conflict, an outdated or up-to-date
@@ -497,9 +499,9 @@ no GitHub name, so that it tells nothing of private repositories.
 The badge of a pull request
 ---------------------------
 
-Each pull request has a badge with the step it is in and how many of its tasks
+Each pull request has a badge with the step it is in and how many of its quality checks
 are done of all of them, such as *Triage 3/4*, with the color of the step behind
-its name; *Steps: outside* when no task
+its name; *Steps: outside* when no quality check
 of any step applies, and
 *Steps: none* without steps. It is at the address of its page with
 ``badge.svg``, or ``badge.png`` for places that show no SVG, such as
@@ -519,7 +521,7 @@ collaborators of its project, like the repository.
 Variables of the templates
 --------------------------
 
-The summary of a step and the descriptions of its tasks take these variables,
+The summary of a step and the descriptions of its quality checks take these variables,
 in their groups. The examples are those of a pull request of
 ``collective/icalendar``; the page of a step shows its templates with them.
 
@@ -579,7 +581,7 @@ The addresses always name the repository of the pull request, so they stay the
 same when the project gets another repository with a pull request of the same
 number. In the message of the PR Sync, the address of the badge ends with
 ``&_v=`` and a number that changes with what the badge shows, its step and the
-tasks done: GitHub keeps images by their address, so it loads the badge again
+quality checks done: GitHub keeps images by their address, so it loads the badge again
 when the step changes.
 
 .. list-table:: Author
@@ -656,18 +658,18 @@ when the step changes.
        variables
      - ``Thanks, @niccokunzmann! A person reviews it soon.``
    * - ``{tasks_all}``
-     - All tasks of the step, as a numbered list: those to do first, with
+     - All quality checks of the step, as a numbered list: those to do first, with
        ``:x:``, those not known yet with ``:grey_question:``, those done at the
        bottom, with ``:heavy_check_mark:``, emoji that GitHub shows; the
-       description of each task on the lines below it, indented, so that it
+       description of each quality check on the lines below it, indented, so that it
        belongs to its item
      - | ``1. :x: Solve the conflict``
        | ``2. :heavy_check_mark: Review it``
    * - ``{tasks_todo}``
-     - The tasks to do; *Nothing to do.* when there are none
+     - The quality checks to do; *Nothing to do.* when there are none
      - ``1. :x: Solve the conflict``
    * - ``{tasks_done}``
-     - The tasks done; *Nothing is done yet.* when there are none
+     - The quality checks done; *Nothing is done yet.* when there are none
      - ``1. :heavy_check_mark: Review it``
 
 The variables of the group *Message* are for the message of the tab
@@ -677,7 +679,7 @@ variables of the step are empty.
 The values are text: a title such as ``[click](https://example.org)`` stays
 text, and nothing else of a template is evaluated; a name in braces that is not
 a variable stays as it is. The badge, the description of the step and the
-tasks are Markdown, made by the site and the writers of the project.
+quality checks are Markdown, made by the site and the writers of the project.
 
 .. _pr-message:
 
@@ -714,9 +716,9 @@ again later, and which the pull requests do not get before it is applied.
    saved while you write; without JavaScript, **Save** saves it.
 **Preview**
    The edited message as example pull requests get it. Each example is in
-   another state: another step, or another task done, to do or not known yet.
-   They go from no task done to all of them: **→** shows the next one, **←**
-   the one before, such as *Example 2 of 6: Review, 1 of 5 tasks done*.
+   another state: another step, or another quality check done, to do or not known yet.
+   They go from no quality check done to all of them: **→** shows the next one, **←**
+   the one before, such as *Example 2 of 6: Review, 1 of 5 quality checks done*.
    **Show** shows the message of a pull request by its number instead. **Edit
    this step** opens the step that the pull request is in, with **Back to the
    review of the message** at the top.

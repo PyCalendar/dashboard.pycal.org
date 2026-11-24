@@ -7,7 +7,7 @@
 <section class="card message-page" data-message>
 <div class="table-head"><h2>{% translate "Current Message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
 <p class="muted">{% translate "The GitHub App writes this message as a comment on the pull requests of its scope, and updates it whenever the message or the values of its variables change." %}</p>
-{% if message %}<p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>
+{% if message %}<p class="muted">{% translate "Step through example pull requests, from no quality check done to all of them, or see the message of a pull request." %}</p>
 {% include "pycal_dashboard/message/_examples.html" %}
 {% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode edit_tab=access.can_write %}
 <h3>{% translate "Which pull requests get it" %}</h3>

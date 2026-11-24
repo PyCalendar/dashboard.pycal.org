@@ -1,0 +1,1 @@
+The conditions of a step are called its quality checks instead of its tasks, and the tab *Steps* shows the new heading *Skip conditions* below them, with the conditions *Skip if* and the authors that skip the step.

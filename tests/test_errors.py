@@ -1,5 +1,6 @@
 """Every error is documented: why it appears and how to resolve it, with a working link."""
 
+import inspect
 import re
 from pathlib import Path
 
@@ -12,13 +13,35 @@ DOCS = Path(__file__).parents[1] / "docs"
 ERRORS = sorted(all_errors().values(), key=lambda cls: cls.__name__)
 
 
+SECTIONS = ("Resolve:", "Context:", "Note:")  # in this order; Context and Note may be missing
+
+
+def sections(cls: type) -> dict[str, str]:
+    """The parts of the docstring of an error: ``why``, then its sections, by their heading."""
+    parts = {"why": []}
+    part = "why"
+    for line in inspect.cleandoc(cls.__doc__ or "").splitlines():
+        if line in SECTIONS:
+            assert line not in parts, f"{line} twice"
+            part = line
+            parts[part] = []
+        else:
+            assert part == "why" or not line or line.startswith("    "), f"{part} is indented"
+            parts[part].append(line)
+    return {part: "\n".join(lines).strip() for part, lines in parts.items()}
+
+
 @pytest.mark.parametrize("cls", ERRORS, ids=lambda cls: cls.__name__)
 def test_error_has_title_and_explanation(cls):
+    """Why it appears, in one sentence, maybe with its cases; the actions that resolve it; its
+    context; a note with the rest (docs/reference/errors.rst)."""
     assert cls.title and cls.title[0].isupper()
-    doc = (cls.__doc__ or "").strip()
-    summary, _, explanation = doc.partition("\n\n")
-    assert summary.endswith("."), "the first line says why the error appears"
-    assert explanation.strip(), "the rest says how to resolve it"
+    parts = sections(cls)
+    summary = parts["why"].split("\n\n")[0]
+    assert summary.endswith("."), "the first sentence says why the error appears"
+    assert not re.search(r"[.!?] +[A-Z]", " ".join(summary.split())), "one sentence"
+    assert parts.get("Resolve:"), "Resolve: says what to do"
+    assert list(parts)[1:] == [s for s in SECTIONS if s in parts], "in the order of SECTIONS"
     assert cls.__doc__ != DashboardError.__doc__ or cls is DashboardError
     assert 100 <= cls.status < 600
 

@@ -713,3 +713,8 @@ community: where to start, what waits for a review, who contributes.
       it to their profile on GitHub; the completion of handles moved to /complete/people/ for the handle "complete"
 - [ ] The person: translate "@{handle} on GitHub", the page of a person and the changed text of the privacy policy
       into German and Spanish?
+- [ ] The documentation of every error: why it appears in one sentence, then its cases; how to resolve it with
+      the actions alone (When X, do Y); the context; a note with the rest
+- [x] The steps page: "Tasks" are "Quality checks", in every text that people read (the code, the JSON keys and the
+      variables keep "tasks"); below them, the new heading "Skip conditions" has "Skipped if" and the field
+      "Skipped for these authors"

@@ -6,7 +6,7 @@
 <section class="card" data-steps-check>
 <div class="table-head"><h2>{% translate "Outside of the steps" %}</h2>
 <a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}">{% translate "← Back to the steps" %}</a></div>
-<p class="muted">{% translate "No task of any step applies to these pull requests: they are outside of the usual steps they should take. A filter of a step may lack a condition for them." %}</p>
+<p class="muted">{% translate "No quality check of any step applies to these pull requests: they are outside of the usual steps they should take. A filter of a step may lack a condition for them." %}</p>
 <p class="choice-row" data-outside-choice>{% if every %}<a href="?">{% translate "Open pull requests" %}</a> · <strong>{% translate "All, also closed and merged" %}</strong>{% else %}<strong>{% translate "Open pull requests" %}</strong> · <a href="?all=1" data-outside-all>{% translate "All, also closed and merged" %}</a>{% endif %}</p>
 {% if not steps %}<p data-no-steps>{% translate "The project has no steps yet." %}</p>
 {% elif pulls %}<p data-outside-count>{% blocktranslate count counter=pulls.paginator.count %}{{ counter }} pull request is outside of the steps.{% plural %}{{ counter }} pull requests are outside of the steps.{% endblocktranslate %}</p>

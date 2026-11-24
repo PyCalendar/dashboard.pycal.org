@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ExamplePulls:
-    """One pull request for each state of the steps, from no task done to all of them.
+    """One pull request for each state of the steps, from no quality check done to all of them.
 
     A pull request has done the tasks of the steps it went through and those done of the step
     it is in; outside of the steps, all of them. Each example differs from all others in its
@@ -67,7 +67,7 @@ class ExamplePulls:
         return found
 
     def examples(self) -> list[dict]:
-        """The examples: each in another state, from no task done to all of them.
+        """The examples: each in another state, from no quality check done to all of them.
 
         Two pull requests are in the same state when they are in the same step with the same
         tasks done, to do and not known; of them, the newest open one is the example, else

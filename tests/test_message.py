@@ -146,10 +146,10 @@ def test_the_review_steps_through_the_examples(client, project, bob):
     client.force_login(bob)
     client.post("/projects/icalendar/message/edit/", {"template": "{pr_title}: {tasks_todo}"})
     first = client.get("/projects/icalendar/message/review/").content.decode()
-    assert "Example 1 of 2: Review, 0 of 1 tasks done" in first  # Ready: to review
+    assert "Example 1 of 2: Review, 0 of 1 quality checks done" in first  # Ready: to review
     assert "Ready: " in first and "data-edit-step-of-example" in first
     second = client.get("/projects/icalendar/message/review/?example=1").content.decode()
-    assert "Example 2 of 2: outside of the steps, 1 of 1 tasks done" in second
+    assert "Example 2 of 2: outside of the steps, 1 of 1 quality checks done" in second
     assert "Nothing to do." in second
     assert 'href="?example=2" data-example-step="1" ' in second and 'aria-disabled="true"' in second
     chosen = client.get("/projects/icalendar/message/review/?pull=2").content.decode()
@@ -316,10 +316,13 @@ def test_visitors_step_through_the_stages(client, project):
     """Logged out, the saved message shows in every state of the steps, and for a number."""
     PullRequestMessage.objects.create(project=project, template="{pr_title}: {tasks_todo}")
     first = client.get("/projects/icalendar/message/").content.decode()
-    assert "Example 1 of 2: Review, 0 of 1 tasks done" in first and "data-example-nav" in first
+    assert (
+        "Example 1 of 2: Review, 0 of 1 quality checks done" in first
+        and "data-example-nav" in first
+    )
     assert "Ready: " in first
     second = client.get("/projects/icalendar/message/?example=1").content.decode()
-    assert "Example 2 of 2: outside of the steps, 1 of 1 tasks done" in second
+    assert "Example 2 of 2: outside of the steps, 1 of 1 quality checks done" in second
     chosen = client.get("/projects/icalendar/message/?pull=2").content.decode()
     assert "Conflict: " in chosen
     assert "data-edit-step-of-example" not in first  # editing the steps is for writers

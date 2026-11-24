@@ -50,7 +50,7 @@ GROUPS = {
                 "(https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar)",
             ),
             "pr_badge_url": (
-                _("the address of the badge of the pull request: its step and tasks done"),
+                _("the address of the badge of the pull request: its step and quality checks done"),
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/badge.svg?repository=collective%2Ficalendar",
             ),
             "pr_steps_url": (
@@ -105,15 +105,15 @@ GROUPS = {
                 "Thanks, @niccokunzmann! A person reviews it soon.",
             ),
             "tasks_all": (
-                _("all tasks of the step, those to do first, those done at the bottom"),
+                _("all quality checks of the step, those to do first, those done at the bottom"),
                 "1. :x: Solve the conflict\n2. :heavy_check_mark: Review it",
             ),
             "tasks_todo": (
-                _("the tasks to do; a sentence when there is nothing to do"),
+                _("the quality checks to do; a sentence when there is nothing to do"),
                 "1. :x: Solve the conflict",
             ),
             "tasks_done": (
-                _("the tasks done; a sentence when nothing is done"),
+                _("the quality checks done; a sentence when nothing is done"),
                 "1. :heavy_check_mark: Review it",
             ),
         },

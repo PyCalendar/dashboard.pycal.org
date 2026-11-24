@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 19:21+0000\n"
+"POT-Creation-Date: 2026-11-24 19:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1207,9 +1207,10 @@ msgstr "Insignia"
 msgid "the badge of the pull request, linked to its page with its steps"
 msgstr "la insignia del pull request, enlazada a su página con sus pasos"
 
-msgid "the address of the badge of the pull request: its step and tasks done"
+msgid ""
+"the address of the badge of the pull request: its step and quality checks "
+"done"
 msgstr ""
-"la dirección de la insignia del pull request: su paso y las tareas hechas"
 
 #, python-format
 msgid ""
@@ -1269,14 +1270,15 @@ msgstr "Mensaje"
 msgid "the summary of the step the pull request is in, in Markdown"
 msgstr "el resumen del paso en el que está el pull request, en Markdown"
 
-msgid "all tasks of the step, those to do first, those done at the bottom"
-msgstr "todas las tareas del paso, primero las pendientes, las hechas al final"
+msgid ""
+"all quality checks of the step, those to do first, those done at the bottom"
+msgstr ""
 
-msgid "the tasks to do; a sentence when there is nothing to do"
-msgstr "las tareas pendientes; una frase cuando no hay nada que hacer"
+msgid "the quality checks to do; a sentence when there is nothing to do"
+msgstr ""
 
-msgid "the tasks done; a sentence when nothing is done"
-msgstr "las tareas hechas; una frase cuando no hay nada hecho"
+msgid "the quality checks done; a sentence when nothing is done"
+msgstr ""
 
 #, python-format
 msgid ""
@@ -2219,11 +2221,11 @@ msgstr[0] ""
 msgstr[1] ""
 "Aplicar el mensaje editado y sincronizarlo con %(counter)s pull requests."
 
-msgid "The example before: one task less done"
-msgstr "El ejemplo anterior: una tarea menos hecha"
+msgid "The example before: one quality check less done"
+msgstr ""
 
-msgid "The next example: one more task done"
-msgstr "El ejemplo siguiente: una tarea más hecha"
+msgid "The next example: one more quality check done"
+msgstr ""
 
 msgid "The message of the pull request"
 msgstr "El mensaje del pull request"
@@ -2318,11 +2320,9 @@ msgid "Preview of the edited message"
 msgstr "Vista previa del mensaje editado"
 
 msgid ""
-"Step through example pull requests, from no task done to all of them, or see "
-"the message of a pull request."
+"Step through example pull requests, from no quality check done to all of "
+"them, or see the message of a pull request."
 msgstr ""
-"Recorre pull requests de ejemplo, desde ninguna tarea hecha hasta todas, o "
-"mira el mensaje de un pull request."
 
 #, python-format
 msgid "It is in the step %(name)s."
@@ -3022,8 +3022,8 @@ msgstr ""
 "Elige uno:"
 
 #, python-format
-msgid "%(done)s of %(total)s tasks done"
-msgstr "%(done)s de %(total)s tareas hechas"
+msgid "%(done)s of %(total)s quality checks done"
+msgstr ""
 
 msgid "The pull request is here"
 msgstr "El pull request está aquí"
@@ -3051,11 +3051,9 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgid ""
-"This pull request is outside of the usual steps it should take: no task of "
-"any step applies to it."
+"This pull request is outside of the usual steps it should take: no quality "
+"check of any step applies to it."
 msgstr ""
-"Este pull request está fuera de los pasos habituales que debería seguir: "
-"ninguna tarea de ningún paso se aplica a él."
 
 #, python-format
 msgid ""
@@ -3074,8 +3072,8 @@ msgstr "aún desconocido"
 msgid "Condition:"
 msgstr "Condición:"
 
-msgid "This step has no tasks."
-msgstr "Este paso no tiene tareas."
+msgid "This step has no quality checks."
+msgstr ""
 
 msgid "switch one on"
 msgstr "activa una"
@@ -3311,10 +3309,9 @@ msgid "Steps of a pull request"
 msgstr "Pasos de un pull request"
 
 msgid ""
-"The pull requests outside of the steps: no task of any step applies to them"
+"The pull requests outside of the steps: no quality check of any step applies "
+"to them"
 msgstr ""
-"Los pull requests fuera de los pasos: ninguna tarea de ningún paso se aplica "
-"a ellos"
 
 msgid "Check"
 msgstr "Comprobar"
@@ -3344,13 +3341,10 @@ msgid "Move right: later"
 msgstr "Mover a la derecha: después"
 
 msgid ""
-"Each step has tasks to complete. A pull request advances to the next step "
-"only if all tasks in a step are completed. Click on a step and find out what "
-"there is to do at each step."
+"Each step has quality checks to complete. A pull request advances to the "
+"next step only if all quality checks in a step are completed. Click on a "
+"step and find out what there is to do at each step."
 msgstr ""
-"Cada paso tiene tareas que completar. Un pull request avanza al siguiente "
-"paso solo si todas las tareas de un paso están completadas. Haz clic en un "
-"paso y descubre qué hay que hacer en cada uno."
 
 #, python-format
 msgid ""
@@ -3378,32 +3372,28 @@ msgstr "Un paso oculto solo aparece allí cuando el pull request está en él."
 msgid "Summary"
 msgstr "Resumen"
 
-msgid "Tasks"
-msgstr "Tareas"
-
 #, python-format
 msgid ""
-"The tasks of this step are the conditions of the filter %(name)s that keep a "
-"pull request in it. Guide people to do each one."
+"The quality checks of this step are the conditions of the filter %(name)s "
+"that keep a pull request in it. Guide people to do each one."
 msgstr ""
-"Las tareas de este paso son las condiciones del filtro %(name)s que "
-"mantienen un pull request en él. Guía a las personas para hacer cada una."
 
 msgid "Description: how to do it"
 msgstr "Descripción: cómo hacerlo"
 
 msgid ""
-"The filter has no conditions in force: this step has no tasks, and no pull "
-"request is in it."
+"The filter has no conditions in force: this step has no quality checks, and "
+"no pull request is in it."
 msgstr ""
-"El filtro no tiene condiciones en vigor: este paso no tiene tareas y ningún "
-"pull request está en él."
+
+msgid "Skip conditions"
+msgstr ""
 
 msgid "Skipped if:"
 msgstr "Saltado si:"
 
-msgid "Skipped for these authors"
-msgstr "Saltado para estos autores"
+msgid "Skipped for these authors: their GitHub handles"
+msgstr ""
 
 msgid ""
 "The pull requests of these authors skip the step: they are in the next one. "
@@ -3418,14 +3408,10 @@ msgstr "Etiquetas"
 
 msgid ""
 "The GitHub App adds and removes these labels when a pull request enters the "
-"step, and when it completes it: it leaves the step with all its tasks done. "
-"Labels of the repositories or new ones, separated by commas; they follow a "
-"rename on GitHub."
+"step, and when it completes it: it leaves the step with all its quality "
+"checks done. Labels of the repositories or new ones, separated by commas; "
+"they follow a rename on GitHub."
 msgstr ""
-"La GitHub App añade y quita estas etiquetas cuando un pull request entra en "
-"el paso y cuando lo completa: sale del paso con todas sus tareas hechas. "
-"Etiquetas de los repositorios o nuevas, separadas por comas; siguen un "
-"cambio de nombre en GitHub."
 
 msgid "When a pull request enters the step"
 msgstr "Cuando un pull request entra en el paso"
@@ -3455,14 +3441,14 @@ msgstr "El filtro se queda."
 msgid "Filter: %(name)s"
 msgstr "Filtro: %(name)s"
 
-msgid "Skipped for the pull requests of"
-msgstr "Saltado para los pull requests de"
-
 msgid "the GitHub App adds the labels"
 msgstr "la GitHub App añade las etiquetas"
 
 msgid "the GitHub App removes the labels"
 msgstr "la GitHub App quita las etiquetas"
+
+msgid "Skipped for the pull requests of"
+msgstr "Saltado para los pull requests de"
 
 msgid "Outside of the steps"
 msgstr "Fuera de los pasos"
@@ -3471,13 +3457,10 @@ msgid "← Back to the steps"
 msgstr "← Volver a los pasos"
 
 msgid ""
-"No task of any step applies to these pull requests: they are outside of the "
-"usual steps they should take. A filter of a step may lack a condition for "
-"them."
+"No quality check of any step applies to these pull requests: they are "
+"outside of the usual steps they should take. A filter of a step may lack a "
+"condition for them."
 msgstr ""
-"Ninguna tarea de ningún paso se aplica a estos pull requests: están fuera de "
-"los pasos habituales que deberían seguir. Puede que al filtro de un paso le "
-"falte una condición para ellos."
 
 msgid "All, also closed and merged"
 msgstr "Todos, también cerrados y fusionados"
@@ -3837,10 +3820,9 @@ msgstr "fuera de los pasos"
 
 #, python-format
 msgid ""
-"Example %(number)s of %(count)s: %(step)s, %(done)s of %(total)s tasks done"
+"Example %(number)s of %(count)s: %(step)s, %(done)s of %(total)s quality "
+"checks done"
 msgstr ""
-"Ejemplo %(number)s de %(count)s: %(step)s, %(done)s de %(total)s tareas "
-"hechas"
 
 #, python-format
 msgid "Keep %(count)s pull request synchronized"

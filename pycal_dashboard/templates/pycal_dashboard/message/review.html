@@ -6,7 +6,7 @@
 {% include "pycal_dashboard/message/_sync_tabs.html" %}
 <section class="card message-page" data-message-review>
 <div class="table-head"><h2>{% translate "Preview of the edited message" %} {% translate "The message of the pull requests" as help %}{% help_link links.pr_message help %}</h2></div>
-<p class="muted">{% translate "Step through example pull requests, from no task done to all of them, or see the message of a pull request." %}</p>
+<p class="muted">{% translate "Step through example pull requests, from no quality check done to all of them, or see the message of a pull request." %}</p>
 {% include "pycal_dashboard/message/_examples.html" %}
 {% include "pycal_dashboard/message/_shown.html" with query=request.GET.urlencode %}
 {% if preview.step_id %}<p data-step-of-example>{% blocktranslate with name=preview.step_name %}It is in the step {{ name }}.{% endblocktranslate %} <a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ preview.step_id }}&amp;back={{ back|urlencode }}" data-edit-step-of-example>{% translate "Edit this step" %}</a></p>{% endif %}

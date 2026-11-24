@@ -371,6 +371,19 @@ def test_readers_see_which_authors_a_step_skips(client, project, filters, bob):
     assert (
         "Skipped for the pull requests of" in shown and 'data-github-user="niccokunzmann"' in shown
     )
+    checks, skips = page.index("<h3>Quality checks</h3>"), page.index("<h3>Skip conditions</h3>")
+    assert checks < skips < page.index("data-skip-authors")  # below the quality checks
+
+
+def test_the_skip_conditions_are_below_the_quality_checks(client, project, filters, bob):
+    conflict, _review = filters
+    client.force_login(bob)
+    make_step(client, conflict)
+    step = PullRequestStep.objects.get()
+    page = client.get(f"/projects/icalendar/steps/?step_id={step.pk}").content.decode()
+    checks, skips = page.index("<h3>Quality checks</h3>"), page.index("<h3>Skip conditions</h3>")
+    assert checks < skips < page.index('name="skip_authors"') < page.index("<h3>Labels</h3>")
+    assert "Tasks" not in page and "tasks" not in page.split("<main")[1]
 
 
 def test_the_step_lists_its_conditions_of_skip_if(client, project, filters, bob):
