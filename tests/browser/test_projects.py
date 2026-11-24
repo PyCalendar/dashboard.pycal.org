@@ -484,8 +484,13 @@ def test_the_page_of_a_pull_request(page, site, github, bob):
 def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     """The menu + adds the reviews of a pull request and the ratio of its author."""
     project = pull_request_project(github, bob)
-    github.add_review("collective/icalendar", 1)
-    github.add_review("collective/icalendar", 1, state="COMMENTED")  # counts: all kinds do
+    mona = {"id": 777, "login": "monalisa", "avatar_url": "", "type": "User"}
+    github.add_review("collective/icalendar", 1, mona)
+    github.add_review("collective/icalendar", 1, mona, "COMMENTED")  # counts: all kinds do
+    github.add_review("collective/icalendar", 1, state="COMMENTED")  # octocat on their own: not
+    github.add_issue("collective/icalendar", "Hers", pull_request=True, user=mona)  # 4
+    github.add_review("collective/icalendar", 4)  # octocat reviews it twice
+    github.add_review("collective/icalendar", 4, state="COMMENTED")
     from pycal_dashboard.services.repository_update import RepositoryUpdate
 
     assert RepositoryUpdate(project.repositories.get()).run()
@@ -499,12 +504,13 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     menu.get_by_role("button", name="Add the column").click()
     expect(page).to_have_url(re.compile(r"col=reviews~all~at_least~1"))
     ready = page.locator("[data-pull-request='collective/icalendar#1']")
-    expect(ready.locator(".col-condition")).to_contain_text("2 reviews")  # all kinds
+    expect(ready.locator(".col-condition")).to_contain_text("2 reviews")  # all kinds, not own
     # the comments do not count with their switch off in the gear of the column
     page.locator("th.col-condition .column-menu summary").first.click()
     gear = page.locator("th.col-condition [data-condition-form]").first
     kinds = gear.locator("[data-review-kinds='reviews_kinds']")
     expect(kinds).to_contain_text("Dismissed: an approval or a request for changes")
+    expect(kinds.locator("input[value='own']")).not_to_be_checked()  # by default
     kinds.locator("label.switch", has_text="commented").click()
     gear.get_by_role("button", name="Change the column").click()
     expect(page).to_have_url(
@@ -519,7 +525,7 @@ def test_columns_of_reviews_and_of_the_author(page, site, github, bob):
     menu.get_by_label("The number to compare with").fill("0.3")
     menu.get_by_role("button", name="Add the column").click()
     expect(page).to_have_url(re.compile(r"col=author~all~review_ratio~above~0.3"))
-    # octocat opened 3 and reviewed twice, with the comment: 0.67
+    # octocat opened 3 and reviewed the pull request of monalisa twice, with the comment: 0.67
     expect(ready.locator(".col-condition").nth(1)).to_contain_text("0.67")
     expect(ready.locator(".col-condition").nth(1)).to_have_attribute("data-result", "yes")
 
@@ -1077,10 +1083,14 @@ def test_a_column_of_the_type_of_author(page, site, github, bob):
 
 
 def test_the_kinds_of_reviews_on_the_page_of_a_person(page, site, github, bob):
-    """The gear chooses which reviews count; a switch counts again at once."""
+    """The gear chooses which reviews count; a switch counts again at once. By default, the
+    reviews of octocat on their own pull requests do not count."""
     project = pull_request_project(github, bob)
-    github.add_review("collective/icalendar", 1)
-    github.add_review("collective/icalendar", 1, state="COMMENTED")
+    mona = {"id": 777, "login": "monalisa", "avatar_url": "", "type": "User"}
+    github.add_issue("collective/icalendar", "Hers", pull_request=True, user=mona)  # 4
+    github.add_review("collective/icalendar", 4)  # by octocat
+    github.add_review("collective/icalendar", 4, state="COMMENTED")
+    github.add_review("collective/icalendar", 1, state="COMMENTED")  # on their own
     from pycal_dashboard.services.repository_update import RepositoryUpdate
 
     assert RepositoryUpdate(project.repositories.get()).run()
@@ -1089,6 +1099,14 @@ def test_the_kinds_of_reviews_on_the_page_of_a_person(page, site, github, bob):
     expect(reviews).to_have_text("2")
     page.locator("[data-kinds-menu] summary").click()
     expect(page.locator("[data-kinds-apply]")).to_be_hidden()  # the script counts at once
+    form = page.locator("[data-kinds-form]")
+    expect(form).to_contain_text("By default, a review counts only when its author is not")
+    form.locator("label.switch", has_text="by the author of the pull request").click()
+    expect(page).to_have_url(re.compile(r"kinds=own"))
+    expect(
+        page.locator(".contributor-tabs a", has_text="Reviews").locator(".tab-count")
+    ).to_have_text("3")
+    page.locator("[data-kinds-menu] summary").click()
     page.locator("[data-kinds-form] label.switch", has_text="commented").click()
     expect(page).to_have_url(re.compile(r"kinds=approved"))
     expect(

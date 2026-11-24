@@ -10,7 +10,14 @@ from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.author import number_text
-from pycal_dashboard.conditions.review_kinds import ALL, DISMISSED_HELP, KINDS, checked, states
+from pycal_dashboard.conditions.review_kinds import (
+    ALL,
+    CHOICES,
+    DISMISSED_HELP,
+    checked,
+    own,
+    states,
+)
 from pycal_dashboard.conditions.spec.reviews import STATES
 from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
@@ -70,6 +77,8 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
     issues = issues.filter(author=person)
     kinds = checked(request.GET.getlist("kinds"))  # the kinds of reviews that count
     reviews = reviews.filter(author=person, state__in=states(kinds))
+    if not own(kinds):  # the reviews on their own pull requests count only when chosen
+        reviews = reviews.exclude(issue__author=person)
     tab = request.GET.get("tab", "profile")
     values = {"kinds": kinds}
     tab = tab if tab in TABS else "profile"
@@ -116,7 +125,7 @@ def project_contributor(request: HttpRequest, slug: str, login: str):
             ],
             "multiple": len(repositories) > 1,
             "kinds": kinds,
-            "all_kinds": [(kind, text) for kind, (_state, text) in KINDS.items()],
+            "all_kinds": [(kind, text) for kind, (_state, text) in CHOICES.items()],
             "kinds_query": "" if kinds == ALL else "".join(f"&kinds={kind}" for kind in kinds),
             "kinds_help": DISMISSED_HELP,
         },

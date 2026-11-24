@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from pycal_dashboard.conditions.input.base import InputSpec
-from pycal_dashboard.conditions.review_kinds import ALL, KINDS
+from pycal_dashboard.conditions.review_kinds import ALL, CHOICES, OWN, checked
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 
 
@@ -12,15 +12,17 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 class ReviewKindsInput(InputSpec):
     """The kinds of reviews that count; all of them by default (type ``review-kinds``).
 
-    Of ``approved``, ``changes_requested``, ``commented`` and ``dismissed``. Every condition and
-    state that counts reviews has it, with the same name, ``kinds``.
+    Of ``approved``, ``changes_requested``, ``commented`` and ``dismissed``, and ``own``: the
+    reviews of the author of a pull request on it, which do not count by default. Every
+    condition and state that counts reviews has it, with the same name, ``kinds``.
     """
 
     name: str = "kinds"
     label: str = "Kinds of reviews"
     help: str = (
         "Which reviews count: approved, changes_requested, commented and dismissed; all of them "
-        "by default. Dismissed are approvals or requests for changes that were dismissed later."
+        "by default. Dismissed are approvals or requests for changes that were dismissed later. "
+        "own: also the reviews of the author of the pull request, which do not count by default."
     )
     required: bool = False
     default: Any = field(default=ALL)
@@ -47,12 +49,12 @@ class ReviewKindsInput(InputSpec):
         """
         names = value.split(",") if isinstance(value, str) else list(value or ())
         names = [str(name).strip() for name in names if str(name).strip()]
-        unknown = [name for name in names if name not in KINDS]
+        unknown = [name for name in names if name not in CHOICES]
         if unknown:
             raise ConditionInputUnknown(f"{self.name}: {', '.join(unknown)}")
         if not names:
             raise ConditionInputMissing(f"{self.name}: {', '.join(ALL)}")
-        return tuple(kind for kind in ALL if kind in names)
+        return checked(names)
 
     def widget(self, context: dict | None = None) -> dict:
         """A switch for each kind.
@@ -63,7 +65,10 @@ class ReviewKindsInput(InputSpec):
         Returns:
             The kind ``switches`` and the kinds with their texts.
         """
-        return {"kind": "switches", "choices": [(kind, text) for kind, (_s, text) in KINDS.items()]}
+        return {
+            "kind": "switches",
+            "choices": [(kind, text) for kind, (_s, text) in CHOICES.items()],
+        }
 
     def describe(self) -> dict:
         """The input with its kinds.
@@ -71,4 +76,4 @@ class ReviewKindsInput(InputSpec):
         Returns:
             As ``InputSpec.describe``, with ``choices``.
         """
-        return {**super().describe(), "default": list(ALL), "choices": list(ALL)}
+        return {**super().describe(), "default": list(ALL), "choices": [*ALL, OWN]}

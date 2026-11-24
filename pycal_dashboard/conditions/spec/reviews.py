@@ -10,6 +10,7 @@ from django.utils.dateparse import parse_datetime
 from django.utils.translation import gettext, gettext_noop
 
 from pycal_dashboard.conditions.evidence import Evidence
+from pycal_dashboard.conditions.review_kinds import own as own_reviews
 from pycal_dashboard.conditions.review_kinds import states as review_states
 from pycal_dashboard.conditions.spec.base import DataSpec
 from pycal_dashboard.github.data_version import DATA_VERSION
@@ -173,13 +174,20 @@ class ReviewsData(DataSpec):
 
         Parameters:
             issue: The pull request.
-            kinds: The kinds of reviews that count; all of them for None.
+            kinds: The kinds of reviews that count; all of them for None. Those of the author
+                of the pull request count only with ``own``.
 
         Returns:
             The reviews of these kinds.
         """
         states = review_states(kinds)
-        found = [review for review in issue.reviews.all() if review.state in states]
+        others = not own_reviews(kinds)  # the reviews of the author on it do not count
+        found = [
+            review
+            for review in issue.reviews.all()
+            if review.state in states
+            and not (others and review.author_id and review.author_id == issue.author_id)
+        ]
         return sorted(found, key=lambda review: (review.submitted is None, review.submitted))
 
     @staticmethod

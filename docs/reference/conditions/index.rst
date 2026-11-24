@@ -112,8 +112,10 @@ partial ``conditions/_input.html``):
    One of a few names, such as ``title`` or ``description``.
 ``review-kinds``
    The kinds of reviews that count, of ``approved``, ``changes_requested``,
-   ``commented`` and ``dismissed``; all of them by default; a switch for each in
-   a form. Every condition and state that counts reviews has it as ``kinds``.
+   ``commented`` and ``dismissed``; all of them by default; and ``own``, the
+   reviews of the author of a pull request on it, which do not count by
+   default. A switch for each in a form. Every condition and state that counts
+   reviews has it as ``kinds``.
 
 Data
 ====

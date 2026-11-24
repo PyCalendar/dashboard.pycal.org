@@ -16,7 +16,7 @@ from pycal_dashboard.conditions.input.comparison import (
     ComparisonInput,
 )
 from pycal_dashboard.conditions.input.number import NumberInput
-from pycal_dashboard.conditions.review_kinds import ALL, KINDS, checked
+from pycal_dashboard.conditions.review_kinds import ALL, CHOICES, checked
 from pycal_dashboard.conditions.review_kinds import text as kinds_text
 from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
@@ -122,7 +122,7 @@ class AuthorGroup(ConditionGroup):
             raise ConditionInputMissing("author: number")
         if choices[0] not in STATES:
             raise ConditionInputUnknown(f"author: {choices[0]}")
-        extra = [kind for kind in choices[3:] if kind not in KINDS]
+        extra = [kind for kind in choices[3:] if kind not in CHOICES]
         if extra:
             raise ConditionInputUnknown(f"author: {', '.join(extra)}")
         kinds = checked(choices[3:]) if has_kinds(STATES[choices[0]]) else ALL
@@ -284,7 +284,7 @@ class AuthorGroup(ConditionGroup):
         head = [{"text": f"{title} {sign} {choices[2]}", "kind": "number"}]
         kinds = state_values(choices).get("kinds", ALL)
         if kinds != ALL:
-            head.append({"text": ", ".join(gettext(KINDS[k][1]) for k in kinds), "kind": "kinds"})
+            head.append({"text": ", ".join(gettext(CHOICES[k][1]) for k in kinds), "kind": "kinds"})
         return head
 
     @classmethod

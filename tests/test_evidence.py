@@ -177,3 +177,23 @@ def test_the_page_of_a_contributor_chooses_the_kinds_of_reviews(client, project)
         "/projects/icalendar/contributors/ben/?tab=reviews&kinds=commented"
     ).content.decode()
     assert "pullrequestreview-50003" in reviews and "pullrequestreview-50001" not in reviews
+
+
+def test_the_reviews_of_a_person_on_their_own_pull_requests(client, github, project):
+    """By default, a review counts only when its author is not the author of the pull request."""
+    github.add_review(REPO, 1, ANNA, "COMMENTED")  # Anna on her own pull request
+    assert RepositoryUpdate(Repository.objects.get()).run()
+    page = client.get("/projects/icalendar/contributors/anna/").content.decode()
+    reviews = page.split("?tab=reviews")[1].split("</a>")[0]
+    assert '<span class="tab-count">0</span>' in reviews
+    assert 'name="kinds" value="own">' in page  # its switch, off
+    assert "By default, a review counts only when its author is not the author" in page
+    assert "by the author of the pull request" in page
+    own = client.get("/projects/icalendar/contributors/anna/?kinds=own").content.decode()
+    assert '<span class="tab-count">1</span>' in own.split("?tab=reviews")[1].split("</a>")[0]
+    assert 'name="kinds" value="own" checked' in own
+    # the condition of the pull request: Ben's 4 reviews, not Anna's comment
+    assert Reviews.check(Issue.objects.get(number=1), {"comparison": "exactly", "reviews": 4})
+    every = "reviews~applies~at_least~9~approved~changes_requested~commented~dismissed"
+    assert "Review by anna: commented" not in {text for text, _url in evidence(every, 1)}
+    assert "Review by anna: commented" in {text for text, _url in evidence(every + "~own", 1)}

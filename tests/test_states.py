@@ -39,7 +39,7 @@ def repositories(github):
     github.add_issue(OTHER, "Bot", pull_request=True, user=BOT)
     github.add_review(REPO, 1, BEN)  # approved
     github.add_review(REPO, 1, BEN, "CHANGES_REQUESTED")
-    github.add_review(REPO, 1, ANNA, "COMMENTED")  # only comments: not counted
+    github.add_review(REPO, 1, ANNA, "COMMENTED")  # on her own: counts only with ``own``
     github.add_review(REPO, 4, ANNA)
     github.add_review(OTHER, 1, BEN, "DISMISSED")
     found = []
@@ -119,11 +119,14 @@ def test_the_states_of_a_person_in_a_project(repositories):
     anna = pull("Anna 1")
     assert STATES["pull_requests_opened"].observe(anna, scope) == 3
     assert STATES["own_pull_requests_closed"].observe(anna, scope) == 1  # not the merged one
-    assert STATES["reviews_given"].observe(anna, scope) == 2  # all kinds: also the comment
-    assert STATES["review_ratio"].observe(anna, scope) == 1  # 2 / (3 - 1)
-    no_comments = {"kinds": ("approved", "changes_requested", "dismissed")}
+    # all kinds, but not her comment on her own pull request
+    assert STATES["reviews_given"].observe(anna, scope) == 1
+    assert STATES["review_ratio"].observe(anna, scope) == 0.5  # 1 / (3 - 1)
+    own = {"kinds": ("approved", "changes_requested", "commented", "dismissed", "own")}
+    assert STATES["reviews_given"].observe(anna, scope, own) == 2  # also the comment
+    assert STATES["review_ratio"].observe(anna, scope, own) == 1  # 2 / (3 - 1)
+    no_comments = {"kinds": ("approved", "changes_requested", "dismissed", "own")}
     assert STATES["reviews_given"].observe(anna, scope, no_comments) == 1
-    assert STATES["review_ratio"].observe(anna, scope, no_comments) == 0.5  # 1 / (3 - 1)
     ben = person("ben")
     assert STATES["reviews_given"].observe(ben, scope) == 3  # in both repositories
     assert STATES["own_pull_requests_closed"].observe(ben, scope) == 0  # Anna closed it
@@ -153,7 +156,7 @@ def test_unknown_while_the_reviews_are_not_read(repositories):
     other.reviews_changed = None
     other.save()
     assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository, other])) is None
-    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 2
+    assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 1
     assert STATES["pull_requests_opened"].observe(pull("Anna 1"), Scope([repository])) == 3
     assert (
         CONDITIONS["review_ratio"].check(
@@ -200,9 +203,16 @@ def test_reviews_at_least_by_default(repositories):
 
 
 def test_the_kinds_of_reviews_count(repositories):
-    """Anna 1 has an approval, a request for changes and a comment: all kinds by default."""
+    """Anna 1 has an approval, a request for changes and her own comment: all kinds by default,
+    but not the reviews of the author; ``own`` counts them, too."""
     condition = CONDITIONS["reviews"]
-    every = condition.configure({"comparison": "exactly", "reviews": 3})
+    every = condition.configure({"comparison": "exactly", "reviews": 2})
+    own = condition.configure({"comparison": "exactly", "reviews": 3, "kinds": "commented, own"})
+    assert own["kinds"] == ("commented", "own")
+    assert condition.check(pull("Anna 1"), own) is False  # her comment alone
+    kinds = "approved, changes_requested, commented, own"
+    own = condition.configure({"comparison": "exactly", "reviews": 3, "kinds": kinds})
+    assert condition.check(pull("Anna 1"), own) is True  # with her comment
     two = condition.configure(
         {"comparison": "exactly", "reviews": 2, "kinds": "approved, changes_requested"}
     )
@@ -221,8 +231,16 @@ def test_a_column_of_kinds_of_reviews(repositories):
     from pycal_dashboard.conditions.group.column import Column
     from pycal_dashboard.conditions.group.reviews import ReviewsGroup
 
-    old = Column.decode("reviews~applies~at_least~3~comments")  # saved before: all kinds
-    assert old.encode() == "reviews~applies~at_least~3" and old.applies(pull("Anna 1")) is True
+    old = Column.decode("reviews~applies~at_least~2~comments")  # saved before: all kinds
+    assert old.encode() == "reviews~applies~at_least~2" and old.applies(pull("Anna 1")) is True
+    own = Column.decode("reviews~applies~at_least~1~own~commented")  # her own comment
+    assert own.encode() == "reviews~applies~at_least~1~commented~own"
+    assert own.applies(pull("Anna 1")) is True
+    assert (
+        own.sentence
+        == "it has at least 1 review: commented, also by the author of the pull request"
+    )
+    assert Column.decode("reviews~applies~at_least~1~commented").applies(pull("Anna 1")) is False
     column = Column.decode("reviews~applies~at_least~2~changes_requested~approved")
     assert column.encode() == "reviews~applies~at_least~2~approved~changes_requested"
     assert column.applies(pull("Anna 1")) is True and column.kinds == column.choices[2:]
@@ -354,8 +372,8 @@ def test_a_column_of_reviews(repositories):
     assert exactly.inverted().encode() == "reviews~not~exactly~1"  # no opposite comparison
     assert exactly.inverted().sentence == "it has not exactly 1 review"
     assert column.group.cell(pull("Anna 1"), column.choices) == [
-        {"text": "3 reviews", "kind": "number"}
-    ]  # all kinds count
+        {"text": "2 reviews", "kind": "number"}
+    ]  # all kinds count, but not the comment of its author
     with pytest.raises(errors.ConditionInputOutOfRange):
         Column.decode("reviews~all~at_least~-1")
 
@@ -372,7 +390,7 @@ def test_a_column_of_the_author(repositories):
     )
     assert column.applies(pull("Ben 1"), scope) is True  # 1.5 in the project
     assert column.applies(pull("Ben 1")) is False  # 2 reviews / 2 in its repository only
-    assert column.applies(pull("Anna 1"), scope) is False  # 0.5
+    assert column.applies(pull("Anna 1"), scope) is False  # 0.5: not her own comment
     assert column.sentence == "its author has a review to pull request ratio above 1.4"
     assert column.group.cell(pull("Ben 1"), column.choices, scope)[0]["text"] == "1.5"
     assert column.group.summary(column.choices) == (
@@ -382,7 +400,9 @@ def test_a_column_of_the_author(repositories):
     assert given.sentence == "its author gave at most 2 reviews"
     below = Column.decode("author~applies~reviews_given~below~2")
     assert below.sentence == "its author gave fewer than 2 reviews"
-    assert below.applies(pull("Anna 1"), scope) is False  # 2 reviews, with the comment
+    assert below.applies(pull("Anna 1"), scope) is True  # 1 review: not her own comment
+    with_own = Column.decode(f"{below.encode()}~approved~changes_requested~commented~dismissed~own")
+    assert with_own.applies(pull("Anna 1"), scope) is False  # 2 reviews, with the comment
     approvals = Column.decode("author~applies~reviews_given~below~2~approved")
     assert approvals.applies(pull("Anna 1"), scope) is True  # 1 approval
     assert approvals.sentence == "its author gave fewer than 2 reviews (reviews: approved)"

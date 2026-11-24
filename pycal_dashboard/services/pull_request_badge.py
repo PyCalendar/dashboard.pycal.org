@@ -10,6 +10,7 @@ from django.utils.translation import get_language, gettext
 
 from pycal_dashboard import badges
 from pycal_dashboard.badges import LABEL_COLOR
+from pycal_dashboard.conditions.results_version import RESULTS_VERSION
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
 
@@ -61,7 +62,7 @@ class PullRequestBadge:
             (repository.pk, repository.updated, repository.reviews_changed)
             for repository in self.repositories
         )
-        parts = repr((self.issue.pk, self.issue.changed, repositories, steps))
+        parts = repr((self.issue.pk, self.issue.changed, repositories, steps, RESULTS_VERSION))
         return hashlib.sha256(parts.encode()).hexdigest()[:20]
 
     def texts(self) -> tuple[str, str, str, str]:

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from django.db.models import Count, F, Q
 
+from pycal_dashboard.conditions.review_kinds import own as own_reviews
 from pycal_dashboard.conditions.review_kinds import states as review_states
 from pycal_dashboard.models import GitHubUser, Issue, PullRequestComment, Review, StepSkip
 
@@ -107,12 +108,14 @@ class Scope:
             name: ``opened`` (pull requests opened), ``closed_own`` (of those, closed by the
                 person without merging) or ``reviews`` (reviews given).
             kinds: For ``reviews``, the kinds of reviews that count; all of them for None.
+                The reviews on their own pull requests count only with ``own``.
 
         Returns:
             The numbers by the id of the ``GitHubUser``; people without any are missing.
         """
         states = review_states(kinds)
-        key = f"{name}:{','.join(states)}" if name == "reviews" else name
+        others = not own_reviews(kinds)
+        key = f"{name}:{','.join(states)}:{others}" if name == "reviews" else name
         if key not in self._counts:
             pulls = Issue.objects.filter(repository__in=self.repositories, pull_request=True)
             if name == "opened":
@@ -124,13 +127,12 @@ class Scope:
                     .annotate(number=Count("pk"))
                 )
             else:
-                rows = (
-                    Review.objects.filter(
-                        Q(issue__repository__in=self.repositories), state__in=states
-                    )
-                    .values("author")
-                    .annotate(number=Count("pk"))
+                reviews = Review.objects.filter(
+                    Q(issue__repository__in=self.repositories), state__in=states
                 )
+                if others:  # not on their own pull requests
+                    reviews = reviews.exclude(author=F("issue__author"))
+                rows = reviews.values("author").annotate(number=Count("pk"))
             self._counts[key] = {row["author"]: row["number"] for row in rows if row["author"]}
         return self._counts[key]
 
@@ -141,6 +143,7 @@ class Scope:
             name: ``opened``, ``closed_own`` or ``reviews``.
             person: The person.
             kinds: For ``reviews``, the kinds of reviews that count; all of them for None.
+                The reviews on their own pull requests count only with ``own``.
 
         Returns:
             The number.

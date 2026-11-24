@@ -2,10 +2,12 @@
 ``reviews_given``: Reviews given
 ================================
 
-How many reviews a person gave in the project, of the kinds that count: all by default.
+How many reviews a person gave in the project, of the kinds that count: all by default, but not those on the pull requests of the person.
 
 The input ``kinds`` says which reviews count: approved, changes requested,
-commented and dismissed, all of them by default. A dismissed review is an
+commented and dismissed, all of them by default. A review on a pull request of
+the person counts only with ``own``, the switch *by the author of the pull
+request*. A dismissed review is an
 approval or a request for changes that a maintainer dismissed later, such as
 after new commits.
 

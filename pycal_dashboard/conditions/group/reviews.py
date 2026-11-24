@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from pycal_dashboard.conditions.condition.reviews import Reviews
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.conditions.input.comparison import COMPARISONS, INVERSE, NOT_EXACTLY
-from pycal_dashboard.conditions.review_kinds import ALL, DISMISSED_HELP, KINDS, checked
+from pycal_dashboard.conditions.review_kinds import ALL, CHOICES, DISMISSED_HELP, checked
 from pycal_dashboard.conditions.review_kinds import text as kinds_text
 from pycal_dashboard.conditions.spec.reviews import ReviewsData
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
@@ -55,7 +55,7 @@ class ReviewsGroup(ConditionGroup):
     id = "reviews"
     title = _("Reviews")
     comparisons = COMPARISONS  # for the menu of the column
-    kinds = KINDS  # the kinds of reviews, for the switches of the menu
+    kinds = CHOICES  # the kinds of reviews, for the switches of the menu
     kinds_help = DISMISSED_HELP
     default = DEFAULT
 
@@ -79,7 +79,7 @@ class ReviewsGroup(ConditionGroup):
             choices = (DEFAULT, *choices)
         if len(choices) < 2 or not choices[1].strip():
             raise ConditionInputMissing("reviews: reviews")
-        unknown = [kind for kind in choices[2:] if kind not in KINDS and kind != LEGACY]
+        unknown = [kind for kind in choices[2:] if kind not in CHOICES and kind != LEGACY]
         if unknown:
             raise ConditionInputUnknown(f"reviews: {', '.join(unknown)}")
         found = Reviews.configure({"comparison": choices[0], "reviews": choices[1]})
@@ -215,7 +215,7 @@ class ReviewsGroup(ConditionGroup):
         head = [{"text": f"{gettext('reviews')} {sign} {choices[1]}", "kind": "number"}]
         kinds = checked(choices[2:])
         if kinds != ALL:
-            head.append({"text": ", ".join(gettext(KINDS[k][1]) for k in kinds), "kind": "kinds"})
+            head.append({"text": ", ".join(gettext(CHOICES[k][1]) for k in kinds), "kind": "kinds"})
         return head
 
     @classmethod

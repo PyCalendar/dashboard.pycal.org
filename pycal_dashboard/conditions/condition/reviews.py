@@ -25,12 +25,15 @@ class Reviews(Condition):
     as the input ``comparison`` says, such as at least 2; at least and at most include the
     number. The input ``kinds`` says which reviews count: approved, changes requested,
     commented and dismissed (an approval or a request for changes dismissed later); all of them
-    by default.
+    by default, but not those of the author of the pull request, unless ``own`` is chosen.
     """
 
     id = "reviews"
     title = "Reviews"
-    description = "A pull request has a number of reviews, of the kinds that count: all by default."
+    description = (
+        "A pull request has a number of reviews, of the kinds that count: all by default, but not "
+        "those of its author."
+    )
     inputs = (
         ComparisonInput(
             "comparison",

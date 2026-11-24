@@ -204,8 +204,10 @@ check mark, or not, with a red cross, and why:
    most*, *more than*, *fewer than* or *exactly*. At least and at most include
    the number. *Which reviews count*: approved, changes requested, commented
    and dismissed, all of them by default; a dismissed review is an approval or a
-   request for changes that a maintainer dismissed later. The cell shows how
-   many it has.
+   request for changes that a maintainer dismissed later. By default, a review
+   counts only when its author is not the author of the pull request; the
+   switch *by the author of the pull request* counts those, too. The cell shows
+   how many it has.
 **Author**
    A state of the author compared with a number, counted in all repositories
    of the project that you see: the review to pull request ratio, the reviews

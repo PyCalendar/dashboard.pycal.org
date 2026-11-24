@@ -695,3 +695,6 @@ community: where to start, what waits for a review, who contributes.
       request PyCalendar/icalendar#2200", linked to the message on GitHub (#issuecomment-...), else the pull request
 - [ ] The person: a static link of the PR message: a variable {pr_message_url} (the address of the comment on GitHub,
       known after it was written) or an address of the dashboard that redirects to the comment?
+- [x] Which reviews count: by default, a review counts only when its author is not the author of the pull request; a
+      switch "by the author of the pull request" (own) counts those, too, in every condition, state and the page of
+      a person; RESULTS_VERSION makes the cached results be computed again

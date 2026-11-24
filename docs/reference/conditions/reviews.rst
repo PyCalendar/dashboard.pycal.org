@@ -2,13 +2,15 @@
 ``reviews``: Reviews
 =====================
 
-A pull request has a number of reviews, of the kinds that count: all by default.
+A pull request has a number of reviews, of the kinds that count: all by default, but not those of its author.
 
 Holds when the number of reviews of the pull request compares with the input
 ``reviews`` as the input ``comparison`` says, such as at least 2. The input
 ``kinds`` says which reviews count, the switches *Which reviews count* of the
 column: approved, changes requested, commented and dismissed, all of them by
-default. A dismissed review is an approval or a request for changes that a
+default. By default, a review counts only when its author is not the author of
+the pull request, such as a comment of the author as a review; ``own``, the
+switch *by the author of the pull request*, counts those, too. A dismissed review is an approval or a request for changes that a
 maintainer dismissed later, such as after new commits. The same input is in the
 states :doc:`/reference/states/reviews_given` and
 :doc:`/reference/states/review_ratio` and the condition :doc:`review_ratio`.

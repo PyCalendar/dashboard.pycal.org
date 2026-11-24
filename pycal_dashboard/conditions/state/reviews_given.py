@@ -19,13 +19,15 @@ class ReviewsGiven(PersonState):
     """How many reviews a person gave on the pull requests of all repositories of a project.
 
     The input ``kinds`` says which reviews count: approved, changes requested, commented and
-    dismissed; all of them by default.
+    dismissed; all of them by default, but not those on the pull requests of the person
+    (``own``).
     """
 
     id = "reviews_given"
     title = gettext_noop("Reviews given")
     description = gettext_noop(
-        "How many reviews a person gave in the project, of the kinds that count: all by default."
+        "How many reviews a person gave in the project, of the kinds that count: all by default, "
+        "but not those on the pull requests of the person."
     )
     inputs = (ReviewKindsInput(),)
     data = (ReviewsData(),)

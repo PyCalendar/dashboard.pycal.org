@@ -88,3 +88,19 @@ def test_a_filter_with_them_is_saved(project):  # noqa: F811
     column = Column.decode(saved.columns[0])
     assert column.choices == ("sync", "skipped")
     assert column.sentence == "it has the PR Sync on or a skipped step"
+
+
+def test_the_cache_changes_with_what_the_conditions_compute(project, monkeypatch):  # noqa: F811
+    """A new RESULTS_VERSION, such as a new default of a condition, computes the results again."""
+    from pycal_dashboard.models import Issue
+    from pycal_dashboard.services import column_results, pull_request_badge
+
+    repositories = list(project.repositories.all())
+    before = ColumnResults(repositories, project=project).version
+    issue = Issue.objects.filter(pull_request=True).first()
+    badge = pull_request_badge.PullRequestBadge(issue, project, repositories)
+    badge_before = badge.version()
+    monkeypatch.setattr(column_results, "RESULTS_VERSION", column_results.RESULTS_VERSION + 1)
+    monkeypatch.setattr(pull_request_badge, "RESULTS_VERSION", column_results.RESULTS_VERSION)
+    assert ColumnResults(repositories, project=project).version != before
+    assert badge.version() != badge_before

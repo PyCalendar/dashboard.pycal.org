@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from django.core.cache import cache
 from django.db.models import prefetch_related_objects
 
+from pycal_dashboard.conditions.results_version import RESULTS_VERSION
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import Issue
 
@@ -48,7 +49,11 @@ class ColumnResults:
 
     @property
     def version(self) -> str:
-        """What the results depend on, as a short hash: the repositories and their updates."""
+        """What the results depend on, as a short hash: the repositories and their updates.
+
+        Also :data:`~pycal_dashboard.conditions.results_version.RESULTS_VERSION`, which changes
+        with what the conditions compute.
+        """
         parts = sorted(
             (
                 repository.pk,
@@ -61,7 +66,7 @@ class ColumnResults:
             for repository in self.repositories
         )
         scope = sorted(repository.pk for repository in self.scope.repositories)
-        return hashlib.sha256(repr((parts, scope)).encode()).hexdigest()[:20]
+        return hashlib.sha256(repr((parts, scope, RESULTS_VERSION)).encode()).hexdigest()[:20]
 
     def query(self):  # noqa: ANN201 - a QuerySet of Issue
         """The pull requests, the newest first, as the table shows them."""
