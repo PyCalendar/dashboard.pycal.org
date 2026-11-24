@@ -706,3 +706,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] The completion of GitHub handles is the same in every field (steps, PR Sync, roles): the authors of the pull
       requests of the project first, the people the site knows that the person may see, then all of GitHub (the
       search of users with the token of the person); the roles only the people who signed in, as only they get one
+- [x] The page of a contributor: instead of "The profile on GitHub", the round mark of GitHub links to the profile, on
+      the right next to @handle, as on sign.pycal.org

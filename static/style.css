@@ -61,7 +61,7 @@ main.wrap { padding-top: 1.5rem; padding-bottom: 2rem; min-height: 60vh; }
 .avatar { border-radius: 50%; background: var(--surface-tint); flex: none; }
 .github-link-icon { color: var(--text-muted); text-decoration: none; padding: .1em; border-radius: .25em; vertical-align: middle; }
 .github-link-icon:hover, .github-link-icon:focus-visible { color: var(--primary); background: var(--surface-tint); }
-h1 .github-link-icon .github-mark { width: .75em; height: .75em; }
+h1 .github-link-icon .github-mark, h2 .github-link-icon .github-mark { width: .75em; height: .75em; }
 .theme-menu summary { list-style: none; display: flex; align-items: center; padding: .3rem .45rem; border: 1px solid color-mix(in srgb, var(--nav-text) 50%, transparent); border-radius: .4rem; color: var(--nav-text); font-weight: 400; }
 .theme-menu summary::-webkit-details-marker { display: none; }
 .theme-menu summary:hover, .theme-menu[open] summary { background: color-mix(in srgb, var(--nav-text) 18%, transparent); }
@@ -584,6 +584,8 @@ form.stacked fieldset.message-scope { display: flex; flex-direction: column; gap
 .markdown .foreign-image { display: inline-block; padding: 0 .4rem; border: 1px dashed var(--border); border-radius: .25rem; font-size: .85em; vertical-align: middle; }
 
 /* the page of a person in a project */
+/* The name of the person, with the mark of GitHub on its right, linked to the profile. */
+.contributor h2 { display: flex; align-items: center; gap: .4em; }
 .contributor-tabs { margin-top: .5rem; }
 .tab-count { display: inline-block; min-width: 1.4em; padding: 0 .35em; border-radius: 999px; background: var(--surface-tint); font-size: .8em; text-align: center; }
 .contributor-states { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .5rem 1rem; margin: 1rem 0; }

@@ -145,6 +145,9 @@ def test_the_page_of_a_contributor(client, project):
     assert 'data-contributor="ben"' in page and "data-contributor-states" in page
     assert "Review to pull request ratio" in page and "∞" in page  # 3 reviews, no pull requests
     assert '<span class="tab-count">4</span>' in page  # reviews, of all kinds
+    profile = 'class="github-link github-link-icon" href="https://github.com/ben"'
+    assert profile in page and 'aria-label="@ben on GitHub"' in page  # the mark by the name
+    assert "The profile on GitHub" not in page
     reviews = client.get("/projects/icalendar/contributors/BEN/?tab=reviews").content.decode()
     assert f'href="{URL}/1#pullrequestreview-50001"' in reviews and "50003" in reviews  # all kinds
     issues = client.get("/projects/icalendar/contributors/ben/?tab=issues").content.decode()

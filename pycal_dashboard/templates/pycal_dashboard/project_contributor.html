@@ -5,7 +5,7 @@
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}
 <section class="card contributor" data-contributor="{{ person.login }}">
-<div class="table-head"><h2>{% github_user person size=32 name=person.name %}</h2>
+<div class="table-head"><h2>{% github_user person size=32 name=person.name %} {% blocktranslate with handle=person.login asvar profile_label %}@{{ handle }} on GitHub{% endblocktranslate %}{% github_link person.url profile_label %}</h2>
 <details class="column-menu kinds-menu" data-kinds-menu><summary class="button button-quiet button-small" title="{% translate "Which reviews count" %}" aria-label="{% translate "Which reviews count" %}"><span aria-hidden="true">⚙</span></summary>
   <form method="get" class="menu-panel stacked" data-kinds-form>{% if shown_tab != "profile" %}<input type="hidden" name="tab" value="{{ shown_tab }}">{% endif %}
     <fieldset class="review-kinds"><legend>{% translate "Which reviews count" %}</legend>
@@ -21,7 +21,6 @@
 </ul></nav>
 {% if shown_tab == "profile" %}<p class="muted">{% translate "What the conditions of the author count, in the repositories of the project. The gear chooses which reviews count: all of them by default." %}</p>
 <dl class="contributor-states" data-contributor-states>{% for title, value in states %}<div><dt>{% translate title %}</dt><dd>{{ value }}</dd></div>{% endfor %}</dl>
-<p><a href="{{ person.url }}">{% translate "The profile on GitHub" %}</a></p>
 {% elif shown %}<ul class="list contributor-list" data-contributor-list="{{ shown_tab }}">{% for item in shown %}<li>
   {% if shown_tab == "reviews" %}<a href="{{ item.issue.url }}#pullrequestreview-{{ item.github_id }}">{% if multiple %}{{ item.issue.repository.full_name }}{% endif %}#{{ item.issue.number }} {{ item.issue.title }}</a> <span class="muted">{% for state, text in review_states.items %}{% if state == item.state %}{% translate text %}{% endif %}{% endfor %}{% if item.submitted %}, {% when item.submitted %}{% endif %}</span>
   {% else %}<span class="badge badge-{{ item.status }}">{% if item.status == 'merged' %}{% translate "merged" %}{% elif item.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span> <a href="{% if item.pull_request %}{% url 'project_pull_request' project.slug item.number %}{% if multiple %}?repository={{ item.repository.full_name|urlencode:'' }}{% endif %}{% else %}{{ item.url }}{% endif %}">{% if multiple %}{{ item.repository.full_name }}{% endif %}#{{ item.number }} {{ item.title }}</a> <span class="muted">{% when item.created %}</span>{% endif %}

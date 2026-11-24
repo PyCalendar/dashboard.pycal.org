@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 17:27+0000\n"
+"POT-Creation-Date: 2026-11-24 18:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2778,6 +2778,10 @@ msgstr ""
 msgid "The owners of the project share it."
 msgstr "Los propietarios del proyecto lo comparten."
 
+#, python-format
+msgid "@%(handle)s on GitHub"
+msgstr ""
+
 msgid "Of the person"
 msgstr "De la persona"
 
@@ -2793,9 +2797,6 @@ msgid ""
 msgstr ""
 "Lo que cuentan las condiciones del autor, en los repositorios del proyecto. "
 "El engranaje elige qué revisiones cuentan: todas por defecto."
-
-msgid "The profile on GitHub"
-msgstr "El perfil en GitHub"
 
 msgid "← Earlier"
 msgstr "← Antes"
