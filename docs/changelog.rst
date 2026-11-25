@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.24.0 (2026-11-25)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- The variables ``{step_check_skip_url}``, ``{step_check_skip_url_author}``, ``{quality_check_skip_url}`` and ``{quality_check_skip_url_author}`` open the page of a pull request with the dialog to skip. With a link of the author, the author of the pull request skips, too; a visitor signs in with GitHub from the dialog, and the reason they typed is kept. See the new page *Skip steps and quality checks*.
+- Writers and owners skip a quality check of a pull request, as they skip a step, with a reason in Markdown: a step whose quality checks are all done or skipped is complete, and the pull request goes on to the next step. A skipped quality check shows ⏩ on the page and in the PR message. The dialog to skip asks why, and closes with ✕.
+
+
 0.23.0 (2026-11-25)
 -------------------
 

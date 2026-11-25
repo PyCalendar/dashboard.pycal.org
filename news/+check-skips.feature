@@ -1,1 +1,0 @@
-Writers and owners skip a quality check of a pull request, as they skip a step, with a reason in Markdown: a step whose quality checks are all done or skipped is complete, and the pull request goes on to the next step. A skipped quality check shows ⏩ on the page and in the PR message. The dialog to skip asks why, and closes with ✕.
