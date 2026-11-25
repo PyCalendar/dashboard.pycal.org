@@ -97,6 +97,39 @@ GROUPS = {
             "step_id": (_("the id of the step"), "7"),
         },
     ),
+    "skip": (
+        _("Skip"),
+        {
+            "step_check_skip_url": (
+                _(
+                    "the address that opens the dialog to skip the step for the pull request on "
+                    "%(site_name)s, for the writers and owners of the project"
+                ),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step",
+            ),
+            "step_check_skip_url_author": (
+                _(
+                    "the same address with a secret key, with which the author of the pull "
+                    "request may skip the step, too"
+                ),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step&key=0123456789abcdef0123",
+            ),
+            "quality_check_skip_url": (
+                _(
+                    "in the summary and description of a quality check: the address that opens "
+                    "the dialog to skip it, for the writers and owners of the project"
+                ),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=reviews~applies~2",
+            ),
+            "quality_check_skip_url_author": (
+                _(
+                    "in the summary and description of a quality check: the same address with a "
+                    "secret key, with which the author of the pull request may skip it, too"
+                ),
+                "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=reviews~applies~2&key=0123456789abcdef0123",
+            ),
+        },
+    ),
     "message": (
         _("Message"),
         {
@@ -105,16 +138,20 @@ GROUPS = {
                 "Thanks, @niccokunzmann! A person reviews it soon.",
             ),
             "tasks_all": (
-                _("all quality checks of the step, those to do first, those done at the bottom"),
-                "1. :x: Solve the conflict\n2. :heavy_check_mark: Review it",
+                _(
+                    "all quality checks of the step, those to do first, those done and skipped "
+                    "at the bottom"
+                ),
+                "1. :x: Solve the conflict\n2. :heavy_check_mark: Review it\n"
+                "3. :fast_forward: Update the changelog",
             ),
             "tasks_todo": (
                 _("the quality checks to do; a sentence when there is nothing to do"),
                 "1. :x: Solve the conflict",
             ),
             "tasks_done": (
-                _("the quality checks done; a sentence when nothing is done"),
-                "1. :heavy_check_mark: Review it",
+                _("the quality checks done and skipped; a sentence when nothing is done"),
+                "1. :heavy_check_mark: Review it\n2. :fast_forward: Update the changelog",
             ),
         },
     ),
@@ -254,11 +291,17 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
         step: The step, if the template is of one.
 
     Returns:
-        The examples of the variables, with the project and the step as they are.
+        The examples of the variables, with the project and the step as they are; the key of
+        the links of the author is made up.
     """
     values = {
         name: about[1] for _title, members in GROUPS.values() for name, about in members.items()
     }
+    page = steps_url(project, 42, "collective/icalendar")
+    for name, target in (("step_check", "step"), ("quality_check", "reviews~applies~2")):
+        link = f"{page}&{urlencode({'step': step.pk if step else 7, 'skip': target})}"
+        values[f"{name}_skip_url"] = link
+        values[f"{name}_skip_url_author"] = f"{link}&key=0123456789abcdef0123"
     return (
         values
         | {

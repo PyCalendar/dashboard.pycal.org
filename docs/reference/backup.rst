@@ -57,6 +57,12 @@ and links this page. A snapshot keeps the same file on dashboard.pycal.org, see
        by: niccokunzmann
        reason: Reviewed in the chat.
        created: '2026-11-19T10:00:00+00:00'
+     - repository: collective/icalendar
+       number: 2190
+       condition: labels~applies~present~needs changelog
+       by: niccokunzmann
+       reason: A typo needs no entry in the changelog.
+       created: '2026-11-20T09:00:00+00:00'
    message:
      template: '{pr_badge} **{step_name}** {tasks_all}'
      draft: '{pr_badge} **{step_name}**'
@@ -102,9 +108,11 @@ The keys
    filter, by the column) and its ``actions``: the labels to ``add`` and to
    ``remove`` when a pull request will ``enter`` the step or ``complete`` it, and
    ``skip_authors``, the GitHub handles of the authors whose pull requests skip
-   it. Its ``skips`` are the pull requests that skip it because a person said
-   so: the ``repository`` and ``number`` of the pull request, the GitHub handle
-   of the person (``by``), the ``reason`` and when it was ``created``.
+   it. Its ``skips`` are the pull requests that skip it or one of its quality
+   checks because a person said so, see :ref:`skips`: the ``repository`` and
+   ``number`` of the pull request, the ``condition`` of the quality check (only
+   for the skip of a quality check), the GitHub handle of the person (``by``),
+   the ``reason`` and when it was ``created``.
 ``message``
    The Status Message of the tab *PR Sync*, see :ref:`pr-message`: its
    ``template``, the edited message that is not applied yet (``draft``, empty
@@ -120,7 +128,7 @@ The keys
 The file is sorted inside, so that the same project always gives the same
 file and two backups or snapshots compare line by line, such as with ``diff``:
 the repositories, the filters and the members by their names, the skips by
-the repository and the number of the pull request, and the GitHub handles,
+the repository, the number of the pull request and the condition, and the GitHub handles,
 the numbers of pull requests (``listed``), the ``authors``, the labels of the ``actions`` and
 the keys of the ``tasks``. Only ``exported`` differs between two backups of an
 unchanged project. The steps keep their order from left to right, and the

@@ -36,6 +36,7 @@ EMOJI = {
     "x": "❌",
     "heavy_check_mark": "✔️",
     "grey_question": "❔",
+    "fast_forward": "⏩",
     "white_check_mark": "✅",
     "warning": "⚠️",
 }

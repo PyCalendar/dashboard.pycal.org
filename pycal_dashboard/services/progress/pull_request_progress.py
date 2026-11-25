@@ -10,6 +10,7 @@ from django.utils.translation import gettext
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import StepSkip
+from pycal_dashboard.services.skip_link import SkipLink
 from pycal_dashboard.services.step_overrides import StepOverrides
 from pycal_dashboard.step_template import expand, values_of
 
@@ -27,7 +28,8 @@ class PullRequestProgress:
     A task is a condition in force of the filter of a step. It is to do while the filter shows
     the pull request by it, as
     :class:`~pycal_dashboard.services.step_assignment.StepAssignment` decides: the pull request
-    is in the left-most step with a task to do. A step without a task to do is complete.
+    is in the left-most step with a task to do. A task that a person skipped is not to do. A
+    step without a task to do is complete.
     """
 
     def __init__(
@@ -80,14 +82,16 @@ class PullRequestProgress:
                         )
                     continue
                 notes = (step.conditions or {}).get(value, {})
+                skipped = overrides.check_skip(issue.pk, step, value)
                 progress.tasks.append(
                     Task(
                         value,
                         column,
                         result,
-                        column.shows(result),
+                        column.shows(result) and skipped is None,
                         notes.get("summary", ""),  # expanded below, with the badge
                         notes.get("description", ""),
+                        skip=skipped,
                     )
                 )
             progress.tasks.sort(key=lambda task: not task.todo)  # stable: to do first
@@ -102,9 +106,15 @@ class PullRequestProgress:
             self.current.current = True
         for step in self.steps:  # the badge is known now: the texts of the tasks with it
             values = self.values(step)
+            links = SkipLink(project, issue, step.step)
             for task in step.tasks:
-                task.summary = expand(task.summary, values)
-                task.description = expand(task.description, values)
+                own = links.values(task.value)
+                task.skip_urls = {
+                    "writers": own["quality_check_skip_url"],
+                    "author": own["quality_check_skip_url_author"],
+                }
+                task.summary = expand(task.summary, values | own)
+                task.description = expand(task.description, values | own)
         # it went through all steps when it skipped those with tasks to do
         self.skipped_open = any(not step.complete and step.skip for step in self.steps)
         stage = "past" if self.current or self.skipped_open else "outside"
@@ -137,18 +147,22 @@ class PullRequestProgress:
 
         Returns:
             The values, with the alternative text of ``pr_badge``: ``badge_alt``, else the
-            text of the badge.
+            text of the badge; with a step, its links to skip it.
         """
         if self._values is None:
             alt = " ".join(self.badge_text()) if self.badge_alt is None else self.badge_alt
             self._values = values_of(self.issue, self.project, alt=alt)
         if step is None:
             return self._values
-        return self._values | {
-            "step_name": step.step.name,
-            "step_number": str(step.number),
-            "step_id": str(step.step.pk),
-        }
+        return (
+            self._values
+            | {
+                "step_name": step.step.name,
+                "step_number": str(step.number),
+                "step_id": str(step.step.pk),
+            }
+            | SkipLink(self.project, self.issue, step.step).values()
+        )
 
     @property
     def visible(self) -> list[StepProgress]:
@@ -197,7 +211,8 @@ class PullRequestProgress:
             ``outside``, whether it is outside of the usual steps, and ``steps``, each with its
             ``id``, ``name``, ``number``, ``hidden``, ``skipped`` (not why), ``complete``,
             ``done``, ``total`` and
-            ``tasks``: their ``condition``, ``sentence``, ``state``, ``summary`` and
+            ``tasks``: their ``condition``, ``sentence``, ``state`` (``todo``, ``done``,
+            ``skipped`` or ``unknown``), ``skipped`` (not why), ``summary`` and
             ``evidence`` (each with ``text`` and ``url``; empty until it is found).
         """
         return {
@@ -218,6 +233,7 @@ class PullRequestProgress:
                             "condition": task.value,
                             "sentence": capfirst(str(task.column.sentence)),
                             "state": task.state,
+                            "skipped": task.skip is not None,
                             "summary": task.summary,
                             "evidence": [found.data() for found in task.evidence],
                         }

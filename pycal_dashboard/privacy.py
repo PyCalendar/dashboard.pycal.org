@@ -42,14 +42,16 @@ DATA = {
     "projects": {
         "what": _(
             "The projects you create, the role of each collaborator with their GitHub handle, "
-            "who skipped a step for a pull request, when, and why, and the GitHub handles of "
+            "who skipped a step or a quality check for a pull request, when, and why, and the "
+            "GitHub handles of "
             "the authors whose pull requests get the message of PR Sync."
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
             "Everybody sees public projects; only the collaborators see the private projects, "
             "and only those who may change a project see who its collaborators are. Everybody "
-            "who sees a pull request sees who skipped a step for it; only those who may change "
+            "who sees a pull request sees who skipped a step or a quality check for it; only "
+            "those who may change "
             "the project see why, and the backups that they download hold the roles and the "
             "reasons, too."
         ),
@@ -173,6 +175,10 @@ MODELS = {
         {"id", "step", "repository", "github_id", "name", "color", "updated"},
     ),
     "pycal_dashboard.StepSkip": ("projects", {"id", "step", "issue", "user", "reason", "created"}),
+    "pycal_dashboard.CheckSkip": (
+        "projects",
+        {"id", "step", "issue", "condition", "user", "reason", "created"},
+    ),
     "pycal_dashboard.PullRequestMessage": (
         "projects",
         {
@@ -396,7 +402,10 @@ EXTERNAL_HOSTS = {"avatars.githubusercontent.com"}
 
 # The cookies of the site; it has no others, also none of other sites.
 COOKIES = [
-    ("sessionid", _("Keeps you signed in.")),
+    (
+        "sessionid",
+        _("Keeps you signed in, and the reason of a skip that you typed until you signed in."),
+    ),
     ("csrftoken", _("Protects the forms against other sites.")),
     ("django_language", _("The language you chose.")),
     ("theme", _("The colors you chose.")),

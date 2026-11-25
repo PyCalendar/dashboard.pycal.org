@@ -16,6 +16,7 @@ import pytest
 from django.utils import timezone
 
 from pycal_dashboard.models import (
+    CheckSkip,
     Issue,
     Project,
     ProjectMember,
@@ -102,7 +103,7 @@ def allowed(answer) -> bool:
     """Whether the site did what was asked, and did not refuse or ask to sign in."""
     if answer.status_code in (403, 404):
         return False
-    return not (answer.status_code == 302 and "/accounts/" in answer["Location"])
+    return not (answer.status_code in (302, 307) and "/accounts/" in answer["Location"])
 
 
 def project_exists() -> bool:
@@ -253,6 +254,27 @@ ACTIONS = {
         ),
         lambda w: not StepSkip.objects.filter(step=w.step, issue=w.pull).exists(),
     ),
+    "skip a quality check of a pull request": (
+        "write",
+        lambda c, w: c.post(
+            w.path + f"pull/{w.pull.number}/skip/",
+            {"step": w.step.pk, "skip": "status~applies~open", "reason": "Met"},
+        ),
+        lambda w: CheckSkip.objects.filter(step=w.step, issue=w.pull).exists(),
+    ),
+    "remove the skip of a quality check": (
+        "write",
+        lambda c, w: (
+            CheckSkip.objects.create(
+                step=w.step, issue=w.pull, condition="status~applies~open", reason="Before"
+            ),
+            c.post(
+                w.path + f"pull/{w.pull.number}/skip/",
+                {"step": w.step.pk, "skip": "status~applies~open", "remove": "1"},
+            ),
+        )[1],
+        lambda w: not CheckSkip.objects.filter(step=w.step, issue=w.pull).exists(),
+    ),
     "switch the step labels on": (
         "write",
         lambda c, w: c.post(w.path + "sync/labels/", {"step_labels": "sync"}),
@@ -313,6 +335,7 @@ def test_who_may_do_what(client, world, signed_in, action):
         assert PullRequestStep.objects.filter(pk=world.step.pk, name="Open").exists()
         assert not world.project.filters.filter(name="Merged").exists()
         assert StepSkip.objects.get(step=world.step, issue=world.pull).reason == "Before"
+        assert not CheckSkip.objects.exclude(reason="Before").exists()
 
 
 @pytest.mark.parametrize("signed_in", ROLES, indirect=True)

@@ -22,7 +22,8 @@ class StepAssignment:
     Steps more to the left come first; a pull request is in the left-most step that shows it,
     and in none when none does. A step whose filter has no condition in force shows none.
     A pull request is not in a step that it skips, and it is in the step that a person chose
-    with its status label (``StepOverrides``).
+    with its status label (``StepOverrides``). A quality check that the pull request skips does
+    not keep it in the step: a step whose quality checks are all done or skipped is complete.
     """
 
     def __init__(self, project: Project, scope: Scope | None = None):
@@ -35,13 +36,15 @@ class StepAssignment:
         """
         self.scope = scope or Scope.of(project)
         self.overrides = StepOverrides(project)
-        self.steps: list[tuple[PullRequestStep, list[Column]]] = []
+        # each step with its quality checks: the value of each, as its filter keeps it, and
+        # its column
+        self.steps: list[tuple[PullRequestStep, list[tuple[str, Column]]]] = []
         # the conditions of Skip if of each step: one that applies skips the step
         self.skipping: dict[int, list[Column]] = {}
         for step in project.steps.select_related("filter"):
-            columns = [Column.decode(value) for value in step.filter.columns]
-            self.steps.append((step, [c for c in columns if c.checks]))
-            self.skipping[step.pk] = [c for c in columns if c.skips]
+            columns = [(value, Column.decode(value)) for value in step.filter.columns]
+            self.steps.append((step, [(v, c) for v, c in columns if c.checks]))
+            self.skipping[step.pk] = [c for _v, c in columns if c.skips]
 
     def step_of_all(self, results: ColumnResults) -> dict[int, PullRequestStep | None]:
         """The step of every pull request at once, from the cached results of the columns.
@@ -55,7 +58,7 @@ class StepAssignment:
         found: dict[int, PullRequestStep | None] = dict.fromkeys(results.ids())
         logins = dict(Issue.objects.filter(pk__in=list(found)).values_list("pk", "author__login"))
         for step, columns in reversed(self.steps):  # the left-most step comes last and wins
-            shown = [(column, results.of(column)) for column in columns]
+            shown = [(value, column, results.of(column)) for value, column in columns]
             skipped = [results.of(column) for column in self.skipping.get(step.pk, [])]
             for pk in found:
                 if any(cells.get(pk) is True for cells in skipped):
@@ -64,7 +67,11 @@ class StepAssignment:
                     continue
                 if self.overrides.skips_step(pk, logins.get(pk) or "", step):
                     continue
-                if any(column.shows(cells.get(pk)) for column, cells in shown):
+                if any(
+                    column.shows(cells.get(pk))
+                    and self.overrides.check_skip(pk, step, value) is None
+                    for value, column, cells in shown
+                ):
                     found[pk] = step
         for pk in found:
             found[pk] = self.overrides.chosen(pk) or found[pk]
@@ -89,6 +96,10 @@ class StepAssignment:
                 continue
             if any(c.applies(issue, self.scope) is True for c in self.skipping.get(step.pk, [])):
                 continue
-            if any(column.shows(column.applies(issue, self.scope)) for column in columns):
+            if any(
+                self.overrides.check_skip(issue.pk, step, value) is None
+                and column.shows(column.applies(issue, self.scope))
+                for value, column in columns
+            ):
                 return step
         return None

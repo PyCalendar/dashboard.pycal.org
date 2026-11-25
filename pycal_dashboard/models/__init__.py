@@ -4,6 +4,7 @@ Of GitHub, the site keeps its installations with their permissions and the repos
 projects with what it read of them, with their issues and pull requests.
 """
 
+from .check_skip import CheckSkip
 from .github_user import GitHubUser
 from .installation import Installation
 from .issue import Issue
@@ -32,6 +33,7 @@ from .update_job import UpdateJob
 from .webhook_delivery import WebhookDelivery
 
 __all__ = [
+    "CheckSkip",
     "GitHubUser",
     "Installation",
     "Issue",

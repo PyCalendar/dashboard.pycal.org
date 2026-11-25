@@ -724,3 +724,16 @@ community: where to start, what waits for a review, who contributes.
 - [x] Translate the 39 new texts into German and Spanish (the person: "translate when you have time")
 - [x] Faster make messages without gettext: a cached image (docker/messages.Dockerfile) instead of installing gettext
       and the packages at every run; 6 s instead of over 10 minutes
+- [x] Quality checks can be skipped, by the same people as steps (writers and owners): a step whose quality checks are
+      all done or skipped is complete, and the pull request goes on to the next step (CheckSkip)
+- [x] A skipped quality check is ⏩ (:fast_forward:) in the PR message, where a check mark or a cross would be
+- [x] Skipping asks for a reason in a dialog that pops out, closed with ✕: "Why can the quality check X be skipped?";
+      the reason is Markdown, and its variables are never replaced
+- [x] The variables {step_check_skip_url}, {step_check_skip_url_author}, {quality_check_skip_url} and
+      {quality_check_skip_url_author}: the page of the step with the dialog open; the links of the author have a
+      secret key, with which the author may skip, too; a visitor signs in from the dialog, the reason is kept, and
+      the skip is made, or the dialog shows the error and the reason
+- [x] A page of the documentation on skips (docs/tutorial/skips.rst)
+- [ ] The person: the names {step_check_skip_url} and {step_check_skip_url_author} are as asked; or should they be
+      {step_skip_url} and {step_skip_url_author}?
+- [ ] The person: translate the new texts of skipping into German and Spanish?

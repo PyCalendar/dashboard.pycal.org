@@ -901,7 +901,9 @@ def test_skip_a_step_of_a_pull_request(signed_in, site, github, bob):
     first.locator("[data-skip-step]").click()  # the dialog pops out
     dialog = page.locator("[data-skip-dialog]:popover-open")
     expect(dialog).to_be_visible()
-    dialog.get_by_label("Reason for skipping").fill("Reviewed at the meeting")
+    dialog.get_by_label("Why can the step Peer review of the pull request be skipped?").fill(
+        "Reviewed at the meeting"
+    )
     dialog.get_by_role("button", name="Skip Peer review of the pull request").click()
     expect(page.get_by_text("The step Peer review of the pull request is skipped.")).to_be_visible()
     first = page.locator("[data-progress] [data-step]").nth(0)

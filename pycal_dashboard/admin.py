@@ -3,6 +3,7 @@
 from django.contrib import admin
 
 from .models import (
+    CheckSkip,
     GitHubUser,
     Installation,
     Issue,
@@ -84,6 +85,11 @@ admin.site.register(StepLabel, list_display=["name", "step", "repository", "gith
 admin.site.register(
     StepSkip,
     list_display=["issue", "step", "user", "created"],
+    raw_id_fields=["issue"],
+)
+admin.site.register(
+    CheckSkip,
+    list_display=["issue", "step", "condition", "user", "created"],
     raw_id_fields=["issue"],
 )
 admin.site.register(

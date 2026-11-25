@@ -376,18 +376,60 @@ class SnapshotNotFound(ProjectError):
 
 
 class SkipReasonMissing(ProjectError):
-    """You skipped a step for a pull request without a reason, but a step is skipped only with one.
+    """You skipped a step or a quality check without a reason, but nothing is skipped without one.
 
     Resolve:
-        Write why the pull request skips the step, such as *The maintainers reviewed it at the
+        Write why the pull request may skip it, such as *The maintainers reviewed it at the
         meeting*.
 
     Context:
-        Only the writers and owners of the project see the reason.
+        The reason is Markdown; only the writers and owners of the project see it.
     """
 
-    title = _("The reason to skip the step is missing")
+    title = _("The reason to skip is missing")
     status = 400
+
+
+class SkipNotAllowed(ProjectError):
+    """You tried to skip a step or a quality check of a pull request, but you may not skip it.
+
+    This happens when:
+
+    - you are not the author of the pull request and have no role *write* in the project, or
+    - you are the author, but the link that you opened has no key or a wrong one.
+
+    Resolve:
+        - When you are the author of the pull request, open the link to skip it again, from
+          the PR message on the pull request on GitHub.
+        - When you signed in with another account of GitHub, sign out and sign in with that
+          of the author.
+        - Else, ask a writer or an owner of the project to skip it, see :ref:`project-roles`.
+
+    Context:
+        The writers and owners of a project skip the steps and quality checks of every pull
+        request. The author of a pull request skips those whose link the project gives them,
+        with a key, see :ref:`skips`.
+
+    Note:
+        The reason that you typed is kept in the dialog.
+    """
+
+    title = _("You may not skip this")
+    status = 403
+
+
+class QualityCheckNotFound(ProjectError):
+    """The step has no quality check of this condition.
+
+    This happens when the condition was removed from the filter of the step, or when the
+    address or the form names another condition.
+
+    Resolve:
+        Open the step on the page of the pull request for the quality checks it has.
+    """
+
+    title = _("Quality check not found")
+    status = 404
 
 
 class FilterIsAStep(ProjectError):

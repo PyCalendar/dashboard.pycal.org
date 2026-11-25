@@ -16,6 +16,7 @@ from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import Issue, PullRequestComment, PullRequestMessage
 from pycal_dashboard.services.column_results import ColumnResults
 from pycal_dashboard.services.progress import PullRequestProgress
+from pycal_dashboard.services.skip_link import SkipLink
 from pycal_dashboard.services.step_overrides import StepOverrides
 from pycal_dashboard.step_template import (
     BADGE_ALT,
@@ -35,8 +36,14 @@ log = logging.getLogger(__name__)
 # a pull request by its number, or with its repository: 42, #42, collective/icalendar#42
 LISTED = re.compile(r"^(?:([\w.-]+/[\w.-]+))?#?(\d+)$")
 
-# the emoji of GitHub of the state of a task in the message: to do, not known yet, done
-STATES = {"todo": ":x:", "unknown": ":grey_question:", "done": ":heavy_check_mark:"}
+# the emoji of GitHub of the state of a task in the message: to do, not known yet, done, and
+# skipped by a person (⏩)
+STATES = {
+    "todo": ":x:",
+    "unknown": ":grey_question:",
+    "done": ":heavy_check_mark:",
+    "skipped": ":fast_forward:",
+}
 
 
 class MessageComments:
@@ -134,10 +141,10 @@ class MessageComments:
     def task_line(task: Task, number: int) -> str:
         """A task as an item of a numbered list, with the emoji of GitHub of its state.
 
-        ``:x:`` to do, ``:grey_question:`` not known yet, ``:heavy_check_mark:`` done (see
-        :data:`STATES`). Its description follows on the next lines, indented as far as the
-        title, so that it belongs to the item, after a line break (two spaces after the
-        title); its empty lines stay empty.
+        ``:x:`` to do, ``:grey_question:`` not known yet, ``:heavy_check_mark:`` done,
+        ``:fast_forward:`` skipped (see :data:`STATES`). Its description follows on the next
+        lines, indented as far as the title, so that it belongs to the item, after a line
+        break (two spaces after the title); its empty lines stay empty.
 
         Parameters:
             task: The task.
@@ -190,6 +197,7 @@ class MessageComments:
         todo = [task for task in tasks if task.state == "todo"]
         unknown = [task for task in tasks if task.state == "unknown"]
         done = [task for task in tasks if task.state == "done"]
+        skipped = [task for task in tasks if task.state == "skipped"]
         # the address of the badge changes with what it shows: GitHub loads it again
         version = (
             badge_version(current.step, current.done, len(current.tasks))
@@ -204,12 +212,17 @@ class MessageComments:
             # the comment stays when its pull request leaves the scope, while the badge changes
             alt=str(BADGE_ALT),
         )
+        values |= (
+            SkipLink(self.project, issue, current.step).values()
+            if current
+            else {"step_check_skip_url": "", "step_check_skip_url_author": ""}
+        )
         summary = expand(current.step.summary, values) if current else ""
         return values | {
             "step_description": summary,
-            "tasks_all": self.task_list(todo + unknown + done),
+            "tasks_all": self.task_list(todo + unknown + done + skipped),
             "tasks_todo": self.task_list(todo) or gettext("Nothing to do."),
-            "tasks_done": self.task_list(done) or gettext("Nothing is done yet."),
+            "tasks_done": self.task_list(done + skipped) or gettext("Nothing is done yet."),
         }
 
     def body(self, issue: Issue, template: str) -> str:

@@ -1,13 +1,14 @@
 """What people decided about the steps of pull requests, besides their conditions.
 
-The skips of steps, and the steps chosen with their step labels on GitHub.
+The skips of steps and of their quality checks, and the steps chosen with their step labels on
+GitHub.
 """
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pycal_dashboard.models import Project, PullRequestPlace, StepSkip
+from pycal_dashboard.models import CheckSkip, Project, PullRequestPlace, StepSkip
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -20,7 +21,9 @@ class StepOverrides:
 
     A pull request skips a step when a writer skipped it for the pull request (``StepSkip``),
     or when the step skips itself for its author (``PullRequestStep.skip_authors``). A pull
-    request is not in a step that it skips: it is in the next one that shows it. With the
+    request is not in a step that it skips: it is in the next one that shows it. A quality
+    check that a person skipped for a pull request (``CheckSkip``) keeps it in its step no
+    more, as if it was done. With the
     step labels on, a person chooses the step of a pull request with its label
     (``PullRequestPlace.chosen``): the pull request is in that step, see :meth:`chosen`.
     """
@@ -36,6 +39,10 @@ class StepOverrides:
         if issues is not None:
             skips = skips.filter(issue__in=[issue.pk for issue in issues])
         self.skips = {(skip.issue_id, skip.step_id): skip for skip in skips}
+        checks = CheckSkip.objects.filter(step__project=project).select_related("user__profile")
+        if issues is not None:
+            checks = checks.filter(issue__in=[issue.pk for issue in issues])
+        self.checks = {(skip.issue_id, skip.step_id, skip.condition): skip for skip in checks}
         self.authors = {
             step.pk: {str(login).lower() for login in step.skip_authors or []}
             for step in project.steps.all()
@@ -97,3 +104,16 @@ class StepOverrides:
         if (pk, step.pk) in self.skips:
             return True
         return bool(login) and login.lower() in self.authors.get(step.pk, ())
+
+    def check_skip(self, pk: int, step: PullRequestStep, condition: str) -> CheckSkip | None:
+        """Whether the pull request of an id skips a quality check of a step, and why.
+
+        Parameters:
+            pk: The id of the pull request.
+            step: The step.
+            condition: The quality check: the column of its condition, as the filter keeps it.
+
+        Returns:
+            The skip; None when the pull request does not skip the quality check.
+        """
+        return self.checks.get((pk, step.pk, condition))

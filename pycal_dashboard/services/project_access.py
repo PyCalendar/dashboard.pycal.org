@@ -6,7 +6,12 @@ from typing import TYPE_CHECKING
 
 from django.db.models import Q, QuerySet
 
-from pycal_dashboard.errors import ProjectNotFound, ProjectOwnersOnly, ProjectReadOnly
+from pycal_dashboard.errors import (
+    ProjectNotFound,
+    ProjectOwnersOnly,
+    ProjectReadOnly,
+    SkipNotAllowed,
+)
 from pycal_dashboard.models import Project, ProjectMember, ProjectSlug
 
 from .identity import GitHubIdentity
@@ -14,6 +19,8 @@ from .identity import GitHubIdentity
 if TYPE_CHECKING:
     from django.contrib.auth.base_user import AbstractBaseUser
     from django.contrib.auth.models import AnonymousUser
+
+    from pycal_dashboard.models import Issue
 
 
 class ProjectAccess:
@@ -28,6 +35,7 @@ class ProjectAccess:
     Update it from GitHub                     no       yes     yes    yes
     Change name, description, repositories    no       no      yes    yes
     Change filters, steps and the message     no       no      yes    yes
+    Skip steps and quality checks             no       no      yes    yes
     See the collaborators and the settings    no       no      yes    yes
     Download a backup                         no       no      yes    yes
     Add collaborators, change their roles     no       no      no     yes
@@ -35,6 +43,8 @@ class ProjectAccess:
     Restore a backup, delete it               no       no      no     yes
     ========================================  =======  ======  =====  =====
 
+    The author of a pull request also skips a step or a quality check of it, whatever their
+    role, with the link of the author that the project gives them (:meth:`may_skip`).
     Everybody who signed in creates projects and owns them. The administrators of the site
     (``SITE_ADMINS``) have the rights of an owner in every project.
     """
@@ -82,6 +92,56 @@ class ProjectAccess:
     def is_owner(self) -> bool:
         """Whether the person shares the project, makes it public or private and deletes it."""
         return self.rank() >= ProjectMember.RANK[ProjectMember.OWNER]
+
+    def is_author(self, issue: Issue) -> bool:
+        """Whether the person opened a pull request: they signed in with its account of GitHub.
+
+        Parameters:
+            issue: The pull request.
+
+        Returns:
+            True if they did.
+        """
+        author = issue.author
+        if author is None or not getattr(self.user, "is_authenticated", False):
+            return False
+        if author.user_id is not None:
+            return author.user_id == self.user.pk
+        profile = getattr(self.user, "profile", None)
+        return bool(profile and profile.github_id) and profile.github_id == str(author.github_id)
+
+    def may_skip(self, issue: Issue, author_link: bool = False) -> bool:
+        """Whether the person skips a step or a quality check of a pull request.
+
+        Parameters:
+            issue: The pull request.
+            author_link: Whether the person came with the link of the author, whose key is
+                valid (:class:`~pycal_dashboard.services.skip_link.SkipLink`).
+
+        Returns:
+            True for the writers and owners; with the link of the author, also for the author.
+        """
+        if not self.can_read:
+            return False
+        return self.can_write or (author_link and self.is_author(issue))
+
+    def require_skip(self, issue: Issue, author_link: bool = False) -> ProjectAccess:
+        """Check that the person skips a step or a quality check of a pull request.
+
+        Parameters:
+            issue: The pull request.
+            author_link: Whether the person came with the valid link of the author.
+
+        Returns:
+            These rights.
+
+        Raises:
+            ProjectNotFound: The person does not see the project.
+            SkipNotAllowed: The person neither writes nor is the author with the link.
+        """
+        if not self.require_read().may_skip(issue, author_link):
+            raise SkipNotAllowed(self.project.name)
+        return self
 
     def require_read(self) -> ProjectAccess:
         """Check that the person sees the project.

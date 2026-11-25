@@ -19,6 +19,7 @@ from django.utils.translation import gettext, ngettext
 
 from pycal_dashboard.errors import BackupInvalid, DashboardError
 from pycal_dashboard.models import (
+    CheckSkip,
     Issue,
     Profile,
     Project,
@@ -331,11 +332,17 @@ class RestorePlan:
 
         Returns:
             The name of the step, the pull request, the profile of who skipped it or None,
-            and the skip of the file, with its ``reason`` and when it was ``created``.
+            and the skip of the file, with its ``reason``, when it was ``created`` and, for a
+            quality check, its ``condition``.
         """
-        known = set(
-            StepSkip.objects.filter(step__project=self.project).values_list(
+        known = {
+            (*found, "")
+            for found in StepSkip.objects.filter(step__project=self.project).values_list(
                 "step__name", "issue__repository__full_name", "issue__number"
+            )
+        } | set(
+            CheckSkip.objects.filter(step__project=self.project).values_list(
+                "step__name", "issue__repository__full_name", "issue__number", "condition"
             )
         )
         found = []
@@ -344,7 +351,7 @@ class RestorePlan:
                 if not isinstance(skip, dict):
                     raise BackupInvalid(f"step {name}: skips: a list of mappings")
                 repository, number = str(skip.get("repository") or ""), skip.get("number")
-                if (name, repository, number) in known:
+                if (name, repository, number, str(skip.get("condition") or "")) in known:
                     continue
                 issue = Issue.objects.filter(
                     repository__in=self.project.repositories.all(),
@@ -366,8 +373,8 @@ class RestorePlan:
         if not count:
             return []
         text = ngettext(
-            "Add %(count)s skip of a step for a pull request",
-            "Add %(count)s skips of steps for pull requests",
+            "Add %(count)s skip of a step or a quality check for a pull request",
+            "Add %(count)s skips of steps or quality checks for pull requests",
             count,
         ) % {"count": count}
         return [RestoreChange("skips", text)]
@@ -545,20 +552,23 @@ class RestorePlan:
         for name, issue, by, entry in self.skips():
             if name not in steps:
                 continue
-            skip, made = StepSkip.objects.get_or_create(
-                step=steps[name],
-                issue=issue,
-                defaults={
-                    "user": by.user if by else None,
-                    "reason": str(entry.get("reason") or ""),
-                },
-            )
+            defaults = {"user": by.user if by else None, "reason": str(entry.get("reason") or "")}
+            condition = str(entry.get("condition") or "")
+            model = CheckSkip if condition else StepSkip
+            if condition:
+                skip, made = CheckSkip.objects.get_or_create(
+                    step=steps[name], issue=issue, condition=condition, defaults=defaults
+                )
+            else:
+                skip, made = StepSkip.objects.get_or_create(
+                    step=steps[name], issue=issue, defaults=defaults
+                )
             try:
                 created = parse_datetime(str(entry.get("created") or ""))
             except ValueError:  # such as a 31st of February
                 created = None
             if made and created:  # when it was skipped, not restored
-                StepSkip.objects.filter(pk=skip.pk).update(created=created)
+                model.objects.filter(pk=skip.pk).update(created=created)
 
     def apply_members(self, keys: set[str], user: AbstractBaseUser, notes: list[str]) -> None:
         """Give the ticked roles, as an owner shares the project.

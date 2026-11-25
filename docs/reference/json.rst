@@ -46,7 +46,8 @@ Every public page has its information as JSON at the address of the page with
        :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
        whether it is ``complete``, how many quality checks are ``done`` of the
        ``total``, and its ``tasks``, each with its ``condition``,
-       ``sentence``, ``state`` (``todo``, ``done`` or ``unknown``),
+       ``sentence``, ``state`` (``todo``, ``done``, ``skipped`` or
+       ``unknown``), whether it is ``skipped`` (not why, see :ref:`skips`),
        ``summary`` and ``evidence``, the links that show why its condition
        holds or not, each with ``text`` and ``url``. When several repositories have a pull request of the
        number, it lists them as ``pull_requests``: ``?repository=owner/name``

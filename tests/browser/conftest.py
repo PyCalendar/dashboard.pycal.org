@@ -71,6 +71,8 @@ def page(page, site):
     )
     # the site sends the person to GitHub to authorize it; the fake agrees and goes back at once
     page.context.route(f"{site}/accounts/github/login/**", FakeOAuth.authorize)
+    # the dialog to skip sends a visitor on to the sign in, with the form kept (307)
+    page.context.route(f"{site}/projects/*/pull/*/skip/", FakeOAuth.authorize)
     page.set_default_timeout(5000)
     yield page
     assert not errors, errors

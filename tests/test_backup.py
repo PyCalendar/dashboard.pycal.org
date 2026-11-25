@@ -149,7 +149,7 @@ def test_the_order_of_the_steps_changes_only_when_ticked(client, project, step, 
 
 
 def test_the_backup_keeps_the_skips_the_roles_and_the_settings(client, project, step, bob):  # noqa: F811
-    from pycal_dashboard.models import Project, ProjectMember, StepSkip
+    from pycal_dashboard.models import CheckSkip, Project, ProjectMember, StepSkip
     from pycal_dashboard.services.project_access import ProjectAccess
     from pycal_dashboard.services.project_editor import ProjectEditor
     from tests.conftest import person
@@ -159,23 +159,29 @@ def test_the_backup_keeps_the_skips_the_roles_and_the_settings(client, project, 
     Project.objects.filter(pk=project.pk).update(step_labels=Project.LABELS_SYNC)
     issue = project.repositories.get().issues.get(number=1)
     StepSkip.objects.create(step=step, issue=issue, user=bob, reason="Reviewed in the chat")
+    condition = step.filter.columns[0]
+    CheckSkip.objects.create(step=step, issue=issue, condition=condition, user=carol, reason="A")
     client.force_login(bob)
     data = yaml.safe_load(download(client))
     assert data["project"]["step_labels"] == "sync"
     assert {"handle": "carol", "role": "write"} in data["members"]
-    (skip,) = data["steps"][0]["skips"]
+    skip, check = data["steps"][0]["skips"]  # the skip of the step first
     assert (skip["repository"], skip["number"], skip["by"]) == ("collective/icalendar", 1, "bob")
     assert skip["reason"] == "Reviewed in the chat" and skip["created"]
+    assert "condition" not in skip and (check["condition"], check["by"]) == (condition, "carol")
     StepSkip.objects.all().delete()
+    CheckSkip.objects.all().delete()
     ProjectMember.objects.filter(user=carol).delete()
     Project.objects.filter(pk=project.pk).update(step_labels=Project.LABELS_OFF)
     text = yaml.safe_dump(data)
     page = plan(client, text).content.decode()
-    assert "Add 1 skip of a step for a pull request" in page
+    assert "Add 2 skips of steps or quality checks for pull requests" in page
     assert 'value="member:carol:write"' in page and 'value="step_labels"' in page
     restore(client, text)  # the skip is added; the role and the labels wait for a tick
     restored = StepSkip.objects.get()
     assert (restored.user, restored.reason) == (bob, "Reviewed in the chat")
+    restored_check = CheckSkip.objects.get()
+    assert (restored_check.condition, restored_check.user) == (condition, carol)
     assert restored.created.isoformat(timespec="seconds") == skip["created"]
     assert not ProjectMember.objects.filter(user=carol).exists()
     restore(client, text, ["member:carol:write", "step_labels"])
@@ -219,6 +225,7 @@ KEPT = {
         "to_closed",
     },
     "StepSkip": {"step", "issue", "user", "reason", "created"},
+    "CheckSkip": {"step", "issue", "condition", "user", "reason", "created"},
     "ProjectMember": {"user", "role"},
 }
 LEFT_OUT = {

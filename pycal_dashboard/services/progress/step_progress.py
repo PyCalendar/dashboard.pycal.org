@@ -35,16 +35,16 @@ class StepProgress:
 
     @property
     def done(self) -> int:
-        """How many tasks are not to do: done, or not known."""
+        """How many tasks are not to do: done, skipped, or not known."""
         return sum(not task.todo for task in self.tasks)
 
     @property
     def complete(self) -> bool:
-        """Whether no task of the step is to do."""
+        """Whether no task of the step is to do: each is done or skipped."""
         return self.done == len(self.tasks)
 
     @property
     def squares(self) -> list[str]:
-        """The states of the tasks for the bar: done first, then not known, then to do."""
-        order = {"done": 0, "unknown": 1, "todo": 2}
+        """The states of the tasks for the bar: done, skipped, not known, then to do."""
+        order = {"done": 0, "skipped": 1, "unknown": 2, "todo": 3}
         return sorted((task.state for task in self.tasks), key=order.__getitem__)

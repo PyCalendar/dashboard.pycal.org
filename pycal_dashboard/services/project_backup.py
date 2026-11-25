@@ -15,7 +15,7 @@ from django.utils import timezone
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.errors import BackupInvalid, BackupVersionUnknown, DashboardError
 from pycal_dashboard.import_guard import IMPORT_GUARD
-from pycal_dashboard.models import ProjectMember, PullRequestMessage, StepSkip
+from pycal_dashboard.models import CheckSkip, ProjectMember, PullRequestMessage, StepSkip
 from pycal_dashboard.step_actions import normalized
 
 if TYPE_CHECKING:
@@ -184,31 +184,41 @@ class ProjectBackup:
 
     @staticmethod
     def skips(step: int) -> list[dict]:
-        """The skips of a step for pull requests, as the file keeps them.
+        """The skips of a step and of its quality checks for pull requests, as the file keeps them.
 
         Parameters:
             step: The id of the step.
 
         Returns:
-            Each with the ``repository`` and ``number`` of the pull request, ``by``, the GitHub
+            Each with the ``repository`` and ``number`` of the pull request, the ``condition``
+            of the quality check (only for the skip of a quality check), ``by``, the GitHub
             handle of who skipped it, the ``reason`` and when it was ``created``; sorted by the
-            repository and the number.
+            repository, the number and the condition, the skip of the step first.
         """
-        skips = StepSkip.objects.filter(step=step).select_related(
-            "issue__repository", "user__profile"
-        )
-        found = [
-            {
-                "repository": skip.issue.repository.full_name,
-                "number": skip.issue.number,
-                "by": getattr(getattr(skip.user, "profile", None), "github_name", "") or "",
-                "reason": skip.reason,
-                "created": skip.created.isoformat(timespec="seconds"),
-            }
-            for skip in skips
-        ]
+        found = []
+        for model in (StepSkip, CheckSkip):
+            skips = model.objects.filter(step=step).select_related(
+                "issue__repository", "user__profile"
+            )
+            for skip in skips:
+                entry = {
+                    "repository": skip.issue.repository.full_name,
+                    "number": skip.issue.number,
+                    "by": getattr(getattr(skip.user, "profile", None), "github_name", "") or "",
+                    "reason": skip.reason,
+                    "created": skip.created.isoformat(timespec="seconds"),
+                }
+                if model is CheckSkip:
+                    entry = {**entry, "condition": skip.condition}
+                found.append(entry)
         return sorted(
-            found, key=lambda skip: (skip["repository"].lower(), skip["number"], skip["created"])
+            found,
+            key=lambda skip: (
+                skip["repository"].lower(),
+                skip["number"],
+                skip.get("condition", ""),
+                skip["created"],
+            ),
         )
 
     def message(self) -> dict | None:

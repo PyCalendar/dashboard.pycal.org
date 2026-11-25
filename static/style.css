@@ -471,8 +471,16 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 /* the dialog to skip a step pops out over the page (popover: also without JavaScript) */
 .skip-dialog { width: min(28rem, calc(100vw - 2rem)); padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); box-shadow: 0 .6rem 2rem rgba(0, 0, 0, .3); text-align: left; }
 .skip-dialog::backdrop { background: rgba(0, 0, 0, .35); }
-.skip-dialog h3 { margin-top: 0; }
+.skip-dialog h3 { margin: 0; }
 .skip-form textarea { width: 100%; }
+.skip-dialog-head { display: flex; align-items: start; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; }
+.dialog-close { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border: 1px solid transparent; border-radius: .3rem; background: none; color: var(--text-muted); font-size: 1.1rem; line-height: 1; text-decoration: none; cursor: pointer; }
+.dialog-close:hover, .dialog-close:focus-visible { border-color: var(--border); color: var(--text); background: var(--surface-tint); }
+/* the dialog that a link opens: open at once, over the page, also without JavaScript */
+.skip-dialog-open { position: fixed; inset: 0; z-index: 50; margin: auto; height: fit-content; max-height: calc(100vh - 2rem); overflow: auto; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .35), 0 .6rem 2rem rgba(0, 0, 0, .3); }
+.skip-reason { display: inline; }
+.skip-reason > p { display: inline; margin: 0; }
+.skip-reason > p + p, .skip-reason > ul, .skip-reason > ol { display: block; margin: .25rem 0 0; }
 /* past steps green with a check mark; the current one yellow when partly done, red when
    nothing is done; future steps gray, without numbers; the chosen step has a background;
    skipped steps are gray but show their tasks */
@@ -496,6 +504,7 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .square { width: .8rem; height: .8rem; border-radius: .15rem; background: var(--danger); }
 .square-done { background: var(--success); }
 .square-unknown { background: var(--border); }
+.square-skipped { background: var(--success); opacity: .45; }
 .progress-here { display: block; color: var(--primary); font-weight: 600; }
 /* outside of the usual steps: all of them gray */
 .progress-bar[data-outside] .progress-step { border-color: var(--border); color: var(--text-muted); }
@@ -506,13 +515,17 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .task { border: 1px solid var(--border); border-left-width: .3rem; border-radius: .4rem; padding: .4rem .7rem; }
 .task-todo { border-left-color: var(--danger); }
 .task-done { border-left-color: var(--success); }
+.task-skipped { border-left-color: var(--success); border-left-style: dashed; }
 .task > summary { display: flex; align-items: baseline; gap: .5rem; cursor: pointer; }
 .task-summary p { display: inline; margin: 0; }
 .task-mark { flex: none; font-weight: 700; }
 .task-mark-todo { padding: 0 .35rem; border-radius: .25rem; background: var(--danger); color: var(--surface); font-size: .75rem; letter-spacing: .04em; }
 .task-mark-done { color: var(--success); }
 .task-mark-unknown { color: var(--text-muted); }
-.task-done .task-summary { color: var(--text-muted); }
+.task-mark-skipped { font-weight: 400; }
+.task-done .task-summary, .task-skipped .task-summary { color: var(--text-muted); }
+.task-skip { margin-top: .4rem; font-size: .9rem; }
+.task-skip form { display: inline; }
 .task-body { margin: .4rem 0 0 0; }
 .evidence { margin: .3rem 0 0; padding-left: 1.2rem; font-size: .9rem; }
 .evidence li { margin: .1rem 0; }

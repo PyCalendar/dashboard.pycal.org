@@ -141,6 +141,7 @@ def test_the_json(client, project, steps):  # noqa: F811
         "condition": "labels~applies~present~needs review",
         "sentence": "It has the label needs review",
         "state": "todo",
+        "skipped": False,
         "summary": "Review Ready",
         "evidence": [{"text": "Its labels on GitHub", "url": f"{URL}/1"}],
     }
@@ -240,14 +241,14 @@ def test_a_skipped_step_moves_the_pull_request_to_the_next(client, project, step
     assert "data-skipped" in box and "data-skip-mark" in box and ">0/1<" in box  # its tasks
     assert "The maintainers met" in box and "data-unskip" in box and ">Don't skip<" in box
     status = box.split('class="progress-status"')[1].split("</div>")[0]
-    assert "Skipped by" in status and ': <span class="skip-reason" data-skip-reason>The' in status
+    assert "Skipped by" in status and "data-skip-reason><p>The maintainers met</p>" in status
     assert "badge" not in status
     assert 'href="/projects/icalendar/contributors/bob/"' in box  # who, on the site
     assert "data-skip-step" not in box
     other = page.split(f'data-step="{open_step.pk}"')[1].split("</li>")[0]
     assert "The pull request is here" in other and "data-skip-step" in other
-    assert 'popovertarget="skip-' in other and "popover data-skip-dialog" in other
-    assert "Reason for skipping" in other and "see why" not in other
+    assert 'popovertarget="skip-' in other and "popover aria-labelledby" in other
+    assert "Why can the step Open be skipped?" in other and "see why" not in other
     assert client.get("/projects/icalendar/contributors/bob/").status_code == 200
     data = client.get(f"/projects/icalendar/pull/{issue.number}.json").json()
     assert data["step"] == open_step.pk and data["steps"][1]["skipped"] is True
@@ -277,7 +278,7 @@ def test_everybody_sees_the_skip_but_only_writers_the_reason(
         box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
         assert "data-skip-mark" in box and "data-skipped-by" in box
         assert "Secret" not in page and "data-unskip" not in page and "data-skip-step" not in page
-        assert skip(client, second).status_code in (302, 403)
+        assert skip(client, second).status_code in (307, 403)  # anonymous: to sign in
     assert StepSkip.objects.get().reason == "Secret"  # readers change nothing
     assert skip(client, second).status_code == 403
 
@@ -286,7 +287,7 @@ def test_a_skip_needs_a_reason_and_a_step(client, project, steps, bob):  # noqa:
     _first, second = steps
     client.force_login(bob)
     answer = skip(client, second, reason="  ")
-    assert answer.status_code == 400 and "The reason to skip the step is missing" in (
+    assert answer.status_code == 400 and "The reason to skip is missing" in (
         answer.content.decode()
     )
     answer = client.post(
@@ -308,7 +309,7 @@ def test_a_step_skips_itself_for_its_authors(client, project, steps, open_step, 
     assert progress.steps[1].skip.automatic and progress.current.step == open_step
     page = client.get(f"/projects/icalendar/pull/{issue.number}/").content.decode()
     box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
-    assert "data-skip-mark" in box and ">Skipped</small>" in box
+    assert "data-skip-mark" in box and ">Skipped</div>" in box
     assert "data-skipped-by" not in box and "data-unskip" not in box and "data-skip-step" not in box
     steps_page = client.get(f"/projects/icalendar/steps/?step_id={second.pk}").content.decode()
     assert 'value="octocat"' in steps_page and "data-complete-list" in steps_page

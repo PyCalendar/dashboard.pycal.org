@@ -6,7 +6,7 @@ the browser tests send it back to the site instead, as GitHub would after the pe
 """
 
 import json
-from urllib.parse import parse_qs, urlencode, urlparse
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse
 
 import requests
 from requests.adapters import BaseAdapter
@@ -65,9 +65,35 @@ class FakeOAuth(BaseAdapter):
 
     @staticmethod
     def authorize(route) -> None:
-        """The site sends the browser to GitHub, where the person agrees: back to the site."""
+        """The site sends the browser to GitHub, where the person agrees: back to the site.
+
+        A form that the site sends on to the sign in, with its method kept (307), such as the
+        one that skips a step, is followed first: routes do not see redirects.
+        """
         response = route.fetch(max_redirects=0)
         location = response.headers.get("location", "")
+        while response.status in (307, 308) and location.startswith("/"):
+            # as a browser: the cookies of the redirect, such as a new session, go along
+            cookies = dict(
+                part.split("=", 1)
+                for part in route.request.headers.get("cookie", "").split("; ")
+                if "=" in part
+            )
+            for header in response.headers_array:
+                if header["name"].lower() == "set-cookie":
+                    name, value = header["value"].split(";", 1)[0].split("=", 1)
+                    cookies[name] = value
+                    route.request.frame.page.context.add_cookies(
+                        [{"name": name, "value": value, "url": route.request.url}]
+                    )
+            headers = {
+                **route.request.headers,
+                "cookie": "; ".join(f"{k}={v}" for k, v in cookies.items()),
+            }
+            response = route.fetch(
+                url=urljoin(route.request.url, location), headers=headers, max_redirects=0
+            )
+            location = response.headers.get("location", "")
         if not location.startswith("https://github.com/login/oauth/authorize"):
             route.fulfill(response=response)
             return

@@ -438,7 +438,7 @@ The boxes of the steps are aligned in rows, as in a table: the names, the qualit
 request is here*, the skip and the buttons.
 
 Writers and owners skip a step for a pull request: **Skip** below the step opens a dialog
-that asks for the *Reason for skipping*. The pull request is then in the next step that shows
+that asks why the step can be skipped, see :ref:`skips`. The pull request is then in the next step that shows
 it; the skipped step is gray with a dashed border and still shows its quality checks, and its actions do
 not follow. In the row of *The pull request is here*, everybody sees *Skipped by* and who
 skipped it, linked to their page in the project; the writers and owners also see the reason,
@@ -449,7 +449,8 @@ and names nobody.
 
 A click on a step shows its summary and its quality checks below the bar. The quality checks to do
 come first, marked *TODO* and open, with their description; the quality checks done have
-a green check mark and are closed. The summaries and descriptions show the
+a green check mark and are closed, and those skipped have ⏩ and who skipped them.
+Writers and owners skip a quality check with **Skip** in it, see :ref:`skips`. The summaries and descriptions show the
 values of the pull request in place of the variables.
 
 Each quality check shows the evidence of its condition: the least that shows why it holds
@@ -650,6 +651,32 @@ when the step changes.
      - The id of the step
      - ``7``
 
+.. list-table:: Skip
+   :header-rows: 1
+   :widths: 25 45 30
+
+   * - Variable
+     - Its value
+     - Example
+   * - ``{step_check_skip_url}``
+     - The address that opens the dialog to skip the step for the pull request
+       on dashboard.pycal.org, for the writers and owners of the project. Such
+       as ``[Skip this step]({step_check_skip_url})``, see :ref:`skips`
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step``
+   * - ``{step_check_skip_url_author}``
+     - The same address with a secret key, with which the author of the pull
+       request may skip the step, too
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step&key=0123456789abcdef0123``
+   * - ``{quality_check_skip_url}``
+     - In the summary and the description of a quality check: the address that
+       opens the dialog to skip it, for the writers and owners of the project
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=reviews~applies~2``
+   * - ``{quality_check_skip_url_author}``
+     - In the summary and the description of a quality check: the same address
+       with a secret key, with which the author of the pull request may skip
+       it, too
+     - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=reviews~applies~2&key=0123456789abcdef0123``
+
 .. list-table:: Message
    :header-rows: 1
    :widths: 25 45 30
@@ -664,17 +691,21 @@ when the step changes.
    * - ``{tasks_all}``
      - All quality checks of the step, as a numbered list: those to do first, with
        ``:x:``, those not known yet with ``:grey_question:``, those done at the
-       bottom, with ``:heavy_check_mark:``, emoji that GitHub shows; the
+       bottom, with ``:heavy_check_mark:``, and after them those skipped, with
+       ``:fast_forward:`` (⏩), emoji that GitHub shows; the
        description of each quality check on the lines below it, indented, so that it
        belongs to its item
      - | ``1. :x: Solve the conflict``
        | ``2. :heavy_check_mark: Review it``
+       | ``3. :fast_forward: Update the changelog``
    * - ``{tasks_todo}``
      - The quality checks to do; *Nothing to do.* when there are none
      - ``1. :x: Solve the conflict``
    * - ``{tasks_done}``
-     - The quality checks done; *Nothing is done yet.* when there are none
-     - ``1. :heavy_check_mark: Review it``
+     - The quality checks done, then those skipped; *Nothing is done yet.* when
+       there are none
+     - | ``1. :heavy_check_mark: Review it``
+       | ``2. :fast_forward: Update the changelog``
 
 The variables of the group *Message* are for the message of the tab
 *PR Sync* only, see :ref:`pr-message`; in a pull request in no step, the

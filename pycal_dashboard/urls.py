@@ -66,6 +66,11 @@ urlpatterns = [
         name="project_pull_request_skip",
     ),
     path(
+        "projects/<project_slug:slug>/pull/<int:number>/skip/resume/",
+        pull_request.project_pull_request_skip_resume,
+        name="project_pull_request_skip_resume",
+    ),
+    path(
         "projects/<project_slug:slug>/pull/<int:number>/message/",
         pull_request.project_pull_request_message,
         name="project_pull_request_message",

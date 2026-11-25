@@ -7,4 +7,5 @@ Tutorial
 
    use
    projects
+   skips
    account
