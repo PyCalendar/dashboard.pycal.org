@@ -98,7 +98,7 @@ def test_writers_see_skip_on_the_quality_checks_to_do(
     page = client.get(page_of(ready, step=review.pk)).content.decode()
     shown = page.split("data-tasks")[1]
     assert "data-skip-check" in shown and "popover aria-labelledby" in shown
-    assert "Why can the quality check Review Ready be skipped?" in shown
+    assert 'Why can the quality check "Review Ready" be skipped?' in shown
     assert 'popovertargetaction="hide"' in shown and "✕" in shown  # closed with ✕
     assert 'name="skip" value="labels~applies~present~needs review"' in shown
     first = client.get(page_of(ready, step=_first.pk)).content.decode()
@@ -161,7 +161,7 @@ def test_the_variables_of_the_links(
     ready,
 ):
     _first, review = steps
-    review.summary = "[Skip it]({step_check_skip_url_author}) or ({step_check_skip_url})"
+    review.summary = "[Skip it]({step_skip_url_author}) or ({step_skip_url})"
     review.conditions = {
         REVIEW: {"summary": "Review", "description": "[Skip]({quality_check_skip_url_author})"}
     }
@@ -172,10 +172,10 @@ def test_the_variables_of_the_links(
 
     page = f"{settings.SITE_URL}/projects/icalendar/pull/{ready.number}/"
     link = SkipLink(project, ready, review)
-    assert values["step_check_skip_url"] == (
+    assert values["step_skip_url"] == (
         f"{page}?repository=collective%2Ficalendar&step={review.pk}&skip=step"
     )
-    assert values["step_check_skip_url_author"].endswith(f"&skip=step&key={link.key('step')}")
+    assert values["step_skip_url_author"].endswith(f"&skip=step&key={link.key('step')}")
     task = progress.steps[1].tasks[0]
     query = parse_qs(urlparse(task.skip_urls["author"]).query)
     assert query["skip"] == [REVIEW] and link.valid(REVIEW, query["key"][0])
@@ -185,7 +185,7 @@ def test_the_variables_of_the_links(
     other = SkipLink(project, Issue.objects.get(title="Conflict"), review)
     assert other.key(REVIEW) != link.key(REVIEW)  # a key for each pull request
     message = MessageComments(project).values(ready)
-    assert message["step_check_skip_url_author"] == values["step_check_skip_url_author"]
+    assert message["step_skip_url_author"] == values["step_skip_url_author"]
 
 
 def test_a_link_opens_the_dialog(
@@ -206,7 +206,7 @@ def test_a_link_opens_the_dialog(
     assert "data-skip-link" in dialog and "data-skip-submit" in dialog
     assert f'href="?step={review.pk}" aria-label="Close"' in dialog
     assert f'name="key" value="{key}"' in dialog
-    assert "Why can the quality check Review Ready be skipped?" in dialog
+    assert "Why can the quality check &quot;Review Ready&quot; be skipped?" in dialog
     client.logout()
     dialog = client.get(address).content.decode().split("<dialog open")[1]
     assert "data-skip-sign-in" in dialog and "Sign in with GitHub" in dialog
@@ -317,3 +317,42 @@ def test_a_skip_of_a_quality_check_the_step_lacks(
     assert answer.status_code == 404 and "Quality check not found" in answer.content.decode()
     assert skip_check(client, review, ready, reason=" ").status_code == 400
     assert not CheckSkip.objects.exists()
+
+
+def test_the_old_names_of_the_links_are_changed_over(
+    project,  # noqa: F811
+    steps,  # noqa: F811
+    ready,
+):
+    """{step_check_skip_url} and {step_check_skip_url_author} are now {step_skip_url} and
+    {step_skip_url_author}: saved texts are changed over, and the old names still work."""
+    import importlib
+
+    from django.apps import apps
+
+    from pycal_dashboard.models import PullRequestMessage
+    from pycal_dashboard.services.restore_plan import message_fields, step_fields
+    from pycal_dashboard.step_template import VARIABLES, expand
+
+    old = "[Skip]({step_check_skip_url}) [Mine]({step_check_skip_url_author}) {pr_title}"
+    new = "[Skip]({step_skip_url}) [Mine]({step_skip_url_author}) {pr_title}"
+    assert "step_check_skip_url" not in VARIABLES  # not documented any more
+    _first, review = steps
+    review.summary = old
+    review.conditions = {REVIEW: {"summary": "Review", "description": old}}
+    review.save()
+    message = PullRequestMessage.objects.create(project=project, template=old, draft=old)
+    migration = importlib.import_module("pycal_dashboard.migrations.0038_rename_step_skip_url")
+    migration.change_over(apps, None)
+    review.refresh_from_db()
+    message.refresh_from_db()
+    assert review.summary == new and review.conditions[REVIEW]["description"] == new
+    assert message.template == new and message.draft == new
+    values = PullRequestProgress(ready, project).values(
+        PullRequestProgress(ready, project).steps[1]
+    )
+    assert expand(old, values) == expand(new, values)  # the old names still work
+    assert "{step_check_skip_url}" not in expand(old, values)
+    restored = step_fields({"summary": old, "tasks": {REVIEW: {"description": old}}})
+    assert restored["summary"] == new and restored["conditions"][REVIEW]["description"] == new
+    assert message_fields({"template": old, "draft": old})["template"] == new

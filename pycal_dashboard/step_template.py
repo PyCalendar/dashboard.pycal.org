@@ -100,14 +100,14 @@ GROUPS = {
     "skip": (
         _("Skip"),
         {
-            "step_check_skip_url": (
+            "step_skip_url": (
                 _(
                     "the address that opens the dialog to skip the step for the pull request on "
                     "%(site_name)s, for the writers and owners of the project"
                 ),
                 "https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step",
             ),
-            "step_check_skip_url_author": (
+            "step_skip_url_author": (
                 _(
                     "the same address with a secret key, with which the author of the pull "
                     "request may skip the step, too"
@@ -168,6 +168,12 @@ MARKDOWN_VALUES = {"pr_badge", "step_description", "tasks_all", "tasks_todo", "t
 VARIABLES = {
     name: about[0] for _title, members in GROUPS.values() for name, about in members.items()
 }
+# the old names of variables, by their new names: they still work, but are not documented, and
+# the texts that people saved with them were changed over (the migration 0038, and restoring)
+RENAMED = {
+    "step_check_skip_url": "step_skip_url",
+    "step_check_skip_url_author": "step_skip_url_author",
+}
 VARIABLE = re.compile(r"\{([a-z_]+)\}")
 # the characters that make Markdown, escaped in values with a backslash
 MARKDOWN = re.compile(r"([\\`*_{}\[\]()#+\-.!|<>~])")
@@ -205,12 +211,47 @@ def expand(template: str, values: dict[str, str]) -> str:
     """
 
     def replace(match: re.Match) -> str:
-        name = match[1]
+        name = RENAMED.get(match[1], match[1])
         if name in VARIABLES and name in values:
             return values[name] if name in MARKDOWN_VALUES else escape(values[name])
         return match[0]
 
     return VARIABLE.sub(replace, template or "")
+
+
+def renamed(template: str) -> str:
+    """A template with the old names of variables changed to the new ones (:data:`RENAMED`).
+
+    Parameters:
+        template: Such as ``[Skip]({step_check_skip_url})``.
+
+    Returns:
+        Such as ``[Skip]({step_skip_url})``.
+
+    Examples:
+        >>> renamed("[Skip]({step_check_skip_url_author}) {pr_title}")
+        '[Skip]({step_skip_url_author}) {pr_title}'
+    """
+    return VARIABLE.sub(lambda match: "{" + RENAMED.get(match[1], match[1]) + "}", template or "")
+
+
+def renamed_conditions(conditions: dict) -> dict:
+    """The texts of the quality checks of a step with the new names of variables.
+
+    Parameters:
+        conditions: The ``summary`` and ``description`` of each, by its condition.
+
+    Returns:
+        The same, changed over with :func:`renamed`.
+    """
+    return {
+        value: {
+            key: renamed(text) if isinstance(text, str) else text for key, text in notes.items()
+        }
+        if isinstance(notes, dict)
+        else notes
+        for value, notes in (conditions or {}).items()
+    }
 
 
 def values_of(
@@ -298,7 +339,7 @@ def example(project: Project, step: PullRequestStep | None = None) -> dict[str, 
         name: about[1] for _title, members in GROUPS.values() for name, about in members.items()
     }
     page = steps_url(project, 42, "collective/icalendar")
-    for name, target in (("step_check", "step"), ("quality_check", "reviews~applies~2")):
+    for name, target in (("step", "step"), ("quality_check", "reviews~applies~2")):
         link = f"{page}&{urlencode({'step': step.pk if step else 7, 'skip': target})}"
         values[f"{name}_skip_url"] = link
         values[f"{name}_skip_url_author"] = f"{link}&key=0123456789abcdef0123"

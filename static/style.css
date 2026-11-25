@@ -504,7 +504,7 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .square { width: .8rem; height: .8rem; border-radius: .15rem; background: var(--danger); }
 .square-done { background: var(--success); }
 .square-unknown { background: var(--border); }
-.square-skipped { background: var(--success); opacity: .45; }
+.square-skipped { background: var(--border); }
 .progress-here { display: block; color: var(--primary); font-weight: 600; }
 /* outside of the usual steps: all of them gray */
 .progress-bar[data-outside] .progress-step { border-color: var(--border); color: var(--text-muted); }
@@ -515,14 +515,14 @@ h2 .save-indicator { margin-left: .5rem; vertical-align: middle; font-size: .85r
 .task { border: 1px solid var(--border); border-left-width: .3rem; border-radius: .4rem; padding: .4rem .7rem; }
 .task-todo { border-left-color: var(--danger); }
 .task-done { border-left-color: var(--success); }
-.task-skipped { border-left-color: var(--success); border-left-style: dashed; }
+.task-skipped { border-left-color: var(--border); color: var(--text-muted); }
 .task > summary { display: flex; align-items: baseline; gap: .5rem; cursor: pointer; }
 .task-summary p { display: inline; margin: 0; }
 .task-mark { flex: none; font-weight: 700; }
 .task-mark-todo { padding: 0 .35rem; border-radius: .25rem; background: var(--danger); color: var(--surface); font-size: .75rem; letter-spacing: .04em; }
 .task-mark-done { color: var(--success); }
 .task-mark-unknown { color: var(--text-muted); }
-.task-mark-skipped { font-weight: 400; }
+.task-mark-skipped { font-weight: 400; filter: grayscale(1); opacity: .7; }
 .task-done .task-summary, .task-skipped .task-summary { color: var(--text-muted); }
 .task-skip { margin-top: .4rem; font-size: .9rem; }
 .task-skip form { display: inline; }

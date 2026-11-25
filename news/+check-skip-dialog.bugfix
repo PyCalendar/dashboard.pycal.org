@@ -1,0 +1,1 @@
+The dialog to skip a quality check names it in quotes, such as *Skip the quality check: "This PR is not ready for documentation review"*, and a skipped quality check is gray, without a dashed line.

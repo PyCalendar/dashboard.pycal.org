@@ -6,7 +6,7 @@ tasks, done in green on the left and to do in red on the right. A click on a ste
 tasks below: those to do first and open, those done with a check mark and closed.
 
 Writers skip a step or a quality check in a dialog that asks why; the links of the texts
-(``{step_check_skip_url}`` and the others, see
+(``{step_skip_url}`` and the others, see
 :class:`~pycal_dashboard.services.skip_link.SkipLink`) open the page with that dialog. A
 visitor who did not sign in signs in from the dialog, and the reason they typed is kept in the
 session until they are back.
@@ -250,7 +250,8 @@ def skip_dialog(
         target: ``step``, or the condition of a quality check of the step.
 
     Returns:
-        What the dialog shows: its ``title``, its ``question``, the ``target``, the ``key``,
+        What the dialog shows: its ``title``, its ``question``, the text of its ``button``, the
+        ``target``, the ``key``,
         whether the person ``signed_in`` and is ``allowed`` to skip, and the ``reason`` and the
         ``error`` of a skip that the person asked for before, and the GitHub handle they
         ``signed_in_as`` when they may not skip; None when there is nothing to
@@ -259,15 +260,16 @@ def skip_dialog(
     if target == STEP:
         if shown.skip is not None:
             return None
-        title = _("Skip %(name)s") % {"name": shown.step.name}
+        title = button = _("Skip %(name)s") % {"name": shown.step.name}
         question = _("Why can the step %(name)s be skipped?") % {"name": shown.step.name}
     else:
         task = next((task for task in shown.tasks if task.value == target), None)
         if task is None or not task.skippable:
             return None
         name = task.name
-        title = _("Skip the quality check %(name)s") % {"name": name}
-        question = _("Why can the quality check %(name)s be skipped?") % {"name": name}
+        title = _('Skip the quality check: "%(name)s"') % {"name": name}
+        question = _('Why can the quality check "%(name)s" be skipped?') % {"name": name}
+        button = _("Skip the quality check")
     key = request.GET.get("key", "")[:40]
     author_link = SkipLink(access.project, issue, shown.step).valid(target, key)
     draft = request.session.get(SKIP_DRAFT) or {}
@@ -284,6 +286,7 @@ def skip_dialog(
         "step": shown.step.pk,
         "title": title,
         "question": question,
+        "button": button,
         "target": target,
         "key": key if author_link else "",
         "signed_in": signed_in,

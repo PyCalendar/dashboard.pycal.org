@@ -701,8 +701,8 @@ community: where to start, what waits for a review, who contributes.
       on GitHub, else to the pull request; the variable {pr_message_url} is that address
 - [x] Self-reviews counted toward the two reviews of Peer review (PyCalendar/icalendar#2101): solved since 0.21.0; a test
       replicates its five reviews (three of its author SemTiOne, two of niccokunzmann)
-- [ ] The person: do two reviews of the same person count as two (#2101 has two of niccokunzmann: Peer review done),
-      or should "at least 2 reviews from others" count different reviewers?
+- [x] The person: do two reviews of the same person count as two (#2101 has two of niccokunzmann: Peer review done),
+      or should "at least 2 reviews from others" count different reviewers? Decided: they count as two, for now
 - [x] The completion of GitHub handles is the same in every field (steps, PR Sync, roles): the authors of the pull
       requests of the project first, the people the site knows that the person may see, then all of GitHub (the
       search of users with the token of the person); the roles only the people who signed in, as only they get one
@@ -734,6 +734,9 @@ community: where to start, what waits for a review, who contributes.
       secret key, with which the author may skip, too; a visitor signs in from the dialog, the reason is kept, and
       the skip is made, or the dialog shows the error and the reason
 - [x] A page of the documentation on skips (docs/tutorial/skips.rst)
-- [ ] The person: the names {step_check_skip_url} and {step_check_skip_url_author} are as asked; or should they be
-      {step_skip_url} and {step_skip_url_author}?
-- [ ] The person: translate the new texts of skipping into German and Spanish?
+- [x] Rename {step_check_skip_url} and {step_check_skip_url_author} to {step_skip_url} and {step_skip_url_author}:
+      the saved texts of steps and messages are changed over (migration 0038, and restoring a backup); the old names
+      still work, but are not documented
+- [x] Translate the new texts of skipping into German and Spanish ("translate when you have time")
+- [x] The dialog of a quality check says: Skip the quality check: "This PR is not ready for documentation review"
+- [x] A skipped quality check is gray, not with a dashed line

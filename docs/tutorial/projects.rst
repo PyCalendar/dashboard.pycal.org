@@ -449,7 +449,8 @@ and names nobody.
 
 A click on a step shows its summary and its quality checks below the bar. The quality checks to do
 come first, marked *TODO* and open, with their description; the quality checks done have
-a green check mark and are closed, and those skipped have ⏩ and who skipped them.
+a green check mark and are closed, and those skipped are gray, with ⏩ and who
+skipped them.
 Writers and owners skip a quality check with **Skip** in it, see :ref:`skips`. The summaries and descriptions show the
 values of the pull request in place of the variables.
 
@@ -658,12 +659,12 @@ when the step changes.
    * - Variable
      - Its value
      - Example
-   * - ``{step_check_skip_url}``
+   * - ``{step_skip_url}``
      - The address that opens the dialog to skip the step for the pull request
        on dashboard.pycal.org, for the writers and owners of the project. Such
-       as ``[Skip this step]({step_check_skip_url})``, see :ref:`skips`
+       as ``[Skip this step]({step_skip_url})``, see :ref:`skips`
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step``
-   * - ``{step_check_skip_url_author}``
+   * - ``{step_skip_url_author}``
      - The same address with a secret key, with which the author of the pull
        request may skip the step, too
      - ``https://dashboard.pycal.org/projects/icalendar/pull/42/?repository=collective%2Ficalendar&step=7&skip=step&key=0123456789abcdef0123``

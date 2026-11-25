@@ -215,7 +215,7 @@ class MessageComments:
         values |= (
             SkipLink(self.project, issue, current.step).values()
             if current
-            else {"step_check_skip_url": "", "step_check_skip_url_author": ""}
+            else {"step_skip_url": "", "step_skip_url_author": ""}
         )
         summary = expand(current.step.summary, values) if current else ""
         return values | {

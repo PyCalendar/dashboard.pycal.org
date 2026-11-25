@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 12:08+0000\n"
+"POT-Creation-Date: 2026-11-25 18:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -703,13 +703,13 @@ msgid "Snapshot not found"
 msgstr "Instantánea no encontrada"
 
 msgid "The reason to skip is missing"
-msgstr ""
+msgstr "Falta el motivo para saltar"
 
 msgid "You may not skip this"
-msgstr ""
+msgstr "No puedes saltar esto"
 
 msgid "Quality check not found"
-msgstr ""
+msgstr "Control de calidad no encontrado"
 
 msgid "The filter is a step already"
 msgstr "El filtro ya es un paso"
@@ -932,6 +932,10 @@ msgid ""
 "why, and the GitHub handles of the authors whose pull requests get the "
 "message of PR Sync."
 msgstr ""
+"Los proyectos que creas, el rol de cada colaborador con su identificador de "
+"GitHub, quién saltó un paso o un control de calidad de un pull request, "
+"cuándo y por qué, y los identificadores de GitHub de los autores cuyos pull "
+"requests reciben el mensaje de PR Sync."
 
 msgid "Collaborators of projects"
 msgstr "Colaboradores de proyectos"
@@ -943,6 +947,12 @@ msgid ""
 "check for it; only those who may change the project see why, and the backups "
 "that they download hold the roles and the reasons, too."
 msgstr ""
+"Todos ven los proyectos públicos; solo los colaboradores ven los proyectos "
+"privados, y solo quienes pueden cambiar un proyecto ven quiénes son sus "
+"colaboradores. Todos los que ven un pull request ven quién saltó un paso o "
+"un control de calidad de él; solo quienes pueden cambiar el proyecto ven por "
+"qué, y las copias de seguridad que descargan contienen también los roles y "
+"los motivos."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Para mostrar los proyectos y decidir quién puede cambiarlos."
@@ -1105,6 +1115,8 @@ msgid ""
 "Keeps you signed in, and the reason of a skip that you typed until you "
 "signed in."
 msgstr ""
+"Mantiene tu sesión iniciada, y el motivo de un salto que escribiste hasta "
+"que inicias sesión."
 
 msgid "Protects the forms against other sites."
 msgstr "Protege los formularios frente a otros sitios."
@@ -1193,7 +1205,9 @@ msgstr "Reemplazar el mensaje de PR Sync y su sincronización"
 msgid "Add %(count)s skip of a step or a quality check for a pull request"
 msgid_plural "Add %(count)s skips of steps or quality checks for pull requests"
 msgstr[0] ""
+"Añadir %(count)s salto de un paso o un control de calidad de un pull request"
 msgstr[1] ""
+"Añadir %(count)s saltos de pasos o controles de calidad de pull requests"
 
 #, python-format
 msgid "@%(handle)s never signed in: no role"
@@ -1305,21 +1319,32 @@ msgid ""
 "the address that opens the dialog to skip the step for the pull request on "
 "%(site_name)s, for the writers and owners of the project"
 msgstr ""
+"la dirección que abre en %(site_name)s el diálogo para saltar el paso del "
+"pull request, para las personas con permiso de escritura y los propietarios "
+"del proyecto"
 
 msgid ""
 "the same address with a secret key, with which the author of the pull "
 "request may skip the step, too"
 msgstr ""
+"la misma dirección con una clave secreta, con la que también el autor del "
+"pull request puede saltar el paso"
 
 msgid ""
 "in the summary and description of a quality check: the address that opens "
 "the dialog to skip it, for the writers and owners of the project"
 msgstr ""
+"en el resumen y la descripción de un control de calidad: la dirección que "
+"abre el diálogo para saltarlo, para las personas con permiso de escritura y "
+"los propietarios del proyecto"
 
 msgid ""
 "in the summary and description of a quality check: the same address with a "
 "secret key, with which the author of the pull request may skip it, too"
 msgstr ""
+"en el resumen y la descripción de un control de calidad: la misma dirección "
+"con una clave secreta, con la que también el autor del pull request puede "
+"saltarlo"
 
 msgid "Message"
 msgstr "Mensaje"
@@ -1331,6 +1356,8 @@ msgid ""
 "all quality checks of the step, those to do first, those done and skipped at "
 "the bottom"
 msgstr ""
+"todos los controles de calidad del paso, primero los pendientes, abajo los "
+"hechos y los saltados"
 
 msgid "the quality checks to do; a sentence when there is nothing to do"
 msgstr ""
@@ -1338,6 +1365,8 @@ msgstr ""
 
 msgid "the quality checks done and skipped; a sentence when nothing is done"
 msgstr ""
+"los controles de calidad hechos y saltados; una frase cuando no hay nada "
+"hecho"
 
 msgid "View progress"
 msgstr "Ver el progreso"
@@ -1573,13 +1602,13 @@ msgstr "Cerrar"
 
 #, python-format
 msgid "You signed in as @%(signed_in_as)s."
-msgstr ""
+msgstr "Iniciaste sesión como @%(signed_in_as)s."
 
 msgid "What this error means and how to solve it"
 msgstr "Qué significa este error y cómo resolverlo"
 
 msgid "Your reason is kept while you sign in."
-msgstr ""
+msgstr "Tu motivo se guarda mientras inicias sesión."
 
 msgid "Back to the start"
 msgstr "Volver al inicio"
@@ -3123,7 +3152,7 @@ msgstr "Saltar %(name)s"
 
 #, python-format
 msgid "Why can the step %(name)s be skipped?"
-msgstr ""
+msgstr "¿Por qué se puede saltar el paso %(name)s?"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no quality "
@@ -3144,7 +3173,7 @@ msgid "TODO"
 msgstr "PENDIENTE"
 
 msgid "skipped"
-msgstr ""
+msgstr "saltado"
 
 msgid "not known yet"
 msgstr "aún desconocido"
@@ -3153,12 +3182,15 @@ msgid "Condition:"
 msgstr "Condición:"
 
 #, python-format
-msgid "Skip the quality check %(name)s"
-msgstr ""
+msgid "Skip the quality check: \"%(name)s\""
+msgstr "Saltar el control de calidad: «%(name)s»"
 
 #, python-format
-msgid "Why can the quality check %(name)s be skipped?"
-msgstr ""
+msgid "Why can the quality check \"%(name)s\" be skipped?"
+msgstr "¿Por qué se puede saltar el control de calidad «%(name)s»?"
+
+msgid "Skip the quality check"
+msgstr "Saltar el control de calidad"
 
 msgid "This step has no quality checks."
 msgstr "Este paso no tiene controles de calidad."
@@ -4078,7 +4110,7 @@ msgstr "El paso %(name)s se salta."
 
 #, python-format
 msgid "A quality check of the step %(name)s is skipped."
-msgstr ""
+msgstr "Un control de calidad del paso %(name)s está saltado."
 
 #, python-format
 msgid "The step %(name)s is not skipped any more."
@@ -4086,7 +4118,7 @@ msgstr "El paso %(name)s ya no se salta."
 
 #, python-format
 msgid "The quality check of the step %(name)s is not skipped any more."
-msgstr ""
+msgstr "El control de calidad del paso %(name)s ya no se salta."
 
 msgid "The settings are saved."
 msgstr "La configuración está guardada."

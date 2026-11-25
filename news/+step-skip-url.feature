@@ -1,0 +1,1 @@
+The variables ``{step_check_skip_url}`` and ``{step_check_skip_url_author}`` are now ``{step_skip_url}`` and ``{step_skip_url_author}``; the summaries of steps, the texts of quality checks and the PR messages that used them were changed over.

@@ -30,6 +30,7 @@ from pycal_dashboard.models import (
     PullRequestStep,
     StepSkip,
 )
+from pycal_dashboard.step_template import renamed, renamed_conditions
 
 from .project_access import ProjectAccess
 from .project_backup import ProjectBackup
@@ -94,13 +95,14 @@ def step_fields(entry: dict) -> dict:
 
     Returns:
         ``summary``, ``hidden``, ``color``, ``conditions``, ``actions`` and ``skip_authors``;
-        the labels and the handles sorted as in a backup, so that their order changes nothing.
+        the labels and the handles sorted as in a backup, so that their order changes nothing,
+        and the old names of variables changed to the new ones.
     """
     return {
-        "summary": str(entry.get("summary") or ""),
+        "summary": renamed(str(entry.get("summary") or "")),
         "hidden": bool(entry.get("hidden")),
         "color": color(entry.get("color")),
-        "conditions": entry.get("tasks") or {},
+        "conditions": renamed_conditions(entry.get("tasks") or {}),
         "actions": ProjectBackup.actions(entry.get("actions")),
         "skip_authors": ProjectBackup.handles(entry.get("skip_authors"))[:100],
     }
@@ -113,12 +115,13 @@ def message_fields(entry: dict) -> dict:
         entry: The message of the file.
 
     Returns:
-        The fields of ``MESSAGE_FIELDS``.
+        The fields of ``MESSAGE_FIELDS``, with the old names of variables changed to the new
+        ones.
     """
     draft = entry.get("draft")
     return {
-        "template": str(entry.get("template") or ""),
-        "draft": None if draft is None else str(draft),
+        "template": renamed(str(entry.get("template") or "")),
+        "draft": None if draft is None else renamed(str(draft)),
         "listed": [str(name) for name in entry.get("listed") or []],
         "to_listed": bool(entry.get("to_listed", True)),
         "authors": ProjectBackup.handles(entry.get("authors"))[:100],

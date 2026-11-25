@@ -22,8 +22,8 @@ class SkipLink:
     Each opens the page of the pull request with the step shown and the dialog that asks why it
     may be skipped (``?step=7&skip=step``, or the condition of the quality check after
     ``skip=``). The link of the writers and owners of the project
-    (``{step_check_skip_url}``, ``{quality_check_skip_url}``) holds nothing secret. The link
-    of the author (``{step_check_skip_url_author}``, ``{quality_check_skip_url_author}``) also
+    (``{step_skip_url}``, ``{quality_check_skip_url}``) holds nothing secret. The link
+    of the author (``{step_skip_url_author}``, ``{quality_check_skip_url_author}``) also
     has a ``key``: a secret of dashboard.pycal.org for this pull request, step and quality
     check, which lets the author of the pull request skip it, too, after signing in. Nobody
     else can make the key, so the author skips only what the project offers them in a text.
@@ -89,10 +89,10 @@ class SkipLink:
             condition: The quality check; "" for the step.
 
         Returns:
-            ``step_check_skip_url`` and ``step_check_skip_url_author``, or with a condition
+            ``step_skip_url`` and ``step_skip_url_author``, or with a condition
             ``quality_check_skip_url`` and ``quality_check_skip_url_author``.
         """
-        prefix = "quality_check" if condition else "step_check"
+        prefix = "quality_check" if condition else "step"
         target = condition or STEP
         return {
             f"{prefix}_skip_url": self.url(target),

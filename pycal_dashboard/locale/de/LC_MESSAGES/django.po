@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 12:08+0000\n"
+"POT-Creation-Date: 2026-11-25 18:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -709,13 +709,13 @@ msgid "Snapshot not found"
 msgstr "Snapshot nicht gefunden"
 
 msgid "The reason to skip is missing"
-msgstr ""
+msgstr "Der Grund für das Überspringen fehlt"
 
 msgid "You may not skip this"
-msgstr ""
+msgstr "Du darfst das nicht überspringen"
 
 msgid "Quality check not found"
-msgstr ""
+msgstr "Qualitätsprüfung nicht gefunden"
 
 msgid "The filter is a step already"
 msgstr "Der Filter ist schon ein Schritt"
@@ -940,6 +940,11 @@ msgid ""
 "why, and the GitHub handles of the authors whose pull requests get the "
 "message of PR Sync."
 msgstr ""
+"Die Projekte, die du erstellst, die Rolle jeder und jedes Mitwirkenden mit "
+"ihrem GitHub-Handle, wer einen Schritt oder eine Qualitätsprüfung für einen "
+"Pull Request übersprungen hat, wann und warum, und die GitHub-Handles der "
+"Autorinnen und Autoren, deren Pull Requests die Nachricht von PR Sync "
+"bekommen."
 
 msgid "Collaborators of projects"
 msgstr "Mitwirkende von Projekten"
@@ -951,6 +956,12 @@ msgid ""
 "check for it; only those who may change the project see why, and the backups "
 "that they download hold the roles and the reasons, too."
 msgstr ""
+"Alle sehen öffentliche Projekte; nur die Mitwirkenden sehen die privaten "
+"Projekte, und nur wer ein Projekt ändern darf, sieht, wer seine Mitwirkenden "
+"sind. Alle, die einen Pull Request sehen, sehen, wer einen Schritt oder eine "
+"Qualitätsprüfung für ihn übersprungen hat; nur wer das Projekt ändern darf, "
+"sieht warum, und die Backups, die diese Personen herunterladen, enthalten "
+"auch die Rollen und die Gründe."
 
 msgid "To show the projects and to decide who may change them."
 msgstr "Um die Projekte zu zeigen und zu entscheiden, wer sie ändern darf."
@@ -1114,6 +1125,8 @@ msgid ""
 "Keeps you signed in, and the reason of a skip that you typed until you "
 "signed in."
 msgstr ""
+"Hält dich angemeldet, und den Grund eines Überspringens, den du getippt "
+"hast, bis du angemeldet bist."
 
 msgid "Protects the forms against other sites."
 msgstr "Schützt die Formulare vor anderen Seiten."
@@ -1201,7 +1214,11 @@ msgstr "Die Nachricht von PR Sync und ihre Synchronisierung ersetzen"
 msgid "Add %(count)s skip of a step or a quality check for a pull request"
 msgid_plural "Add %(count)s skips of steps or quality checks for pull requests"
 msgstr[0] ""
+"%(count)s Überspringen eines Schritts oder einer Qualitätsprüfung für einen "
+"Pull Request hinzufügen"
 msgstr[1] ""
+"%(count)s Überspringen von Schritten oder Qualitätsprüfungen für Pull "
+"Requests hinzufügen"
 
 #, python-format
 msgid "@%(handle)s never signed in: no role"
@@ -1315,21 +1332,32 @@ msgid ""
 "the address that opens the dialog to skip the step for the pull request on "
 "%(site_name)s, for the writers and owners of the project"
 msgstr ""
+"die Adresse, die auf %(site_name)s den Dialog öffnet, um den Schritt für den "
+"Pull Request zu überspringen, für die Personen mit Schreibrechten und die "
+"Eigentümer des Projekts"
 
 msgid ""
 "the same address with a secret key, with which the author of the pull "
 "request may skip the step, too"
 msgstr ""
+"dieselbe Adresse mit einem geheimen Schlüssel, mit dem auch die Autorin oder "
+"der Autor des Pull Requests den Schritt überspringen darf"
 
 msgid ""
 "in the summary and description of a quality check: the address that opens "
 "the dialog to skip it, for the writers and owners of the project"
 msgstr ""
+"in der Zusammenfassung und Beschreibung einer Qualitätsprüfung: die Adresse, "
+"die den Dialog öffnet, um sie zu überspringen, für die Personen mit "
+"Schreibrechten und die Eigentümer des Projekts"
 
 msgid ""
 "in the summary and description of a quality check: the same address with a "
 "secret key, with which the author of the pull request may skip it, too"
 msgstr ""
+"in der Zusammenfassung und Beschreibung einer Qualitätsprüfung: dieselbe "
+"Adresse mit einem geheimen Schlüssel, mit dem auch die Autorin oder der "
+"Autor des Pull Requests sie überspringen darf"
 
 msgid "Message"
 msgstr "Nachricht"
@@ -1342,12 +1370,16 @@ msgid ""
 "all quality checks of the step, those to do first, those done and skipped at "
 "the bottom"
 msgstr ""
+"alle Qualitätsprüfungen des Schritts, die offenen zuerst, die erledigten und "
+"übersprungenen unten"
 
 msgid "the quality checks to do; a sentence when there is nothing to do"
 msgstr "die offenen Qualitätsprüfungen; ein Satz, wenn nichts zu tun ist"
 
 msgid "the quality checks done and skipped; a sentence when nothing is done"
 msgstr ""
+"die erledigten und übersprungenen Qualitätsprüfungen; ein Satz, wenn nichts "
+"erledigt ist"
 
 msgid "View progress"
 msgstr "Fortschritt ansehen"
@@ -1582,13 +1614,13 @@ msgstr "Schließen"
 
 #, python-format
 msgid "You signed in as @%(signed_in_as)s."
-msgstr ""
+msgstr "Du bist als @%(signed_in_as)s angemeldet."
 
 msgid "What this error means and how to solve it"
 msgstr "Was dieser Fehler bedeutet und wie man ihn löst"
 
 msgid "Your reason is kept while you sign in."
-msgstr ""
+msgstr "Dein Grund bleibt erhalten, während du dich anmeldest."
 
 msgid "Back to the start"
 msgstr "Zurück zum Anfang"
@@ -3142,7 +3174,7 @@ msgstr "%(name)s überspringen"
 
 #, python-format
 msgid "Why can the step %(name)s be skipped?"
-msgstr ""
+msgstr "Warum kann der Schritt %(name)s übersprungen werden?"
 
 msgid ""
 "This pull request is outside of the usual steps it should take: no quality "
@@ -3163,7 +3195,7 @@ msgid "TODO"
 msgstr "ZU TUN"
 
 msgid "skipped"
-msgstr ""
+msgstr "übersprungen"
 
 msgid "not known yet"
 msgstr "noch unbekannt"
@@ -3172,12 +3204,15 @@ msgid "Condition:"
 msgstr "Bedingung:"
 
 #, python-format
-msgid "Skip the quality check %(name)s"
-msgstr ""
+msgid "Skip the quality check: \"%(name)s\""
+msgstr "Qualitätsprüfung überspringen: „%(name)s“"
 
 #, python-format
-msgid "Why can the quality check %(name)s be skipped?"
-msgstr ""
+msgid "Why can the quality check \"%(name)s\" be skipped?"
+msgstr "Warum kann die Qualitätsprüfung „%(name)s“ übersprungen werden?"
+
+msgid "Skip the quality check"
+msgstr "Qualitätsprüfung überspringen"
 
 msgid "This step has no quality checks."
 msgstr "Dieser Schritt hat keine Qualitätsprüfungen."
@@ -4117,7 +4152,7 @@ msgstr "Der Schritt %(name)s wird übersprungen."
 
 #, python-format
 msgid "A quality check of the step %(name)s is skipped."
-msgstr ""
+msgstr "Eine Qualitätsprüfung des Schritts %(name)s ist übersprungen."
 
 #, python-format
 msgid "The step %(name)s is not skipped any more."
@@ -4126,6 +4161,7 @@ msgstr "Der Schritt %(name)s wird nicht mehr übersprungen."
 #, python-format
 msgid "The quality check of the step %(name)s is not skipped any more."
 msgstr ""
+"Die Qualitätsprüfung des Schritts %(name)s wird nicht mehr übersprungen."
 
 msgid "The settings are saved."
 msgstr "Die Einstellungen sind gespeichert."

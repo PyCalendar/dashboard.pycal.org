@@ -45,10 +45,10 @@ def test_a_writer_skips_a_quality_check(signed_in, site, github, bob):
     dialog.get_by_role("button", name="Close").click()  # ✕
     expect(dialog).to_have_count(0)
     task.locator("[data-skip-check]").click()
-    dialog.get_by_label("Why can the quality check Pass review be skipped?").fill(
+    dialog.get_by_label('Why can the quality check "Pass review" be skipped?').fill(
         "Reviewed at **the meeting** for {pr_title}"
     )
-    dialog.get_by_role("button", name="Skip the quality check Pass review").click()
+    dialog.get_by_role("button", name="Skip the quality check", exact=True).click()
     expect(page.get_by_text("A quality check of the step Review is skipped.")).to_be_visible()
     first = page.locator("[data-progress] [data-step]").nth(0)
     expect(first).to_have_attribute("data-stage", "past")  # complete: the next step
@@ -79,7 +79,7 @@ def test_the_author_skips_with_their_link_after_signing_in(page, site, github, b
     expect(page.locator("dialog[open]")).to_have_count(0)
     expect(page).to_have_url(re.compile(rf"\?repository=collective%2Ficalendar&step={review.pk}$"))
     page.goto(address)
-    dialog.get_by_label("Why can the quality check Pass review be skipped?").fill("A typo")
+    dialog.get_by_label('Why can the quality check "Pass review" be skipped?').fill("A typo")
     dialog.get_by_role("button", name="Sign in with GitHub").click()
     expect(page.get_by_text("A quality check of the step Review is skipped.")).to_be_visible()
     expect(page.locator(".account-menu summary")).to_contain_text("octocat")
@@ -98,11 +98,11 @@ def test_who_may_not_skip_sees_the_error_and_the_reason(page, site, github, bob,
     link = SkipLink(project, Issue.objects.get(title="Ready"), review).url(REVIEW, author=True)
     page.goto(link.replace("https://dashboard.example.org", site))
     dialog = page.locator("dialog[open][data-skip-dialog]")
-    dialog.get_by_label("Why can the quality check Pass review be skipped?").fill("Mine")
+    dialog.get_by_label('Why can the quality check "Pass review" be skipped?').fill("Mine")
     dialog.get_by_role("button", name="Sign in with GitHub").click()
     expect(dialog.locator("[data-skip-error]")).to_contain_text("You may not skip this")
     expect(dialog.locator("[data-skip-error]")).to_contain_text("You signed in as @carol.")
-    expect(dialog.get_by_label("Why can the quality check Pass review be skipped?")).to_have_value(
-        "Mine"
-    )
+    expect(
+        dialog.get_by_label('Why can the quality check "Pass review" be skipped?')
+    ).to_have_value("Mine")
     assert not CheckSkip.objects.exists()

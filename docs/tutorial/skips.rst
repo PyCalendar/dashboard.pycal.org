@@ -22,9 +22,10 @@ A skipped quality check
    It keeps the pull request in its step no more, as if it was done. When every
    quality check of a step is done or skipped, the step is complete and the pull
    request goes on to the next step. The badge counts a skipped quality check as
-   done, such as *Review 2/2*. The quality check shows ⏩ on the page of the pull
-   request, and in the PR message ``:fast_forward:``, which GitHub shows as ⏩,
-   where a quality check done has ✔️ and one to do ❌, see :ref:`pr-message`.
+   done, such as *Review 2/2*. The quality check is gray, with ⏩, on the page
+   of the pull request, and so is its square in the bar of the steps. In the PR
+   message it has ``:fast_forward:``, which GitHub shows as ⏩, where a quality
+   check done has ✔️ and one to do ❌, see :ref:`pr-message`.
 
 Everybody who sees the pull request sees what is skipped and who skipped it,
 linked to their page in the project. Only the writers and owners of the project
@@ -50,8 +51,9 @@ The reason
 ==========
 
 Each skip needs a reason. The dialog of **Skip** asks why the step or the
-quality check can be skipped, such as *Why can the quality check Update the
-changelog be skipped?*. ✕ closes the dialog. The reason is Markdown, with a bar
+quality check can be skipped, such as *Skip the quality check: "Update the
+changelog"* and *Why can the quality check "Update the changelog" be
+skipped?*. ✕ closes the dialog. The reason is Markdown, with a bar
 of formats and a preview: **bold**, *italic*, links and lists. It has no
 variables: a name in braces, such as ``{pr_title}``, stays as it is.
 
@@ -70,10 +72,10 @@ dashboard.pycal.org, with the step shown and the dialog to skip open.
    * - Variable
      - Skips
      - Who may skip
-   * - ``{step_check_skip_url}``
+   * - ``{step_skip_url}``
      - The step
      - The writers and owners
-   * - ``{step_check_skip_url_author}``
+   * - ``{step_skip_url_author}``
      - The step
      - The writers and owners, and the author of the pull request
    * - ``{quality_check_skip_url}``
