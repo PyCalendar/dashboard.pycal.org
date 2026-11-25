@@ -70,8 +70,10 @@ def test_the_address_is_the_slug_only(client, project):
     for old, new in [
         ("anything/", ""),
         ("anything/settings/?a=1", "settings/?a=1"),
-        ("anything/repositories/", "repositories/"),
-        ("anything/people/", "collaborators/"),
+        ("anything/repositories/", "settings/repositories/"),
+        ("anything/people/", "settings/collaborators/"),
+        ("repositories/?a=1", "settings/repositories/?a=1"),  # before they were in the settings
+        ("collaborators/", "settings/collaborators/"),
     ]:
         answer = client.get(f"/projects/{project.slug}/{old}")
         assert answer.status_code == 301, old
@@ -91,7 +93,7 @@ def test_rename_and_the_old_links_keep_working(client, bob, project):
     assert project.slug == "ical"
     for path, target in [
         (f"/projects/{old}/", "/projects/ical/"),
-        (f"/projects/{old}/collaborators/?a=1", "/projects/ical/collaborators/?a=1"),
+        (f"/projects/{old}/collaborators/?a=1", "/projects/ical/settings/collaborators/?a=1"),
         (f"/projects/{old.upper()}/settings/", "/projects/ical/settings/"),
         (f"/projects/{old}/", "/projects/ical/"),
     ]:
@@ -155,12 +157,13 @@ def test_the_suggestion_after_the_one_repository(client, bob, project):
 def test_use_the_suggestion_from_the_repositories(client, bob, project):
     project.repositories.add(Repository.objects.create(full_name="collective/icalendar"))
     client.force_login(bob)
-    page = client.get(project.path("repositories/")).content.decode()
+    page = client.get(project.path("settings/repositories/")).content.decode()
     assert "data-suggestion" in page and "<code>icalendar</code>" in page
     answer = client.post(
-        f"/projects/{project.slug}/address/", {"slug": "icalendar", "back": "repositories/"}
+        f"/projects/{project.slug}/address/",
+        {"slug": "icalendar", "back": "settings/repositories/"},
     )
-    assert answer["Location"] == "/projects/icalendar/repositories/"
+    assert answer["Location"] == "/projects/icalendar/settings/repositories/"
     answer = client.post("/projects/icalendar/address/", {"slug": "a", "back": "/elsewhere"})
     assert answer["Location"] == "/projects/a/settings/"
 

@@ -91,8 +91,8 @@ def test_the_pages_load_only_the_avatars_of_github(client, github, bob):
         "/projects/",
         project.path(),
         project.path("pull-requests/"),
-        project.path("collaborators/"),
-        project.path("repositories/"),
+        project.path("settings/collaborators/"),
+        project.path("settings/repositories/"),
         "/account/",
     ):
         answer = client.get(path)

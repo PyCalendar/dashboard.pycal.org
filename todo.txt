@@ -740,3 +740,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] Translate the new texts of skipping into German and Spanish ("translate when you have time")
 - [x] The dialog of a quality check says: Skip the quality check: "This PR is not ready for documentation review"
 - [x] A skipped quality check is gray, not with a dashed line
+- [x] Repositories and Collaborators are tabs of the settings only (settings/repositories/, settings/collaborators/;
+      the old addresses redirect), not of the project; what is public, the repositories on the Overview, stays

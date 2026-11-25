@@ -1,0 +1,1 @@
+*Repositories* and *Collaborators* are no longer tabs of a project, but tabs of its *Settings*, at ``settings/repositories/`` and ``settings/collaborators/``; the old addresses lead there. Everybody who sees a project still sees its repositories on the tab *Overview*.

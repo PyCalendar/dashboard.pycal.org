@@ -186,17 +186,28 @@ urlpatterns = [
     ),
     path("projects/<project_slug:slug>/address/", projects.project_slug, name="project_slug"),
     path(
-        "projects/<project_slug:slug>/repositories/",
+        "projects/<project_slug:slug>/settings/repositories/",
         projects.project_repositories,
         name="project_repositories",
     ),
     path(
-        "projects/<project_slug:slug>/collaborators/",
+        "projects/<project_slug:slug>/settings/collaborators/",
         projects.project_collaborators,
         name="project_collaborators",
     ),
     # the addresses before: the tab People, and the name of the project after the slug
     path("projects/<project_slug:slug>/people/", projects.project_moved, {"page": "people"}),
+    # the tabs Repositories and Collaborators before they were tabs of the settings
+    path(
+        "projects/<project_slug:slug>/repositories/",
+        projects.project_moved,
+        {"page": "repositories"},
+    ),
+    path(
+        "projects/<project_slug:slug>/collaborators/",
+        projects.project_moved,
+        {"page": "collaborators"},
+    ),
     path("projects/<project_slug:slug>/<str:name>/", projects.project_moved),
     path("projects/<project_slug:slug>/<str:name>/<str:page>/", projects.project_moved),
     path("repositories/complete/", projects.repository_complete, name="repository_complete"),

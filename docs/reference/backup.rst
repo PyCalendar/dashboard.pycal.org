@@ -93,7 +93,7 @@ The keys
    restoring leaves as they are: the address and the visibility of the project.
 ``repositories``
    The names of the repositories, such as ``collective/icalendar``. Restoring
-   adds those that the project lacks, as the tab *Repositories* does, with the
+   adds those that the project lacks, as the tab *Settings → Repositories* does, with the
    rights of the person who restores: a private repository needs the GitHub
    App, and goes only into a private project.
 ``filters``
@@ -151,7 +151,7 @@ are the same when their names are.
 - What only adds is restored: the filters and steps that the project lacks (new
   steps come last), the message when the project has none, the skips of pull
   requests that the project knows, and the repositories that it lacks, as the
-  tab *Repositories* adds them.
+  tab *Settings → Repositories* adds them.
 - What deletes or replaces something happens only when it is ticked, and
   nothing is ticked at first: a filter or a step that differs from the backup is
   replaced, one added after the backup is deleted (a filter with its step), the

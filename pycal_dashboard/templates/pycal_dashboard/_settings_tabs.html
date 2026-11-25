@@ -1,5 +1,6 @@
 {% load i18n %}<nav aria-label="{% translate "Settings" %}"><ul class="tabs sync-tabs settings-tabs" data-settings-tabs>
   <li><a href="{% url 'project_edit' project.slug %}"{% if settings_tab == "display" %} aria-current="page"{% endif %}>{% translate "Display" %}</a></li>
+  <li><a href="{% url 'project_repositories' project.slug %}"{% if settings_tab == "repositories" %} aria-current="page"{% endif %}>{% translate "Repositories" %}</a></li>
   <li><a href="{% url 'project_collaborators' project.slug %}"{% if settings_tab == "collaborators" %} aria-current="page"{% endif %}>{% translate "Collaborators" %}</a></li>
   <li><a href="{% url 'project_snapshots' project.slug %}"{% if settings_tab == "snapshots" %} aria-current="page"{% endif %}>{% translate "Snapshots" %}</a></li>
   <li><a href="{% url 'project_backup_page' project.slug %}"{% if settings_tab == "backup" %} aria-current="page"{% endif %}>{% translate "Backup" %}</a></li>

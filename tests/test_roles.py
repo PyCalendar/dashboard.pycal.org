@@ -178,35 +178,39 @@ ACTIONS = {
     ),
     "see the collaborators": (
         "write",
-        lambda c, w: c.get(w.path + "collaborators/"),
+        lambda c, w: c.get(w.path + "settings/collaborators/"),
         lambda w: True,
     ),
     "invite a collaborator": (
         "owner",
-        lambda c, w: c.post(w.path + "collaborators/", {"github_name": "dave", "role": "read"}),
+        lambda c, w: c.post(
+            w.path + "settings/collaborators/", {"github_name": "dave", "role": "read"}
+        ),
         lambda w: ProjectMember.objects.filter(user__username="dave").exists(),
     ),
     "change a role": (
         "owner",
-        lambda c, w: c.post(w.path + "collaborators/", {"github_name": "carol", "role": "write"}),
+        lambda c, w: c.post(
+            w.path + "settings/collaborators/", {"github_name": "carol", "role": "write"}
+        ),
         lambda w: ProjectMember.objects.get(user=w.carol).role == "write",
     ),
     "remove a collaborator": (
         "owner",
         lambda c, w: c.post(
-            w.path + "collaborators/",
+            w.path + "settings/collaborators/",
             {"remove": ProjectMember.objects.get(user=w.carol).pk},
         ),
         lambda w: not ProjectMember.objects.filter(user=w.carol).exists(),
     ),
     "see the repositories": (
         "write",
-        lambda c, w: c.get(w.path + "repositories/"),
+        lambda c, w: c.get(w.path + "settings/repositories/"),
         lambda w: True,
     ),
     "remove a repository": (
         "write",
-        lambda c, w: c.post(w.path + "repositories/", {"remove": w.repository.pk}),
+        lambda c, w: c.post(w.path + "settings/repositories/", {"remove": w.repository.pk}),
         lambda w: not w.project.repositories.exists(),
     ),
     "download a backup": (
@@ -346,9 +350,10 @@ def test_the_tabs_and_buttons_of_each_role(client, world, signed_in):
     settings = client.get(world.path + "settings/").content.decode()
     assert ("data-update" in overview) is (rank >= RANK["read"])
     assert (f"{world.path}settings/" in overview) is (rank >= RANK["write"])
-    assert (f"{world.path}repositories/" in overview) is (rank >= RANK["write"])
+    assert f"{world.path}settings/repositories/" not in overview  # a tab of the settings
     if rank >= RANK["write"]:
-        assert f"{world.path}collaborators/" in settings  # a tab of the settings
+        assert f"{world.path}settings/repositories/" in settings  # tabs of the settings
+        assert f"{world.path}settings/collaborators/" in settings
         backup = client.get(world.path + "settings/backup/").content.decode()
         assert "data-download-backup" in backup
         assert ("data-restore>" in backup) is (rank >= RANK["owner"])
@@ -363,6 +368,6 @@ def test_the_tabs_and_buttons_of_each_role(client, world, signed_in):
         assert ('name="snapshot"' in snapshots) is (rank >= RANK["owner"])
         assert ('class="visibility" disabled' in settings) is (rank < RANK["owner"])
         assert ("data-address" in settings) is (rank >= RANK["owner"])
-        collaborators = client.get(world.path + "collaborators/").content.decode()
+        collaborators = client.get(world.path + "settings/collaborators/").content.decode()
         assert ("data-share" in collaborators) is (rank >= RANK["owner"])
         assert ('name="remove"' in collaborators) is (rank >= RANK["owner"])

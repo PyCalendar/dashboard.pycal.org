@@ -71,7 +71,7 @@ def test_the_only_owner_of_a_shared_project_hands_it_over_first(client, bob, ali
     client.force_login(bob)
     page = client.get("/account/?tab=delete").content.decode()
     assert "data-shared-projects" in page and 'action="/account/delete/"' not in page
-    assert f"/projects/{project.slug}/collaborators/" in page
+    assert f"/projects/{project.slug}/settings/collaborators/" in page
     answer = client.post("/account/delete/", {"confirm": "bob"})
     assert answer.status_code == 409 and "You are the only owner of shared projects" in (
         answer.content.decode()

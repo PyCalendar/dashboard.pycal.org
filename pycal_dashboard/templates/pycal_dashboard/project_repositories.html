@@ -3,7 +3,7 @@
 {% block title %}{% translate "Repositories" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script src="{% static 'repository-complete.js' %}" defer></script>{% endblock %}
 {% block main %}
-{% include "pycal_dashboard/_project_tabs.html" %}
+{% include "pycal_dashboard/_project_tabs.html" %}{% include "pycal_dashboard/_settings_tabs.html" %}
 <section class="card" id="repositories"><h2>{% translate "Repositories of the project" %}</h2>
 {% if repositories %}<ul class="list" data-project-repositories>{% for repository in repositories %}<li data-repository="{{ repository.full_name }}">
   <a href="{{ repository.url }}">{{ repository.full_name }}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
@@ -59,7 +59,7 @@
 </section>
 {% if suggestion %}<section class="card" data-suggestion><h2>{% translate "Address" %}</h2>
   <p>{% translate "The project is at" %} <code>{{ project.path }}</code></p>
-  <form method="post" action="{% url 'project_slug' project.slug %}">{% csrf_token %}<input type="hidden" name="back" value="repositories/"><input type="hidden" name="slug" value="{{ suggestion }}">
+  <form method="post" action="{% url 'project_slug' project.slug %}">{% csrf_token %}<input type="hidden" name="back" value="settings/repositories/"><input type="hidden" name="slug" value="{{ suggestion }}">
     <p>{% translate "Suggestion, after the repository of the project:" %} <code>{{ suggestion }}</code> <button class="button button-quiet">{% translate "Use it" %}</button></p></form>
 </section>{% endif %}
 <p><a class="button" href="{% url 'project' project.slug %}" data-to-overview>{% translate "Go to the overview" %}</a></p>

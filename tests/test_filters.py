@@ -308,7 +308,8 @@ def test_the_tabs_have_filters_after_the_pull_requests(client, project, bob):
     client.force_login(bob)
     page = client.get("/projects/icalendar/filters/").content.decode()
     tabs = page.split('<ul class="tabs">')[1].split("</ul>")[0]
-    assert tabs.index("Pull requests") < tabs.index("Filters") < tabs.index("Repositories")
+    assert tabs.index("Pull requests") < tabs.index("Filters") < tabs.index("Settings")
+    assert "Repositories" not in tabs and "Collaborators" not in tabs  # tabs of the settings
 
 
 def test_a_renamed_label_keeps_the_filters_working(client, project, github):

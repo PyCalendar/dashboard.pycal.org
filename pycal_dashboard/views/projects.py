@@ -60,7 +60,7 @@ if TYPE_CHECKING:
 
 
 # the pages that a change of the address goes back to
-BACK_PAGES = {"settings/", "repositories/"}
+BACK_PAGES = {"settings/", "settings/repositories/"}
 # the repositories offered while typing, of those the site knows
 KNOWN_CHOICES = 200
 MAX_BACKUP = 1_000_000  # bytes of a file of a backup, see ProjectBackup
@@ -259,16 +259,19 @@ def project_new(request: HttpRequest):
         messages.success(
             request, _("The project %(name)s is created. Add its repositories.") % {"name": project}
         )
-        return redirect(project.path("repositories/"))
+        return redirect(project.path("settings/repositories/"))
     return render(request, "pycal_dashboard/project_form.html", {"form": form, "new": True})
 
 
 PAGES = {"": "", "update": "", "settings": "settings/", "address": "settings/"}
-PAGES |= {"repositories": "repositories/", "collaborators": "collaborators/"}
+PAGES |= {
+    "repositories": "settings/repositories/",
+    "collaborators": "settings/collaborators/",
+}
 PAGES["pull-requests"] = "pull-requests/"
 PAGES["filters"] = "filters/"
 PAGES["steps"] = "steps/"
-PAGES["people"] = "collaborators/"  # the tab before it was called Collaborators
+PAGES["people"] = "settings/collaborators/"  # the tab before it was called Collaborators
 
 
 def project_moved(request: HttpRequest, slug: str, name: str = "", page: str = ""):
@@ -775,7 +778,7 @@ def project_repositories(request: HttpRequest, slug: str):
     Returns:
         The page.
     """
-    access, moved = opened(request, slug, "repositories/")
+    access, moved = opened(request, slug, "settings/repositories/")
     if moved:
         return moved
     access.require_write()
@@ -788,7 +791,7 @@ def project_repositories(request: HttpRequest, slug: str):
         else:
             names = request.POST.getlist("repository")
             add_repositories(request, editor, [n for n in names if n.strip()])
-        return redirect(access.project.path("repositories/"))
+        return redirect(access.project.path("settings/repositories/"))
     owner = request.GET.get("owner", "").strip()
     search = request.GET.get("search", "").strip()
     repositories = list(access.project.repositories.select_related("installation"))
@@ -804,7 +807,8 @@ def project_repositories(request: HttpRequest, slug: str):
                 r for r in repositories if r.app_installed and r.installation.missing_permissions
             ],
             "known": known_repositories(request.user),
-            "tab": "repositories",
+            "tab": "settings",
+            "settings_tab": "repositories",
             "suggestion": ProjectEditor(access).suggestion() if access.is_owner else None,
             **choices(request, owner, search),
         },
@@ -882,7 +886,7 @@ def project_collaborators(request: HttpRequest, slug: str):
     Raises:
         ProjectReadOnly: The person may only read the project, or is none of its collaborators.
     """
-    access, moved = opened(request, slug, "collaborators/")
+    access, moved = opened(request, slug, "settings/collaborators/")
     if moved:
         return moved
     access.require_write()
@@ -901,7 +905,7 @@ def project_collaborators(request: HttpRequest, slug: str):
                 _("@%(name)s may %(role)s the project.")
                 % {"name": name_of(member), "role": role_title(member.role)},
             )
-        return redirect(access.project.path("collaborators/"))
+        return redirect(access.project.path("settings/collaborators/"))
     members = list(
         access.project.members.select_related("user__profile").order_by("user__username")
     )

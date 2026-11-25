@@ -7,7 +7,5 @@
   <li><a href="{% url 'project_filters' project.slug %}"{% if tab == 'filters' %} aria-current="page"{% endif %}>{% translate "Filters" %}</a></li>
   <li><a href="{% url 'project_steps' project.slug %}"{% if tab == 'steps' %} aria-current="page"{% endif %}>{% translate "Steps" %}</a></li>
   <li><a href="{% url 'project_message' project.slug %}"{% if tab == 'message' %} aria-current="page"{% endif %}>{% translate "PR Sync" %}</a></li>
-  {% if access.can_write %}<li><a href="{% url 'project_repositories' project.slug %}"{% if tab == 'repositories' %} aria-current="page"{% endif %}>{% translate "Repositories" %}</a></li>{% endif %}
-  {% if access.can_write %}<li><a href="{% url 'project_collaborators' project.slug %}"{% if tab == 'collaborators' %} aria-current="page"{% endif %}>{% translate "Collaborators" %}</a></li>{% endif %}
   {% if access.can_write %}<li><a href="{% url 'project_edit' project.slug %}"{% if tab == 'settings' %} aria-current="page"{% endif %}>{% translate "Settings" %}</a></li>{% endif %}
 </ul></nav>

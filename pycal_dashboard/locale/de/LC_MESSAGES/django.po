@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 18:19+0000\n"
+"POT-Creation-Date: 2026-11-25 18:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1591,14 +1591,14 @@ msgstr "Filter"
 msgid "PR Sync"
 msgstr "PR Sync"
 
+msgid "Display"
+msgstr "Anzeigen"
+
 msgid "Repositories"
 msgstr "Repositorys"
 
 msgid "Collaborators"
 msgstr "Mitwirkende"
-
-msgid "Display"
-msgstr "Anzeigen"
 
 msgid "Snapshots"
 msgstr "Snapshots"

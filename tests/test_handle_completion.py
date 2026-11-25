@@ -81,7 +81,7 @@ def test_every_field_of_github_handles_completes_the_same(client, projects, bob)
     pages = {
         "steps": f"/projects/{public.slug}/steps/?step={step.pk}",
         "scope": f"/projects/{public.slug}/message/scope/",
-        "collaborators": f"/projects/{public.slug}/collaborators/",
+        "collaborators": f"/projects/{public.slug}/settings/collaborators/",
     }
     expected = {
         "steps": f'data-complete-people="{COMPLETE}?project=open"',

@@ -74,8 +74,8 @@ class AccountOwnsSharedProjects(AccountError):
     """The account was not deleted: it is the only owner of projects that others share.
 
     Resolve:
-        On the tab *Collaborators* of each project the page lists, give another person the role
-        *own*, or delete the project; then delete the account.
+        On the tab *Settings → Collaborators* of each project the page lists, give another
+        person the role *own*, or delete the project; then delete the account.
 
     Context:
         A project always has an owner.

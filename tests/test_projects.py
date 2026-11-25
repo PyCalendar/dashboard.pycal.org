@@ -48,7 +48,7 @@ def repositories(github):
 
 def add(client, project, *names):
     return client.post(
-        f"/projects/{project.slug}/repositories/", {"repository": list(names)}, follow=True
+        f"/projects/{project.slug}/settings/repositories/", {"repository": list(names)}, follow=True
     )
 
 
@@ -145,7 +145,7 @@ def test_create_a_project(client, bob):
     project = Project.objects.get()
     assert (project.name, project.public) == ("My project", False)
     assert re.fullmatch("[0-9a-f]{6}", project.slug)  # random by default
-    assert answer["Location"] == f"/projects/{project.slug}/repositories/"
+    assert answer["Location"] == f"/projects/{project.slug}/settings/repositories/"
     assert ProjectMember.objects.get(project=project).role == ProjectMember.OWNER
 
 
@@ -178,7 +178,7 @@ def test_readers_may_not_change_writers_may_not_share(client, project, alice):
     page = client.get(f"/projects/{project.slug}/settings/")
     assert page.status_code == 403 and "You may not change this project" in page.content.decode()
     assert client.post(f"/projects/{project.slug}/update/").status_code == 302  # readers update
-    assert client.get(f"/projects/{project.slug}/repositories/").status_code == 403
+    assert client.get(f"/projects/{project.slug}/settings/repositories/").status_code == 403
     ProjectEditor(ProjectAccess(project, project.created_by)).share("alice", "write")
     answer = client.post(
         f"/projects/{project.slug}/settings/",
@@ -189,7 +189,7 @@ def test_readers_may_not_change_writers_may_not_share(client, project, alice):
     project.refresh_from_db()
     assert project.name == "Changed" and project.public
     answer = client.post(
-        f"/projects/{project.slug}/collaborators/", {"github_name": "x", "role": "read"}
+        f"/projects/{project.slug}/settings/collaborators/", {"github_name": "x", "role": "read"}
     )
     assert answer.status_code == 403 and "Only the owners" in answer.content.decode()
     answer = client.post(f"/projects/{project.slug}/settings/", {"delete": "yes"})
@@ -204,14 +204,14 @@ def test_readers_may_not_change_writers_may_not_share(client, project, alice):
 def test_share_the_project(client, project, bob, alice):
     client.force_login(bob)
     page = client.post(
-        f"/projects/{project.slug}/collaborators/",
+        f"/projects/{project.slug}/settings/collaborators/",
         {"github_name": "@Alice", "role": "write"},
         follow=True,
     ).content.decode()
     assert "@alice may change the project." in page
     assert ProjectMember.objects.get(user=alice).role == "write"
     member = ProjectMember.objects.get(user=alice)
-    client.post(f"/projects/{project.slug}/collaborators/", {"remove": member.pk})
+    client.post(f"/projects/{project.slug}/settings/collaborators/", {"remove": member.pk})
     assert not ProjectMember.objects.filter(user=alice).exists()
 
 
@@ -223,7 +223,7 @@ def test_only_owners_change_roles_and_add_collaborators(client, project, bob, al
     owner.share("alice", role)
     owner.share("carol", "read")
     client.force_login(alice)
-    address = f"/projects/{project.slug}/collaborators/"
+    address = f"/projects/{project.slug}/settings/collaborators/"
     page = client.get(address).content.decode()
     if role == "write":  # readers do not see the page
         assert 'name="remove"' not in page and 'name="role"' not in page
@@ -249,7 +249,7 @@ def test_only_owners_change_roles_and_add_collaborators(client, project, bob, al
 def test_share_errors(client, project, bob, alice, name, role, error):
     client.force_login(bob)
     page = client.post(
-        f"/projects/{project.slug}/collaborators/", {"github_name": name, "role": role}
+        f"/projects/{project.slug}/settings/collaborators/", {"github_name": name, "role": role}
     )
     assert page.status_code in (400, 404) and error in page.content.decode()
 
@@ -257,17 +257,17 @@ def test_share_errors(client, project, bob, alice, name, role, error):
 def test_the_people_are_the_collaborators_now(client, project, bob):
     """The tab People is called Collaborators; its old address leads there."""
     client.force_login(bob)
-    page = client.get(f"/projects/{project.slug}/collaborators/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/collaborators/").content.decode()
     assert "Collaborators of the project" in page and ">People<" not in page
     answer = client.get(f"/projects/{project.slug}/people/?a=1")
     assert answer.status_code == 301
-    assert answer["Location"] == f"/projects/{project.slug}/collaborators/?a=1"
+    assert answer["Location"] == f"/projects/{project.slug}/settings/collaborators/?a=1"
 
 
 def test_the_only_owner_cannot_change_their_role_on_the_page(client, project, bob, alice):
     """The page offers no change and no removal for the only owner; with two, it does."""
     client.force_login(bob)
-    url = f"/projects/{project.slug}/collaborators/"
+    url = f"/projects/{project.slug}/settings/collaborators/"
     client.post(url, {"github_name": "alice", "role": "read"})
     page = client.get(url).content.decode()
     bob_row = page.split('data-member="bob"')[1].split("</tr>")[0]
@@ -283,16 +283,19 @@ def test_the_only_owner_cannot_change_their_role_on_the_page(client, project, bo
 def test_a_project_keeps_an_owner(client, project, bob, alice):
     client.force_login(bob)
     owner = ProjectMember.objects.get(user=bob)
-    page = client.post(f"/projects/{project.slug}/collaborators/", {"remove": owner.pk})
+    page = client.post(f"/projects/{project.slug}/settings/collaborators/", {"remove": owner.pk})
     assert "The project needs an owner" in page.content.decode()
     page = client.post(
-        f"/projects/{project.slug}/collaborators/", {"github_name": "bob", "role": "read"}
+        f"/projects/{project.slug}/settings/collaborators/", {"github_name": "bob", "role": "read"}
     )
     assert "The project needs an owner" in page.content.decode()
     client.post(
-        f"/projects/{project.slug}/collaborators/", {"github_name": "alice", "role": "owner"}
+        f"/projects/{project.slug}/settings/collaborators/",
+        {"github_name": "alice", "role": "owner"},
     )
-    client.post(f"/projects/{project.slug}/collaborators/", {"github_name": "bob", "role": "read"})
+    client.post(
+        f"/projects/{project.slug}/settings/collaborators/", {"github_name": "bob", "role": "read"}
+    )
     assert ProjectMember.objects.get(user=bob).role == "read"
 
 
@@ -304,12 +307,12 @@ def test_only_writers_see_the_collaborators_and_the_settings(client, project, al
     client.force_login(alice)
     overview = client.get(f"/projects/{project.slug}/").content.decode()
     assert "/collaborators/" not in overview and "/settings/" not in overview
-    for page in ("collaborators/", "settings/"):
+    for page in ("settings/collaborators/", "settings/repositories/", "settings/"):
         answer = client.get(f"/projects/{project.slug}/{page}")
         assert answer.status_code == 403
         assert "You may not change this project" in answer.content.decode()
     client.logout()
-    answer = client.get(f"/projects/{project.slug}/collaborators/")
+    answer = client.get(f"/projects/{project.slug}/settings/collaborators/")
     assert answer.status_code == 302 and "/accounts/" in answer["Location"]
 
 
@@ -319,8 +322,10 @@ def test_writers_see_the_collaborators_but_do_not_share(client, private_project,
     )
     client.force_login(alice)
     overview = client.get(f"/projects/{private_project.slug}/").content.decode()
-    assert "/collaborators/" in overview and "/settings/" in overview
-    page = client.get(f"/projects/{private_project.slug}/collaborators/").content.decode()
+    assert "/collaborators/" not in overview and "/settings/" in overview  # in the settings
+    settings = client.get(f"/projects/{private_project.slug}/settings/").content.decode()
+    assert "/settings/collaborators/" in settings.split("data-settings-tabs")[1]
+    page = client.get(f"/projects/{private_project.slug}/settings/collaborators/").content.decode()
     assert "@bob" in page and "The owners of the project share it." in page
     assert "data-share" not in page
 
@@ -373,11 +378,11 @@ def test_the_install_step_is_shown_only_when_the_app_is_missing_or_out_of_date(
         Repository.objects.create(full_name="collective/icalendar", installation=installation)
     )
     client.force_login(bob)
-    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/repositories/").content.decode()
     assert "data-install-step" not in page and "app installed" in page
     installation.permissions = {"metadata": "read"}
     installation.save()
-    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/repositories/").content.decode()
     assert "data-install-step" in page and "data-install-link" not in page
     assert "1 repository has the app without the permissions it needs now." in page
     assert installation.settings_url in page
@@ -414,7 +419,7 @@ def test_a_private_repository_needs_access(client, alice, repositories):
 def test_choose_from_an_organization_and_search(client, project, bob, repositories):
     repositories.organizations = ["PyCalendar"]
     client.force_login(bob)
-    url = f"/projects/{project.slug}/repositories/"
+    url = f"/projects/{project.slug}/settings/repositories/"
     page = client.get(url, {"owner": "PyCalendar"}).content.decode()
     assert '<option value="PyCalendar" selected>' in page and '<option value="bob"' in page
     assert 'value="PyCalendar/plann"' in page
@@ -431,7 +436,7 @@ def test_without_a_token_the_page_says_to_sign_in_again(client, project, bob, re
 
     SocialToken.objects.all().delete()
     client.force_login(bob)
-    page = client.get(f"/projects/{project.slug}/repositories/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/repositories/").content.decode()
     assert "Sign in again to list your repositories" in page and "data-github-error" in page
     assert "Sign in again" in add(client, project, "collective/icalendar").content.decode()
 
@@ -451,7 +456,7 @@ def test_remove_a_repository(client, project, bob, repositories):
     add(client, project, "PyCalendar/plann")
     repository = Repository.objects.get()
     page = client.post(
-        f"/projects/{project.slug}/repositories/", {"remove": repository.pk}, follow=True
+        f"/projects/{project.slug}/settings/repositories/", {"remove": repository.pk}, follow=True
     ).content.decode()
     assert "PyCalendar/plann is removed." in page
     assert Repository.objects.exists() and not project.repositories.exists()

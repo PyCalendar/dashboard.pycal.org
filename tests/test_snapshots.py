@@ -69,7 +69,8 @@ def test_the_settings_have_their_tabs(client, project, bob):  # noqa: F811
     client.force_login(bob)
     for page, current in (
         ("settings/", "Display"),
-        ("collaborators/", "Collaborators"),
+        ("settings/repositories/", "Repositories"),
+        ("settings/collaborators/", "Collaborators"),
         ("settings/snapshots/", "Snapshots"),
         ("settings/backup/", "Backup"),
         ("settings/danger/", "Danger zone"),

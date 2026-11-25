@@ -134,7 +134,7 @@ def test_share_a_project(signed_in, site, alice):
     page.get_by_role("button", name="Share").click()
     expect(page.get_by_text("@alice may change the project.")).to_be_visible()
     expect(page.locator("[data-member='alice']")).to_be_visible()
-    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/collaborators/$"))
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/settings/collaborators/$"))
 
 
 def test_give_a_project_a_short_address(signed_in, site, github):
@@ -144,19 +144,19 @@ def test_give_a_project_a_short_address(signed_in, site, github):
     page.goto(f"{site}/projects/new/")
     page.get_by_label("Name").fill("iCalendar")
     page.get_by_role("button", name="Create the project").click()
-    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/repositories/$"))
+    expect(page).to_have_url(re.compile(r"/projects/[0-9a-f]{6}/settings/repositories/$"))
     old = page.url
     page.get_by_label("Repository", exact=True).fill("collective/icalendar")
     page.locator("[data-add-by-name]").get_by_role("button", name="Add").click()
     suggestion = page.locator("[data-suggestion]")
     expect(suggestion).to_contain_text("icalendar")
     suggestion.get_by_role("button", name="Use it").click()
-    expect(page).to_have_url(f"{site}/projects/icalendar/repositories/")
+    expect(page).to_have_url(f"{site}/projects/icalendar/settings/repositories/")
     expect(
         page.get_by_text("The address of the project is /projects/icalendar/ now")
     ).to_be_visible()
     page.goto(old)
-    expect(page).to_have_url(f"{site}/projects/icalendar/repositories/")
+    expect(page).to_have_url(f"{site}/projects/icalendar/settings/repositories/")
 
     page.get_by_role("link", name="Settings").click()
     page.locator("[data-rename]").get_by_label("Address").fill("pycal~ical")

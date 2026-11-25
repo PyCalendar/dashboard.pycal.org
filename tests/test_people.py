@@ -74,7 +74,7 @@ def test_the_github_handles_lead_to_the_pages_of_people(client, projects, bob):
     assert 'class="github-user" href="/projects/open/contributors/dave/"' in pulls
     assert 'aria-label="@dave on GitHub"' in pulls
     client.force_login(bob)
-    members = client.get("/projects/open/collaborators/").content.decode()
+    members = client.get("/projects/open/settings/collaborators/").content.decode()
     assert 'href="/projects/open/contributors/bob/"' in members  # took no part: all projects
     assert client.get("/projects/open/contributors/bob/")["Location"] == "/people/bob/"
     account_page = client.get("/account/").content.decode()

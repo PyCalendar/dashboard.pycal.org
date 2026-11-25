@@ -248,8 +248,6 @@ def test_the_tabs_are_in_order_overview_public_private(client, project, bob):
         "Filters",
         "Steps",
         "PR Sync",
-        "Repositories",
-        "Collaborators",
         "Settings",
     ]
     client.logout()
@@ -299,7 +297,7 @@ def test_a_person_without_a_github_user_is_unknown():
 
 def test_the_collaborators_have_their_avatar(client, project, bob):
     client.force_login(bob)
-    page = client.get(f"/projects/{project.slug}/collaborators/").content.decode()
+    page = client.get(f"/projects/{project.slug}/settings/collaborators/").content.decode()
     row = page.split('data-member="bob"')[1].split("</tr>")[0]
     assert 'data-github-user="bob"' in row and 'class="avatar"' in row
     assert 'href="https://github.com/bob"' in row
@@ -350,7 +348,7 @@ def test_the_update_is_at_the_bottom_of_the_overview(client, project, bob):
 
 def test_the_roles_link_what_each_may_do(client, project, bob):
     client.force_login(bob)
-    page = client.get(project.path("collaborators/")).content.decode()
+    page = client.get(project.path("settings/collaborators/")).content.decode()
     link = 'href="https://docs.example.org/tutorial/projects.html#project-roles"'
     table, share = page.split("data-share")
     assert link in table.split("<thead>")[1].split("</thead>")[0]  # next to Role

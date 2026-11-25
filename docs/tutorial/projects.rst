@@ -52,7 +52,7 @@ before, with the name of the project after the address, lead there.
 - When the project has one repository, the site suggests an address after it:
   the name of the repository, such as ``icalendar``; if another project has it,
   ``collective~icalendar``; then ``collective~icalendar-2``, ``-3`` and so on.
-  Press *Use it* on the tab *Repositories* or *Settings → Display*.
+  Press *Use it* on the tab *Settings → Repositories* or *Settings → Display*.
 - The owners change the address on the tab *Settings → Display*. Old links keep working:
   the old address leads to the new one. Every address a project had is kept
   with the time it was used, listed under *Old addresses*, and no other project
@@ -64,7 +64,7 @@ before, with the name of the project after the address, lead there.
 Add repositories
 ================
 
-On the tab *Repositories* of the project, add repositories in one of three
+On the tab *Settings → Repositories* of the project, add repositories in one of three
 ways:
 
 By name
@@ -104,7 +104,7 @@ see it.
 Install the GitHub App
 ======================
 
-After adding repositories, the tab *Repositories* says on which of them the
+After adding repositories, the tab *Settings → Repositories* says on which of them the
 GitHub App is installed. The section *Install the GitHub App* shows up only
 while a repository lacks the app or the permissions it needs now. Installed,
 the app lets the site
@@ -814,6 +814,10 @@ The tab *Settings*, for writers and owners, has a second row of tabs:
 
 *Display*
    The name, the description, the visibility and the address of the project.
+*Repositories*
+   The repositories of the project: add and remove them, see
+   :ref:`add-repositories`. Everybody who sees the project sees its
+   repositories on the tab *Overview*, the private ones only its collaborators.
 *Collaborators*
    Who may do what in the project, see :ref:`project-roles`.
 *Snapshots*
@@ -944,10 +948,7 @@ Public projects have their JSON, such as ``/projects.json`` and
      - ``/projects/<address>/``
    * - Pull requests
      - ``/projects/<address>/pull-requests/``
-   * - Repositories
-     - ``/projects/<address>/repositories/``
-   * - Collaborators
-     - ``/projects/<address>/collaborators/``
    * - Settings
-     - ``/projects/<address>/settings/``, and its tabs ``settings/snapshots/``,
-       ``settings/backup/`` and ``settings/danger/``
+     - ``/projects/<address>/settings/``, and its tabs
+       ``settings/repositories/``, ``settings/collaborators/``,
+       ``settings/snapshots/``, ``settings/backup/`` and ``settings/danger/``
