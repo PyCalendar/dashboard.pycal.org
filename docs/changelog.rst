@@ -9,6 +9,23 @@ Changelog
 
 .. towncrier release notes start
 
+0.25.0 (2026-11-25)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- *Repositories* and *Collaborators* are no longer tabs of a project, but tabs of its *Settings*, at ``settings/repositories/`` and ``settings/collaborators/``; the old addresses lead there. Everybody who sees a project still sees its repositories on the tab *Overview*.
+- The texts of skipping steps and quality checks are in German and Spanish.
+- The variables ``{step_check_skip_url}`` and ``{step_check_skip_url_author}`` are now ``{step_skip_url}`` and ``{step_skip_url_author}``; the summaries of steps, the texts of quality checks and the PR messages that used them were changed over.
+
+
+Bug fixes
+~~~~~~~~~
+
+- The dialog to skip a quality check names it in quotes, such as *Skip the quality check: "This PR is not ready for documentation review"*, and a skipped quality check is gray, without a dashed line.
+
+
 0.24.0 (2026-11-25)
 -------------------
 
