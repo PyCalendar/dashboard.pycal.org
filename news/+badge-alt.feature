@@ -1,1 +1,0 @@
-The badge of ``{pr_badge}`` has an alternative text for screen readers: on the pages of the dashboard what the badge shows, such as *Triage 3/4*, and in the PR message *View progress*, as the comment stays on a pull request that leaves its scope while the badge goes on changing.

@@ -9,6 +9,30 @@ Changelog
 
 .. towncrier release notes start
 
+0.23.0 (2026-11-25)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Every GitHub handle leads to the page of the person on the dashboard: in a project to their page in the project, else to the new page ``/people/<handle>/`` with the projects they took part in. The mark of GitHub next to each handle leads to their profile on GitHub.
+- The badge of ``{pr_badge}`` has an alternative text for screen readers: on the pages of the dashboard what the badge shows, such as *Triage 3/4*, and in the PR message *View progress*, as the comment stays on a pull request that leaves its scope while the badge goes on changing.
+- The conditions of a step are called its quality checks instead of its tasks, and the tab *Steps* shows the new heading *Skip conditions* below them, with the conditions *Skip if* and the authors that skip the step.
+- The new texts are translated into German and Spanish: the page of a person, the quality checks, the skip conditions, the alternative text of the badge and the changed texts of the privacy policy.
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- The documentation of every error says why it appears in one sentence and then its cases, how to resolve it with the actions alone, split up by the cases, then its context and a note with the rest.
+
+
+Maintenance
+~~~~~~~~~~~
+
+- ``make messages`` without gettext builds a small image with gettext and the packages once, and again only when ``uv.lock`` changes: it takes seconds instead of minutes.
+
+
 0.22.1 (2026-11-24)
 -------------------
 
