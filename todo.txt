@@ -793,6 +793,6 @@ community: where to start, what waits for a review, who contributes.
 - [ ] The person: the rest of the interface of a condition, and "This way, they can react and be put into the ..."
 - [x] Quality checks (and conditions of Skip if) are grouped into an OR, as into an AND; a radio choice turns an OR
       into an AND and back (or<n>~ in the address, | in the key of the step; Change without JavaScript)
-- [ ] The person: translate the new texts of OR into German and Spanish?
+- [x] The person: translate the new texts of OR into German and Spanish? Yes: translated (also the error of a column)
 - [x] The __getattr__ of Not saves the attribute in the class as a property, so that the access is faster next time
 - [x] The NOT finds its page and its description without State.docs_url.__func__: State.page and State.described

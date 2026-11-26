@@ -197,7 +197,7 @@ msgstr "NICHT"
 
 #, python-format
 msgid "%(conditions)s or %(condition)s"
-msgstr ""
+msgstr "%(conditions)s oder %(condition)s"
 
 #, python-format
 msgid "%(conditions)s and %(condition)s"
@@ -562,7 +562,7 @@ msgid "Unknown label"
 msgstr "Unbekanntes Label"
 
 msgid "The column cannot show the condition"
-msgstr ""
+msgstr "Die Spalte kann die Bedingung nicht zeigen"
 
 msgid "A setting of the site is wrong"
 msgstr "Eine Einstellung der Seite ist falsch"
@@ -2017,7 +2017,7 @@ msgid "Applies to"
 msgstr "Trifft zu auf"
 
 msgid "OR"
-msgstr ""
+msgstr "ODER"
 
 msgid "AND"
 msgstr "UND"
@@ -2149,24 +2149,27 @@ msgid ""
 "The choice of a group, All of them (AND) or Any of them (OR), turns an AND "
 "into an OR, which holds when one of its conditions holds, and back."
 msgstr ""
+"Die Wahl einer Gruppe, Alle davon (UND) oder Eine davon (ODER), macht aus "
+"einem UND ein ODER, das erfüllt ist, wenn eine seiner Bedingungen erfüllt "
+"ist, und zurück."
 
 msgid "No conditions: all pull requests."
 msgstr "Keine Bedingungen: alle Pull Requests."
 
 msgid "Any of these, as one condition:"
-msgstr ""
+msgstr "Eine dieser, als eine Bedingung:"
 
 msgid "All of these, as one condition:"
 msgstr "Alle diese, als eine Bedingung:"
 
 msgid "How the conditions are joined"
-msgstr ""
+msgstr "Wie die Bedingungen verbunden sind"
 
 msgid "All of them (AND)"
-msgstr ""
+msgstr "Alle davon (UND)"
 
 msgid "Any of them (OR)"
-msgstr ""
+msgstr "Eine davon (ODER)"
 
 msgid "Change"
 msgstr "Ändern"
@@ -3290,10 +3293,12 @@ msgid ""
 "Joined by OR with the other columns of the same number: one condition of the "
 "step"
 msgstr ""
+"Mit ODER verbunden mit den anderen Spalten derselben Nummer: eine Bedingung "
+"des Schritts"
 
 #, python-format
 msgid "OR %(number)s"
-msgstr ""
+msgstr "ODER %(number)s"
 
 msgid ""
 "Joined by AND with the other columns of the same number: one condition of "
