@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, ClassVar
 
+from pycal_dashboard.conditions.condition.negation import Not
 from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.state.base import State
 from pycal_dashboard.conditions.state.scope import Scope
@@ -18,9 +19,11 @@ class Condition(State):
     """A condition of a pull request: a state that is true or false.
 
     A subclass has an ``id``, the ``inputs`` that configure it, the ``data`` that the
-    background reads for it, and :meth:`assess`. Each has its page in the documentation,
-    ``reference/conditions/<id>.html``, with its API reference at the bottom. The id, inputs,
-    data, configuration and description are those of every state (:class:`~.state.base.State`).
+    background reads for it, and :meth:`assess`. Every condition can be inverted:
+    :meth:`negate` wraps it in its NOT (:class:`~.negation.Not`), named by ``negation``. Each has
+    its page in the documentation, ``reference/conditions/<id>.html``, with its API reference
+    at the bottom. The id, inputs, data, configuration and description are those of every state
+    (:class:`~.state.base.State`).
 
     Attributes:
         id: The name of the condition in configurations, such as ``label_exists``.
@@ -31,6 +34,24 @@ class Condition(State):
     """
 
     section: ClassVar[str] = "conditions"
+    # the id, title and description of its NOT (negate()), such as label_absent of label_exists;
+    # empty for those that the NOT makes of its own
+    negation: ClassVar[tuple[str, str, str]] = ("", "", "")
+
+    @classmethod
+    def negate(cls) -> Not:
+        """The NOT of the condition: it holds exactly when the condition does not.
+
+        Returns:
+            The condition wrapped in :class:`~.negation.Not`, whose :meth:`~.negation.Not.negate`
+            gives it back.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.condition.label_exists import LabelExists
+            >>> LabelExists.negate().id, LabelExists.negate().negate() is LabelExists
+            ('label_absent', True)
+        """
+        return Not(cls, *cls.negation)
 
     @classmethod
     def complete(cls, issue: Issue) -> bool:

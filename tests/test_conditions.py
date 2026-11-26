@@ -65,7 +65,8 @@ def test_every_condition_has_its_page_with_the_api_at_the_bottom(id, settings):
             assert "does not ask for these permissions yet" in page
     api = page.rsplit("API reference\n=============", 1)
     assert len(api) == 2, "the API reference is the last section"
-    assert f".. autoclass:: {condition.__module__}.{condition.__name__}" in api[1]
+    kind = condition if isinstance(condition, type) else type(condition)  # a NOT: Not
+    assert f".. autoclass:: {kind.__module__}.{kind.__name__}" in api[1]
     assert not re.search(r"\n[^\n]+\n={3,}\n", api[1]), "no section after it"
     settings.DOCS_URL = "https://docs.example.org/"
     assert condition.docs_url() == f"https://docs.example.org/reference/conditions/{id}.html"
@@ -76,7 +77,8 @@ def test_every_condition_has_its_page_with_the_api_at_the_bottom(id, settings):
 def test_every_condition_and_data_is_in_the_api_reference():
     api = (DOCS / "api.rst").read_text()
     for condition in CONDITIONS.values():
-        assert f".. automodule:: {condition.__module__}" in api
+        kind = condition if isinstance(condition, type) else type(condition)  # a NOT: Not
+        assert f".. automodule:: {kind.__module__}" in api
     for spec in DATA_SPECS:
         assert f".. automodule:: {type(spec).__module__}" in api
 
@@ -275,6 +277,43 @@ def test_the_conditions_are_assessed(repository, id, config, results):
     condition = CONDITIONS[id]
     values = condition.configure(config, {"repository": repository})
     assert {title: condition.check(pull(title), values) for title in results} == results
+    # every condition can be inverted: its NOT holds exactly when it does not
+    negated = condition.negate()
+    assert negated.negate() is condition or negated.negate() == condition
+    assert {title: negated.check(pull(title), values) for title in results} == {
+        title: None if result is None else not result for title, result in results.items()
+    }
+    assert {title: negated.observe(pull(title), None, values) for title in results} == {
+        title: None if result is None else not result for title, result in results.items()
+    }
+
+
+@pytest.mark.parametrize("id", IDS)
+def test_every_condition_can_be_inverted(id):
+    """The NOT wraps a condition: its name is its own, the rest is that of the condition."""
+    condition = CONDITIONS[id]
+    negated = condition.negate()
+    assert negated.negate() == condition and negated.negate().negate() == negated
+    assert negated.id != condition.id and negated.title and negated.description
+    assert (negated.inputs, negated.data, negated.scoped) == (
+        condition.inputs,
+        condition.data,
+        condition.scoped,
+    )
+    described = negated.describe()
+    assert described["id"] == negated.id and described["documentation"].endswith(
+        f"/{negated.id}.html"
+    )
+
+
+def test_label_absent_is_the_not_of_label_exists():
+    from pycal_dashboard.conditions.condition.label_exists import LabelExists
+    from pycal_dashboard.conditions.condition.negation import Not
+
+    absent = CONDITIONS["label_absent"]
+    assert isinstance(absent, Not) and absent == LabelExists.negate()
+    assert absent.negate() is LabelExists and absent.title == "A label is absent"
+    assert absent.inputs == LabelExists.inputs and absent.data == LabelExists.data
 
 
 @pytest.mark.django_db

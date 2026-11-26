@@ -24,10 +24,10 @@ from pycal_dashboard.conditions.condition.ci_passes import CiPasses
 from pycal_dashboard.conditions.condition.ci_unknown import CiUnknown
 from pycal_dashboard.conditions.condition.closed import Closed
 from pycal_dashboard.conditions.condition.draft import Draft
-from pycal_dashboard.conditions.condition.label_absent import LabelAbsent
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.condition.merge_conflict import MergeConflict
 from pycal_dashboard.conditions.condition.merged import Merged
+from pycal_dashboard.conditions.condition.negation import Not
 from pycal_dashboard.conditions.condition.open import Open
 from pycal_dashboard.conditions.condition.pr_sync_on import PrSyncOn
 from pycal_dashboard.conditions.condition.review_ratio import ReviewRatioCompared
@@ -46,11 +46,12 @@ from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
 from pycal_dashboard.conditions.state.reviews_given import ReviewsGiven
 from pycal_dashboard.errors import UnknownCondition
 
-CONDITIONS: dict[str, type[Condition]] = {
+# a NOT of a condition (Not) is one, too, such as label_absent
+CONDITIONS: dict[str, type[Condition] | Not] = {
     condition.id: condition
     for condition in (
         LabelExists,
-        LabelAbsent,
+        LabelExists.negate(),
         CiPasses,
         CiFails,
         CiUnknown,
@@ -79,7 +80,7 @@ STATES: dict[str, type[PersonState]] = {
 DATA_SPECS = (IssueData(), LabelsData(), PullRequestData(), ChecksData(), ReviewsData())
 
 
-def find(id: str) -> type[Condition]:
+def find(id: str) -> type[Condition] | Not:
     """The condition with an id.
 
     Parameters:

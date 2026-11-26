@@ -16,6 +16,14 @@ specs give the links of their data, which the conditions reuse
 condition chooses the least of them
 (:meth:`~pycal_dashboard.conditions.condition.base.Condition.evidence`).
 
+Every condition can be inverted: its NOT
+(:class:`~pycal_dashboard.conditions.condition.negation.Not`, made by
+:meth:`~pycal_dashboard.conditions.condition.base.Condition.negate`) is wrapped
+around it and holds exactly when it does not; while the condition is not known,
+neither is its NOT. The NOT has its own id, title and description, and the
+inputs, the data and the evidence of the condition; the NOT of a NOT is the
+condition again. ``label_absent`` is the NOT of ``label_exists``.
+
 .. list-table::
    :header-rows: 1
 

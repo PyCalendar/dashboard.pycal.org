@@ -108,7 +108,7 @@ Conditions
 .. automodule:: pycal_dashboard.conditions.condition.label_exists
    :no-members:
 
-.. automodule:: pycal_dashboard.conditions.condition.label_absent
+.. automodule:: pycal_dashboard.conditions.condition.negation
    :no-members:
 
 .. automodule:: pycal_dashboard.conditions.condition.ci_passes

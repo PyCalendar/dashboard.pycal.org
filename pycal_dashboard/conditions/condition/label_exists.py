@@ -16,12 +16,13 @@ class LabelExists(Condition):
     """A label exists on a pull request.
 
     Holds when the pull request has the label of the input ``label``, such as ``needs review``;
-    its case does not matter.
+    its case does not matter. Its NOT is ``label_absent``: the label is absent.
     """
 
     id = "label_exists"
     title = "A label exists"
     description = "A label exists on a pull request."
+    negation = ("label_absent", "A label is absent", "A label is absent from a pull request.")
     inputs = (LabelInput("label", "Label", "The name of a label of the repository."),)
     data = (LabelsData(),)
 

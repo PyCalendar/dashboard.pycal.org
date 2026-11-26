@@ -5,7 +5,8 @@
 A label is absent from a pull request.
 
 Holds when the pull request does not have the label of the input ``label``: the
-opposite of ``label_exists``.
+NOT of :doc:`label_exists`, which it wraps (``LabelExists.negate()``). Its inputs,
+its data and its evidence are those of ``label_exists``.
 
 It is checked on pull requests only. While the data of a pull request is not
 complete, the condition cannot be assessed yet.
@@ -49,6 +50,5 @@ The update of the repository reads in the background:
 API reference
 =============
 
-.. autoclass:: pycal_dashboard.conditions.condition.label_absent.LabelAbsent
-   :members: assess
-   :show-inheritance:
+.. autoclass:: pycal_dashboard.conditions.condition.negation.Not
+   :members: negate, assess, check

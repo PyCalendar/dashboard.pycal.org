@@ -142,8 +142,13 @@ after a change, follow the rule it names instead of changing the test.
   `docs/reference/conditions/<id>.rst` with the API reference at its bottom, and is in
   `CONDITIONS`; `tests/test_conditions.py` checks them. Data whose permissions the GitHub App
   does not ask for is described but not read: asking for a permission is the person's decision.
-- Every condition can be inverted, and the page of saving a filter always has its buttons
-  Invert and Remove. Each condition shows its evidence on the page of a pull request: the
+- Every condition can be inverted, always: a condition (`Condition.negate()`) is wrapped in its
+  NOT (`Not`, `conditions/condition/negation.py`), which sees through to everything but its
+  name and its result, and `Not.negate()` gives the condition back; a negative condition is
+  such a NOT (`label_absent` of `label_exists`), not a subclass. A column too
+  (`Column.inverted()`, the NOT of a column with `not~`), in every group, filter and type; the
+  page of saving a filter always has its buttons Invert and Remove. `tests/test_invert.py`
+  and `tests/test_conditions.py` check every group and condition. Each condition shows its evidence on the page of a pull request: the
   least that shows why it holds or not (`Evidence`); its data specs give the links.
   A new choice of a column keeps the columns saved before as they were.
 - Conditions joined by AND (`Conjunction`, `Column.joined`) are one condition of a step: one

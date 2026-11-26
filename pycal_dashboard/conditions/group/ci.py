@@ -33,6 +33,22 @@ class CiGroup(SwitchesGroup):
     phrase = (gettext_noop("its CI is %(states)s"), gettext_noop("its CI is not %(states)s"))
 
     @classmethod
+    def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
+        """None: the other states of the CI are not the opposite for sure.
+
+        The CI of a closed or merged pull request is unknown, and whether it passes or fails is
+        not known, so failing is not known where passing or unknown holds. A column of the CI is
+        inverted by its filter, or as the NOT of its condition, instead.
+
+        Parameters:
+            choices: The switches that are on.
+
+        Returns:
+            None.
+        """
+        return None
+
+    @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
         """Why the result of the checks is not known.
 

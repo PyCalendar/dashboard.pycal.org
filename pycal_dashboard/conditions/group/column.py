@@ -7,6 +7,9 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 from urllib.parse import unquote
 
+from django.utils.translation import gettext
+
+from pycal_dashboard.conditions.condition.negation import Not
 from pycal_dashboard.conditions.group.author import AuthorGroup
 from pycal_dashboard.conditions.group.author_type import AuthorTypeGroup
 from pycal_dashboard.conditions.group.branch import BranchGroup
@@ -59,19 +62,24 @@ class Column:
     such as ``branch~all~outdated~conflict`` or ``labels~applies~present~needs review``.
     A column joined with others by AND starts with the number of the AND, such as
     ``and1~labels~applies~present~bug`` (see
-    :class:`~pycal_dashboard.conditions.group.conjunction.Conjunction`).
+    :class:`~pycal_dashboard.conditions.group.conjunction.Conjunction`), and the NOT of its
+    condition with ``not``, such as ``not~text~skip~title~contains~WIP``: every condition can
+    be inverted (:meth:`inverted`), its NOT holds when it does not
+    (:class:`~pycal_dashboard.conditions.condition.negation.Not`).
 
     Attributes:
         group: The group of conditions.
         choices: Its choices.
         filter: ``all``, ``applies`` or ``not``.
         joined: The number of the AND that it is a part of in its filter; 0 for none.
+        negated: Whether it is the NOT of the condition of its group and choices.
     """
 
     group: type[ConditionGroup]
     choices: tuple[str, ...]
     filter: str = "all"
     joined: int = 0
+    negated: bool = False
 
     @classmethod
     def decode(cls, value: str) -> Column:
@@ -92,13 +100,17 @@ class Column:
         joined = JOINED.fullmatch(parts[0])
         if joined:
             parts = parts[1:] or [""]
+        negated = parts[0] == "not"
+        if negated:
+            parts = parts[1:] or [""]
         group = GROUPS.get(parts[0])
         if group is None:
             raise UnknownCondition(parts[0])
         filter = parts[1] if len(parts) > 1 else "all"
         if filter not in FILTERS:
             raise ConditionInputUnknown(f"filter: {filter}")
-        return cls(group, group.check(tuple(parts[2:])), filter, int(joined[1]) if joined else 0)
+        number = int(joined[1]) if joined else 0
+        return cls(group, group.check(tuple(parts[2:])), filter, number, negated)
 
     @classmethod
     def of_form(cls, form: QueryDict) -> Column:
@@ -127,9 +139,11 @@ class Column:
         """The value of the column in the address.
 
         Returns:
-            Such as ``branch~all~outdated``, or ``and1~branch~all~outdated`` when it is joined.
+            Such as ``branch~all~outdated``, ``and1~branch~all~outdated`` when it is joined, or
+            ``not~branch~all~outdated`` when it is negated.
         """
         parts = (f"and{self.joined}",) if self.joined else ()
+        parts += ("not",) if self.negated else ()
         parts += (self.group.id, self.filter, *self.choices)
         # only % and the separator ~ are escaped: the address escapes the rest once
         return "~".join(part.replace("%", "%25").replace("~", "%7E") for part in parts)
@@ -143,9 +157,11 @@ class Column:
                 repository when None.
 
         Returns:
-            True or False; None while its data is not complete.
+            True or False; None while its data is not complete. The NOT of the condition, when
+            the column is negated.
         """
-        return self.group.applies(issue, self.choices, scope)
+        result = self.group.applies(issue, self.choices, scope)
+        return Not.result(result) if self.negated else result
 
     def evidence(
         self, issue: Issue, scope: Scope | None = None, project: Project | None = None
@@ -250,17 +266,23 @@ class Column:
     @property
     def summary(self) -> str:
         """The header of the column in words, for its title and screen readers."""
-        return self.group.summary(self.choices)
+        summary = self.group.summary(self.choices)
+        return gettext("NOT %(condition)s") % {"condition": summary} if self.negated else summary
 
     @property
     def sentence(self) -> str:
-        """The condition as it filters, as a part of a sentence, such as ``it is open``."""
-        return self.group.sentence(self.choices, negative=self.filter == "not")
+        """The condition as it filters, as a part of a sentence, such as ``it is open``.
+
+        A negated column that shows the pull requests it does not apply to reads as the
+        condition: two NOTs.
+        """
+        return self.group.sentence(self.choices, negative=(self.filter == "not") != self.negated)
 
     @property
     def head(self) -> list[dict]:
-        """The shortest header of the column, see ``ConditionGroup.head``."""
-        return self.group.head(self.choices)
+        """The shortest header of the column, see ``ConditionGroup.head``; NOT first, if so."""
+        head = self.group.head(self.choices)
+        return [{"text": gettext("NOT"), "kind": "not"}, *head] if self.negated else head
 
     def toggled(self, result: str) -> str:
         """The filter after a click on the toggle of the check marks or the crosses.
@@ -291,29 +313,37 @@ class Column:
             return other  # the last one that was on: the other one instead
         return "all"  # switch this one on too
 
-    def inverted(self) -> Column | None:
-        """The column that shows exactly the pull requests that this one does not show.
+    def inverted(self) -> Column:
+        """The column of the opposite condition: every condition can be inverted.
 
-        Its group inverts its choices where it can, such as label absent for present or below
-        for at least; else its filter is inverted: the pull requests it does not apply to,
-        such as *it is not auto-merging*.
+        A negated column becomes the condition again. Else its group inverts its choices where
+        it can, such as label absent for present or below for at least; else a quality check
+        that is on inverts its filter: the pull requests it does not apply to, such as *it is
+        not auto-merging*; else, such as when it is off or of Skip if, it is the NOT of the
+        condition (``negated``). Inverting it again gives it back.
 
         Returns:
-            The inverted column; None for a column that does not filter.
+            The inverted column.
 
         Examples:
             >>> from pycal_dashboard.conditions.group.status import StatusGroup
+            >>> from pycal_dashboard.conditions.group.text import TextGroup
             >>> Column(StatusGroup, ("auto_merge",), "applies").inverted().encode()
             'status~not~auto_merge'
             >>> Column(StatusGroup, ("open",), "applies").inverted().encode()
             'status~applies~closed~merged'
+            >>> wip = Column(TextGroup, ("title", "contains", "WIP"), "skip")
+            >>> wip.inverted().encode(), wip.inverted().inverted() == wip
+            ('not~text~skip~title~contains~WIP', True)
         """
+        if self.negated:
+            return replace(self, negated=False)
         choices = self.group.invert(self.choices)
-        if choices is not None and self.filter != "all":
+        if choices is not None:
             return replace(self, choices=choices)
-        if self.filter in ("all", "skip", "skip_off"):  # Skip if inverts by its choices only
-            return None
-        return replace(self, filter="not" if self.filter == "applies" else "applies")
+        if self.filter in ("applies", "not"):
+            return replace(self, filter="not" if self.filter == "applies" else "applies")
+        return replace(self, negated=True)
 
     def opposite(self) -> Column | None:
         """The opposite of a column that shows only those it does not apply to.
@@ -330,7 +360,7 @@ class Column:
             >>> Column(LabelsGroup, ("present", "bug"), "not").opposite().encode()
             'labels~applies~absent~bug'
         """
-        if self.filter != "not":
+        if self.filter != "not" or self.negated:
             return None
         choices = self.group.opposite(self.choices)
         return replace(self, choices=choices, filter="applies") if choices else None

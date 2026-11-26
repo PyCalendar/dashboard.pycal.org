@@ -284,9 +284,14 @@ Drag a condition from one table to the other, or use **To Skip if** and **To the
 quality checks**. Each condition has its type, a quality check or Skip if, and its
 switch: a condition switched off stays in its table, grayed out. A switch at each condition turns it off: it is grayed out and
 stays a column of the table without filtering; when a filter is saved the
-first time, every condition is on. **Invert** next to a condition turns it
-into its opposite, such as *it is not auto-merging* for *it is auto-merging*
-or *fewer than 2 reviews* for *at least 2*, and **Remove** removes it. For a condition that shows only
+first time, every condition is on. Every condition can be inverted: **Invert**
+next to a condition turns it into its opposite, such as *it is not auto-merging*
+for *it is auto-merging* or *fewer than 2 reviews* for *at least 2*, also when it
+is off or of Skip if. Where no other choice is the opposite, it becomes the
+*NOT* of the condition, which holds exactly when the condition does not, such as
+*NOT Text: title contains “WIP”*; the table shows *NOT* in its header, and the
+address starts its column with ``not~``. **Invert** again gives it back, and
+**Remove** removes it. For a condition that shows only
 what it does not apply to, the page suggests its opposite where it is the same,
 such as *label absent* for not *label present*; **Use it** switches it.
 

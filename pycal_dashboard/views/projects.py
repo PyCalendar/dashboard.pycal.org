@@ -514,7 +514,11 @@ def changes(request: HttpRequest, found: list[Column]) -> list[Column] | None:
             return [*found, Column.of_form(request.GET)]
         if "edit" in request.GET:
             number = index("edit")
-            found[number] = replace(Column.of_form(request.GET), joined=found[number].joined)
+            # its AND and its NOT stay
+            column = found[number]
+            found[number] = replace(
+                Column.of_form(request.GET), joined=column.joined, negated=column.negated
+            )
             return found
         if "filter_of" in request.GET:  # a toggle of the check marks or crosses
             number = index("filter_of")

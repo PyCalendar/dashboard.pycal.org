@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from pycal_dashboard.conditions.condition.label_absent import LabelAbsent
 from pycal_dashboard.conditions.condition.label_exists import LabelExists
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.conditions.input.label import LabelInput
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
     from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue, Project
 
-MODES = {"present": LabelExists, "absent": LabelAbsent}
+MODES = {"present": LabelExists, "absent": LabelExists.negate()}
 
 
 class LabelsGroup(ConditionGroup):

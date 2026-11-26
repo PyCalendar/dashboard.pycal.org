@@ -83,7 +83,8 @@ def test_invert_and_remove_a_condition(client, project, bob):
     inverted = client.get(address + "&invert=0")["Location"]
     assert "col=status~applies~closed~merged" in inverted.replace("%7E", "~")
     inverted = client.get(address + "&invert=2")["Location"].replace("%7E", "~")
-    assert "col=branch~all~conflict" in inverted  # it does not filter: as it was
+    # also a condition that is off is inverted: every condition can be
+    assert "col=branch~all~up_to_date~outdated" in inverted
     removed = client.get(address + "&remove=1")["Location"].replace("%7E", "~")
     assert "needs" not in removed and removed.count("col=") == 2
     auto = "/projects/icalendar/filters/save/?col=status~applies~auto_merge&invert=0"

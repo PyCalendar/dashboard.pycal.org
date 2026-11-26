@@ -339,6 +339,7 @@ form.stacked label.switch input { width: 3.2rem; max-width: none; }
 .state-merged, .state-auto_merge { color: var(--merged); }
 .state-outdated { color: var(--warning); }
 .state-draft { color: var(--text-muted); }  /* as GitHub shows drafts: gray */
+.state-not { font-weight: 700; letter-spacing: .04em; color: var(--text-muted); }  /* the NOT of a condition */
 
 /* the table of pull requests stays a table on phones: it scrolls in its frame, its header with
    + and the gears stays, and so do the columns that people choose */

@@ -38,7 +38,7 @@ Every public page has its information as JSON at the address of the page with
      - ``/projects/<slug>/filters.json``: the saved filters of a public project:
        each with its ``name``, ``description``, ``columns`` (those joined by
        AND start with its number, such as ``and1~status~applies~open``, see
-       :ref:`and-conditions`), ``count`` of pull requests and the address of its
+       :ref:`and-conditions`, and the NOT of a condition with ``not~``), ``count`` of pull requests and the address of its
        ``pull_requests``
    * - ``/projects/<slug>/pull/<number>/``
      - ``/projects/<slug>/pull/<number>.json``: a pull request of a public

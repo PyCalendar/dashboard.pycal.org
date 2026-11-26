@@ -762,3 +762,13 @@ community: where to start, what waits for a review, who contributes.
 - [x] Rule (AGENTS.md, remembered): every link that leads to GitHub has the mark of GitHub, so that people know when
       they leave the platform; tests/test_github_links.py checks the pages, also links in Markdown
 - [x] PR Sync, Edit: Preview and Apply at the bottom are swapped (Apply last); also Edit and Apply of the review
+- [x] All conditions can be inverted, a rule that always applies (AGENTS.md): Invert on every condition of the page of
+      saving a filter, also when it is off and of Skip if (the filter of icalendar had several without it); tested
+      for every group, filter and type (tests/test_invert.py)
+- [x] A NOT condition (Not) wraps a condition and sees through to the rest of its attributes; Condition.negate()
+      returns it, Not.negate() the condition again; LabelAbsent (a subclass of LabelExists) is now
+      LabelExists.negate(), with the id label_absent; the other conditions that look like opposites (open/closed,
+      CI passes/fails, branch) are not exact NOTs, as a third state exists, so they stay
+- [x] A column is inverted as the NOT of its condition (not~) where no choice is its opposite
+- [x] The CI did not invert exactly: failing is not known for a merged pull request, passing or unknown holds;
+      its states are no longer swapped to invert it
