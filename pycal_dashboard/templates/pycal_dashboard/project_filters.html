@@ -16,7 +16,7 @@
     <summary>{% blocktranslate count counter=item.in_force %}{{ counter }} condition{% plural %}{{ counter }} conditions{% endblocktranslate %}</summary>
     {% if item.rows %}<div class="table-wrap"><table class="table filter-conditions" data-filter-conditions>
       <thead><tr><th>{% translate "Condition" %}</th><th class="numeric">{% translate "Applies to" %}</th></tr></thead>
-      <tbody>{% for row in item.rows %}<tr data-condition-count="{{ row.index }}"><td class="condition-name">{{ row.column.sentence|capfirst }}</td><td class="numeric" data-count-of="{{ row.index }}"><a href="{{ item.counts }}" class="muted">{% translate "count" %}</a></td></tr>{% endfor %}</tbody>
+      <tbody>{% for row in item.rows %}<tr data-condition-count="{{ row.index }}"><td class="condition-name">{% if row.and_before %}<span class="and-chip">{% translate "AND" %}</span> {% endif %}{{ row.column.sentence|capfirst }}</td><td class="numeric" data-count-of="{{ row.index }}"><a href="{{ item.counts }}" class="muted">{% translate "count" %}</a></td></tr>{% endfor %}</tbody>
     </table></div>{% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}
     <p class="muted" data-filter-total></p>
   </details>

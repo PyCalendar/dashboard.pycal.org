@@ -1,0 +1,1 @@
+Dragging a condition on the page of saving a filter shows where it lands: the AND or the condition that it joins, or the gap between two conditions, which has room to drop in between; a drop in a gap moves the condition there, and a drop where it was picked up changes nothing.

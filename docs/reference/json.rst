@@ -36,8 +36,10 @@ Every public page has its information as JSON at the address of the page with
        not known)
    * - ``/projects/<slug>/filters/``
      - ``/projects/<slug>/filters.json``: the saved filters of a public project:
-       each with its ``name``, ``description``, ``columns``, ``count`` of pull
-       requests and the address of its ``pull_requests``
+       each with its ``name``, ``description``, ``columns`` (those joined by
+       AND start with its number, such as ``and1~status~applies~open``, see
+       :ref:`and-conditions`), ``count`` of pull requests and the address of its
+       ``pull_requests``
    * - ``/projects/<slug>/pull/<number>/``
      - ``/projects/<slug>/pull/<number>.json``: a pull request of a public
        project, with its ``repository``, ``number``, ``title``, ``url``,
@@ -45,7 +47,8 @@ Every public page has its information as JSON at the address of the page with
        (``null`` in none), and the ``steps`` of the project, see
        :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
        whether it is ``complete``, how many quality checks are ``done`` of the
-       ``total``, and its ``tasks``, each with its ``condition``,
+       ``total``, and its ``tasks``, each with its ``condition`` (of
+       conditions joined by AND, their columns joined with ``&``),
        ``sentence``, ``state`` (``todo``, ``done``, ``skipped`` or
        ``unknown``), whether it is ``skipped`` (not why, see :ref:`skips`),
        ``summary`` and ``evidence``, the links that show why its condition

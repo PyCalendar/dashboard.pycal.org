@@ -4,14 +4,15 @@
 <div class="table-wrap"><table class="table filter-conditions" data-filter-summary>
   <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th>{% if editable %}<th class="condition-actions">{% translate "Actions" %}</th>{% endif %}</tr></thead>
   <tbody data-section="checks">{% for item in rows %}{% if not item.skips %}{% include "pycal_dashboard/conditions/_summary_row.html" %}{% endif %}{% endfor %}
-    <tr class="drop-here" data-drop-here><td colspan="3" class="muted">{% translate "Drop a condition here to make it a quality check." %}</td></tr></tbody>
+    <tr class="drop-here" data-drop-here data-gap data-before=""><td colspan="3" class="muted">{% translate "Drop a condition here to make it a quality check." %}</td></tr></tbody>
 </table></div>
 <h3 data-section-title="skip">{% translate "Skip if" %}</h3>
 <p class="muted">{% translate "If any of these conditions apply, the step is skipped for the pull request, and the filter does not show it." %}</p>
 <div class="table-wrap"><table class="table filter-conditions" data-filter-skip>
   <thead><tr><th class="switch-cell"><span class="visually-hidden">{% translate "Filters" %}</span></th><th>{% translate "Condition" %}</th>{% if editable %}<th class="condition-actions">{% translate "Actions" %}</th>{% endif %}</tr></thead>
   <tbody data-section="skip">{% for item in rows %}{% if item.skips %}{% include "pycal_dashboard/conditions/_summary_row.html" %}{% endif %}{% endfor %}
-    <tr class="drop-here" data-drop-here><td colspan="3" class="muted">{% translate "Drop a condition here to skip the step when it applies." %}</td></tr></tbody>
+    <tr class="drop-here" data-drop-here data-gap data-before=""><td colspan="3" class="muted">{% translate "Drop a condition here to skip the step when it applies." %}</td></tr></tbody>
 </table></div>
 <p class="muted">{% translate "A condition that is off stays a column but does not filter." %}</p>
+{% if editable %}<p class="muted" data-and-help>{% translate "Drag a condition onto another one or onto an AND to join them by AND: they are one condition of the step, which holds when all of them hold. Drag it between two conditions to move it there, also out of its AND." %}</p>{% endif %}
 {% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}

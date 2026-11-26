@@ -640,6 +640,21 @@ form:has(input[name="step_labels"][value="off"]:checked:not([data-current])) [da
 tr[data-condition-row][draggable="true"] { cursor: grab; }
 tbody[data-section].dragged-over { outline: 2px dashed var(--primary); outline-offset: -2px; }
 tr.drop-here td { font-size: .85rem; text-align: center; }
+/* conditions joined by AND: a group of rows, with a line on the left and a head row */
+.and-chip { display: inline-block; padding: 0 .4em; border-radius: .3em; background: var(--surface-tint); border: 1px solid var(--border); color: var(--text-muted); font-size: .75em; font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
+.filter-conditions tr.and-head td { background: var(--surface-tint); border-bottom: 0; padding-top: .5rem; padding-bottom: .25rem; }
+.filter-conditions tr.and-head td:first-child, .filter-conditions tr.and-member td:first-child { border-left: .25rem solid var(--primary); }
+.filter-conditions tr.and-member td { background: var(--surface-tint); }
+.filter-conditions tr.and-member:not(.and-last) td { border-bottom-color: var(--surface-tint); }
+/* where a dragged condition lands: the condition or the AND to join, or the gap between two */
+.filter-conditions tr.join-target td { background: color-mix(in srgb, var(--primary) 30%, var(--surface)); border-bottom-color: color-mix(in srgb, var(--primary) 30%, var(--surface)); }
+.filter-conditions tr.join-target td:first-child { border-left: .4rem solid var(--primary); }
+/* the gaps have room to drop in between, and do not move while dragging; without the script
+   nothing is dropped, so they take no room */
+.filter-conditions tr.drop-gap td { height: 0; padding: 0; border: 0; background: transparent; }
+form[data-droppable] .filter-conditions tr.drop-gap td { height: 1rem; }
+.filter-conditions tr.gap-target td { background: color-mix(in srgb, var(--primary) 16%, var(--surface)); outline: 2px dashed var(--primary); outline-offset: -3px; }
+.filter-conditions tr.drop-here.gap-target td { color: var(--text); }
 
 /* the settings of a project: the Danger zone is slightly red, its tab and its card */
 .tabs .danger-tab a { color: var(--danger); }

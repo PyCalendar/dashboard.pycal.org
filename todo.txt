@@ -742,3 +742,18 @@ community: where to start, what waits for a review, who contributes.
 - [x] A skipped quality check is gray, not with a dashed line
 - [x] Repositories and Collaborators are tabs of the settings only (settings/repositories/, settings/collaborators/;
       the old addresses redirect), not of the project; what is public, the repositories on the Overview, stays
+- [x] On the page of saving a filter, conditions are joined by AND (Join) by dragging one onto another, also between
+      the quality checks and Skip if; dropping one outside of its AND takes it out again; without JavaScript, the
+      buttons "AND with the one above" and "Out of the AND"
+- [x] An AND is one condition of the step: one quality check (one task, one skip, one summary and description), or
+      one condition of Skip if that skips when all of its conditions apply; its default text joins the sentences
+      with "and", and its evidence shows that of every condition
+- [x] An AND cannot be inverted on the page of saving a filter (its conditions can); it looks like a group
+- [x] Editing a column in the table, its toggles, moving and removing columns, and saving keep the AND
+- [x] Test that the parameters are forwarded: what was typed, the switches, saved and per_page through the buttons and
+      links of ANDs, and the value of an AND (with &) through the skip link, the dialog, the sign in and the resume;
+      the page of saving a filter kept the default size of the table instead of per_page: fixed
+- [x] A drag shows where the condition lands: an AND is highlighted as a whole, a single condition to make an AND,
+      the gap between two conditions, which grows while dragging so that there is room to drop in between
+- [x] A drop where the condition was picked up (onto itself, or the gaps before and after it) changes nothing
+- [x] Translate the new texts of AND into German and Spanish

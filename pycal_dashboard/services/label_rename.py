@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from pycal_dashboard.conditions.group.column import Column
@@ -49,7 +50,8 @@ class LabelRename:
             return value
         if column.group is not LabelsGroup or column.choices[1].lower() != self.old.lower():
             return value
-        return Column(column.group, (column.choices[0], self.new), column.filter).encode()
+        # its AND stays
+        return replace(column, choices=(column.choices[0], self.new)).encode()
 
     def apply(self) -> int:
         """Rename the label in the filters and in the actions of the steps of the projects.

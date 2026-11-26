@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 from urllib.parse import unquote
 
@@ -46,6 +47,8 @@ GROUPS: dict[str, type[ConditionGroup]] = {
 # filter that it applies to; skip_off: one of Skip if that is switched off. So each condition of
 # a filter has its type (a quality check, or Skip if) and whether it is active.
 FILTERS = ("all", "applies", "not", "skip", "skip_off")
+# the first part of a column joined with others by AND: ``and<number>~``, such as ``and1~``
+JOINED = re.compile(r"and([1-9][0-9]{0,2})")
 
 
 @dataclass(frozen=True)
@@ -54,16 +57,21 @@ class Column:
 
     The value is ``<group>~<filter>~<choice>~...``, with ``%`` and ``~`` of a part escaped,
     such as ``branch~all~outdated~conflict`` or ``labels~applies~present~needs review``.
+    A column joined with others by AND starts with the number of the AND, such as
+    ``and1~labels~applies~present~bug`` (see
+    :class:`~pycal_dashboard.conditions.group.conjunction.Conjunction`).
 
     Attributes:
         group: The group of conditions.
         choices: Its choices.
         filter: ``all``, ``applies`` or ``not``.
+        joined: The number of the AND that it is a part of in its filter; 0 for none.
     """
 
     group: type[ConditionGroup]
     choices: tuple[str, ...]
     filter: str = "all"
+    joined: int = 0
 
     @classmethod
     def decode(cls, value: str) -> Column:
@@ -81,13 +89,16 @@ class Column:
             ConditionError: A choice is wrong.
         """
         parts = [unquote(part) for part in value.split("~")]
+        joined = JOINED.fullmatch(parts[0])
+        if joined:
+            parts = parts[1:] or [""]
         group = GROUPS.get(parts[0])
         if group is None:
             raise UnknownCondition(parts[0])
         filter = parts[1] if len(parts) > 1 else "all"
         if filter not in FILTERS:
             raise ConditionInputUnknown(f"filter: {filter}")
-        return cls(group, group.check(tuple(parts[2:])), filter)
+        return cls(group, group.check(tuple(parts[2:])), filter, int(joined[1]) if joined else 0)
 
     @classmethod
     def of_form(cls, form: QueryDict) -> Column:
@@ -116,9 +127,10 @@ class Column:
         """The value of the column in the address.
 
         Returns:
-            Such as ``branch~all~outdated``.
+            Such as ``branch~all~outdated``, or ``and1~branch~all~outdated`` when it is joined.
         """
-        parts = (self.group.id, self.filter, *self.choices)
+        parts = (f"and{self.joined}",) if self.joined else ()
+        parts += (self.group.id, self.filter, *self.choices)
         # only % and the separator ~ are escaped: the address escapes the rest once
         return "~".join(part.replace("%", "%25").replace("~", "%7E") for part in parts)
 
@@ -194,10 +206,10 @@ class Column:
             'not'
         """
         if self.kind == "skip":
-            return Column(self.group, self.choices, "skip" if on else "skip_off")
+            return replace(self, filter="skip" if on else "skip_off")
         if not on:
-            return Column(self.group, self.choices, "all")
-        return Column(self.group, self.choices, self.filter if self.checks else "applies")
+            return replace(self, filter="all")
+        return replace(self, filter=self.filter if self.checks else "applies")
 
     def shows(self, result: bool | None) -> bool:
         """Whether the filter of the column shows a pull request with this result.
@@ -213,6 +225,27 @@ class Column:
         if self.filter == "not":
             return result is False
         return True  # all, and skip, which hides the pull requests it applies to instead
+
+    def holds(self, result: bool | None) -> bool | None:
+        """Whether the condition holds as the column filters, for a result.
+
+        A column that shows the pull requests it does not apply to holds when it does not
+        apply, such as *it is not open*; the others when it applies.
+
+        Parameters:
+            result: Whether the condition applies; None while not known.
+
+        Returns:
+            True, False, or None while not known.
+
+        Examples:
+            >>> from pycal_dashboard.conditions.group.status import StatusGroup
+            >>> Column(StatusGroup, ("open",), "not").holds(False)
+            True
+        """
+        if result is None or self.filter != "not":
+            return result
+        return not result
 
     @property
     def summary(self) -> str:
@@ -277,10 +310,10 @@ class Column:
         """
         choices = self.group.invert(self.choices)
         if choices is not None and self.filter != "all":
-            return Column(self.group, choices, self.filter)
+            return replace(self, choices=choices)
         if self.filter in ("all", "skip", "skip_off"):  # Skip if inverts by its choices only
             return None
-        return Column(self.group, self.choices, "not" if self.filter == "applies" else "applies")
+        return replace(self, filter="not" if self.filter == "applies" else "applies")
 
     def opposite(self) -> Column | None:
         """The opposite of a column that shows only those it does not apply to.
@@ -300,7 +333,7 @@ class Column:
         if self.filter != "not":
             return None
         choices = self.group.opposite(self.choices)
-        return Column(self.group, choices, "applies") if choices else None
+        return replace(self, choices=choices, filter="applies") if choices else None
 
     def shown(self, result: str) -> bool:
         """Whether the toggle of the check marks (``applies``) or crosses (``not``) is on.

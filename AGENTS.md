@@ -141,6 +141,12 @@ after a change, follow the rule it names instead of changing the test.
   Invert and Remove. Each condition shows its evidence on the page of a pull request: the
   least that shows why it holds or not (`Evidence`); its data specs give the links.
   A new choice of a column keeps the columns saved before as they were.
+- Conditions joined by AND (`Conjunction`, `Column.joined`) are one condition of a step: one
+  quality check, or one condition of Skip if. Wherever a step or a filter uses its conditions,
+  go through `Conjunction.of` (its value, `encode()`, keys the texts and the skips of the step);
+  a change of a column keeps its AND (`dataclasses.replace`). The AND itself is not inverted,
+  its conditions are. On the page of saving a filter, a drag shows where it lands, and a drop
+  where it was picked up changes nothing.
 - Steps are shown to visitors by their names, never by their numbers.
 - Signing out stays on the page if visitors see it, else goes a level higher in the path until
   a page answers (`signed_out.py`): so the address of a tab lies below that of its parent page,

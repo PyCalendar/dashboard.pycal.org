@@ -6,6 +6,8 @@ whether each shows the pull requests it applies to, those it does not, or both.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
@@ -15,6 +17,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.errors import FilterNameMissing, FilterNameTaken
 from pycal_dashboard.models import Label, PullRequestFilter, PullRequestStep
 from pycal_dashboard.services.column_results import ColumnResults
@@ -23,6 +26,7 @@ from pycal_dashboard.services.project_access import ProjectAccess
 from .json_page import page
 from .projects import (
     PER_PAGE,
+    PER_PAGE_CHOICES,
     opened,
     saved_filter,
     shown_repositories,
@@ -33,6 +37,8 @@ from .projects import (
 def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
     """The conditions of a filter as the pages of filters show them, in their order.
 
+    The columns joined by AND come together, in the place of their first one.
+
     Parameters:
         columns: The columns of conditions.
         enabled: Whether every condition is switched on, as for a filter saved the first
@@ -41,26 +47,170 @@ def summary(columns: list[Column], enabled: bool = False) -> list[dict]:
     Returns:
         Each column with its ``index``, whether it ``filters`` (a column that shows both the
         pull requests it applies to and those it does not apply to is off), and its
-        ``opposite`` if it has one for sure.
+        ``opposite`` if it has one for sure; ``joined``, the number of its AND (0 for none),
+        with ``first`` and ``last`` of it and the ``conjunction`` at the first; and
+        ``above``, whether a condition of its type is above it that it can be joined with.
     """
-    return [
-        {
-            "column": column,
-            "index": index,
-            "filters": enabled or column.active,
-            "opposite": column.opposite(),
-            "inverted": column.inverted(),
-            "skips": column.kind == "skip",  # its section, also when it is off
-        }
-        for index, column in enumerate(columns)
-    ]
+    found = []
+    seen: set[str] = set()  # the types of the conditions above
+    for numbers in Conjunction.indices(columns):
+        kind = columns[numbers[0]].kind
+        number = columns[numbers[0]].joined if len(numbers) > 1 else 0
+        for place, index in enumerate(numbers):
+            column = columns[index]
+            found.append(
+                {
+                    "column": column,
+                    "index": index,
+                    "filters": enabled or column.active,
+                    "opposite": column.opposite(),
+                    "inverted": column.inverted(),
+                    "skips": column.kind == "skip",  # its section, also when it is off
+                    "joined": number,
+                    "first": bool(number) and place == 0,
+                    "last": bool(number) and place == len(numbers) - 1,
+                    "conjunction": Conjunction(tuple(columns[n] for n in numbers))
+                    if number and place == 0
+                    else None,
+                    "above": kind in seen,
+                }
+            )
+        seen.add(kind)
+    return found
+
+
+def in_force(columns: list[Column]) -> list[dict]:
+    """The conditions of a filter that are switched on, as the tab Filters lists them.
+
+    Parameters:
+        columns: The columns of conditions.
+
+    Returns:
+        Those of :func:`summary` that filter, each with ``and_before``: whether the one before
+        it is of its AND.
+    """
+    rows = [item for item in summary(columns) if item["filters"]]
+    for before, item in zip([None, *rows], rows, strict=False):
+        item["and_before"] = bool(
+            before
+            and item["joined"]
+            and (before["joined"], before["skips"]) == (item["joined"], item["skips"])
+        )
+    return rows
+
+
+def page_size(form: QueryDict) -> int:
+    """The size of the table of pull requests that the page of saving goes back to.
+
+    Parameters:
+        form: The address or the form sent, with ``per_page``.
+
+    Returns:
+        A number of ``PER_PAGE_CHOICES``; the default for another one.
+
+    Examples:
+        >>> from django.http import QueryDict
+        >>> page_size(QueryDict("per_page=50")), page_size(QueryDict("per_page=7"))
+        (50, 25)
+    """
+    value = form.get("per_page", "")
+    return int(value) if value.isdigit() and int(value) in PER_PAGE_CHOICES else PER_PAGE
+
+
+def typed(column: Column, kind: str) -> Column:
+    """A column as a condition of another type, switched on or off as it was, in no AND.
+
+    Parameters:
+        column: The column.
+        kind: ``skip`` for Skip if, ``check`` for the quality checks.
+
+    Returns:
+        The column; the same when it has the type.
+    """
+    if column.kind == kind:
+        return column
+    if kind == "skip":  # a condition of Skip if: it applies, the step is skipped
+        return replace(column, filter="skip" if column.active else "skip_off", joined=0)
+    return replace(column, filter="applies" if column.active else "all", joined=0)
+
+
+def placed(columns: list[Column], index: int, before: int | None, kind: str) -> list[Column]:
+    """The columns with one put between the conditions of a section, out of its AND.
+
+    Parameters:
+        columns: The columns of conditions.
+        index: The place of the column.
+        before: The place of the first column of the condition that it comes before; None for
+            the end of the section.
+        kind: The type of the section: ``skip`` for Skip if, ``check`` for the quality checks.
+
+    Returns:
+        The columns; the same when it is put where it is, alone, such as by a drop where it
+        was picked up.
+
+    Examples:
+        >>> from pycal_dashboard.conditions.group.status import StatusGroup
+        >>> columns = [Column(StatusGroup, (state,), "applies") for state in ("open", "draft")]
+        >>> placed(columns, 1, 0, "check") == columns[::-1]
+        True
+        >>> placed(columns, 0, 1, "check") == columns  # where it was
+        True
+    """
+    if before is not None and not 0 <= before < len(columns):
+        return columns
+    column = replace(typed(columns[index], kind), joined=0)
+    changed = list(columns)
+    del changed[index]
+    if before is None:
+        changed.append(column)
+    else:
+        changed.insert(before - (before > index), column)
+    return changed
+
+
+def joined(columns: list[Column], index: int, target: int | None) -> list[Column]:
+    """The columns with one joined by AND with another one, or with the AND of it.
+
+    It takes the type of the other one, and comes after the last column of the AND.
+
+    Parameters:
+        columns: The columns of conditions.
+        index: The place of the column to join.
+        target: The place of the column to join it with; None for the condition of its type
+            above it, as the page shows them.
+
+    Returns:
+        The columns.
+    """
+    if target is None:
+        kind = columns[index].kind
+        above = [n for n in Conjunction.indices(columns) if columns[n[0]].kind == kind]
+        place = next(p for p, numbers in enumerate(above) if index in numbers)
+        if place == 0:
+            return columns
+        target = above[place - 1][-1]
+    if not 0 <= target < len(columns) or target == index:
+        return columns
+    other = columns[target]
+    column = columns[index]
+    if other.joined and (column.kind, column.joined) == (other.kind, other.joined):
+        return columns  # in the AND already
+    number = other.joined or max(c.joined for c in columns) + 1
+    changed = list(columns)
+    changed[target] = replace(other, joined=number)
+    del changed[index]
+    last = max(p for p, c in enumerate(changed) if (c.kind, c.joined) == (other.kind, number))
+    changed.insert(last + 1, replace(typed(column, other.kind), joined=number))
+    return changed
 
 
 def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None:
     """The columns after a button of the page of saving, such as ``invert`` or ``skip``.
 
-    The buttons: ``swap``, ``invert``, ``remove``, ``skip`` (into Skip if) or ``check`` (into
-    the quality checks).
+    The buttons: ``swap``, ``invert``, ``remove``, ``skip`` (into Skip if), ``check`` (into
+    the quality checks), ``join`` (by AND, with the condition of ``to``, else with the one
+    above), ``unjoin`` (out of its AND) or ``place`` (before the condition of ``to``, or at
+    the end of the ``section``: ``checks`` or ``skip``). An AND of one column is none.
 
     Parameters:
         form: The address or the form sent, with the number of the column of the button.
@@ -69,30 +219,34 @@ def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None
     Returns:
         The changed columns; None without such a button.
     """
-    for action in ("swap", "invert", "remove", "skip", "check"):
+    for action in ("swap", "invert", "remove", "skip", "check", "join", "unjoin", "place"):
         if action not in form:
             continue
         changed = list(columns)
         try:
             index = int(form[action])
             column = changed[index]
+            target = int(form["to"]) if action in ("join", "place") and form.get("to") else None
         except (ValueError, IndexError):
             return changed
         if action == "remove":
             del changed[index]
         elif action == "skip":  # a condition of Skip if: it applies, the step is skipped
-            changed[index] = Column(
-                column.group, column.choices, "skip" if column.active else "skip_off"
-            )
+            changed[index] = typed(column, "skip")
         elif action == "check":  # a quality check: the step waits for it
-            changed[index] = Column(
-                column.group, column.choices, "applies" if column.active else "all"
-            )
+            changed[index] = typed(column, "check")
+        elif action == "join":
+            changed = joined(changed, index, target)
+        elif action == "unjoin":
+            changed[index] = replace(column, joined=0)
+        elif action == "place":  # dropped between two conditions, or at the end of a section
+            kind = "skip" if form.get("section") == "skip" else "check"
+            changed = placed(changed, index, target, kind)
         elif action == "invert":
             changed[index] = column.inverted() or column
         else:  # a column of crosses for its opposite of check marks
             changed[index] = column.opposite() or column
-        return changed
+        return Conjunction.normalized(changed)
     return None
 
 
@@ -164,7 +318,7 @@ def project_filters(request: HttpRequest, slug: str):
                 "path": access.project.path("pull-requests/") + address,
                 "edit": access.project.path("filters/save/") + address,
                 "in_force": sum(column.active for column in columns),
-                "rows": [item for item in summary(columns) if item["filters"]],
+                "rows": in_force(columns),
                 "step": getattr(saved, "step", None) if hasattr(saved, "step") else None,
                 "counts": access.project.path(f"filters/{saved.pk}/"),
             }
@@ -211,7 +365,7 @@ def project_filter_counts(request: HttpRequest, slug: str, number: int):
     columns = [Column.decode(value) for value in saved.columns]
     results = ColumnResults(shown_repositories(access), project=access.project)
     # only the conditions in force: those that are off are no part of the filter
-    rows = [item for item in summary(columns) if item["filters"]]
+    rows = in_force(columns)
     for item in rows:
         item["count"] = results.count(item["column"])
     context = {
@@ -261,7 +415,8 @@ def project_filter_save(request: HttpRequest, slug: str):
         return moved
     access.require_write()
     form = request.POST if request.method == "POST" else request.GET
-    columns = [Column.decode(value) for value in form.getlist("col")]
+    size = page_size(form)  # of the table it goes back to
+    columns = Conjunction.normalized(Column.decode(value) for value in form.getlist("col"))
     saved = saved_filter(access.project, form.get("saved"))
     if request.method == "POST":  # the switches as they are on the page
         on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
@@ -270,8 +425,8 @@ def project_filter_save(request: HttpRequest, slug: str):
     if changed is not None:  # a button of a condition: use the opposite, invert or remove it
         if request.method == "POST":  # a button of the form: what was typed stays
             name = request.POST.get("name", "")
-            return save_page(request, access, changed, saved, enabled=False, name=name)
-        address = table_address(changed, PER_PAGE, saved.pk if saved else None)
+            return save_page(request, access, changed, saved, enabled=False, name=name, size=size)
+        address = table_address(changed, page_size(form), saved.pk if saved else None)
         return redirect(access.project.path("filters/save/") + address)
     if request.method == "POST":
         name = " ".join(request.POST.get("name", "").split())[:100]
@@ -285,7 +440,7 @@ def project_filter_save(request: HttpRequest, slug: str):
             return JsonResponse({"saved": False, "taken": name}, status=409)
         if other is not None and request.POST.get("replace") != str(other.pk):
             return save_page(  # another filter has the name: replace it?
-                request, access, columns, saved, enabled=False, conflict=other, name=name
+                request, access, columns, saved, enabled=False, conflict=other, name=name, size=size
             )
         if other is not None:  # replace it: its conditions and description, its steps stay
             target = other
@@ -303,7 +458,7 @@ def project_filter_save(request: HttpRequest, slug: str):
             return JsonResponse({"saved": True, "filter": target.pk, "name": target.name})
         messages.success(request, _("The filter %(name)s is saved.") % {"name": name})
         return redirect(access.project.path("filters/"))
-    return save_page(request, access, columns, saved, enabled=saved is None)
+    return save_page(request, access, columns, saved, enabled=saved is None, size=size)
 
 
 def save_page(
@@ -314,6 +469,7 @@ def save_page(
     enabled: bool,
     conflict: PullRequestFilter | None = None,
     name: str | None = None,
+    size: int = PER_PAGE,
 ):
     """The page of saving a filter, also again with the question whether to replace another one.
 
@@ -326,6 +482,7 @@ def save_page(
         conflict: Another filter of the name that the person typed: the page asks whether to
             replace it.
         name: The name typed; None for that of the filter.
+        size: The size of the table of pull requests, which the page keeps.
 
     Returns:
         The page.
@@ -359,11 +516,12 @@ def save_page(
             "description": request.POST.get("description", saved.description if saved else ""),
             "count": len(ColumnResults(repositories, project=access.project).matching(columns)),
             "back": access.project.path("pull-requests/")
-            + table_address(columns, PER_PAGE, saved.pk if saved else None),
-            "address": table_address(columns, PER_PAGE, saved.pk if saved else None),
+            + table_address(columns, size, saved.pk if saved else None),
+            "address": table_address(columns, size, saved.pk if saved else None),
             "page_address": access.project.path("filters/save/")
-            + table_address(columns, PER_PAGE, saved.pk if saved else None),
+            + table_address(columns, size, saved.pk if saved else None),
             "label_colors": {label.name.lower(): label.color for label in labels},
+            "size": size,
             "tab": "filters",
         },
     )

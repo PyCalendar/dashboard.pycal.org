@@ -6,7 +6,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from pycal_dashboard.actions import LabelAdded, LabelRemoved
-from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import Issue, PullRequestPlace
 from pycal_dashboard.services.step_assignment import StepAssignment
@@ -50,7 +50,7 @@ class StepCompletion:
         Returns:
             True if no condition in force of its filter shows the pull request.
         """
-        columns = [Column.decode(value) for value in step.filter.columns]
+        columns = Conjunction.of_values(step.filter.columns)
         return not any(
             column.shows(column.applies(issue, self.assignment.scope))
             for column in columns

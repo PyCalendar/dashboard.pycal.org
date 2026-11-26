@@ -10,6 +10,7 @@ from django.utils.text import capfirst
 
 from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.markdown_text import render
 
 if TYPE_CHECKING:
@@ -21,9 +22,11 @@ class Task:
     """A task of a step: a condition in force of its filter, for one pull request.
 
     Attributes:
-        value: The column of the condition, as the filter keeps it.
-        column: The column of the condition.
-        result: Whether the condition applies to the pull request; None while not known.
+        value: The column of the condition, as the filter keeps it; for columns joined by AND,
+            their values joined with ``&`` (``Conjunction.encode``).
+        column: The column of the condition, or the columns joined by AND.
+        result: Whether the condition applies to the pull request (for an AND: whether all of
+            its conditions hold); None while not known.
         todo: Whether the task keeps the pull request in the step: the filter shows it, and
             nobody skipped it.
         summary: The summary of the task, expanded with the values of the pull request.
@@ -38,7 +41,7 @@ class Task:
     """
 
     value: str
-    column: Column
+    column: Column | Conjunction
     result: bool | None
     todo: bool
     summary: str = ""

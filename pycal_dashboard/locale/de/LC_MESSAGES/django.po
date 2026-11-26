@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 18:33+0000\n"
+"POT-Creation-Date: 2026-11-26 13:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,6 +187,10 @@ msgstr ""
 
 msgid "not known yet: no check of the last commit has completed"
 msgstr "noch nicht bekannt: Kein Check des letzten Commits ist fertig"
+
+#, python-format
+msgid "%(conditions)s and %(condition)s"
+msgstr "%(conditions)s und %(condition)s"
 
 msgid "Dashboard"
 msgstr "Dashboard"
@@ -1998,6 +2002,9 @@ msgstr "Bedingung"
 msgid "Applies to"
 msgstr "Trifft zu auf"
 
+msgid "AND"
+msgstr "UND"
+
 msgid "From"
 msgstr "Von"
 
@@ -2111,8 +2118,21 @@ msgstr ""
 msgid "A condition that is off stays a column but does not filter."
 msgstr "Eine ausgeschaltete Bedingung bleibt eine Spalte, filtert aber nicht."
 
+msgid ""
+"Drag a condition onto another one or onto an AND to join them by AND: they "
+"are one condition of the step, which holds when all of them hold. Drag it "
+"between two conditions to move it there, also out of its AND."
+msgstr ""
+"Ziehe eine Bedingung auf eine andere oder auf ein UND, um sie mit UND zu "
+"verbinden: Sie sind eine Bedingung des Schritts, die gilt, wenn alle gelten. "
+"Ziehe sie zwischen zwei Bedingungen, um sie dorthin zu verschieben, auch aus "
+"ihrem UND heraus."
+
 msgid "No conditions: all pull requests."
 msgstr "Keine Bedingungen: alle Pull Requests."
+
+msgid "All of these, as one condition:"
+msgstr "Alle diese, als eine Bedingung:"
 
 #, python-format
 msgid "Filter by %(name)s"
@@ -2130,6 +2150,12 @@ msgstr "Umkehren: %(sentence)s"
 
 msgid "Invert"
 msgstr "Umkehren"
+
+msgid "Out of the AND"
+msgstr "Aus dem UND heraus"
+
+msgid "AND with the one above"
+msgstr "UND mit der darüber"
 
 msgid "To the quality checks"
 msgstr "Zu den Qualitätsprüfungen"
@@ -3225,6 +3251,17 @@ msgstr "Pro Seite"
 
 msgid "On GitHub"
 msgstr "Auf GitHub"
+
+msgid ""
+"Joined by AND with the other columns of the same number: one condition of "
+"the step"
+msgstr ""
+"Mit UND verbunden mit den anderen Spalten derselben Nummer: eine Bedingung "
+"des Schritts"
+
+#, python-format
+msgid "AND %(number)s"
+msgstr "UND %(number)s"
 
 msgid "Move left"
 msgstr "Nach links"

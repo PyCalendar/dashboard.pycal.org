@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from django.utils.text import capfirst
 from django.utils.translation import gettext
 
-from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import StepSkip
 from pycal_dashboard.services.skip_link import SkipLink
@@ -66,8 +66,8 @@ class PullRequestProgress:
         self.badge_alt = badge_alt
         for number, step in enumerate(project.steps.select_related("filter"), 1):
             progress = StepProgress(step, number, skip=overrides.skip(issue, step))
-            for value in step.filter.columns:
-                column = Column.decode(value)
+            for column in Conjunction.of_values(step.filter.columns):
+                value = column.encode()  # of a column, or of columns joined by AND
                 if not column.active:  # off: no part of the filter
                     continue
                 cached = results.cached(column) if results else None

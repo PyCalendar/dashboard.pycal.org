@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from django.core.cache import cache
 from django.db.models import prefetch_related_objects
 
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.conditions.results_version import RESULTS_VERSION
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import Issue
@@ -103,15 +105,17 @@ class ColumnResults:
             self._reviews = True
         return self._pulls
 
-    def of(self, column: Column) -> dict[int, bool | None]:
-        """Whether a column applies to each pull request.
+    def of(self, column: Column | Conjunction) -> dict[int, bool | None]:
+        """Whether a column applies to each pull request, or the conditions of an AND hold.
 
         Parameters:
-            column: The column.
+            column: The column, or the AND of columns.
 
         Returns:
             The result by the id of the pull request: True, False, or None while not known.
         """
+        if isinstance(column, Conjunction):
+            return column.results([self.of(member) for member in column.in_force])
         key = self.key(column)
         found = cache.get(key) if column.group.cached else None
         if found is None:
@@ -121,18 +125,21 @@ class ColumnResults:
                 cache.set(key, found, CACHED_SECONDS)
         return found
 
-    def cached(self, column: Column) -> dict[int, bool | None] | None:
+    def cached(self, column: Column | Conjunction) -> dict[int, bool | None] | None:
         """The results of a column if the cache has them, without evaluating it.
 
         A page of one pull request uses them where they are, and evaluates the column for
         that pull request alone where they are not, which is faster than for all.
 
         Parameters:
-            column: The column.
+            column: The column, or the AND of columns: the cache has it when it has them all.
 
         Returns:
             The results by the id of the pull request; None when they are not in the cache.
         """
+        if isinstance(column, Conjunction):
+            found = [self.cached(member) for member in column.in_force]
+            return None if any(f is None for f in found) else column.results(found)
         if not column.group.cached:  # such as data of the dashboard: evaluated each time
             return None
         return cache.get(self.key(column))
@@ -146,7 +153,8 @@ class ColumnResults:
         Returns:
             The key, without spaces.
         """
-        name = hashlib.sha256(column.encode().encode()).hexdigest()[:20]
+        # the same results, whether the column is joined with others by AND or not
+        name = hashlib.sha256(replace(column, joined=0).encode().encode()).hexdigest()[:20]
         return f"column:{self.version}:{name}"
 
     def matching(self, columns: list[Column]) -> list[int]:
@@ -155,7 +163,9 @@ class ColumnResults:
         The filters are an OR: a pull request is shown when any column that filters (one that
         shows only the pull requests it applies to, or only those it does not apply to) shows
         it. Columns that show both do not filter; without columns that filter, all are shown.
-        Of those, a pull request that a condition of Skip if applies to is not shown.
+        Of those, a pull request that a condition of Skip if applies to is not shown. Columns
+        joined by AND are one condition (:class:`Conjunction`): it shows a pull request when
+        all of them show it, and skips when all of them apply.
 
         Parameters:
             columns: The columns of conditions.
@@ -163,8 +173,9 @@ class ColumnResults:
         Returns:
             The ids of the pull requests.
         """
-        filtering = [column for column in columns if column.checks]
-        skipping = [self.of(column) for column in columns if column.skips]
+        conditions = Conjunction.of(columns)
+        filtering = [item for item in conditions if item.checks]
+        skipping = [self.of(item) for item in conditions if item.skips]
         ids = self.ids()
         if filtering:
             results = [(column, self.of(column)) for column in filtering]

@@ -21,6 +21,7 @@ from django.utils.translation import gettext
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.errors import FilterIsAStep, StepNotFound
 from pycal_dashboard.markdown_text import render as render_markdown
 from pycal_dashboard.models import Issue, Label, Project, PullRequestFilter, PullRequestStep
@@ -110,17 +111,20 @@ def handles(text: str) -> list[str]:
 def conditions_of(step: PullRequestStep) -> list[dict]:
     """The conditions in force of the filter of a step, with how they are explained.
 
+    Columns joined by AND are one condition, explained once.
+
     Parameters:
         step: The step.
 
     Returns:
-        Each condition: its ``index``, ``value``, ``column``, ``summary``, ``description`` and
-        the ``preview`` of the description, expanded with values of an example.
+        Each condition: its ``index``, ``value``, ``column`` (or columns joined by AND),
+        ``summary``, ``description`` and the ``preview`` of the description, expanded with
+        values of an example.
     """
     values = example(step.project, step)
     found = []
-    for index, value in enumerate(step.filter.columns):
-        column = Column.decode(value)
+    for index, column in enumerate(Conjunction.of_values(step.filter.columns)):
+        value = column.encode()
         if not column.checks:  # off, or a condition of Skip if: no task
             continue
         notes = (step.conditions or {}).get(value, {})
@@ -210,9 +214,7 @@ def steps_page(request: HttpRequest, slug: str, number: str | None = None):
             "shown": shown,
             "conditions": conditions_of(shown) if shown else [],
             "skip_conditions": [
-                column
-                for column in (Column.decode(value) for value in shown.filter.columns)
-                if column.skips
+                column for column in Conjunction.of_values(shown.filter.columns) if column.skips
             ]
             if shown
             else [],
@@ -377,8 +379,8 @@ def project_step_edit(request: HttpRequest, slug: str, number: int):
             for trigger in TRIGGERS
         }
     notes = dict(step.conditions or {})
-    for value in step.filter.columns:
-        index = step.filter.columns.index(value)
+    for index, condition in enumerate(Conjunction.of_values(step.filter.columns)):
+        value = condition.encode()  # of a column, or of columns joined by AND
         if request.POST.get(f"value-{index}") != value:
             continue
         notes[value] = {

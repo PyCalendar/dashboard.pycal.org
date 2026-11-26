@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import TYPE_CHECKING
 from urllib.parse import urlencode
 
@@ -17,6 +18,7 @@ from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_http_methods, require_POST
 
 from pycal_dashboard.conditions.group.column import FILTERS, GROUPS, Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.conditions.review_kinds import ALL as REVIEW_KINDS
 from pycal_dashboard.errors import (
     BackupInvalid,
@@ -469,7 +471,8 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
 
     ``add`` adds the column of the form, ``edit=<i>`` replaces a column with it,
     ``filter_of=<i>&filter=<f>`` sets its filter, ``remove=<i>`` removes one and
-    ``move=<i>&to=<j>`` moves one, such as by dragging it.
+    ``move=<i>&to=<j>`` moves one, such as by dragging it. A column keeps its AND
+    (``Column.joined``) when it is changed; an AND of one column is none.
 
     Parameters:
         request: The request, with the fields of the menu.
@@ -482,6 +485,23 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
         ConditionError: The form is wrong: a subclass says how.
     """
     found = list(columns)
+    changed = changes(request, found)
+    return None if changed is None else Conjunction.normalized(changed)
+
+
+def changes(request: HttpRequest, found: list[Column]) -> list[Column] | None:
+    """The columns after a change of the menus of the table, see :func:`changed_columns`.
+
+    Parameters:
+        request: The request, with the fields of the menu.
+        found: The columns before, a copy that is changed.
+
+    Returns:
+        The columns after; None if the request changes nothing.
+
+    Raises:
+        ConditionError: The form is wrong: a subclass says how.
+    """
 
     def index(name: str) -> int:
         number = int(request.GET.get(name, "-1") or -1)
@@ -493,14 +513,15 @@ def changed_columns(request: HttpRequest, columns: list[Column]) -> list[Column]
         if "add" in request.GET:
             return [*found, Column.of_form(request.GET)]
         if "edit" in request.GET:
-            found[index("edit")] = Column.of_form(request.GET)
+            number = index("edit")
+            found[number] = replace(Column.of_form(request.GET), joined=found[number].joined)
             return found
         if "filter_of" in request.GET:  # a toggle of the check marks or crosses
             number = index("filter_of")
             filter = request.GET.get("filter", "all")
             if filter not in FILTERS:
                 raise ConditionInputUnknown(f"filter: {filter}")
-            found[number] = Column(found[number].group, found[number].choices, filter)
+            found[number] = replace(found[number], filter=filter)
             return found
         if "remove" in request.GET:
             del found[index("remove")]

@@ -11,7 +11,7 @@
   <span class="filter-actions"><a class="button button-quiet button-small" href="{{ back }}" data-edit-conditions>{% translate "Edit the conditions" %}</a>
   {% if step %}<a class="button button-quiet button-small" href="{% url 'project_steps' project.slug %}?step={{ step.pk }}" data-step-link>{% blocktranslate with name=step.name %}Step: {{ name }}{% endblocktranslate %}</a>{% endif %}</span></div>
   {% for column in columns %}<input type="hidden" name="col" value="{{ column.encode }}">{% endfor %}
-  {% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}
+  {% if saved %}<input type="hidden" name="saved" value="{{ saved.pk }}">{% endif %}<input type="hidden" name="per_page" value="{{ size }}">
   <p><label for="name">{% translate "Name" %}</label><input id="name" name="name" maxlength="100" required value="{{ name }}"></p>
   {% if conflict %}<div class="message message-warning" data-conflict="{{ conflict.pk }}" role="alert"><p>{% blocktranslate with name=conflict.name %}The project has a filter {{ name }} already. Replace its conditions and its description with these? Its step stays.{% endblocktranslate %}</p>
     <p><button class="button button-danger" name="replace" value="{{ conflict.pk }}" data-replace>{% blocktranslate with name=conflict.name %}Replace {{ name }}{% endblocktranslate %}</button> <span class="muted">{% translate "Or change the name above and save again." %}</span></p>

@@ -27,7 +27,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
-from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.errors import (
     PullRequestNotFound,
     PullRequestNumberAmbiguous,
@@ -302,7 +302,9 @@ def skip_target(step: PullRequestStep, target: str) -> str:
 
     Parameters:
         step: The step.
-        target: ``step``, or the condition of a quality check; "" for the step.
+        target: ``step``, or the condition of a quality check, such as
+            ``reviews~applies~2``, or its columns joined by AND, such as
+            ``status~applies~open&ci~applies~failing``; "" for the step.
 
     Returns:
         ``step`` or the condition.
@@ -312,7 +314,8 @@ def skip_target(step: PullRequestStep, target: str) -> str:
     """
     if not target or target == STEP:
         return STEP
-    if target not in step.filter.columns or not Column.decode(target).checks:
+    checks = {item.encode() for item in Conjunction.of_values(step.filter.columns) if item.checks}
+    if target not in checks:
         raise QualityCheckNotFound(target[:60])
     return target
 

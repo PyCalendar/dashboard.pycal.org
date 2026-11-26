@@ -94,6 +94,10 @@ quality check *Update the changelog*:
    Add a news fragment to `news/`. When your change needs none, such as for a
    typo, [skip this quality check]({quality_check_skip_url_author}).
 
+Conditions joined by AND (see :ref:`and-conditions`) are one quality check:
+they are skipped together, and the variables of their summary and description
+skip all of them.
+
 What the link does depends on who opens it:
 
 - A writer or owner of the project, or the author with a link of the author,

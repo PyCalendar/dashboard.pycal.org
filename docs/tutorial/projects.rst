@@ -293,6 +293,45 @@ such as *label absent* for not *label present*; **Use it** switches it.
 Dragging a condition and these buttons keep the name, the description and the
 switches as you typed them, until you save.
 
+.. _and-conditions:
+
+Conditions joined by AND
+------------------------
+
+Drag a condition onto another one to join them by *AND*: they become one
+condition of the step, which holds when all of them hold, such as *it has the
+label needs review and it is open*. Drag another condition onto the AND to add
+it. Where a dragged condition lands is highlighted: the whole AND, the single
+condition that makes a new AND with it, or the gap between two conditions, which
+has room to drop in between. Dropping a condition into a gap moves it there, also into
+the other table or out of its AND; dropping it where you picked it up changes
+nothing. Without JavaScript, **AND with the one above** joins a condition with
+the condition above it, and **Out of the AND** takes it out.
+
+The page shows an AND as a group, with the line *AND: All of these, as one
+condition* and its conditions joined by *and* above them. In the table of pull
+requests, its columns have the mark *AND* with its number.
+
+- As a quality check, an AND keeps a pull request in the step while all of its
+  conditions hold, each as it filters: *it is open and it does not have the
+  label bug*. It is one quality check of the step, with one summary and one
+  description on the tab *Steps*, one line in the message of the pull request,
+  and it is skipped as one (see :ref:`skips`). Its default text is its
+  conditions joined by *and*, and its evidence is that of all of them.
+- As a condition of *Skip if*, an AND skips the step when all of its conditions
+  apply.
+
+A condition of an AND has its own switch, **Invert** and **Remove**; one that is
+switched off is no part of the AND. The AND itself is not inverted. An AND of one
+condition is none: taking out the last but one leaves a single condition. A
+condition that goes to the other table leaves its AND, and dropping a condition
+of one table onto an AND of the other gives it the type of the AND.
+
+Changing a column in the table of pull requests, its check marks and crosses,
+moving it and saving the filter keep it in its AND. In the address, the columns
+of an AND start with its number, such as
+``col=and1~labels~applies~present~needs+review&col=and1~status~applies~open``.
+
 The tab *Filters*, public like the project, lists the saved filters with their
 description. **+ New filter** opens the table of pull requests with its menu **+**
 open, to add the first condition of a new filter. Opening a filter shows a

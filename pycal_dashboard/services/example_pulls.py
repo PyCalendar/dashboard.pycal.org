@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.models import Issue
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ class ExamplePulls:
         """
         self.results = results
         self.steps = [
-            [c for c in (Column.decode(v) for v in step.filter.columns) if c.checks]
+            [c for c in Conjunction.of_values(step.filter.columns) if c.checks]
             for step in project.steps.select_related("filter")
         ]
         self.total = sum(len(columns) for columns in self.steps)

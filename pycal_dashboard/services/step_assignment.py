@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.conditions.state.scope import Scope
 from pycal_dashboard.models import Issue
 from pycal_dashboard.services.step_overrides import StepOverrides
@@ -36,15 +37,15 @@ class StepAssignment:
         """
         self.scope = scope or Scope.of(project)
         self.overrides = StepOverrides(project)
-        # each step with its quality checks: the value of each, as its filter keeps it, and
-        # its column
-        self.steps: list[tuple[PullRequestStep, list[tuple[str, Column]]]] = []
+        # each step with its quality checks: the value of each, as the step keeps it, and its
+        # column, or its columns joined by AND
+        self.steps: list[tuple[PullRequestStep, list[tuple[str, Column | Conjunction]]]] = []
         # the conditions of Skip if of each step: one that applies skips the step
-        self.skipping: dict[int, list[Column]] = {}
+        self.skipping: dict[int, list[Column | Conjunction]] = {}
         for step in project.steps.select_related("filter"):
-            columns = [(value, Column.decode(value)) for value in step.filter.columns]
-            self.steps.append((step, [(v, c) for v, c in columns if c.checks]))
-            self.skipping[step.pk] = [c for _v, c in columns if c.skips]
+            conditions = Conjunction.of_values(step.filter.columns)
+            self.steps.append((step, [(c.encode(), c) for c in conditions if c.checks]))
+            self.skipping[step.pk] = [c for c in conditions if c.skips]
 
     def step_of_all(self, results: ColumnResults) -> dict[int, PullRequestStep | None]:
         """The step of every pull request at once, from the cached results of the columns.
