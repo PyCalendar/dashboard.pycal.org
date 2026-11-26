@@ -9,6 +9,22 @@ Changelog
 
 .. towncrier release notes start
 
+0.26.0 (2026-11-26)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Dragging a condition on the page of saving a filter shows where it lands: the AND or the condition that it joins, or the gap between two conditions, which has room to drop in between; a drop in a gap moves the condition there, and a drop where it was picked up changes nothing.
+- On the page of saving a filter, conditions are joined by AND by dragging one onto another, also between the quality checks and Skip if, and taken out by dragging them between two conditions; without JavaScript, the buttons AND with the one above and Out of the AND do it. An AND is one condition of a step: one quality check with one summary, description and skip, whose text joins its conditions with "and" and whose evidence is that of all of them, or one condition of Skip if that skips when all of its conditions apply. It is shown as a group, is not inverted itself, and stays when its columns are changed in the table and when the filter is saved.
+
+
+Bug fixes
+~~~~~~~~~
+
+- The page of saving a filter keeps the size of the page of the table of pull requests, also after its buttons and in its link back.
+
+
 0.25.0 (2026-11-25)
 -------------------
 
