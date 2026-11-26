@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.29.2 (2026-11-26)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- The conditions name the pull request directly, such as "PR description does not match: contains …" instead of "Its description does not match", in English, German and Spanish.
+
+
 0.29.1 (2026-11-26)
 -------------------
 
