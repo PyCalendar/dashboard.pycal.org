@@ -779,3 +779,7 @@ community: where to start, what waits for a review, who contributes.
       only not~labels~...~present~x? Decided: absent stays, and inverting absent may give the filter not
 - [x] Answer: where the filter factory is: there is none as one class; a filter is the list of strings
       PullRequestFilter.columns, made into conditions by Column.decode and Conjunction.of_values (normalized when saved)
+- [x] Answer: where the factory of the conditions is: there is none; each group maps its choices to a condition
+      (LabelsGroup.MODES, the switches of SwitchesGroup, Reviews, TextMatches, AuthorType), the values are passed to
+      check() each time, and Column.applies wraps the result in Not; conditions.find is used by nothing but tests
+- [ ] The person: should a factory make the condition of a column, bound to its values (and wrapped in Not)?
