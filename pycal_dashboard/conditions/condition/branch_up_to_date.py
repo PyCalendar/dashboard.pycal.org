@@ -44,13 +44,11 @@ class BranchUpToDate(Condition):
         """
         return issue.merged is not None or super().complete(issue)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the branch is up to date.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
 
         Returns:
             True if it was merged, or is neither behind nor in conflict.

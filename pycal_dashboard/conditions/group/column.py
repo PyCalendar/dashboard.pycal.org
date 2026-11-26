@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING
+from functools import cached_property
+from typing import TYPE_CHECKING, Any
 from urllib.parse import unquote
 
 from django.utils.translation import gettext
 
-from pycal_dashboard.conditions.condition.negation import Not
+from pycal_dashboard.conditions.factory import ConditionFactory
 from pycal_dashboard.conditions.group.author import AuthorGroup
 from pycal_dashboard.conditions.group.author_type import AuthorTypeGroup
 from pycal_dashboard.conditions.group.branch import BranchGroup
@@ -110,7 +111,8 @@ class Column:
         if filter not in FILTERS:
             raise ConditionInputUnknown(f"filter: {filter}")
         number = int(joined[1]) if joined else 0
-        return cls(group, group.check(tuple(parts[2:])), filter, number, negated)
+        column = cls(group, group.check(tuple(parts[2:])), filter, number, negated)
+        return column.writing(column.condition)  # such as absent for the NOT of present
 
     @classmethod
     def of_form(cls, form: QueryDict) -> Column:
@@ -134,6 +136,30 @@ class Column:
         if filter not in FILTERS:
             raise ConditionInputUnknown(f"filter: {filter}")
         return cls(group, group.parse(form), filter)
+
+    @cached_property
+    def condition(self) -> Any:  # noqa: ANN401 - a condition, an OR or a NOT
+        """The condition that the column checks, made by the factory of its group and choices.
+
+        It is the NOT of that condition when the column is negated.
+        """
+        return ConditionFactory().decode(self.group, self.choices, self.negated)
+
+    def writing(self, condition: Any) -> Column:  # noqa: ANN401 - a condition, an OR or a NOT
+        """The column with another condition of its group, written by the factory.
+
+        Parameters:
+            condition: The condition, such as the NOT of that of the column.
+
+        Returns:
+            The column with the choices that write the condition, negated if they are those of
+            its NOT; its filter and AND stay.
+
+        Raises:
+            ConditionNotInGroup: The group has no choices for the condition.
+        """
+        choices, negated = ConditionFactory().encode(self.group, condition)
+        return replace(self, choices=choices, negated=negated)
 
     def encode(self) -> str:
         """The value of the column in the address.
@@ -160,8 +186,7 @@ class Column:
             True or False; None while its data is not complete. The NOT of the condition, when
             the column is negated.
         """
-        result = self.group.applies(issue, self.choices, scope)
-        return Not.result(result) if self.negated else result
+        return self.condition.check(issue, scope)
 
     def evidence(
         self, issue: Issue, scope: Scope | None = None, project: Project | None = None
@@ -176,7 +201,7 @@ class Column:
         Returns:
             The links, such as to the checks on GitHub.
         """
-        return self.group.evidence(issue, self.choices, scope, project)
+        return self.condition.evidence(issue, scope, project)
 
     @property
     def kinds(self) -> tuple[str, ...]:
@@ -316,11 +341,12 @@ class Column:
     def inverted(self) -> Column:
         """The column of the opposite condition: every condition can be inverted.
 
-        A negated column becomes the condition again. Else its group inverts its choices where
-        it can, such as label absent for present or below for at least; else a quality check
-        that is on inverts its filter: the pull requests it does not apply to, such as *it is
-        not auto-merging*; else, such as when it is off or of Skip if, it is the NOT of the
-        condition (``negated``). Inverting it again gives it back.
+        It has the NOT of its condition when its group writes that without a NOT (the factory):
+        label absent for present, below for at least, or the condition of a negated column.
+        Else the opposite choices of its group, such as closed and merged for open; else a
+        quality check that is on inverts its filter: the pull requests it does not apply to,
+        such as *it is not auto-merging*; else, such as when it is off or of Skip if, it is the
+        NOT of the condition (``negated``). Inverting it again gives it back.
 
         Returns:
             The inverted column.
@@ -336,20 +362,22 @@ class Column:
             >>> wip.inverted().encode(), wip.inverted().inverted() == wip
             ('not~text~skip~title~contains~WIP', True)
         """
-        if self.negated:
-            return replace(self, negated=False)
-        choices = self.group.invert(self.choices)
+        negation = self.writing(self.condition.negate())
+        if not negation.negated:
+            return negation
+        choices = self.group.opposite(self.choices)
         if choices is not None:
             return replace(self, choices=choices)
         if self.filter in ("applies", "not"):
             return replace(self, filter="not" if self.filter == "applies" else "applies")
-        return replace(self, negated=True)
+        return negation
 
     def opposite(self) -> Column | None:
         """The opposite of a column that shows only those it does not apply to.
 
-        It shows those that the opposite applies to, when that is the same for sure, such as
-        label absent for label present.
+        It shows those that the opposite applies to, when that is the same for sure: the NOT of
+        its condition when its group writes that without a NOT, such as label absent for label
+        present, or the opposite choices of its group, such as closed and merged for open.
 
         Returns:
             The opposite column; None if there is none for sure, or the column does not show
@@ -362,6 +390,9 @@ class Column:
         """
         if self.filter != "not" or self.negated:
             return None
+        negation = self.writing(self.condition.negate())
+        if not negation.negated:
+            return replace(negation, filter="applies")
         choices = self.group.opposite(self.choices)
         return replace(self, choices=choices, filter="applies") if choices else None
 

@@ -159,8 +159,8 @@ def test_unknown_while_the_reviews_are_not_read(repositories):
     assert STATES["reviews_given"].observe(pull("Anna 1"), Scope([repository])) == 1
     assert STATES["pull_requests_opened"].observe(pull("Anna 1"), Scope([repository])) == 3
     assert (
-        CONDITIONS["review_ratio"].check(
-            pull("Anna 1"), {"comparison": "above", "ratio": 0.1}, Scope([repository, other])
+        CONDITIONS["review_ratio"]({"comparison": "above", "ratio": 0.1}).check(
+            pull("Anna 1"), Scope([repository, other])
         )
         is None
     )
@@ -185,8 +185,8 @@ def test_without_an_author_there_is_no_state(repositories):
 def test_reviews(repositories, comparison, number, anna, ben):
     condition = CONDITIONS["reviews"]
     values = condition.configure({"comparison": comparison, "reviews": str(number)})
-    assert condition.check(pull("Anna 1"), values) is anna
-    assert condition.check(pull("Ben 1"), values) is ben
+    assert condition(values).check(pull("Anna 1")) is anna
+    assert condition(values).check(pull("Ben 1")) is ben
 
 
 def test_reviews_at_least_by_default(repositories):
@@ -209,16 +209,16 @@ def test_the_kinds_of_reviews_count(repositories):
     every = condition.configure({"comparison": "exactly", "reviews": 2})
     own = condition.configure({"comparison": "exactly", "reviews": 3, "kinds": "commented, own"})
     assert own["kinds"] == ("commented", "own")
-    assert condition.check(pull("Anna 1"), own) is False  # her comment alone
+    assert condition(own).check(pull("Anna 1")) is False  # her comment alone
     kinds = "approved, changes_requested, commented, own"
     own = condition.configure({"comparison": "exactly", "reviews": 3, "kinds": kinds})
-    assert condition.check(pull("Anna 1"), own) is True  # with her comment
+    assert condition(own).check(pull("Anna 1")) is True  # with her comment
     two = condition.configure(
         {"comparison": "exactly", "reviews": 2, "kinds": "approved, changes_requested"}
     )
     assert two["kinds"] == ("approved", "changes_requested")
-    assert condition.check(pull("Anna 1"), every) is True
-    assert condition.check(pull("Anna 1"), two) is True
+    assert condition(every).check(pull("Anna 1")) is True
+    assert condition(two).check(pull("Anna 1")) is True
     with pytest.raises(errors.ConditionInputUnknown):
         condition.configure({"reviews": 1, "kinds": "maybe"})
     with pytest.raises(errors.ConditionInputMissing):
@@ -299,18 +299,18 @@ def test_review_ratio(repositories):
     condition = CONDITIONS["review_ratio"]
     scope = Scope(repositories)
     above = {"comparison": "above"}
-    assert condition.check(pull("Ben 1"), condition.configure({"ratio": "1.4"}), scope) is True
-    assert condition.check(pull("Ben 1"), condition.configure({"ratio": 1.5}), scope) is False
-    assert condition.check(pull("Ben 1"), {"comparison": "at_least", "ratio": 1.5}, scope)
-    assert condition.check(pull("Anna 1"), {**above, "ratio": 0.4}, scope) is True
-    assert condition.check(pull("Anna 1"), {"comparison": "below", "ratio": 1.5}) is True
+    assert condition({"ratio": "1.4"}).check(pull("Ben 1"), scope) is True
+    assert condition({"ratio": 1.5}).check(pull("Ben 1"), scope) is False
+    assert condition({"comparison": "at_least", "ratio": 1.5}).check(pull("Ben 1"), scope)
+    assert condition({**above, "ratio": 0.4}).check(pull("Anna 1"), scope) is True
+    assert condition({"comparison": "below", "ratio": 1.5}).check(pull("Anna 1")) is True
     assert [i["type"] for i in condition.describe()["inputs"]] == [
         "comparison",
         "number",
         "review-kinds",
     ]
     no_comments = {"comparison": "below", "ratio": 0.6, "kinds": ("approved",)}
-    assert condition.check(pull("Anna 1"), no_comments, scope) is True  # 1 / 2
+    assert condition(no_comments).check(pull("Anna 1"), scope) is True  # 1 / 2
 
 
 @pytest.mark.parametrize(
@@ -341,7 +341,7 @@ def test_without_the_app_reviews_are_not_read(github):
     assert RepositoryUpdate(repository).run()
     repository.refresh_from_db()
     assert repository.reviews_changed is None and github.graphql_reviews_queries == []
-    assert CONDITIONS["reviews"].check(Issue.objects.get(), {"reviews": 1}) is None
+    assert CONDITIONS["reviews"]({"reviews": 1}).check(Issue.objects.get()) is None
 
 
 # the columns of the table: the groups Reviews and Author

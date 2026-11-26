@@ -27,13 +27,11 @@ class PrSyncOn(DashboardCondition):
     title = "PR Sync on"
     description = "The PR Sync of the project is on for a pull request: it has its Status Message."
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict, scope: Scope | None = None) -> bool:
+    def assess(self, issue: Issue, scope: Scope | None = None) -> bool:
         """Whether the pull request has the Status Message of the project.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
             scope: The repositories and the project.
 
         Returns:
@@ -41,19 +39,13 @@ class PrSyncOn(DashboardCondition):
         """
         return issue.pk in (scope.synced() or set())
 
-    @classmethod
     def evidence(
-        cls,
-        issue: Issue,
-        values: dict,
-        scope: Scope | None = None,
-        project: Project | None = None,
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
         """The Status Message on GitHub, else the tab PR Sync of the project.
 
         Parameters:
             issue: The pull request.
-            values: Not used.
             scope: Not used.
             project: The project.
 

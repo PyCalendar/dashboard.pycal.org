@@ -23,13 +23,11 @@ class DashboardCondition(Condition):
     data = (DashboardData(),)
     scoped: ClassVar[bool] = True
 
-    @classmethod
-    def check(cls, issue: Issue, values: dict, scope: Scope | None = None) -> bool | None:
+    def check(self, issue: Issue, scope: Scope | None = None) -> bool | None:
         """Assess the condition, if the project is known.
 
         Parameters:
             issue: The pull request.
-            values: The configuration.
             scope: The repositories and the project.
 
         Returns:
@@ -37,4 +35,4 @@ class DashboardCondition(Condition):
         """
         if not issue.pull_request or scope is None or scope.project is None:
             return None
-        return cls.assess(issue, values, scope)
+        return self.assess(issue, scope)

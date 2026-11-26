@@ -51,4 +51,4 @@ API reference
 =============
 
 .. autoclass:: pycal_dashboard.conditions.condition.negation.Not
-   :members: negate, assess, check
+   :members: negate, check

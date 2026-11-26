@@ -18,28 +18,11 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 if TYPE_CHECKING:
     from django.http import QueryDict
 
-    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.models import Issue
 
 DEFAULT = "at_least"
 LEGACY = "comments"  # saved before the kinds: all kinds count
-
-
-def values(choices: tuple[str, ...]) -> dict:
-    """The configuration of the condition ``reviews`` of the choices of a column.
-
-    Parameters:
-        choices: The comparison, the number and the kinds, if not all.
-
-    Returns:
-        ``comparison``, ``reviews`` and ``kinds``.
-
-    Examples:
-        >>> values(("below", "2", "approved"))
-        {'comparison': 'below', 'reviews': 2, 'kinds': ('approved',)}
-    """
-    return {"comparison": choices[0], "reviews": int(choices[1]), "kinds": checked(choices[2:])}
 
 
 class ReviewsGroup(ConditionGroup):
@@ -106,41 +89,50 @@ class ReviewsGroup(ConditionGroup):
         return cls.check((form.get("reviews_comparison", DEFAULT), form.get("reviews", ""), *kinds))
 
     @classmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether the number of reviews of the pull request compares with the number.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The condition ``reviews`` of the comparison, the number and the kinds.
 
         Parameters:
-            issue: The pull request.
-            choices: The comparison and the number.
-            scope: Not used: the reviews are of the pull request itself.
+            choices: The comparison, the number and the kinds, if not all.
 
         Returns:
-            True or False; None while the reviews are not read.
+            The spec.
+
+        Examples:
+            >>> ReviewsGroup.specs(("below", "2", "approved"))
+            [{'id': 'reviews', 'comparison': 'below', 'reviews': 2, 'kinds': ('approved',)}]
         """
-        return Reviews.check(issue, values(choices))
+        return [
+            {
+                "id": Reviews.id,
+                "comparison": choices[0],
+                "reviews": int(choices[1]),
+                "kinds": checked(choices[2:]),
+            }
+        ]
 
     @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """As many reviews as decide the condition, see ``Reviews.evidence``.
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The choices of ``reviews``, and of its NOT: the opposite comparison.
+
+        Such as below 2 for the NOT of at least 2; exactly has no opposite comparison.
 
         Parameters:
-            issue: The pull request.
-            choices: The comparison and the number.
-            scope: Not used.
-            project: Not used.
+            specs: The specs of the conditions.
 
         Returns:
-            The links.
+            The comparison, the number and the kinds if not all; None for other conditions.
         """
-        return Reviews.evidence(issue, values(choices), scope, project)
+        if len(specs) != 1 or specs[0].get("id") not in (Reviews.id, Reviews.negate().id):
+            return None
+        spec = specs[0]
+        comparison = spec["comparison"]
+        if spec["id"] != Reviews.id:
+            comparison = INVERSE.get(comparison)
+            if comparison is None:
+                return None
+        kinds = checked(spec["kinds"])
+        return comparison, str(spec["reviews"]), *(() if kinds == ALL else kinds)
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -159,19 +151,6 @@ class ReviewsGroup(ConditionGroup):
         count = len(ReviewsData.counted(issue, checked(choices[2:])))
         text = ngettext("%(count)s review", "%(count)s reviews", count) % {"count": count}
         return [{"text": text, "kind": "number"}]
-
-    @classmethod
-    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
-        """The opposite comparison, such as below 2 for at least 2.
-
-        Parameters:
-            choices: The comparison and the number.
-
-        Returns:
-            The choices; None for exactly, which has no opposite comparison.
-        """
-        inverse = INVERSE.get(choices[0])
-        return (inverse, *choices[1:]) if inverse else None
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:

@@ -51,15 +51,13 @@ class AuthorType(Condition):
         """
         return issue.repository.data_version >= SINCE and super().complete(issue)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the type of the author is one of the types.
 
         Parameters:
             issue: The pull request.
-            values: ``types``.
 
         Returns:
             True if it is.
         """
-        return type_of(issue.author_association) in values["types"]
+        return type_of(issue.author_association) in self.values["types"]

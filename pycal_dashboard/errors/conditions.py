@@ -210,3 +210,24 @@ class ConditionLabelUnknown(ConditionError):
     """
 
     title = _("Unknown label")
+
+
+class ConditionNotInGroup(ConditionError):
+    """A column cannot show a condition, as its group has no choices for it.
+
+    This happens when a condition, or its NOT, is put into a column of a group of other
+    conditions, such as a condition of reviews into a column of labels.
+
+    Resolve:
+        When it happens in the table of pull requests, reload the table and choose the column
+        in its menu again.
+
+    Context:
+        Each column of the table of pull requests writes its condition into the address with
+        the choices of its group (:doc:`/reference/conditions/index`).
+
+    Note:
+        The detail names the group and the condition, such as ``labels: reviews``.
+    """
+
+    title = _("The column cannot show the condition")

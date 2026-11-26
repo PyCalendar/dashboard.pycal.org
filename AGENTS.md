@@ -151,6 +151,15 @@ after a change, follow the rule it names instead of changing the test.
   and `tests/test_conditions.py` check every group and condition. Each condition shows its evidence on the page of a pull request: the
   least that shows why it holds or not (`Evidence`); its data specs give the links.
   A new choice of a column keeps the columns saved before as they were.
+- A condition is an object made of its class and a creation spec, the inputs by name
+  (`LabelExists({"label": "bug"})`), and yields the same spec again (`spec()`). All that writes
+  conditions down and reads them again lives outside of them, in the factory of the conditions
+  (`ConditionFactory`, `conditions/factory.py`): `create()`, `dump()` and `load()` (a spec with
+  its id), `decode()` and `encode()` (the choices of a column). A group declares only which specs
+  its choices mean (`specs()`) and which choices write specs (`choices_of()`); no other code maps
+  choices to conditions, checks them for a column or inverts them. So a NOT and the condition
+  that it is are the same: `absent` and `not~` of `present` read as one condition, written as
+  `absent`. `tests/test_factory.py` checks it.
 - Conditions joined by AND (`Conjunction`, `Column.joined`) are one condition of a step: one
   quality check, or one condition of Skip if. Wherever a step or a filter uses its conditions,
   go through `Conjunction.of` (its value, `encode()`, keys the texts and the skips of the step);

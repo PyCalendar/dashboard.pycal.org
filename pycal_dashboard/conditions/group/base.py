@@ -10,17 +10,17 @@ from django.utils.translation import gettext
 if TYPE_CHECKING:
     from django.http import QueryDict
 
-    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.models import Issue
 
 
 class ConditionGroup(ABC):
     """Conditions that people choose together, such as the states of a branch.
 
-    A group reads its choices from a form (:meth:`parse`), says whether they apply to a pull
-    request (:meth:`applies`), and what its cell shows (:meth:`cell`): a text that is
-    translated, with the class of its color.
+    A group reads its choices from a form (:meth:`parse`), says which conditions they mean
+    (:meth:`specs`, and :meth:`choices_of` the other way round), and what its cell shows
+    (:meth:`cell`): a text that is translated, with the class of its color. The conditions are
+    made by the :class:`~pycal_dashboard.conditions.factory.ConditionFactory`.
 
     Attributes:
         id: The name of the group in the address of the table, such as ``branch``.
@@ -65,19 +65,31 @@ class ConditionGroup(ABC):
 
     @classmethod
     @abstractmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether the condition applies to a pull request.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The conditions that checked choices mean, as specs with their ids.
+
+        The :class:`~pycal_dashboard.conditions.factory.ConditionFactory` makes the condition of
+        them: the condition of the one spec, or of more any one that holds (an OR, such as the
+        switches that are on).
 
         Parameters:
-            issue: The pull request, with its labels and state.
-            choices: The choices.
-            scope: The repositories of the project, for the states of its author; its
-                repository when None.
+            choices: The choices, checked (:meth:`check`).
 
         Returns:
-            True or False; None while its data is not complete.
+            The specs, such as ``[{"id": "label_absent", "label": "bug"}]``.
+        """
+
+    @classmethod
+    @abstractmethod
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The choices that write conditions, the opposite of :meth:`specs`.
+
+        Parameters:
+            specs: The specs of the conditions joined by OR, with their ids, such as
+                ``[{"id": "label_absent", "label": "bug"}]``.
+
+        Returns:
+            The choices, such as ``("absent", "bug")``; None when the group has none for them.
         """
 
     @classmethod
@@ -109,28 +121,6 @@ class ConditionGroup(ABC):
         """
 
     @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """The least that shows why the condition holds for a pull request, or why not.
-
-        Parameters:
-            issue: The pull request.
-            choices: The choices.
-            scope: The repositories of the project, for the states of its author.
-            project: The project, for its pages.
-
-        Returns:
-            The links, see :meth:`Condition.evidence
-            <pycal_dashboard.conditions.condition.base.Condition.evidence>`; none by default.
-        """
-        return []
-
-    @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
         """Why the condition cannot be assessed for a pull request, for its question mark.
 
@@ -157,19 +147,6 @@ class ConditionGroup(ABC):
             The opposite choices; None if there are none for sure.
         """
         return None
-
-    @classmethod
-    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
-        """The choices that apply exactly when these do not, to invert a condition.
-
-        Parameters:
-            choices: The choices.
-
-        Returns:
-            The inverted choices, such as label absent for present; None when the group has
-            none, then the filter of the column is inverted instead.
-        """
-        return cls.opposite(choices)
 
     @classmethod
     @abstractmethod

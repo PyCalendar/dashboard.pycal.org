@@ -10,7 +10,7 @@ and description.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from django.conf import settings
 
@@ -117,10 +117,42 @@ class State(ABC):
             not known.
         """
 
+    @staticmethod
+    def page(section: str, id: str) -> str:
+        """The page of a state or a condition in the documentation.
+
+        Parameters:
+            section: The folder of the page in the reference, such as ``conditions``.
+            id: The id, such as ``label_absent``.
+
+        Returns:
+            The address of the page.
+        """
+        return f"{settings.DOCS_URL.rstrip('/')}/reference/{section}/{id}.html"
+
     @classmethod
     def docs_url(cls) -> str:
         """The page in the documentation."""
-        return f"{settings.DOCS_URL.rstrip('/')}/reference/{cls.section}/{cls.id}.html"
+        return State.page(cls.section, cls.id)
+
+    @staticmethod
+    def described(state: Any) -> dict:  # noqa: ANN401 - a state, a condition or a NOT
+        """A state, a condition or a NOT for the JSON and the documentation.
+
+        Parameters:
+            state: Its class, or a NOT, with its own id, title and description.
+
+        Returns:
+            Its id, title, description, inputs, data and page.
+        """
+        return {
+            "id": state.id,
+            "title": str(state.title),
+            "description": str(state.description),
+            "inputs": [spec.describe() for spec in state.inputs],
+            "data": [spec.describe() for spec in state.data],
+            "documentation": state.docs_url(),
+        }
 
     @classmethod
     def describe(cls) -> dict:
@@ -129,11 +161,4 @@ class State(ABC):
         Returns:
             Its id, title, description, inputs, data and page.
         """
-        return {
-            "id": cls.id,
-            "title": str(cls.title),
-            "description": str(cls.description),
-            "inputs": [spec.describe() for spec in cls.inputs],
-            "data": [spec.describe() for spec in cls.data],
-            "documentation": cls.docs_url(),
-        }
+        return State.described(cls)

@@ -21,27 +21,6 @@ if TYPE_CHECKING:
 CASE = "case"  # the choice of matching the case of letters; else it does not matter
 
 
-def values(choices: tuple[str, ...]) -> dict:
-    """The configuration of the condition ``text_matches`` of the choices of a column.
-
-    Parameters:
-        choices: The field, the mode, the text and maybe ``case``.
-
-    Returns:
-        ``field``, ``mode``, ``text`` and ``case_sensitive``.
-
-    Examples:
-        >>> values(("title", "starts", "fix", "case"))["case_sensitive"]
-        True
-    """
-    return {
-        "field": choices[0],
-        "mode": choices[1],
-        "text": choices[2],
-        "case_sensitive": CASE in choices[3:],
-    }
-
-
 class TextGroup(ConditionGroup):
     """A text of a pull request matches: the condition ``text_matches``.
 
@@ -99,20 +78,49 @@ class TextGroup(ConditionGroup):
         )
 
     @classmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether the text of the pull request matches.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The condition ``text_matches`` of the field, the mode, the text and the case.
 
         Parameters:
-            issue: The pull request.
             choices: The field, the mode, the text and maybe ``case``.
-            scope: Not used: the condition is of the pull request itself.
 
         Returns:
-            True or False; None for an issue.
+            The spec.
+
+        Examples:
+            >>> TextGroup.specs(("title", "starts", "fix", "case"))[0]["case_sensitive"]
+            True
         """
-        return TextMatches.check(issue, values(choices))
+        return [
+            {
+                "id": TextMatches.id,
+                "field": choices[0],
+                "mode": choices[1],
+                "text": choices[2],
+                "case_sensitive": CASE in choices[3:],
+            }
+        ]
+
+    @classmethod
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The choices of ``text_matches``.
+
+        Parameters:
+            specs: The specs of the conditions.
+
+        Returns:
+            The field, the mode, the text and ``case`` if it matters; None for other
+            conditions.
+        """
+        if len(specs) != 1 or specs[0].get("id") != TextMatches.id:
+            return None
+        spec = specs[0]
+        return (
+            spec["field"],
+            spec["mode"],
+            spec["text"],
+            *((CASE,) if spec["case_sensitive"] else ()),
+        )
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:

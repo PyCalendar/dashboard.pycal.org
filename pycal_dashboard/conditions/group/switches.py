@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.utils.translation import gettext
 
-from pycal_dashboard.conditions.evidence import Evidence
+from pycal_dashboard.conditions.factory import ConditionFactory
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from pycal_dashboard.conditions.condition.base import Condition
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.models import Issue
 
 
 class SwitchesGroup(ConditionGroup):
@@ -76,6 +76,44 @@ class SwitchesGroup(ConditionGroup):
         return cls.check(tuple(form.getlist(cls.id)))
 
     @classmethod
+    def spec_of(cls, name: str) -> dict:
+        """The spec of the condition of a switch, with its id.
+
+        Parameters:
+            name: The name of the switch.
+
+        Returns:
+            Such as ``{"id": "open"}``.
+        """
+        return {"id": next(c for n, c, _text in cls.switches if n == name).id}
+
+    @classmethod
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The conditions of the switches that are on, any one of which holds.
+
+        Parameters:
+            choices: The switches that are on.
+
+        Returns:
+            Their specs, such as ``[{"id": "open"}, {"id": "merged"}]``.
+        """
+        return [cls.spec_of(name) for name in choices]
+
+    @classmethod
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The switches of the conditions.
+
+        Parameters:
+            specs: The specs of the conditions, such as ``[{"id": "open"}]``.
+
+        Returns:
+            The names of their switches, in the order of the switches; None when one is no
+            switch of the group.
+        """
+        names = [name for name in cls.names() if cls.spec_of(name) in specs]
+        return tuple(names) if names and len(names) == len(specs) else None
+
+    @classmethod
     def results(cls, issue: Issue, scope: Scope | None = None) -> dict[str, bool | None]:
         """Whether the condition of each switch holds for a pull request.
 
@@ -86,57 +124,8 @@ class SwitchesGroup(ConditionGroup):
         Returns:
             The result of each switch by its name.
         """
-        return {name: condition.check(issue, {}, scope) for name, condition, _text in cls.switches}
-
-    @classmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether one of the switches that are on holds.
-
-        Parameters:
-            issue: The pull request.
-            choices: The switches that are on.
-            scope: The repositories and the project, for conditions on data of the dashboard.
-
-        Returns:
-            True if one holds; None if none holds and one cannot be assessed.
-        """
-        results = cls.results(issue, scope)
-        chosen = [results[name] for name in choices]
-        if any(chosen):
-            return True
-        return None if None in chosen else False
-
-    @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """The evidence of the switches that hold, or of all that are on when none holds.
-
-        Parameters:
-            issue: The pull request.
-            choices: The switches that are on.
-            scope: The repositories and the project, for conditions on data of the dashboard.
-            project: Not used.
-
-        Returns:
-            The links of their conditions, each once.
-        """
-        results = cls.results(issue, scope)
-        holding = [name for name in choices if results[name]]
-        conditions = {name: condition for name, condition, _text in cls.switches}
-        return Evidence.unique(
-            [
-                found
-                for name in holding or choices
-                for found in conditions[name].evidence(issue, {}, scope, project)
-            ]
-        )
+        factory = ConditionFactory()
+        return {name: factory.load(cls.spec_of(name)).check(issue, scope) for name in cls.names()}
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:

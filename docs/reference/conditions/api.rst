@@ -4,7 +4,8 @@ API reference
 
 .. automodule:: pycal_dashboard.conditions
 
-.. autofunction:: pycal_dashboard.conditions.find
+.. automodule:: pycal_dashboard.conditions.factory
+   :members:
 
 The base classes
 ================
@@ -111,6 +112,12 @@ Conditions
 .. automodule:: pycal_dashboard.conditions.condition.negation
    :no-members:
 
+.. automodule:: pycal_dashboard.conditions.condition.negate_method
+   :members:
+
+.. automodule:: pycal_dashboard.conditions.condition.any_of
+   :members:
+
 .. automodule:: pycal_dashboard.conditions.condition.ci_passes
    :no-members:
 
@@ -148,6 +155,9 @@ Conditions
    :no-members:
 
 .. automodule:: pycal_dashboard.conditions.condition.review_ratio
+   :no-members:
+
+.. automodule:: pycal_dashboard.conditions.condition.author_state
    :no-members:
 
 

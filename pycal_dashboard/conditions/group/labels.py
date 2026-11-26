@@ -15,11 +15,11 @@ from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 if TYPE_CHECKING:
     from django.http import QueryDict
 
-    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.models import Issue
 
-MODES = {"present": LabelExists, "absent": LabelExists.negate()}
+# the modes and the ids of their conditions: absent is the NOT of present
+MODES = {"present": LabelExists.id, "absent": LabelExists.negate().id}
 
 
 class LabelsGroup(ConditionGroup):
@@ -65,41 +65,31 @@ class LabelsGroup(ConditionGroup):
         return cls.check((form.get("mode", "present"), form.get("label", "")))
 
     @classmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether the pull request has the label, or not, as the mode says.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """``label_exists`` of the label when present, ``label_absent``, its NOT, when absent.
 
         Parameters:
-            issue: The pull request.
             choices: The mode and the name.
-            scope: Not used: the condition is of the pull request itself.
 
         Returns:
-            True or False; None while the labels are not read.
+            The spec.
         """
-        return MODES[choices[0]].check(issue, {"label": choices[1]})
+        return [{"id": MODES[choices[0]], "label": choices[1]}]
 
     @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """The labels of the pull request on GitHub.
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The mode and the name of ``label_exists`` or ``label_absent``.
 
         Parameters:
-            issue: The pull request.
-            choices: The mode and the label.
-            scope: Not used.
-            project: Not used.
+            specs: The specs of the conditions.
 
         Returns:
-            The link.
+            The choices; None for other conditions.
         """
-        return MODES[choices[0]].evidence(issue, {"label": choices[1]}, scope, project)
+        modes = {id: mode for mode, id in MODES.items()}
+        if len(specs) != 1 or specs[0].get("id") not in modes:
+            return None
+        return modes[specs[0]["id"]], specs[0]["label"]
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -114,18 +104,6 @@ class LabelsGroup(ConditionGroup):
             No parts.
         """
         return []
-
-    @classmethod
-    def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...]:
-        """Absent for present, present for absent, of the same label.
-
-        Parameters:
-            choices: The mode and the name.
-
-        Returns:
-            The other mode and the name.
-        """
-        return ("absent" if choices[0] == "present" else "present", choices[1])
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:

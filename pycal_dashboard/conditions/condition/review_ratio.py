@@ -46,34 +46,27 @@ class ReviewRatioCompared(Condition):
     data = ReviewRatio.data
     scoped = True
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict, scope: Scope | None = None) -> bool:
+    def assess(self, issue: Issue, scope: Scope | None = None) -> bool:
         """Whether the ratio of the author compares with the input.
 
         Parameters:
             issue: The pull request.
-            values: ``comparison``, ``ratio`` and the inputs of the state, such as ``kinds``.
             scope: The repositories of the project.
 
         Returns:
             True if it holds; False for a pull request without an author.
         """
+        values = self.values
         comparison = values.get("comparison", "above")
         return bool(ReviewRatio.compare(issue, comparison, values["ratio"], scope, values))
 
-    @classmethod
     def evidence(
-        cls,
-        issue: Issue,
-        values: dict,
-        scope: Scope | None = None,
-        project: Project | None = None,
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
         """The page of the author in the project, with the reviews and pull requests counted.
 
         Parameters:
             issue: The pull request.
-            values: Not used.
             scope: Not used.
             project: The project.
 

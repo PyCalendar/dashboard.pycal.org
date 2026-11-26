@@ -24,6 +24,25 @@ neither is its NOT. The NOT has its own id, title and description, and the
 inputs, the data and the evidence of the condition; the NOT of a NOT is the
 condition again. ``label_absent`` is the NOT of ``label_exists``.
 
+A condition is made of its class and a creation spec, the inputs by name, such
+as ``LabelExists({"label": "bug"})``, and yields the same spec again
+(:meth:`~pycal_dashboard.conditions.condition.base.Condition.spec`). How
+conditions are written down and read again is not their business, but that of
+the factory of the conditions
+(:class:`~pycal_dashboard.conditions.factory.ConditionFactory`): it makes a
+condition of its class or id and a spec, writes it as a spec with its id, such
+as ``{"id": "label_absent", "label": "bug"}``, and as the choices of a column
+of the table of pull requests, such as ``labels~applies~absent~bug``. Each
+group of columns says only which specs its choices mean, and which choices
+write specs. So a NOT and the condition that it is are the same: the choices
+``absent`` and the NOT of ``present`` (``not~labels~applies~present~bug``)
+read as the same condition, written as ``absent``; the NOT of *at least 2
+reviews* is written as *below 2*. A NOT that its group has no choices for is
+written as the NOT of the condition, with ``not~``. The switches of a column
+that are on are joined by OR
+(:class:`~pycal_dashboard.conditions.condition.any_of.AnyOf`): one of them
+holds.
+
 .. list-table::
    :header-rows: 1
 
@@ -59,6 +78,8 @@ condition again. ``label_absent`` is the NOT of ``label_exists``.
      - A pull request has a number of reviews, without those of comments only.
    * - :doc:`review_ratio`
      - The review to pull request ratio of the author compared with a number.
+   * - :doc:`author_state`
+     - A state of the author of a pull request compared with a number.
    * - :doc:`author_type`
      - The author of a pull request is an owner, a member, a collaborator, ...
    * - :doc:`text_matches`
@@ -86,6 +107,7 @@ condition again. ``label_absent`` is the NOT of ``label_exists``.
    closed
    reviews
    review_ratio
+   author_state
    author_type
    text_matches
    pr_sync

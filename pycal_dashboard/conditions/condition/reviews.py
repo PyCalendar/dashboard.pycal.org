@@ -47,18 +47,17 @@ class Reviews(Condition):
     )
     data = (ReviewsData(),)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the number of reviews compares with the input.
 
         Parameters:
             issue: The pull request.
-            values: ``comparison``, ``reviews`` and ``kinds``.
 
         Returns:
             True if it holds.
         """
         # the reviews prefetched with the pull request, if so
+        values = self.values
         counted = len(ReviewsData.counted(issue, values.get("kinds")))
         return compare(counted, values.get("comparison", "at_least"), values["reviews"])
 
@@ -94,13 +93,8 @@ class Reviews(Condition):
         }
         return min(count, enough.get(comparison, count))
 
-    @classmethod
     def evidence(
-        cls,
-        issue: Issue,
-        values: dict,
-        scope: Scope | None = None,
-        project: Project | None = None,
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
         """As many reviews as decide the condition, the oldest first.
 
@@ -108,15 +102,15 @@ class Reviews(Condition):
 
         Parameters:
             issue: The pull request.
-            values: ``comparison``, ``reviews`` and ``kinds``.
             scope: Not used.
             project: Not used.
 
         Returns:
             A link to each review; to the pull request without one to show.
         """
+        values = self.values
         found = ReviewsData().evidence(issue, values.get("kinds"))
-        shown = cls.deciding(len(found), values.get("comparison", "at_least"), values["reviews"])
+        shown = self.deciding(len(found), values.get("comparison", "at_least"), values["reviews"])
         if not shown:
             return [Evidence(gettext("Its reviews on GitHub"), issue.url)]
         return found[:shown]

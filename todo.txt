@@ -782,4 +782,16 @@ community: where to start, what waits for a review, who contributes.
 - [x] Answer: where the factory of the conditions is: there is none; each group maps its choices to a condition
       (LabelsGroup.MODES, the switches of SwitchesGroup, Reviews, TextMatches, AuthorType), the values are passed to
       check() each time, and Column.applies wraps the result in Not; conditions.find is used by nothing but tests
-- [ ] The person: should a factory make the condition of a column, bound to its values (and wrapped in Not)?
+- [x] The person: should a factory make the condition of a column, bound to its values (and wrapped in Not)? Yes
+- [x] A factory of the conditions (ConditionFactory) creates conditions from their classes (or ids) and a creation
+      spec; label absent and the NOT of label present are the same in it; all serialization and deserialization of
+      conditions (such as the values of col=) lives in it, outside of the conditions, and no code duplicates it
+      (the groups no longer map their choices to conditions themselves); a condition takes its creation spec and
+      yields a serialization spec that looks just alike; created when needed (0.15 µs: no instance() needed);
+      "absent" and "not present" read as the NOT of present, written as "absent" by default; the NOT of at least
+      is below; the switches that are on are an OR (AnyOf); the column Author checks the condition author_state
+- [ ] The person: the rest of the interface of a condition, and "This way, they can react and be put into the ..."
+- [ ] Quality checks (and conditions of Skip if) are grouped into an OR, as into an AND; a radio choice turns an OR
+      into an AND and back
+- [x] The __getattr__ of Not saves the attribute in the class as a property, so that the access is faster next time
+- [x] The NOT finds its page and its description without State.docs_url.__func__: State.page and State.described

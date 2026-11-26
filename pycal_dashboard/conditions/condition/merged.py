@@ -16,13 +16,11 @@ class Merged(Condition):
     description = "A pull request was merged."
     data = (IssueData(),)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the pull request was merged.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
 
         Returns:
             True if it was merged.

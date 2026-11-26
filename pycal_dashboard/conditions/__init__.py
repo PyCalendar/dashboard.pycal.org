@@ -8,12 +8,14 @@ pull request that is true or false; a state of a person (:class:`~.state.person.
 ``docs/reference/states/<id>.rst``) is a number counted in the repositories of a project
 (:class:`~.state.scope.Scope`), such as the reviews the author gave.
 
-``CONDITIONS`` and ``STATES`` have them by id; :func:`~pycal_dashboard.conditions.find` finds a
-condition, and ``DATA_SPECS`` are the data that the update of a repository reads. The modules
+``CONDITIONS`` and ``STATES`` have them by id, and ``DATA_SPECS`` are the data that the update
+of a repository reads. The :class:`~pycal_dashboard.conditions.factory.ConditionFactory` makes
+the conditions of their classes or ids, and writes them down and reads them again. The modules
 are grouped: ``condition/`` the conditions, ``state/`` the states, ``input/`` the kinds of
 inputs and ``spec/`` the data, each on its ``base.py``.
 """
 
+from pycal_dashboard.conditions.condition.author_state import AuthorState
 from pycal_dashboard.conditions.condition.author_type import AuthorType
 from pycal_dashboard.conditions.condition.auto_merge_enabled import AutoMergeEnabled
 from pycal_dashboard.conditions.condition.base import Condition
@@ -44,7 +46,6 @@ from pycal_dashboard.conditions.state.person import PersonState
 from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
 from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
 from pycal_dashboard.conditions.state.reviews_given import ReviewsGiven
-from pycal_dashboard.errors import UnknownCondition
 
 # a NOT of a condition (Not) is one, too, such as label_absent
 CONDITIONS: dict[str, type[Condition] | Not] = {
@@ -65,6 +66,7 @@ CONDITIONS: dict[str, type[Condition] | Not] = {
         Closed,
         Reviews,
         ReviewRatioCompared,
+        AuthorState,
         AuthorType,
         TextMatches,
         PrSyncOn,
@@ -78,21 +80,3 @@ STATES: dict[str, type[PersonState]] = {
 }
 # in the order the background reads them: the checks need the state of the pull request
 DATA_SPECS = (IssueData(), LabelsData(), PullRequestData(), ChecksData(), ReviewsData())
-
-
-def find(id: str) -> type[Condition] | Not:
-    """The condition with an id.
-
-    Parameters:
-        id: Such as ``label_exists``.
-
-    Returns:
-        The condition.
-
-    Raises:
-        UnknownCondition: There is no condition with this id.
-    """
-    try:
-        return CONDITIONS[id]
-    except KeyError:
-        raise UnknownCondition(id) from None

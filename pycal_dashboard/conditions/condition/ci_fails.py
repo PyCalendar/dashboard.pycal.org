@@ -22,13 +22,11 @@ class CiFails(CiPasses):
     title = "CI fails"
     description = "A check of the last commit of a pull request failed."
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether a check failed.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
 
         Returns:
             True if one failed.

@@ -198,7 +198,7 @@ def test_the_reviews_of_a_person_on_their_own_pull_requests(client, github, proj
     assert '<span class="tab-count">1</span>' in own.split("?tab=reviews")[1].split("</a>")[0]
     assert 'name="kinds" value="own" checked' in own
     # the condition of the pull request: Ben's 4 reviews, not Anna's comment
-    assert Reviews.check(Issue.objects.get(number=1), {"comparison": "exactly", "reviews": 4})
+    assert Reviews({"comparison": "exactly", "reviews": 4}).check(Issue.objects.get(number=1))
     every = "reviews~applies~at_least~9~approved~changes_requested~commented~dismissed"
     assert "Review by anna: commented" not in {text for text, _url in evidence(every, 1)}
     assert "Review by anna: commented" in {text for text, _url in evidence(every + "~own", 1)}

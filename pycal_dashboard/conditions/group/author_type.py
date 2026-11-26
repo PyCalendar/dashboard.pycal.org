@@ -2,18 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from django.utils.translation import gettext_noop
 
 from pycal_dashboard.conditions.author_types import HELP, TYPES
 from pycal_dashboard.conditions.condition.author_type import AuthorType
-from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.group.switches import SwitchesGroup
-
-if TYPE_CHECKING:
-    from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
 
 
 class AuthorTypeGroup(SwitchesGroup):
@@ -42,35 +35,39 @@ class AuthorTypeGroup(SwitchesGroup):
     docs = "reference/conditions/author_type.html"
 
     @classmethod
-    def results(cls, issue: Issue, scope: Scope | None = None) -> dict[str, bool | None]:
-        """Whether the author is of each type.
+    def spec_of(cls, name: str) -> dict:
+        """The condition ``author_type`` of one type.
 
         Parameters:
-            issue: The pull request.
-            scope: Not used: the type is of the pull request itself.
+            name: The type, such as ``contributor``.
 
         Returns:
-            The result of each type by its name; None while the type is not known.
+            Its spec.
         """
-        return {name: AuthorType.check(issue, {"types": (name,)}) for name in TYPES}
+        return {"id": AuthorType.id, "types": (name,)}
 
     @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """The pull request on GitHub, which shows its author.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The condition ``author_type`` of the types that are on.
 
         Parameters:
-            issue: The pull request.
-            choices: The types that are on.
-            scope: Not used.
-            project: Not used.
+            choices: The types.
 
         Returns:
-            The link.
+            Its spec.
         """
-        return AuthorType.evidence(issue, {"types": choices}, scope, project)
+        return [{"id": AuthorType.id, "types": tuple(choices)}]
+
+    @classmethod
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The types of the condition ``author_type``.
+
+        Parameters:
+            specs: The specs of the conditions.
+
+        Returns:
+            The types, in the order of the switches; None for other conditions.
+        """
+        if len(specs) != 1 or specs[0].get("id") != AuthorType.id:
+            return None
+        return tuple(name for name in cls.names() if name in specs[0]["types"]) or None

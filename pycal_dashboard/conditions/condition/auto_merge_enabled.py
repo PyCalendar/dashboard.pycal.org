@@ -23,13 +23,11 @@ class AutoMergeEnabled(Condition):
     description = "Auto-merge is enabled on a pull request."
     data = (PullRequestData(),)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether auto-merge is enabled.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
 
         Returns:
             True if it is enabled.

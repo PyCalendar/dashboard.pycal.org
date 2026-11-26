@@ -31,32 +31,24 @@ class CiUnknown(Condition):
     description = "The result of the checks of a pull request is not known."
     data = (IssueData(),)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the result of the checks is not known.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
 
         Returns:
             True if ``ci_passes`` cannot be assessed.
         """
-        return CiPasses.check(issue, {}) is None
+        return CiPasses().check(issue) is None
 
-    @classmethod
     def evidence(
-        cls,
-        issue: Issue,
-        values: dict,
-        scope: Scope | None = None,
-        project: Project | None = None,
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
         """Why the result is not known: the pull request is closed or merged; else its checks.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
             scope: Not used.
             project: Not used.
 

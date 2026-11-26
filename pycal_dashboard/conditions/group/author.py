@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
+from pycal_dashboard.conditions.condition.author_state import STATES, AuthorState, has_kinds
 from pycal_dashboard.conditions.group.base import ConditionGroup
 from pycal_dashboard.conditions.input.comparison import (
     COMPARISONS,
@@ -18,40 +19,17 @@ from pycal_dashboard.conditions.input.comparison import (
 from pycal_dashboard.conditions.input.number import NumberInput
 from pycal_dashboard.conditions.review_kinds import ALL, CHOICES, checked
 from pycal_dashboard.conditions.review_kinds import text as kinds_text
-from pycal_dashboard.conditions.state.own_pull_requests_closed import OwnPullRequestsClosed
-from pycal_dashboard.conditions.state.pull_requests_opened import PullRequestsOpened
-from pycal_dashboard.conditions.state.review_ratio import ReviewRatio
-from pycal_dashboard.conditions.state.reviews_given import ReviewsGiven
 from pycal_dashboard.errors import ConditionInputMissing, ConditionInputUnknown
 
 if TYPE_CHECKING:
     from django.http import QueryDict
 
-    from pycal_dashboard.conditions.evidence import Evidence
-    from pycal_dashboard.conditions.state.person import PersonState
     from pycal_dashboard.conditions.state.scope import Scope
-    from pycal_dashboard.models import Issue, Project
+    from pycal_dashboard.models import Issue
 
-# the states of the author that a column compares, in the order of the menu
-STATES: dict[str, type[PersonState]] = {
-    state.id: state
-    for state in (ReviewRatio, ReviewsGiven, PullRequestsOpened, OwnPullRequestsClosed)
-}
 NUMBER = NumberInput("number", "Number", minimum=0)
 COMPARISON = ComparisonInput("comparison", "Comparison")
 DEFAULT = "below"  # such as fewer reviews than pull requests
-
-
-def has_kinds(state: type[PersonState]) -> bool:
-    """Whether a state counts reviews and so has the input of their kinds.
-
-    Parameters:
-        state: The state.
-
-    Returns:
-        True for such as ``reviews_given`` and ``review_ratio``.
-    """
-    return any(spec.name == "kinds" for spec in state.inputs)
 
 
 def state_values(choices: tuple[str, ...]) -> dict:
@@ -158,25 +136,51 @@ class AuthorGroup(ConditionGroup):
         )
 
     @classmethod
-    def applies(
-        cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None
-    ) -> bool | None:
-        """Whether the state of the author compares with the number.
+    def specs(cls, choices: tuple[str, ...]) -> list[dict]:
+        """The condition ``author_state`` of the state, the comparison and the number.
 
         Parameters:
-            issue: The pull request.
-            choices: The state, the comparison and the number.
-            scope: The repositories of the project.
+            choices: The state, the comparison, the number and the kinds of reviews if not all.
 
         Returns:
-            True or False; None while the data of a repository is not complete, or without
-            an author.
+            The spec.
+
+        Examples:
+            >>> AuthorGroup.specs(("pull_requests_opened", "below", "2"))[0]["number"]
+            2.0
+            >>> AuthorGroup.specs(("reviews_given", "below", "2", "approved"))[0]["kinds"]
+            ('approved',)
         """
-        if not issue.pull_request:
+        spec = {
+            "id": AuthorState.id,
+            "state": choices[0],
+            "comparison": choices[1],
+            "number": float(choices[2]),
+        }
+        return [{**spec, **state_values(choices)}]
+
+    @classmethod
+    def choices_of(cls, specs: list[dict]) -> tuple[str, ...] | None:
+        """The choices of ``author_state``, and of its NOT: the opposite comparison.
+
+        Parameters:
+            specs: The specs of the conditions.
+
+        Returns:
+            The state, the comparison, the number and the kinds if not all; None for other
+            conditions, and for the NOT of exactly.
+        """
+        if len(specs) != 1 or specs[0].get("id") not in (AuthorState.id, AuthorState.negate().id):
             return None
-        return STATES[choices[0]].compare(
-            issue, choices[1], float(choices[2]), scope, state_values(choices)
-        )
+        spec = specs[0]
+        comparison = spec["comparison"]
+        if spec["id"] != AuthorState.id:
+            comparison = INVERSE.get(comparison)
+            if comparison is None:
+                return None
+        kinds = checked(spec["kinds"]) if has_kinds(STATES[spec["state"]]) else ALL
+        found = (spec["state"], comparison, number_text(spec["number"]))
+        return (*found, *(() if kinds == ALL else kinds))
 
     @classmethod
     def cell(cls, issue: Issue, choices: tuple[str, ...], scope: Scope | None = None) -> list[dict]:
@@ -192,27 +196,6 @@ class AuthorGroup(ConditionGroup):
         """
         value = STATES[choices[0]].observe(issue, scope, state_values(choices))
         return [] if value is None else [{"text": number_text(value), "kind": "number"}]
-
-    @classmethod
-    def evidence(
-        cls,
-        issue: Issue,
-        choices: tuple[str, ...],
-        scope: Scope | None = None,
-        project: Project | None = None,
-    ) -> list[Evidence]:
-        """The page of the author in the project, where the states are counted.
-
-        Parameters:
-            issue: The pull request.
-            choices: The state, the comparison and the number.
-            scope: Not used.
-            project: The project.
-
-        Returns:
-            The link; none without an author or a project.
-        """
-        return STATES[choices[0]].evidence(issue, project)
 
     @classmethod
     def unknown(cls, issue: Issue, choices: tuple[str, ...]) -> str:
@@ -231,19 +214,6 @@ class AuthorGroup(ConditionGroup):
             "not known yet: the reviews of a repository of the project are not read yet; they "
             "need the GitHub App"
         )
-
-    @classmethod
-    def invert(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:
-        """The opposite comparison, such as at least 1 for below 1.
-
-        Parameters:
-            choices: The state, the comparison and the number.
-
-        Returns:
-            The choices; None for exactly, which has no opposite comparison.
-        """
-        inverse = INVERSE.get(choices[1])
-        return (choices[0], inverse, *choices[2:]) if inverse else None
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:

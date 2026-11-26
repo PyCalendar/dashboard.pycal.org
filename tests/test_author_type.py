@@ -47,15 +47,15 @@ def test_the_update_keeps_the_association(github, bob):
     condition = CONDITIONS["author_type"]
     values = condition.configure({"types": ["first_timer", "contributor"]})
     assert values["types"] == ("contributor", "first_timer")
-    assert condition.check(first, values) is True
-    assert condition.check(member, values) is False
+    assert condition(values).check(first) is True
+    assert condition(values).check(member) is False
 
 
 def test_it_is_not_known_before_the_repository_was_read_again(project):  # noqa: F811
     issue = Issue.objects.get(title="Ready")
     Repository.objects.update(data_version=3)
     issue.refresh_from_db()
-    assert CONDITIONS["author_type"].check(issue, {"types": ("contributor",)}) is None
+    assert CONDITIONS["author_type"]({"types": ("contributor",)}).check(issue) is None
     assert Column.decode("author_type~applies~contributor").applies(issue) is None
 
 
@@ -95,7 +95,7 @@ def test_the_column_of_the_types(project):  # noqa: F811
     inverted = column.inverted()
     assert inverted.choices == ("collaborator", "contributor", "first_timer")
     assert inverted.applies(conflict) is True
-    evidence = column.group.evidence(ready, column.choices)
+    evidence = column.evidence(ready)
     assert [found.url for found in evidence] == [ready.url]
 
 

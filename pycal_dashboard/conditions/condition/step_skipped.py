@@ -29,13 +29,11 @@ class StepSkipped(DashboardCondition):
         "A pull request skips a step of the project, skipped by a person or for its author."
     )
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict, scope: Scope | None = None) -> bool:
+    def assess(self, issue: Issue, scope: Scope | None = None) -> bool:
         """Whether the pull request skips a step.
 
         Parameters:
             issue: The pull request.
-            values: Nothing: the condition has no inputs.
             scope: The repositories and the project.
 
         Returns:
@@ -45,19 +43,13 @@ class StepSkipped(DashboardCondition):
         login = issue.author.login.lower() if issue.author_id and issue.author else ""
         return issue.pk in issues or bool(login and login in authors)
 
-    @classmethod
     def evidence(
-        cls,
-        issue: Issue,
-        values: dict,
-        scope: Scope | None = None,
-        project: Project | None = None,
+        self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
         """The steps of the pull request on the dashboard, which say which one it skips.
 
         Parameters:
             issue: The pull request.
-            values: Not used.
             scope: Not used.
             project: The project.
 

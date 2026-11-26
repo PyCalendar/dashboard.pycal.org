@@ -7,7 +7,8 @@ import pytest
 from django.template.loader import render_to_string
 
 from pycal_dashboard import errors
-from pycal_dashboard.conditions import CONDITIONS, DATA_SPECS, ChecksData, find
+from pycal_dashboard.conditions import CONDITIONS, DATA_SPECS, ChecksData
+from pycal_dashboard.conditions.factory import ConditionFactory
 from pycal_dashboard.conditions.input.integer import IntegerInput
 from pycal_dashboard.conditions.input.label import LabelInput
 from pycal_dashboard.conditions.input.positive_integer import PositiveIntegerInput
@@ -33,6 +34,7 @@ IDS = [
     "closed",
     "reviews",
     "review_ratio",
+    "author_state",
     "author_type",
     "text_matches",
     "pr_sync",
@@ -43,9 +45,10 @@ REPO = "collective/icalendar"
 
 def test_the_conditions_have_their_ids():
     assert list(CONDITIONS) == IDS
-    assert all(find(id).id == id for id in IDS)
+    factory = ConditionFactory()
+    assert all(factory.find(id).id == id for id in IDS)
     with pytest.raises(errors.UnknownCondition):
-        find("nothing")
+        factory.find("nothing")
 
 
 @pytest.mark.parametrize("id", IDS)
@@ -274,16 +277,17 @@ def test_the_update_reads_the_data_of_the_conditions(repository, github):
     ],
 )
 def test_the_conditions_are_assessed(repository, id, config, results):
-    condition = CONDITIONS[id]
-    values = condition.configure(config, {"repository": repository})
-    assert {title: condition.check(pull(title), values) for title in results} == results
+    condition = ConditionFactory().create(id, config, {"repository": repository})
+    assert condition.spec() == condition.values  # it yields the spec that made it
+    assert ConditionFactory().create(id, condition.spec()) == condition
+    assert {title: condition.check(pull(title)) for title in results} == results
     # every condition can be inverted: its NOT holds exactly when it does not
     negated = condition.negate()
-    assert negated.negate() is condition or negated.negate() == condition
-    assert {title: negated.check(pull(title), values) for title in results} == {
+    assert negated.negate() == condition
+    assert {title: negated.check(pull(title)) for title in results} == {
         title: None if result is None else not result for title, result in results.items()
     }
-    assert {title: negated.observe(pull(title), None, values) for title in results} == {
+    assert {title: negated.observe(pull(title)) for title in results} == {
         title: None if result is None else not result for title, result in results.items()
     }
 
@@ -356,8 +360,8 @@ def test_ci_from_the_rollup_of_github(github, rollup, summary, passes, fails):
     assert RepositoryUpdate(repository).run()
     change = pull("Change")
     assert change.pull_state.checks == summary
-    assert CONDITIONS["ci_passes"].check(change, {}) is passes
-    assert CONDITIONS["ci_fails"].check(change, {}) is fails
+    assert CONDITIONS["ci_passes"]().check(change) is passes
+    assert CONDITIONS["ci_fails"]().check(change) is fails
 
 
 @pytest.mark.django_db
@@ -371,7 +375,7 @@ def test_while_checks_run_the_last_complete_result_counts(github):
     RepositoryUpdate(repository).run()
     change = pull("Change")
     assert (change.pull_state.checks, change.pull_state.checks_complete) == ("pending", "failure")
-    assert CONDITIONS["ci_fails"].check(change, {}) is True
+    assert CONDITIONS["ci_fails"]().check(change) is True
 
 
 @pytest.mark.django_db
@@ -417,4 +421,4 @@ def test_a_draft_in_the_column_status(repository):
     assert column.inverted().sentence == "it is not a draft"
     assert {"text": "draft", "kind": "draft"} in column.group.cell(pull("Behind"), column.choices)
     Repository.objects.update(data_version=4)  # read before the drafts: not known
-    assert CONDITIONS["draft"].check(pull("Behind"), {}) is None
+    assert CONDITIONS["draft"]().check(pull("Behind")) is None

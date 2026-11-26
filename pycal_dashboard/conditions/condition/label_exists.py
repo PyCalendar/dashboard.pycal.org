@@ -26,16 +26,14 @@ class LabelExists(Condition):
     inputs = (LabelInput("label", "Label", "The name of a label of the repository."),)
     data = (LabelsData(),)
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the pull request has the label.
 
         Parameters:
             issue: The pull request.
-            values: ``label``.
 
         Returns:
             True if it has the label.
         """
-        wanted = values["label"].lower()  # the labels prefetched with the pull request, if so
+        wanted = self.values["label"].lower()  # the labels prefetched with the pull request, if so
         return any(label.name.lower() == wanted for label in issue.labels.all())

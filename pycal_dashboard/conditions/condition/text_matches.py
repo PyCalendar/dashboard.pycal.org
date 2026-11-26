@@ -59,16 +59,15 @@ class TextMatches(Condition):
         check(values["mode"], values["text"])
         return values
 
-    @classmethod
-    def assess(cls, issue: Issue, values: dict) -> bool:
+    def assess(self, issue: Issue) -> bool:
         """Whether the text of the pull request matches.
 
         Parameters:
             issue: The pull request.
-            values: ``field``, ``mode``, ``text`` and ``case_sensitive``.
 
         Returns:
             True if it matches.
         """
+        values = self.values
         text = issue.title if values["field"] == "title" else issue.description or ""
         return matches(text, values["mode"], values["text"], values.get("case_sensitive", False))
