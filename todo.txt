@@ -772,3 +772,8 @@ community: where to start, what waits for a review, who contributes.
 - [x] A column is inverted as the NOT of its condition (not~) where no choice is its opposite
 - [x] The CI did not invert exactly: failing is not known for a merged pull request, passing or unknown holds;
       its states are no longer swapped to invert it
+- [x] Answer: how the conditions are made from a string: Column.decode splits the value of col= at ~ (and<n>~, not~,
+      the group of GROUPS, the filter, then the choices checked by the group), Conjunction.of joins the ANDs;
+      the conditions themselves are found by id (conditions.find, CONDITIONS)
+- [ ] The person: should the column Label lose its mode "absent" (labels~...~absent~x), so that an absent label is
+      only not~labels~...~present~x? Saved filters and steps would be changed over by a migration
