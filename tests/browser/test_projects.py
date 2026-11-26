@@ -736,6 +736,24 @@ def test_the_message_of_the_pull_requests(signed_in, site, github, bob):
     assert message.draft in (None, message.template)
 
 
+def test_a_switch_changed_before_the_script_ran_is_counted(signed_in, site, github, bob):
+    """The script of the scope may come after a click, such as on a slow line: it counts then."""
+    from pycal_dashboard.models import PullRequestMessage
+
+    project = pull_request_project(github, bob)
+    PullRequestMessage.objects.create(project=project, template="{pr_title}")
+    page = signed_in
+    held = []
+    page.route("**/message.js", lambda route: held.append(route))  # the script waits
+    page.goto(f"{site}/projects/icalendar/message/scope/", wait_until="commit")
+    page.locator("[data-message-scope]").get_by_text("Add to all open pull requests").click()
+    save = page.locator("[data-save-message]")
+    expect(save).to_have_text("Keep 0 pull requests synchronized")  # not counted yet
+    assert len(held) == 1
+    held[0].continue_()
+    expect(save).to_have_text("Keep 3 pull requests synchronized")
+
+
 def test_a_filter_keeps_its_name_from_the_step_to_the_table_and_back(signed_in, site, github, bob):
     """Step -> Edit the filter -> the table -> change a condition -> Save: still the filter."""
     from pycal_dashboard.models import PullRequestFilter, PullRequestStep

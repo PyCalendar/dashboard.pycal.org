@@ -798,3 +798,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] The NOT finds its page and its description without State.docs_url.__func__: State.page and State.described
 - [x] "Its description does not match:" -> "PR description does not match:": every sentence of a condition names the
       pull request directly (PR is open, PR has the label bug, PR author gave ...), also in German and Spanish
+- [x] The CI of Release 0.29.2 failed in test_the_message_of_the_pull_requests: a click on a switch of the scope before
+      message.js ran was not counted (the script is deferred); the script counts at once then (a browser test holds it)

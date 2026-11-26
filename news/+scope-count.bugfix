@@ -1,0 +1,1 @@
+The button of the scope of the PR message counts the pull requests also when a switch was changed before its script ran, such as on a slow line or when the browser restores the page.
