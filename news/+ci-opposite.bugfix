@@ -1,1 +1,0 @@
-A column of the CI that shows those it does not apply to no longer suggests "passing or unknown" as the same as "not failing": for a closed or merged pull request, whose CI is unknown, they differ. Invert of the CI now inverts exactly.

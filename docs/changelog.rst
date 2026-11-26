@@ -9,6 +9,21 @@ Changelog
 
 .. towncrier release notes start
 
+0.28.0 (2026-11-26)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Every condition can be inverted, also one that is switched off or of Skip if, such as a text that the title contains: where no other choice is its opposite, Invert makes it the NOT of the condition, which the table shows as NOT in its header. A condition is inverted by wrapping it in its NOT, which holds exactly when it does not; ``label_absent`` is now the NOT of ``label_exists``.
+
+
+Bug fixes
+~~~~~~~~~
+
+- A column of the CI that shows those it does not apply to no longer suggests "passing or unknown" as the same as "not failing": for a closed or merged pull request, whose CI is unknown, they differ. Invert of the CI now inverts exactly.
+
+
 0.27.0 (2026-11-26)
 -------------------
 
