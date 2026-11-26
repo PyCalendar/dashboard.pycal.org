@@ -171,6 +171,8 @@ after a change, follow the rule it names instead of changing the test.
 - Signing out stays on the page if visitors see it, else goes a level higher in the path until
   a page answers (`signed_out.py`): so the address of a tab lies below that of its parent page,
   such as `settings/danger/` below `settings/`.
+- Texts that people read do not say *its* or *it* where it is not clear what it refers to: they
+  name it, such as *PR description does not match* or *PR labels on GitHub* for a pull request.
 - The site names itself by its name, `SITE_NAME` (`{{ site_name }}` in templates), such as
   dashboard.pycal.org, never "this site" or "the site" in the texts that people read.
 - Every model is registered in the Django admin (`pycal_dashboard/admin.py`),

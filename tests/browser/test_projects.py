@@ -869,7 +869,7 @@ def test_the_evidence_of_a_task_and_the_page_of_its_author(page, site, github, b
     PullRequestStep.objects.create(project=project, filter=saved, name="Ready")
     page.goto(f"{site}/projects/icalendar/pull/2/")
     tasks = page.locator("[data-tasks]")
-    expect(tasks.get_by_role("link", name="Where it is merged, on GitHub")).to_have_attribute(
+    expect(tasks.get_by_role("link", name="Where the PR is merged, on GitHub")).to_have_attribute(
         "href", "https://github.com/collective/icalendar/pull/2#issue-comment-box"
     )
     tasks.get_by_role("link", name="octocat in the project").click()

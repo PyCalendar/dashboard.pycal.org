@@ -57,5 +57,5 @@ class PrSyncOn(DashboardCondition):
         comment = PullRequestComment.objects.filter(project=project, issue=issue).first()
         if comment is not None:
             url = f"{issue.url}#issuecomment-{comment.github_id}"
-            return [Evidence(gettext("Its Status Message on GitHub"), url)]
+            return [Evidence(gettext("PR Status Message on GitHub"), url)]
         return [Evidence(gettext("The PR Sync of the project"), project.path("message/"))]

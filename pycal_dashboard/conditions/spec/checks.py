@@ -80,7 +80,7 @@ class ChecksData(DataSpec):
         Returns:
             The link to them.
         """
-        return [Evidence(gettext("Its checks on GitHub"), issue.url + "/checks")]
+        return [Evidence(gettext("PR checks on GitHub"), issue.url + "/checks")]
 
     def complete(self, issue: Issue) -> bool:
         """Read after the last reading of the pull request, for its last commit.

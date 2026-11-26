@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 23:05+0000\n"
+"POT-Creation-Date: 2026-11-26 23:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,18 +52,18 @@ msgstr "Gemergt: Die Checks werden nur für offene Pull Requests gelesen"
 msgid "Closed: the checks are read for open pull requests only"
 msgstr "Geschlossen: Die Checks werden nur für offene Pull Requests gelesen"
 
-msgid "Its Status Message on GitHub"
-msgstr "Seine Statusnachricht auf GitHub"
+msgid "PR Status Message on GitHub"
+msgstr "PR-Statusnachricht auf GitHub"
 
 msgid "The PR Sync of the project"
 msgstr "Der PR Sync des Projekts"
 
-msgid "Its reviews on GitHub"
-msgstr "Seine Reviews auf GitHub"
+msgid "PR reviews on GitHub"
+msgstr "PR-Reviews auf GitHub"
 
 #, python-format
-msgid "Its steps on %(site)s"
-msgstr "Seine Schritte auf %(site)s"
+msgid "PR steps on %(site)s"
+msgstr "PR-Schritte auf %(site)s"
 
 msgid "Author"
 msgstr "Autor"
@@ -390,17 +390,17 @@ msgstr ""
 msgid "%(kinds)s, also by the author of the pull request"
 msgstr "%(kinds)s, auch von der Autorin oder dem Autor des Pull Requests"
 
-msgid "Its checks on GitHub"
-msgstr "Seine Checks auf GitHub"
+msgid "PR checks on GitHub"
+msgstr "PR-Checks auf GitHub"
 
 msgid "The pull request on GitHub"
 msgstr "Der Pull Request auf GitHub"
 
-msgid "Its labels on GitHub"
-msgstr "Seine Labels auf GitHub"
+msgid "PR labels on GitHub"
+msgstr "PR-Labels auf GitHub"
 
-msgid "Where it is merged, on GitHub"
-msgstr "Wo er gemergt wird, auf GitHub"
+msgid "Where the PR is merged, on GitHub"
+msgstr "Wo der PR gemergt wird, auf GitHub"
 
 #, python-format
 msgid "Review by %(handle)s: %(state)s"

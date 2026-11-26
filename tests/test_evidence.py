@@ -43,14 +43,14 @@ def evidence(value: str, number: int, project=None) -> list[tuple[str, str]]:
 def test_the_data_specs_give_the_links(project):
     assert evidence("status~applies~open", 1) == [("The pull request on GitHub", f"{URL}/1")]
     assert evidence("labels~applies~present~needs review", 1) == [
-        ("Its labels on GitHub", f"{URL}/1")
+        ("PR labels on GitHub", f"{URL}/1")
     ]
-    merge_box = ("Where it is merged, on GitHub", f"{URL}/2#issue-comment-box")
+    merge_box = ("Where the PR is merged, on GitHub", f"{URL}/2#issue-comment-box")
     assert evidence("branch~applies~conflict", 2) == [merge_box]
     assert evidence("branch~applies~outdated~up_to_date", 2) == [merge_box]  # each link once
     assert evidence("status~applies~auto_merge", 2) == [merge_box]
-    assert evidence("ci~applies~failing", 1) == [("Its checks on GitHub", f"{URL}/1/checks")]
-    assert evidence("ci~applies~passing", 1) == [("Its checks on GitHub", f"{URL}/1/checks")]
+    assert evidence("ci~applies~failing", 1) == [("PR checks on GitHub", f"{URL}/1/checks")]
+    assert evidence("ci~applies~passing", 1) == [("PR checks on GitHub", f"{URL}/1/checks")]
 
 
 def test_switches_show_those_that_hold(project):
@@ -58,9 +58,7 @@ def test_switches_show_those_that_hold(project):
     assert evidence("status~applies~open~auto_merge", 1) == [
         ("The pull request on GitHub", f"{URL}/1")
     ]
-    assert evidence("ci~applies~unknown~failing", 1) == [
-        ("Its checks on GitHub", f"{URL}/1/checks")
-    ]
+    assert evidence("ci~applies~unknown~failing", 1) == [("PR checks on GitHub", f"{URL}/1/checks")]
 
 
 def test_ci_unknown_says_why(project):
@@ -107,7 +105,7 @@ def test_all_kinds_of_reviews_count_by_default(project):
 
 def test_no_reviews_link_the_pull_request(project):
     assert evidence("reviews~applies~at_least~1~approved~changes_requested~dismissed", 2) == [
-        ("Its reviews on GitHub", f"{URL}/2")
+        ("PR reviews on GitHub", f"{URL}/2")
     ]
     assert Reviews.deciding(0, "at_least", 0) == 0
 
@@ -132,12 +130,12 @@ def test_the_page_of_a_pull_request_shows_the_evidence(client, project):
     )
     PullRequestStep.objects.create(project=project, filter=saved, name="Checks")
     page = client.get("/projects/icalendar/pull/1/").content.decode()
-    assert f'<a href="{URL}/1/checks">Its checks on GitHub <svg' in page
+    assert f'<a href="{URL}/1/checks">PR checks on GitHub <svg' in page
     assert f'href="{URL}/1#pullrequestreview-50001">Review by ben: approved <svg' in page
     assert "pullrequestreview-50002" not in page  # one review shows at least one
     data = client.get("/projects/icalendar/pull/1.json").json()
     tasks = data["steps"][0]["tasks"]
-    assert {"text": "Its checks on GitHub", "url": f"{URL}/1/checks"} in tasks[0]["evidence"]
+    assert {"text": "PR checks on GitHub", "url": f"{URL}/1/checks"} in tasks[0]["evidence"]
 
 
 def test_the_page_of_a_contributor(client, project):

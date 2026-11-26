@@ -112,5 +112,5 @@ class Reviews(Condition):
         found = ReviewsData().evidence(issue, values.get("kinds"))
         shown = self.deciding(len(found), values.get("comparison", "at_least"), values["reviews"])
         if not shown:
-            return [Evidence(gettext("Its reviews on GitHub"), issue.url)]
+            return [Evidence(gettext("PR reviews on GitHub"), issue.url)]
         return found[:shown]

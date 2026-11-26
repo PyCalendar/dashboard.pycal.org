@@ -59,5 +59,5 @@ class StepSkipped(DashboardCondition):
         if project is None:
             return []
         path = project.path(f"pull/{issue.number}/")
-        text = gettext("Its steps on %(site)s") % {"site": settings.SITE_NAME}
+        text = gettext("PR steps on %(site)s") % {"site": settings.SITE_NAME}
         return [Evidence(text, path)]

@@ -70,7 +70,7 @@ class PullRequestData(DataSpec):
         Returns:
             The link to it.
         """
-        return [Evidence(gettext("Where it is merged, on GitHub"), issue.url + MERGE_BOX)]
+        return [Evidence(gettext("Where the PR is merged, on GitHub"), issue.url + MERGE_BOX)]
 
     def complete(self, issue: Issue) -> bool:
         """Read since the last change of the pull request, and GitHub knows if it merges.

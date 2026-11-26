@@ -800,3 +800,7 @@ community: where to start, what waits for a review, who contributes.
       pull request directly (PR is open, PR has the label bug, PR author gave ...), also in German and Spanish
 - [x] The CI of Release 0.29.2 failed in test_the_message_of_the_pull_requests: a click on a switch of the scope before
       message.js ran was not counted (the script is deferred); the script counts at once then (a browser test holds it)
+- [x] PyCalendar/icalendar#2203 showed the same evidence twice (an OR of two conditions of the description): the
+      evidence of an AND or an OR has each link once
+- [x] "Its labels on GitHub" -> "PR labels on GitHub", and the other evidence (checks, reviews, Status Message, steps,
+      where the PR is merged); rule (AGENTS.md): no its or it where it is not clear what it refers to

@@ -92,3 +92,16 @@ def test_an_or_is_one_quality_check_of_the_step(project):  # noqa: F811
     # the evidence of those that hold
     label = Column.decode(LABEL)
     assert first.column.evidence(ready, project=project) == label.evidence(ready, project=project)
+
+
+@pytest.mark.parametrize("operator", ["and", "or"])
+def test_the_evidence_of_a_group_shows_each_link_once(project, operator):  # noqa: F811
+    """Two conditions of the description of the pull request: its link once, as in #2203."""
+    ready = Issue.objects.select_related("repository").get(title="Ready")
+    values = [
+        f"{operator}1~not~text~applies~description~contains~## Description",
+        f"{operator}1~not~text~applies~description~contains~## Checklist",
+    ]
+    (group,) = Conjunction.of_values(values)
+    evidence = group.evidence(ready, project=project)
+    assert [found.url for found in evidence] == [ready.url]

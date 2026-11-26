@@ -143,7 +143,7 @@ def test_the_json(client, project, steps):  # noqa: F811
         "state": "todo",
         "skipped": False,
         "summary": "Review Ready",
-        "evidence": [{"text": "Its labels on GitHub", "url": f"{URL}/1"}],
+        "evidence": [{"text": "PR labels on GitHub", "url": f"{URL}/1"}],
     }
 
 

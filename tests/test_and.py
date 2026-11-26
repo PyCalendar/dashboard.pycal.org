@@ -4,6 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.group.column import Column
 from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.models import CheckSkip, Issue, PullRequestFilter, PullRequestStep
@@ -197,9 +198,9 @@ def test_an_and_is_one_quality_check_of_the_step(client, project, step, bob):  #
     assert (first.state, first.result, first.summary) == ("todo", True, "Review Ready")
     assert first.column.sentence == "PR has the label needs review and PR is open"
     columns = first.column.columns
-    assert first.column.evidence(ready, project=project) == [
-        found for column in columns for found in column.evidence(ready, project=project)
-    ]
+    assert first.column.evidence(ready, project=project) == Evidence.unique(
+        [found for column in columns for found in column.evidence(ready, project=project)]
+    )
     assert StepAssignment(project).step_of(ready) == step
     conflict = Issue.objects.get(title="Conflict")
     found = PullRequestProgress(conflict, project).steps[0].tasks

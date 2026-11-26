@@ -118,7 +118,7 @@ class LabelsData(DataSpec):
         Returns:
             The link to it.
         """
-        return [Evidence(gettext("Its labels on GitHub"), issue.url)]
+        return [Evidence(gettext("PR labels on GitHub"), issue.url)]
 
     def complete(self, issue: Issue) -> bool:
         """The labels are kept with the issues since data version 2.

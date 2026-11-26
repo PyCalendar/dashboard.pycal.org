@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 
 from django.utils.translation import gettext
 
+from pycal_dashboard.conditions.evidence import Evidence
 from pycal_dashboard.conditions.group.column import Column
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from pycal_dashboard.conditions.evidence import Evidence
     from pycal_dashboard.conditions.state.scope import Scope
     from pycal_dashboard.models import Issue, Project
 
@@ -317,6 +317,9 @@ class Conjunction:
     ) -> list[Evidence]:
         """The evidence of every condition of the AND, in its order; of an OR, those that hold.
 
+        Each link once: two conditions of the same data, such as two of the description of the
+        pull request, show it once.
+
         An OR of which none holds shows the evidence of all of them.
 
         Parameters:
@@ -331,7 +334,9 @@ class Conjunction:
         if self.operator == "or":
             holding = [c for c in columns if c.holds(c.applies(issue, scope))]
             columns = tuple(holding) or columns
-        return [item for column in columns for item in column.evidence(issue, scope, project)]
+        return Evidence.unique(
+            [item for column in columns for item in column.evidence(issue, scope, project)]
+        )
 
     @staticmethod
     def joined_text(parts: Iterable[str], operator: str = "and") -> str:
