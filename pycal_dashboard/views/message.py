@@ -63,6 +63,10 @@ def saved_message(project: Project) -> PullRequestMessage | None:
     return PullRequestMessage.objects.filter(project=project).first()
 
 
+# what saving the edited message writes, so that requests at the same time keep the rest
+DRAFT_FIELDS = ["draft", "updated_by", "updated"]
+
+
 def draft_of(project: Project) -> str:
     """The message being edited: the saved draft, else the current one, else the default.
 
@@ -333,7 +337,9 @@ def project_message_edit(request: HttpRequest, slug: str):
         if "apply" in request.POST:
             return apply_message(request, project, message)
         message.updated_by = request.user
-        message.save()
+        # only the draft: an autosave that comes at the same time as Apply, such as when the
+        # click on Apply leaves the field, must not write back the template it loaded before
+        message.save(update_fields=DRAFT_FIELDS if message.pk else None)
         is_applied = message.draft == message.template
         if "application/json" in request.headers.get("Accept", ""):
             return JsonResponse({"saved": True, "applied": is_applied})
@@ -451,7 +457,8 @@ def apply_message(request: HttpRequest, project: Project, message: PullRequestMe
         message.template = DEFAULT
     message.draft = None
     message.updated_by = request.user
-    message.save()
+    # the message alone: the scope, saved on its own page at the same time, stays
+    message.save(update_fields=[*DRAFT_FIELDS, "template"] if message.pk else None)
     count = MessageComments(project).pulls(message).count()
     UpdateQueue.add(project, request.user)  # then the comments, in the background
     messages.success(

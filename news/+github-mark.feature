@@ -1,0 +1,1 @@
+Every link that leads to GitHub shows the mark of GitHub, so that people see that they leave dashboard.pycal.org: the repositories, the pull requests, the reviews, the evidence, the links to report a problem and to the privacy statement of GitHub, and the links to GitHub in texts of Markdown.

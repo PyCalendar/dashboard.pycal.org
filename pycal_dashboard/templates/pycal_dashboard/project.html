@@ -1,5 +1,5 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n help times markdown static %}
+{% load i18n help times markdown static github %}
 {% block title %}{{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}{% if status.updating %}<noscript><meta http-equiv="refresh" content="3"></noscript><script src="{% static 'project-status.js' %}" defer></script>{% endif %}<script src="{% static 'dismiss.js' %}" defer></script>{% endblock %}
 {% block main %}
@@ -14,7 +14,7 @@
 {% if repositories %}<div class="table-wrap" data-after-update="repositories"><table class="table" data-repositories>
   <thead><tr><th>{% translate "Repository" %}</th><th class="numeric">{% translate "Open issues" %}</th><th class="numeric">{% translate "Open pull requests" %}</th><th>{% translate "Updated" %}</th></tr></thead>
   <tbody>{% for repository in repositories %}<tr data-repository="{{ repository.full_name }}">
-    <td><a href="{{ repository.url }}">{{ repository.full_name }}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
+    <td><a href="{{ repository.url }}">{{ repository.full_name }}{% github_mark repository.url %}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
       {% if repository.description %}<br><small class="muted">{{ repository.description|truncatechars:160 }}</small>{% endif %}
       {% if repository.error_code %}<br><small class="badge badge-error" title="{{ repository.error_detail }}">{% translate "could not be updated" %}</small> <small>{{ repository.error_detail }}</small>{% endif %}</td>
     <td class="numeric">{% if repository.open_issues is None %}–{% else %}{{ repository.open_issues }}{% endif %}</td>

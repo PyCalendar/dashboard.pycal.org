@@ -124,6 +124,11 @@ after a change, follow the rule it names instead of changing the test.
   their avatar from GitHub before their name, linked to GitHub. In texts, the *GitHub handle*
   is the login, such as `niccokunzmann`, and the *GitHub name* is the display name, such as
   *Nicco Kunzmann*.
+- Every link that leads to GitHub has the mark of GitHub, so that people see that they leave
+  dashboard.pycal.org: `{% github_link %}` or `{% github_user %}`, else `{% github_mark url %}`
+  after the text of the link in a template; links to GitHub in Markdown get it from
+  `markdown_text.py`. `tests/test_github_links.py` checks the pages: add a new page with such
+  links to it.
 - A switch is the partial `_switch.html`; `tests/quality/test_structure.py` checks it.
 - A page with public JSON goes into `pycal_dashboard/json_api.py`, which makes `/llms.txt` (the
   guideline for agents) and `/robots.txt`, and into `docs/reference/json.rst`;

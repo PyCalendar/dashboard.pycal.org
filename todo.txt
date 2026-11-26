@@ -757,3 +757,8 @@ community: where to start, what waits for a review, who contributes.
       the gap between two conditions, which grows while dragging so that there is room to drop in between
 - [x] A drop where the condition was picked up (onto itself, or the gaps before and after it) changes nothing
 - [x] Translate the new texts of AND into German and Spanish
+- [x] test_the_message_of_the_pull_requests is not flaky: the autosave, which the click on Apply starts when it leaves
+      the field, wrote back the template that it loaded before Apply saved; it saves the draft alone now
+- [x] Rule (AGENTS.md, remembered): every link that leads to GitHub has the mark of GitHub, so that people know when
+      they leave the platform; tests/test_github_links.py checks the pages, also links in Markdown
+- [x] PR Sync, Edit: Preview and Apply at the bottom are swapped (Apply last); also Edit and Apply of the review

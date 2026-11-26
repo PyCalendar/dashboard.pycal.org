@@ -1,4 +1,4 @@
-{% load i18n %}<section class="status-page{% if error %} error{% endif %}"{% if error %} data-error="{{ error.code }}"{% endif %} aria-labelledby="status-title">
+{% load i18n github %}<section class="status-page{% if error %} error{% endif %}"{% if error %} data-error="{{ error.code }}"{% endif %} aria-labelledby="status-title">
   <p class="status-code" aria-hidden="true">{{ status }}</p>
   <div class="status-text">
     <h1 id="status-title">{{ title }}</h1>
@@ -22,6 +22,6 @@ Time: {% now "Y-m-d H:i:s" %} UTC
 Version: {{ version|default:"unknown" }}
 Documentation: {{ error.docs_url }}</textarea>
     </details>{% endif %}
-    {% if links.issues %}<p class="status-help">{% blocktranslate with url=links.issues %}Is this wrong? <a href="{{ url }}">Report a bug</a> and say what you did before.{% endblocktranslate %}</p>{% endif %}
+    {% if links.issues %}<p class="status-help">{% github_mark links.issues as mark %}{% blocktranslate with url=links.issues %}Is this wrong? <a href="{{ url }}">Report a bug{{ mark }}</a> and say what you did before.{% endblocktranslate %}</p>{% endif %}
   </div>
 </section>

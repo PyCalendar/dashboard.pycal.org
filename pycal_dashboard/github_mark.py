@@ -13,3 +13,39 @@ PATH = (
     "-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 "
     "0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
 )
+
+# the hosts of GitHub, whose links show the mark: people see that they leave the site
+GITHUB_HOSTS = {"github.com", "www.github.com", "gist.github.com", "docs.github.com"}
+
+
+def svg() -> str:
+    """The mark of GitHub as inline SVG, in the color of the text.
+
+    Returns:
+        The HTML, hidden from screen readers: the link has the label.
+    """
+    return (
+        '<svg class="icon github-mark" viewBox="0 0 16 16" width="16" height="16" '
+        f'aria-hidden="true" focusable="false"><path fill="currentColor" d="{PATH}"/></svg>'
+    )
+
+
+def leads_to_github(url: str) -> bool:
+    """Whether an address leads to GitHub, where a link shows the mark of GitHub.
+
+    Parameters:
+        url: The address, such as ``https://github.com/PyCalendar``.
+
+    Returns:
+        True for the hosts of GitHub, also below ``github.com``.
+
+    Examples:
+        >>> leads_to_github("https://github.com/PyCalendar"), leads_to_github("/projects/")
+        (True, False)
+        >>> leads_to_github("https://docs.github.com/x"), leads_to_github("https://github.com.evil")
+        (True, False)
+    """
+    if "//" not in url:
+        return False
+    host = url.split("//", 1)[1].split("/", 1)[0].split("?", 1)[0].lower()
+    return host in GITHUB_HOSTS or host.endswith(".github.com")

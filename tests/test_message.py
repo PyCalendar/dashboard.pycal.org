@@ -129,7 +129,7 @@ def test_the_edited_message_is_saved_and_applied_later(client, github, project, 
     assert shown.index("</div>") < shown.index("data-message-pull")  # below the message
     line = shown.split("data-message-pull>")[1].split("</p>")[0]
     assert line.startswith("This is the message as it would appear in pull request <a href=")
-    assert f'href="https://github.com/{REPO}/pull/1" data-message-pull-link>{REPO}#1</a>' in line
+    assert f'href="https://github.com/{REPO}/pull/1" data-message-pull-link>{REPO}#1 <svg' in line
     assert "data-edit-message" in page.split("markdown-tabs")[1].split("</p>")[0]  # a tab
     edit = client.get(EDIT).content.decode()
     assert "data-applied data-apply-text" in edit and "✓ Applied" in edit  # nothing to apply
@@ -439,7 +439,7 @@ def test_the_preview_links_the_message_on_github(client, github, project, bob):
     page = client.get("/projects/icalendar/message/?pull=1").content.decode()
     line = page.split("data-message-pull>")[1].split("</p>")[0]
     url = f"https://github.com/{REPO}/pull/1#issuecomment-{comment.github_id}"
-    assert f'<a href="{url}" data-message-pull-link>{REPO}#1</a>' in line
+    assert f'<a href="{url}" data-message-pull-link>{REPO}#1 <svg' in line
 
 
 def test_the_fixed_address_of_the_message(client, github, project, bob, settings):
@@ -472,3 +472,36 @@ def test_the_fixed_address_of_the_message(client, github, project, bob, settings
     )
     assert client.get("/projects/icalendar/pull/1/message/")["Location"] == answer["Location"]
     assert client.get("/projects/icalendar/pull/99/message/").status_code == 404
+
+
+def test_an_autosave_at_the_same_time_as_apply_keeps_the_applied_message(
+    client, project, bob, monkeypatch
+):
+    """The click on Apply leaves the field, which saves it: the two requests come together.
+
+    The autosave loaded the message before Apply saved it; it writes the draft alone, so the
+    applied message stays, and the scope saved meanwhile, too.
+    """
+    from pycal_dashboard.views import message as views
+
+    client.force_login(bob)
+    client.post(EDIT, {"template": "Old"}, HTTP_ACCEPT="application/json")
+    client.post(EDIT, {"apply": "yes"})
+    stale = PullRequestMessage.objects.get()  # what the autosave loaded, before Apply
+    client.post(EDIT, {"template": "New", "apply": "yes"})  # Apply, with the latest text
+    PullRequestMessage.objects.update(to_open=True)  # the scope, saved meanwhile
+    monkeypatch.setattr(views, "saved_message", lambda project: stale)
+    answer = client.post(EDIT, {"template": "New"}, HTTP_ACCEPT="application/json")
+    assert answer.json()["saved"]
+    message = PullRequestMessage.objects.get()
+    assert (message.template, message.draft, message.to_open) == ("New", "New", True)
+
+
+def test_preview_or_edit_comes_before_apply(client, project, bob):
+    """Apply is the last button at the bottom of Edit and of the review."""
+    client.force_login(bob)
+    edit = client.get(EDIT).content.decode().split("data-apply-form")[1]
+    assert edit.index("data-to-preview") < edit.index("data-apply ")
+    review = client.get("/projects/icalendar/message/review/").content.decode()
+    review = review.split("data-apply-form")[1]
+    assert review.index("data-to-edit") < review.index("data-apply ")

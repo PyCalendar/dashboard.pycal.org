@@ -1,12 +1,12 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n help static %}
+{% load i18n help static github %}
 {% block title %}{% translate "Repositories" %} · {{ project.name }} · {{ site_name }}{% endblock %}
 {% block head %}<script src="{% static 'repository-complete.js' %}" defer></script>{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_project_tabs.html" %}{% include "pycal_dashboard/_settings_tabs.html" %}
 <section class="card" id="repositories"><h2>{% translate "Repositories of the project" %}</h2>
 {% if repositories %}<ul class="list" data-project-repositories>{% for repository in repositories %}<li data-repository="{{ repository.full_name }}">
-  <a href="{{ repository.url }}">{{ repository.full_name }}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
+  <a href="{{ repository.url }}">{{ repository.full_name }}{% github_mark repository.url %}</a>{% if repository.private %} <span class="badge muted">{% translate "private" %}</span>{% endif %}
   {% if repository.app_installed %}{% if repository.installation.missing_permissions %}<span class="badge badge-warning">{% translate "the app needs more permissions" %}</span> <a href="{{ repository.installation.settings_url }}">{% translate "Accept the permissions on GitHub" %}</a>{% else %}<span class="badge badge-success" data-app-installed>{% translate "app installed" %}</span>{% endif %}{% else %}<span class="badge badge-warning" data-app-missing>{% translate "app not installed" %}</span>{% endif %}
   <form method="post" class="inline">{% csrf_token %}<button class="button button-quiet button-small" name="remove" value="{{ repository.pk }}">{% translate "Remove" %}</button></form></li>{% endfor %}</ul>
 {% else %}<p data-no-repositories>{% translate "No repositories yet: add them below." %}</p>{% endif %}

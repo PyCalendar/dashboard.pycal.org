@@ -11,7 +11,8 @@ only from this site, such as the badges of pull requests, and from the hosts tha
 administrators allow on the page Settings: nothing else is loaded from other sites.
 An image of another site shows its text instead (:func:`foreign_image`), so that it is seen
 where it is, such as a badge in a message. A few emoji of GitHub, such as ``:x:``, show as on
-GitHub (:func:`emoji`).
+GitHub (:func:`emoji`). A link to GitHub shows the mark of GitHub after its text
+(:func:`github_link`), so that people see that they leave the site.
 """
 
 import html as html_text
@@ -24,6 +25,7 @@ from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext
 
+from pycal_dashboard.github_mark import leads_to_github, svg
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models.site_settings import SiteSettings
 
@@ -31,6 +33,8 @@ from pycal_dashboard.models.site_settings import SiteSettings
 TASK = re.compile(r"<li>(\s*<p>)?\[( |x|X)\] ")
 # an image whose address was removed: it shows nothing
 EMPTY_IMAGE = re.compile(r"<img(?![^>]*\ssrc=)[^>]*>")
+# a link of the cleaned HTML: its address and what is in it
+LINK = re.compile(r'(<a href="([^"]*)"[^>]*>)(.*?)</a>', re.DOTALL)
 # the emoji of GitHub that the messages use, such as for the states of tasks, as GitHub shows them
 EMOJI = {
     "x": "❌",
@@ -211,6 +215,29 @@ def task_box(match: re.Match) -> str:
     return f'<li class="task-item">{match[1] or ""}{box} '
 
 
+def github_link(match: re.Match) -> str:
+    """A link that leads to GitHub with the mark of GitHub after its text; others stay.
+
+    People see that they leave the site.
+
+    Parameters:
+        match: A link of the cleaned HTML (:data:`LINK`).
+
+    Returns:
+        The link.
+
+    Examples:
+        >>> found = LINK.search('<a href="https://github.com/x/issues/1">the issue</a>')
+        >>> github_link(found).startswith('<a href="https://github.com/x/issues/1">the issue <svg')
+        True
+        >>> github_link(LINK.search('<a href="https://pycal.org">x</a>'))
+        '<a href="https://pycal.org">x</a>'
+    """
+    if not leads_to_github(html_text.unescape(match[2])):
+        return match[0]
+    return f"{match[1]}{match[3]} {svg()}</a>"
+
+
 def render(text: str) -> SafeString:
     """The HTML of a text in Markdown, cleaned.
 
@@ -248,4 +275,5 @@ def render(text: str) -> SafeString:
     )
     html = EMPTY_IMAGE.sub("", html)
     html = emoji(TASK.sub(task_box, html))
+    html = LINK.sub(github_link, html)
     return mark_safe(html.strip())  # noqa: S308 - cleaned by nh3

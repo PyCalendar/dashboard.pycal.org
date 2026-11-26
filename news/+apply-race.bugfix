@@ -1,0 +1,1 @@
+Apply right after typing the message applies the new text: the edited message, which is saved when the field is left, no longer writes back the message that was applied a moment before.

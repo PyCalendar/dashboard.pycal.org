@@ -200,8 +200,8 @@ def test_the_pull_requests_are_a_table_with_columns_to_choose(client, project):
     )
     assert '<td class="col-organization">collective</td>' in row
     assert '<td class="col-repository">icalendar</td>' in row
-    number = '<a href="https://github.com/collective/icalendar/pull/2">#2</a>'
-    assert f'<td class="col-number">{number}</td>' in row
+    number = '<a href="https://github.com/collective/icalendar/pull/2">#2 <svg'
+    assert f'<td class="col-number">{number}' in row and "github-mark" in row  # it leaves
     assert 'data-status="merged"' in page and 'data-status="closed"' in page
     assert "pull-table.js" in page
 

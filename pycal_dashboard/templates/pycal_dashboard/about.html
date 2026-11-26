@@ -1,11 +1,11 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n %}
+{% load i18n github %}
 {% block title %}{% translate "Contact" %} · {{ site_name }}{% endblock %}
 {% block main %}
 {% include "pycal_dashboard/_about_tabs.html" with tab="about" %}
 <ul class="contact-tiles" data-contact-tiles>
   <li><a href="{{ links.documentation }}" data-tile="documentation"><strong>{% translate "Documentation" %}</strong><span>{% blocktranslate %}How {{ site_name }} works and how to use it.{% endblocktranslate %}</span></a></li>
-  <li><a href="{{ links.issues }}" data-tile="feedback"><strong>{% translate "Report a problem or leave feedback" %}</strong><span>{% translate "On GitHub: what does not work, or what would help you." %}</span></a></li>
+  <li><a href="{{ links.issues }}" data-tile="feedback"><strong>{% translate "Report a problem or leave feedback" %}</strong><span>{% translate "On GitHub: what does not work, or what would help you." %}{% github_mark links.issues %}</span></a></li>
   <li><a href="{{ links.changelog }}" data-tile="changelog"><strong>{% translate "Changelog" %}</strong><span>{% translate "What changed in each release." %}</span></a></li>
 </ul>
 {% endblock %}

@@ -11,7 +11,7 @@
 </table></div>
 </section>
 <section class="card" id="parties" data-parties><h2>{% translate "Who else gets data" %}</h2>
-<ul class="items">{% for party in parties %}<li class="item"><span class="item-title">{{ party.name|named }}</span><span class="item-meta">{{ party.gets|named }}{% if party.policy %} <a href="{{ party.policy }}">{% translate "Its privacy statement" %}</a>{% endif %}</span></li>{% endfor %}</ul>
+<ul class="items">{% for party in parties %}<li class="item"><span class="item-title">{{ party.name|named }}</span><span class="item-meta">{{ party.gets|named }}{% if party.policy %} <a href="{{ party.policy }}">{% translate "Its privacy statement" %}{% github_mark party.policy %}</a>{% endif %}</span></li>{% endfor %}</ul>
 <p>{% if email_host %}{% blocktranslate %}The mail server of {{ site_name }} is {{ email_host }}.{% endblocktranslate %}{% else %}{% blocktranslate %}{{ site_name }} sends no emails: it writes them into its log.{% endblocktranslate %}{% endif %}</p>
 <p>{% translate "Nothing else: no analytics, no advertising, and no fonts, scripts or styles of other sites. The pages load from other sites only:" %} {% for host in external_hosts %}<code>{{ host }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</p>
 {% if image_hosts %}<p data-image-hosts>{% blocktranslate %}And images in texts of Markdown, such as badges, of the hosts that the administrators of {{ site_name }} allow:{% endblocktranslate %} {% for host in image_hosts %}<code>{{ host }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</p>{% endif %}

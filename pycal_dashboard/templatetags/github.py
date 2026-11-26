@@ -3,6 +3,7 @@
 ``{% github_link url label %}`` is the mark alone, for places where it is clear what it links
 to, such as next to the title of a repository; ``label`` is its text for screen readers and
 on hover. ``{% github_link url label text "button" %}`` shows the mark before ``text``.
+``{% github_mark url %}`` is the mark at the end of a link of a template that leads to GitHub.
 ``{% github_user person %}`` shows a person: their GitHub handle leads to their page on the
 dashboard, the mark of GitHub after it to their profile on GitHub.
 """
@@ -10,8 +11,9 @@ dashboard, the mark of GitHub after it to their profile on GitHub.
 from django import template
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
-from pycal_dashboard.github_mark import PATH
+from pycal_dashboard.github_mark import leads_to_github, svg
 from pycal_dashboard.import_guard import IMPORT_GUARD
 from pycal_dashboard.models import GitHubUser
 
@@ -24,11 +26,24 @@ def mark() -> str:
     Returns:
         The HTML, hidden from screen readers: the link has the label.
     """
-    return format_html(
-        '<svg class="icon github-mark" viewBox="0 0 16 16" width="16" height="16" '
-        'aria-hidden="true" focusable="false"><path fill="currentColor" d="{}"/></svg>',
-        PATH,
-    )
+    return mark_safe(svg())  # noqa: S308 - a constant
+
+
+@register.simple_tag
+def github_mark(url: str) -> str:
+    """The mark of GitHub at the end of a link that leads to GitHub, such as of a repository.
+
+    Every link to GitHub has the mark, so that people see that they leave the site; this one
+    goes into a link of a template, after its text: ``<a href="{{ url }}">{{ text }}{%
+    github_mark url %}</a>``.
+
+    Parameters:
+        url: The address of the link.
+
+    Returns:
+        A space and the mark for an address on GitHub; "" for another one.
+    """
+    return mark_safe(" " + svg()) if leads_to_github(str(url or "")) else ""  # noqa: S308
 
 
 @register.simple_tag

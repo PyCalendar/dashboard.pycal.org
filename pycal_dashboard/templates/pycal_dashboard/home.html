@@ -1,10 +1,10 @@
 {% extends "pycal_dashboard/base.html" %}
-{% load i18n %}
+{% load i18n github %}
 {% block main %}
 <section class="hero">
   <h1>{% translate "Welcome to the community of PyCalendar" %}</h1>
   <p class="lead">{% translate "This dashboard will guide the contributor community of" %}
-  {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
+  {% for url in links.organizations %}<a href="{{ url }}">{{ url|cut:"https://github.com/" }}{% github_mark url %}</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
   {% translate "Projects show the open issues and pull requests of their repositories; the automation is designed next." %}</p>
   <p><a class="button" href="{{ links.documentation }}">{% translate "Read the documentation" %}</a> <a class="button button-quiet" href="{% url 'about' %}">{% blocktranslate %}About {{ site_name }}{% endblocktranslate %}</a></p>
 </section>

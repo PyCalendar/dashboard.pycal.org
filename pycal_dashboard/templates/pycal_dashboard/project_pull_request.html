@@ -9,7 +9,7 @@
 <ul class="list">{% for choice, query in choices %}<li><a href="{{ query }}">{{ choice.repository.full_name }}#{{ choice.number }}</a>: {{ choice.title }}</li>{% endfor %}</ul>
 </section>{% else %}
 <section class="card pull-head" data-pull="{{ pull.repository.full_name }}#{{ pull.number }}" data-status="{{ pull.status }}">
-<h2>{{ pull.title }} <a class="muted" href="{{ pull.url }}">{{ pull.repository.full_name }}#{{ pull.number }}</a></h2>
+<h2>{{ pull.title }} <a class="muted" href="{{ pull.url }}">{{ pull.repository.full_name }}#{{ pull.number }}{% github_mark pull.url %}</a></h2>
 <p class="pull-meta"><span class="badge badge-{{ pull.status }}">{% if pull.status == 'merged' %}{% translate "merged" %}{% elif pull.status == 'open' %}{% translate "open" %}{% else %}{% translate "closed" %}{% endif %}</span>
 {% github_user pull.author %} <span class="muted">{% when pull.created %}</span></p>
 {% if progress.steps %}<ol class="progress-bar" data-progress{% if progress.outside %} data-outside{% endif %}>{% for step in progress.visible %}
@@ -34,7 +34,7 @@
       <span class="task-summary">{% if task.summary %}{{ task.summary|markdown }}{% else %}{{ task.column.sentence|capfirst }}{% endif %}</span></summary>
     <div class="task-body">{% if task.description %}<div class="markdown">{{ task.description|markdown }}</div>{% endif %}
       <p class="muted condition-name">{% translate "Condition:" %} {{ task.column.sentence|capfirst }}</p>
-      {% if task.evidence %}<ul class="evidence" data-evidence>{% for found in task.evidence %}<li><a href="{{ found.url }}">{{ found.text }}</a></li>{% endfor %}</ul>{% endif %}
+      {% if task.evidence %}<ul class="evidence" data-evidence>{% for found in task.evidence %}<li><a href="{{ found.url }}">{{ found.text }}{% github_mark found.url %}</a></li>{% endfor %}</ul>{% endif %}
       {% if task.skip %}<div class="task-skip" data-check-skip>{% with handle=task.skip.user.profile.github_name %}{% translate "Skipped by" %} {% if handle %}{% url 'project_contributor' project.slug handle as person_url %}{% spaceless %}<span class="skip-by" data-skipped-by>{% github_user handle size=16 href=person_url %}</span>{% endspaceless %}{% else %}{% translate "a deleted account" %}{% endif %}{% endwith %}{% if access.can_write and task.skip.reason %}: <div class="skip-reason markdown" data-skip-reason>{{ task.skip.reason|markdown }}</div>{% endif %}
         {% if access.can_write %}<form method="post" action="{% url 'project_pull_request_skip' project.slug pull.number %}">{% csrf_token %}<input type="hidden" name="step" value="{{ shown.step.pk }}"><input type="hidden" name="skip" value="{{ task.value }}">{% if repository_query %}<input type="hidden" name="repository" value="{{ pull.repository.full_name }}">{% endif %}<button class="button button-quiet button-small" name="remove" value="1" data-unskip-check>{% translate "Don't skip" %}</button></form>{% endif %}</div>
       {% elif access.can_write and task.skippable %}<p><button type="button" class="button button-quiet button-small" popovertarget="skip-check-{{ forloop.counter }}" data-skip-check>{% translate "Skip" %}</button></p>

@@ -132,8 +132,8 @@ def test_the_page_of_a_pull_request_shows_the_evidence(client, project):
     )
     PullRequestStep.objects.create(project=project, filter=saved, name="Checks")
     page = client.get("/projects/icalendar/pull/1/").content.decode()
-    assert f'<a href="{URL}/1/checks">Its checks on GitHub</a>' in page
-    assert f'href="{URL}/1#pullrequestreview-50001">Review by ben: approved</a>' in page
+    assert f'<a href="{URL}/1/checks">Its checks on GitHub <svg' in page
+    assert f'href="{URL}/1#pullrequestreview-50001">Review by ben: approved <svg' in page
     assert "pullrequestreview-50002" not in page  # one review shows at least one
     data = client.get("/projects/icalendar/pull/1.json").json()
     tasks = data["steps"][0]["tasks"]

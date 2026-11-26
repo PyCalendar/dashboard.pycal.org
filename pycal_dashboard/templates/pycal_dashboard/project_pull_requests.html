@@ -40,7 +40,7 @@
     <td class="col-step"><a href="{% url 'project_pull_request' project.slug pull.number %}{% if repositories|length > 1 %}?repository={{ pull.repository.full_name|urlencode:'' }}{% endif %}" data-pull-badge><img src="{% url 'project_pull_request_badge' project.slug pull.number %}{% if repositories|length > 1 %}?repository={{ pull.repository.full_name|urlencode:'' }}{% endif %}" alt="{% blocktranslate with number=pull.number %}The step of #{{ number }}{% endblocktranslate %}" height="20" loading="lazy"></a></td>
     <td class="col-organization">{{ pull.repository.owner }}</td>
     <td class="col-repository">{{ pull.repository.name }}</td>
-    <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}</a></td>
+    <td class="col-number"><a href="{{ pull.url }}">#{{ pull.number }}{% github_mark pull.url %}</a></td>
     <td class="col-creator">{% github_user pull.author %}</td>
     <td class="col-created">{% when pull.created %}</td>
     {% for cell in row.cells %}<td class="col-condition" data-result="{% if cell.result is None %}unknown{% elif cell.result %}yes{% else %}no{% endif %}">{% if cell.result is None %}<span class="result result-unknown" role="img" aria-label="{{ cell.reason }}" title="{{ cell.reason }}">?</span>{% elif cell.result %}<span class="result result-yes" role="img" aria-label="{% translate "applies" %}" title="{% translate "applies" %}">✓</span>{% else %}<span class="result result-no" role="img" aria-label="{% translate "does not apply" %}" title="{% translate "does not apply" %}">✗</span>{% endif %}

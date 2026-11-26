@@ -1,6 +1,6 @@
 {% load i18n %}<form method="post" action="{% url 'project_message_edit' project.slug %}" class="apply-form" data-apply-form>{% csrf_token %}{% translate "Apply" as apply_text %}{% translate "Applied" as applied_text %}
+  {% if other == "preview" %}<a class="button button-quiet" href="{% url 'project_message_review' project.slug %}" data-to-preview>{% translate "Preview" %}</a>{% elif other == "edit" %}<a class="button button-quiet" href="{% url 'project_message_edit' project.slug %}" data-to-edit>{% translate "Edit" %}</a>{% endif %}
   {% if applied %}<button class="button button-success" name="apply" value="yes" disabled data-apply data-applied data-apply-text="{{ apply_text }}" data-applied-text="{{ applied_text }}">✓ {% translate "Applied" %}</button>
   {% else %}<button class="button" name="apply" value="yes" data-apply data-apply-text="{{ apply_text }}" data-applied-text="{{ applied_text }}">{% translate "Apply" %}</button>{% endif %}
-  {% if other == "preview" %}<a class="button button-quiet" href="{% url 'project_message_review' project.slug %}" data-to-preview>{% translate "Preview" %}</a>{% elif other == "edit" %}<a class="button button-quiet" href="{% url 'project_message_edit' project.slug %}" data-to-edit>{% translate "Edit" %}</a>{% endif %}
   <small class="muted" data-apply-text>{% blocktranslate count counter=sync_count %}Apply the edited message and synchronise it with {{ counter }} pull request.{% plural %}Apply the edited message and synchronise it with {{ counter }} pull requests.{% endblocktranslate %}</small>
 </form>
