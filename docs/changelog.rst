@@ -9,6 +9,15 @@ Changelog
 
 .. towncrier release notes start
 
+0.29.1 (2026-11-26)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- The texts of conditions joined by OR are translated into German and Spanish.
+
+
 0.29.0 (2026-11-26)
 -------------------
 
