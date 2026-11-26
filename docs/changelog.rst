@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.29.3 (2026-11-26)
+-------------------
+
+Bug fixes
+~~~~~~~~~
+
+- An AND or an OR of conditions shows each link of its evidence once, such as the pull request of two conditions of its description; the evidence names the pull request directly, such as "PR labels on GitHub" instead of "Its labels on GitHub".
+- The button of the scope of the PR message counts the pull requests also when a switch was changed before its script ran, such as on a slow line or when the browser restores the page.
+
+
 0.29.2 (2026-11-26)
 -------------------
 
