@@ -107,7 +107,7 @@ class LabelsGroup(ConditionGroup):
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``it has the label bug`` or ``it does not have the label bug``.
+        """Such as ``PR has the label bug`` or ``PR does not have the label bug``.
 
         Parameters:
             choices: The mode and the name.
@@ -118,8 +118,8 @@ class LabelsGroup(ConditionGroup):
         """
         has = (choices[0] == "present") != negative
         if has:
-            return gettext("it has the label %(name)s") % {"name": choices[1]}
-        return gettext("it does not have the label %(name)s") % {"name": choices[1]}
+            return gettext("PR has the label %(name)s") % {"name": choices[1]}
+        return gettext("PR does not have the label %(name)s") % {"name": choices[1]}
 
     @classmethod
     def head(cls, choices: tuple[str, ...]) -> list[dict]:

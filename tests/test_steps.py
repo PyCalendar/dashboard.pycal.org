@@ -110,8 +110,8 @@ def test_edit_a_step_and_its_conditions(client, project, filters, bob):
     step = PullRequestStep.objects.get()
     page = client.get(f"/projects/icalendar/steps/?step={step.pk}").content.decode()
     detail = page.split("data-step-detail")[1]
-    assert "It has the label needs review" in detail
-    assert "It is open" not in detail  # off: no part of the filter
+    assert "PR has the label needs review" in detail
+    assert "PR is open" not in detail  # off: no part of the filter
     assert "✎" not in detail and detail.count("data-variables-menu") == 2  # summary, condition
     assert f'data-markdown-preview="/projects/icalendar/steps/{step.pk}/preview/"' in detail
     assert "tutorial/projects.html#step-variables" in detail  # the documentation, no list
@@ -394,11 +394,11 @@ def test_the_step_lists_its_conditions_of_skip_if(client, project, filters, bob)
     make_step(client, review)
     step = PullRequestStep.objects.get()
     page = client.get(f"/projects/icalendar/steps/?step_id={step.pk}").content.decode()
-    assert "Skipped if: it is closed" in page
+    assert "Skipped if: PR is closed" in page
     tasks = page.split('class="step-conditions"')[1].split("</ul>")[0]
     assert "closed" not in tasks  # no task
     client.logout()
-    assert "Skipped if: it is closed" in client.get("/projects/icalendar/steps/").content.decode()
+    assert "Skipped if: PR is closed" in client.get("/projects/icalendar/steps/").content.decode()
 
 
 def test_the_merge_box_is_a_link_in_markdown(project):

@@ -37,7 +37,7 @@ class ReviewRatio(PersonState):
     parts = (ReviewsGiven, PullRequestsOpened, OwnPullRequestsClosed)
     inputs = PersonState.inputs_of(*parts)  # its parts choose, too, such as the kinds of reviews
 
-    phrase = gettext_noop("its author has a review to pull request ratio %(comparison)s %(number)s")
+    phrase = gettext_noop("PR author has a review to pull request ratio %(comparison)s %(number)s")
     counted = False
 
     @classmethod

@@ -25,8 +25,8 @@ class BranchGroup(SwitchesGroup):
     )
     exclusive = ("up_to_date", "outdated", "conflict")
     phrase = (
-        gettext_noop("its branch is %(states)s"),
-        gettext_noop("its branch is not %(states)s"),
+        gettext_noop("PR branch is %(states)s"),
+        gettext_noop("PR branch is not %(states)s"),
     )
     words = {"conflict": gettext_noop("in conflict")}
 

@@ -138,7 +138,7 @@ class TextGroup(ConditionGroup):
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``its title starts with “fix”``.
+        """Such as ``PR title starts with “fix”``.
 
         Parameters:
             choices: The field, the mode, the text and maybe ``case``.
@@ -153,9 +153,9 @@ class TextGroup(ConditionGroup):
             "text": choices[2],
         }
         text = (
-            gettext("its %(field)s does not match: %(mode)s “%(text)s”")
+            gettext("PR %(field)s does not match: %(mode)s “%(text)s”")
             if negative
-            else gettext("its %(field)s %(mode)s “%(text)s”")
+            else gettext("PR %(field)s %(mode)s “%(text)s”")
         ) % found
         if CASE in choices[3:]:
             text += gettext(", case sensitive")

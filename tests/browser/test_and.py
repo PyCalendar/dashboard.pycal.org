@@ -37,14 +37,14 @@ def test_join_two_conditions_by_dragging_and_take_one_out(signed_in, site, githu
     expect(page).to_have_url(re.compile(r"col=and1~labels.*col=and1~status~applies~open"))
     head = checks.locator("tr[data-and-head]")
     expect(head).to_contain_text("All of these, as one condition:")
-    expect(head).to_contain_text("It has the label needs review and it is open")
+    expect(head).to_contain_text("PR has the label needs review and PR is open")
     expect(checks.locator("tr.and-member")).to_have_count(2)
     expect(page.get_by_label("Name")).to_have_value("Typed")  # what was typed stays
     # out of the AND: between the two conditions that are left
-    member = checks.locator("tr.and-member", has_text="It is open")
+    member = checks.locator("tr.and-member", has_text="PR is open")
     member.drag_to(checks.locator("tr[data-gap]").last)
     expect(checks.locator("tr.and-member")).to_have_count(0)
-    expect(checks.locator("tr[data-condition-row]").last).to_contain_text("It is open")
+    expect(checks.locator("tr[data-condition-row]").last).to_contain_text("PR is open")
 
 
 def test_where_a_dragged_condition_lands_is_highlighted(signed_in, site, github, bob):
@@ -109,7 +109,7 @@ def test_turn_an_and_into_an_or_with_the_radio_choice(signed_in, site, github, b
     expect(page).to_have_url(re.compile(r"col=or1~labels.*col=or1~branch~applies~conflict"))
     head = checks.locator("tr[data-and-head]")
     expect(head).to_contain_text("Any of these, as one condition:")
-    expect(head).to_contain_text("It has the label needs review or its branch is in conflict")
+    expect(head).to_contain_text("PR has the label needs review or PR branch is in conflict")
     expect(head.get_by_label("Any of them (OR)")).to_be_checked()
     expect(page.get_by_label("Name")).to_have_value("Typed")  # what was typed stays
     head.get_by_label("All of them (AND)").check()

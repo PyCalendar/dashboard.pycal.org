@@ -30,7 +30,7 @@ class CiGroup(SwitchesGroup):
         "are unknown; also open ones whose checks are not read yet, or that the GitHub App may "
         "not read."
     )
-    phrase = (gettext_noop("its CI is %(states)s"), gettext_noop("its CI is not %(states)s"))
+    phrase = (gettext_noop("PR CI is %(states)s"), gettext_noop("PR CI is not %(states)s"))
 
     @classmethod
     def opposite(cls, choices: tuple[str, ...]) -> tuple[str, ...] | None:

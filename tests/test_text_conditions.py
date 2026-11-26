@@ -44,9 +44,9 @@ def test_the_description_matches(project):  # noqa: F811
 
 def test_the_sentences_of_a_column():
     column = Column.decode("text~applies~title~starts~fix~case")
-    assert column.sentence == "its title starts with “fix”, case sensitive"
+    assert column.sentence == "PR title starts with “fix”, case sensitive"
     assert (
-        column.inverted().sentence == "its title does not match: starts with “fix”, case sensitive"
+        column.inverted().sentence == "PR title does not match: starts with “fix”, case sensitive"
     )
     assert column.head[0]["text"] == "title starts with “fix”"
     assert column.group.summary(column.choices) == "Text: title starts with “fix”"

@@ -117,7 +117,7 @@ class ConditionGroup(ABC):
             negative: The pull requests that it does not apply to.
 
         Returns:
-            Such as ``it has the label bug`` or ``its branch is not outdated or in conflict``.
+            Such as ``PR has the label bug`` or ``PR branch is not outdated or in conflict``.
         """
 
     @classmethod

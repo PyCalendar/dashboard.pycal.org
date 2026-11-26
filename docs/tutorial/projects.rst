@@ -285,8 +285,8 @@ quality checks**. Each condition has its type, a quality check or Skip if, and i
 switch: a condition switched off stays in its table, grayed out. A switch at each condition turns it off: it is grayed out and
 stays a column of the table without filtering; when a filter is saved the
 first time, every condition is on. Every condition can be inverted: **Invert**
-next to a condition turns it into its opposite, such as *it is not auto-merging*
-for *it is auto-merging* or *fewer than 2 reviews* for *at least 2*, also when it
+next to a condition turns it into its opposite, such as *PR is not auto-merging*
+for *PR is auto-merging* or *fewer than 2 reviews* for *at least 2*, also when it
 is off or of Skip if. Where no other choice is the opposite, it becomes the
 *NOT* of the condition, which holds exactly when the condition does not, such as
 *NOT Text: title contains “WIP”*; the table shows *NOT* in its header, and the
@@ -304,8 +304,8 @@ Conditions joined by AND
 ------------------------
 
 Drag a condition onto another one to join them by *AND*: they become one
-condition of the step, which holds when all of them hold, such as *it has the
-label needs review and it is open*. Drag another condition onto the AND to add
+condition of the step, which holds when all of them hold, such as *PR has the
+label needs review and PR is open*. Drag another condition onto the AND to add
 it. Where a dragged condition lands is highlighted: the whole AND, the single
 condition that makes a new AND with it, or the gap between two conditions, which
 has room to drop in between. Dropping a condition into a gap moves it there, also into
@@ -318,7 +318,7 @@ condition* and its conditions joined by *and* above them. In the table of pull
 requests, its columns have the mark *AND* with its number.
 
 - As a quality check, an AND keeps a pull request in the step while all of its
-  conditions hold, each as it filters: *it is open and it does not have the
+  conditions hold, each as it filters: *PR is open and PR does not have the
   label bug*. It is one quality check of the step, with one summary and one
   description on the tab *Steps*, one line in the message of the pull request,
   and it is skipped as one (see :ref:`skips`). Its default text is its
@@ -342,7 +342,7 @@ Conditions joined by OR
 
 The head of an AND has the choice **All of them (AND)** or **Any of them
 (OR)**. *Any of them* turns the AND into an *OR*: one condition of the step,
-which holds when one of its conditions holds, such as *it is a draft or it has
+which holds when one of its conditions holds, such as *PR is a draft or PR has
 the label WIP*. The page shows it at once; without JavaScript, **Change** next
 to the choice shows it, and every other button and saving keep the choice, too.
 *All of them* turns it back into an AND. Everything else is as for an AND: it

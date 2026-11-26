@@ -335,7 +335,7 @@ def test_save_a_filter_and_open_it_again(signed_in, site, github, bob):
     expect(page.get_by_role("link", name="Filters")).to_have_attribute("aria-current", "page")
     page.locator("[data-opposite]").get_by_role("button", name="Use it").click()
     expect(page.locator("[data-condition-row='0']")).to_contain_text(
-        "It does not have the label needs review"
+        "PR does not have the label needs review"
     )
     expect(page.locator("[data-opposite]")).to_have_count(0)
     status = page.locator("[data-condition-row='1']")
@@ -1136,7 +1136,7 @@ def test_drag_a_condition_into_skip_if(signed_in, site, github, bob):
     checks.locator("tr[data-condition-row='1']").drag_to(skip.locator("tr[data-drop-here]"))
     expect(page).to_have_url(re.compile(r"labels~skip~present"))
     skip = page.locator("tbody[data-section='skip']")
-    expect(skip.locator("tr[data-condition-row]")).to_contain_text("It has the label needs review")
+    expect(skip.locator("tr[data-condition-row]")).to_contain_text("PR has the label needs review")
     skip.get_by_role("button", name="To the quality checks").click()
     expect(page).to_have_url(re.compile(r"labels~applies~present"))
     expect(page.locator("tbody[data-section='skip'] tr[data-condition-row]")).to_have_count(0)

@@ -417,8 +417,8 @@ def test_a_draft_in_the_column_status(repository):
 
     column = Column.decode("status~applies~draft")
     assert column.applies(pull("Behind")) is True and column.applies(pull("Ready")) is False
-    assert column.sentence == "it is a draft"
-    assert column.inverted().sentence == "it is not a draft"
+    assert column.sentence == "PR is a draft"
+    assert column.inverted().sentence == "PR is not a draft"
     assert {"text": "draft", "kind": "draft"} in column.group.cell(pull("Behind"), column.choices)
     Repository.objects.update(data_version=4)  # read before the drafts: not known
     assert CONDITIONS["draft"]().check(pull("Behind")) is None

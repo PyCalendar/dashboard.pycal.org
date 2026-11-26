@@ -29,8 +29,8 @@ def test_pr_sync_on(project):  # noqa: F811
     assert column.applies(pull("Ready"), scope) is True
     assert column.applies(pull("Conflict"), scope) is False
     assert column.applies(pull("Ready")) is None  # without the project: not known
-    assert column.sentence == "it has the PR Sync on"
-    assert column.inverted().sentence == "it does not have the PR Sync on"
+    assert column.sentence == "PR has the PR Sync on"
+    assert column.inverted().sentence == "PR does not have the PR Sync on"
     evidence = column.evidence(pull("Ready"), scope, project)
     assert evidence[0].url.endswith("/pull/1#issuecomment-99")
     other = column.evidence(pull("Conflict"), scope, project)
@@ -87,7 +87,7 @@ def test_a_filter_with_them_is_saved(project):  # noqa: F811
     )
     column = Column.decode(saved.columns[0])
     assert column.choices == ("sync", "skipped")
-    assert column.sentence == "it has the PR Sync on or a skipped step"
+    assert column.sentence == "PR has the PR Sync on or a skipped step"
 
 
 def test_the_cache_changes_with_what_the_conditions_compute(project, monkeypatch):  # noqa: F811

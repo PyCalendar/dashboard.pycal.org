@@ -23,10 +23,10 @@ class Conjunction:
 
     The columns of an AND have the same number (``Column.joined``) and the same type: quality checks
     or Skip if. Joined by OR (``Column.operator``, the same for all of them, that of the first), it
-    holds when one of its conditions in force holds, as it filters, such as *it is a draft or it has
+    holds when one of its conditions in force holds, as it filters, such as *PR is a draft or PR has
     the label WIP*; a radio choice of the page of saving a filter turns an AND into an OR and back.
     As a quality check, the AND keeps a pull request in the step while all of its conditions in
-    force hold, as each of them filters, such as *it is open and it has the label bug*; as a
+    force hold, as each of them filters, such as *PR is open and PR has the label bug*; as a
     condition of Skip if, it skips the step when all of them apply. A column that is off is no part
     of it. It is used like a column where the filter and the steps use their conditions: its value
     (:meth:`encode`) is that of its columns without their numbers, joined with ``&``, or with ``|``
@@ -338,11 +338,11 @@ class Conjunction:
         """Texts joined by *and*, or by *or*.
 
         Parameters:
-            parts: Such as ``["it is open", "it has the label bug"]``.
+            parts: Such as ``["PR is open", "PR has the label bug"]``.
             operator: ``and`` or ``or``.
 
         Returns:
-            Such as ``it is open and it has the label bug``.
+            Such as ``PR is open and PR has the label bug``.
         """
         found = ""
         for part in parts:

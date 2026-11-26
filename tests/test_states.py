@@ -238,14 +238,14 @@ def test_a_column_of_kinds_of_reviews(repositories):
     assert own.applies(pull("Anna 1")) is True
     assert (
         own.sentence
-        == "it has at least 1 review: commented, also by the author of the pull request"
+        == "PR has at least 1 review: commented, also by the author of the pull request"
     )
     assert Column.decode("reviews~applies~at_least~1~commented").applies(pull("Anna 1")) is False
     column = Column.decode("reviews~applies~at_least~2~changes_requested~approved")
     assert column.encode() == "reviews~applies~at_least~2~approved~changes_requested"
     assert column.applies(pull("Anna 1")) is True and column.kinds == column.choices[2:]
     assert Column.decode("reviews~applies~at_least~2~commented").applies(pull("Anna 1")) is False
-    assert column.sentence == "it has at least 2 reviews: approved or changes requested"
+    assert column.sentence == "PR has at least 2 reviews: approved or changes requested"
     assert column.inverted().encode() == "reviews~applies~below~2~approved~changes_requested"
     assert [part["text"] for part in column.head] == [
         "reviews ≥ 2",
@@ -362,15 +362,15 @@ def test_a_column_of_reviews(repositories):
     column = Column.decode("reviews~applies~2")  # as saved before: at least
     assert column.encode() == "reviews~applies~at_least~2"
     assert column.applies(pull("Anna 1")) is True and column.applies(pull("Ben 1")) is False
-    assert column.sentence == "it has at least 2 reviews"
+    assert column.sentence == "PR has at least 2 reviews"
     assert column.head[0]["text"] == "reviews ≥ 2"
     assert column.opposite() is None
     assert column.inverted().encode() == "reviews~applies~below~2"
-    assert Column.decode("reviews~not~at_least~1").sentence == "it has fewer than 1 review"
-    assert Column.decode("reviews~all~exactly~0").sentence == "it has exactly 0 reviews"
+    assert Column.decode("reviews~not~at_least~1").sentence == "PR has fewer than 1 review"
+    assert Column.decode("reviews~all~exactly~0").sentence == "PR has exactly 0 reviews"
     exactly = Column.decode("reviews~applies~exactly~1")
     assert exactly.inverted().encode() == "reviews~not~exactly~1"  # no opposite comparison
-    assert exactly.inverted().sentence == "it has not exactly 1 review"
+    assert exactly.inverted().sentence == "PR has not exactly 1 review"
     assert column.group.cell(pull("Anna 1"), column.choices) == [
         {"text": "2 reviews", "kind": "number"}
     ]  # all kinds count, but not the comment of its author
@@ -386,26 +386,26 @@ def test_a_column_of_the_author(repositories):
     assert column.encode() == "author~applies~review_ratio~above~1.4"
     assert column.head[0]["text"] == "Review to pull request ratio > 1.4"
     assert column.inverted().sentence == (
-        "its author has a review to pull request ratio at most 1.4"
+        "PR author has a review to pull request ratio at most 1.4"
     )
     assert column.applies(pull("Ben 1"), scope) is True  # 1.5 in the project
     assert column.applies(pull("Ben 1")) is False  # 2 reviews / 2 in its repository only
     assert column.applies(pull("Anna 1"), scope) is False  # 0.5: not her own comment
-    assert column.sentence == "its author has a review to pull request ratio above 1.4"
+    assert column.sentence == "PR author has a review to pull request ratio above 1.4"
     assert column.group.cell(pull("Ben 1"), column.choices, scope)[0]["text"] == "1.5"
     assert column.group.summary(column.choices) == (
         "Author: review to pull request ratio above 1.4"
     )
     given = Column.decode("author~not~reviews_given~above~2")
-    assert given.sentence == "its author gave at most 2 reviews"
+    assert given.sentence == "PR author gave at most 2 reviews"
     below = Column.decode("author~applies~reviews_given~below~2")
-    assert below.sentence == "its author gave fewer than 2 reviews"
+    assert below.sentence == "PR author gave fewer than 2 reviews"
     assert below.applies(pull("Anna 1"), scope) is True  # 1 review: not her own comment
     with_own = Column.decode(f"{below.encode()}~approved~changes_requested~commented~dismissed~own")
     assert with_own.applies(pull("Anna 1"), scope) is False  # 2 reviews, with the comment
     approvals = Column.decode("author~applies~reviews_given~below~2~approved")
     assert approvals.applies(pull("Anna 1"), scope) is True  # 1 approval
-    assert approvals.sentence == "its author gave fewer than 2 reviews (reviews: approved)"
+    assert approvals.sentence == "PR author gave fewer than 2 reviews (reviews: approved)"
     assert [part["text"] for part in approvals.head] == ["Reviews given < 2", "approved"]
     assert Column.decode("author~all~pull_requests_opened~below~2~approved").encode() == (
         "author~all~pull_requests_opened~below~2"

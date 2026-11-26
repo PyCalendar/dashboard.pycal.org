@@ -32,7 +32,7 @@ class ReviewsGiven(PersonState):
     inputs = (ReviewKindsInput(),)
     data = (ReviewsData(),)
 
-    phrase = gettext_noop("its author gave %(comparison)s %(number)s reviews")
+    phrase = gettext_noop("PR author gave %(comparison)s %(number)s reviews")
 
     @classmethod
     def measure(cls, person: GitHubUser, scope: Scope, values: dict) -> int:

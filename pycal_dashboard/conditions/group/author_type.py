@@ -21,8 +21,8 @@ class AuthorTypeGroup(SwitchesGroup):
     switches = tuple((name, AuthorType, text) for name, (_a, text) in TYPES.items())
     exclusive = tuple(TYPES)
     phrase = (
-        gettext_noop("its author is %(states)s"),
-        gettext_noop("its author is not %(states)s"),
+        gettext_noop("PR author is %(states)s"),
+        gettext_noop("PR author is not %(states)s"),
     )
     words = {
         "owner": gettext_noop("an owner"),

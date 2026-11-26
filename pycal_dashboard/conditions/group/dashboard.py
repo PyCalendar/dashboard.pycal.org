@@ -24,7 +24,7 @@ class DashboardGroup(SwitchesGroup):
         ("sync", PrSyncOn, gettext_noop("PR Sync on")),
         ("skipped", StepSkipped, gettext_noop("a skipped step")),
     )
-    phrase = (gettext_noop("it has %(states)s"), gettext_noop("it does not have %(states)s"))
+    phrase = (gettext_noop("PR has %(states)s"), gettext_noop("PR does not have %(states)s"))
     words = {"sync": gettext_noop("the PR Sync on")}
     help = gettext_noop(
         "Data of the dashboard, not of GitHub: whether the PR Sync of the project is on for a "

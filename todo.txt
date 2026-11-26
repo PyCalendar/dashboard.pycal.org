@@ -796,3 +796,5 @@ community: where to start, what waits for a review, who contributes.
 - [x] The person: translate the new texts of OR into German and Spanish? Yes: translated (also the error of a column)
 - [x] The __getattr__ of Not saves the attribute in the class as a property, so that the access is faster next time
 - [x] The NOT finds its page and its description without State.docs_url.__func__: State.page and State.described
+- [x] "Its description does not match:" -> "PR description does not match:": every sentence of a condition names the
+      pull request directly (PR is open, PR has the label bug, PR author gave ...), also in German and Spanish

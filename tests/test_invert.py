@@ -67,7 +67,7 @@ def test_invert_a_condition_that_is_off_or_of_skip_if(client, project, bob):  # 
     answer = client.post("/projects/icalendar/filters/save/", {**data, "on": ["0"], "invert": "0"})
     page = answer.content.decode()
     assert 'value="not~text~skip~title~contains~WIP"' in page
-    assert "Its title does not match: contains “WIP”" in page
+    assert "PR title does not match: contains “WIP”" in page
     answer = client.post("/projects/icalendar/filters/save/", {**data, "on": ["0"], "invert": "1"})
     assert 'value="not~ci~all~failing"' in answer.content.decode()
     table = client.get(

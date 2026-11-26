@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 20:12+0000\n"
+"POT-Creation-Date: 2026-11-26 23:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,12 +90,12 @@ msgid "Type of author"
 msgstr "Art des Autors"
 
 #, python-format
-msgid "its author is %(states)s"
-msgstr "sein Autor ist %(states)s"
+msgid "PR author is %(states)s"
+msgstr "PR-Autor ist %(states)s"
 
 #, python-format
-msgid "its author is not %(states)s"
-msgstr "sein Autor ist nicht %(states)s"
+msgid "PR author is not %(states)s"
+msgstr "PR-Autor ist nicht %(states)s"
 
 msgid "an owner"
 msgstr "Eigentümer"
@@ -129,12 +129,12 @@ msgid "conflict"
 msgstr "Konflikt"
 
 #, python-format
-msgid "its branch is %(states)s"
-msgstr "sein Branch ist %(states)s"
+msgid "PR branch is %(states)s"
+msgstr "PR-Branch ist %(states)s"
 
 #, python-format
-msgid "its branch is not %(states)s"
-msgstr "sein Branch ist nicht %(states)s"
+msgid "PR branch is not %(states)s"
+msgstr "PR-Branch ist nicht %(states)s"
 
 msgid "in conflict"
 msgstr "im Konflikt"
@@ -167,12 +167,12 @@ msgstr ""
 "noch nicht gelesen sind oder die die GitHub App nicht lesen darf."
 
 #, python-format
-msgid "its CI is %(states)s"
-msgstr "seine CI ist %(states)s"
+msgid "PR CI is %(states)s"
+msgstr "PR-CI ist %(states)s"
 
 #, python-format
-msgid "its CI is not %(states)s"
-msgstr "seine CI ist nicht %(states)s"
+msgid "PR CI is not %(states)s"
+msgstr "PR-CI ist nicht %(states)s"
 
 msgid "not known: the checks are read for open pull requests only"
 msgstr "nicht bekannt: Die Checks werden nur bei offenen Pull Requests gelesen"
@@ -213,12 +213,12 @@ msgid "a skipped step"
 msgstr "ein übersprungener Schritt"
 
 #, python-format
-msgid "it has %(states)s"
-msgstr "er hat %(states)s"
+msgid "PR has %(states)s"
+msgstr "PR hat %(states)s"
 
 #, python-format
-msgid "it does not have %(states)s"
-msgstr "er hat nicht %(states)s"
+msgid "PR does not have %(states)s"
+msgstr "PR hat nicht %(states)s"
 
 msgid "the PR Sync on"
 msgstr "den PR Sync an"
@@ -236,12 +236,12 @@ msgid "Label"
 msgstr "Label"
 
 #, python-format
-msgid "it has the label %(name)s"
-msgstr "er hat das Label %(name)s"
+msgid "PR has the label %(name)s"
+msgstr "PR hat das Label %(name)s"
 
 #, python-format
-msgid "it does not have the label %(name)s"
-msgstr "er hat das Label %(name)s nicht"
+msgid "PR does not have the label %(name)s"
+msgstr "PR hat das Label %(name)s nicht"
 
 msgid "present"
 msgstr "vorhanden"
@@ -263,16 +263,16 @@ msgstr[0] "%(count)s Review"
 msgstr[1] "%(count)s Reviews"
 
 #, python-format
-msgid "it has %(comparison)s %(number)s review: %(kinds)s"
-msgid_plural "it has %(comparison)s %(number)s reviews: %(kinds)s"
-msgstr[0] "er hat %(comparison)s %(number)s Review: %(kinds)s"
-msgstr[1] "er hat %(comparison)s %(number)s Reviews: %(kinds)s"
+msgid "PR has %(comparison)s %(number)s review: %(kinds)s"
+msgid_plural "PR has %(comparison)s %(number)s reviews: %(kinds)s"
+msgstr[0] "PR hat %(comparison)s %(number)s Review: %(kinds)s"
+msgstr[1] "PR hat %(comparison)s %(number)s Reviews: %(kinds)s"
 
 #, python-format
-msgid "it has %(comparison)s %(number)s review"
-msgid_plural "it has %(comparison)s %(number)s reviews"
-msgstr[0] "er hat %(comparison)s %(number)s Review"
-msgstr[1] "er hat %(comparison)s %(number)s Reviews"
+msgid "PR has %(comparison)s %(number)s review"
+msgid_plural "PR has %(comparison)s %(number)s reviews"
+msgstr[0] "PR hat %(comparison)s %(number)s Review"
+msgstr[1] "PR hat %(comparison)s %(number)s Reviews"
 
 msgid "reviews"
 msgstr "Reviews"
@@ -304,12 +304,12 @@ msgid "draft"
 msgstr "Entwurf"
 
 #, python-format
-msgid "it is %(states)s"
-msgstr "er ist %(states)s"
+msgid "PR is %(states)s"
+msgstr "PR ist %(states)s"
 
 #, python-format
-msgid "it is not %(states)s"
-msgstr "er ist nicht %(states)s"
+msgid "PR is not %(states)s"
+msgstr "PR ist nicht %(states)s"
 
 msgid "a draft"
 msgstr "ein Entwurf"
@@ -321,12 +321,12 @@ msgid "Text"
 msgstr "Text"
 
 #, python-format
-msgid "its %(field)s does not match: %(mode)s “%(text)s”"
-msgstr "%(field)s passt nicht: %(mode)s „%(text)s“"
+msgid "PR %(field)s does not match: %(mode)s “%(text)s”"
+msgstr "PR-%(field)s passt nicht: %(mode)s „%(text)s“"
 
 #, python-format
-msgid "its %(field)s %(mode)s “%(text)s”"
-msgstr "%(field)s %(mode)s „%(text)s“"
+msgid "PR %(field)s %(mode)s “%(text)s”"
+msgstr "PR-%(field)s %(mode)s „%(text)s“"
 
 msgid ", case sensitive"
 msgstr ", Groß- und Kleinschreibung beachtet"
@@ -419,9 +419,9 @@ msgstr ""
 "geschlossen hat."
 
 #, python-format
-msgid "its author closed %(comparison)s %(number)s of their own pull requests"
+msgid "PR author closed %(comparison)s %(number)s of their own pull requests"
 msgstr ""
-"sein Autor hat %(comparison)s %(number)s seiner eigenen Pull Requests "
+"PR-Autor hat %(comparison)s %(number)s seiner eigenen Pull Requests "
 "geschlossen"
 
 #, python-format
@@ -435,8 +435,8 @@ msgid "How many pull requests a person opened in the project."
 msgstr "Wie viele Pull Requests eine Person im Projekt geöffnet hat."
 
 #, python-format
-msgid "its author opened %(comparison)s %(number)s pull requests"
-msgstr "sein Autor hat %(comparison)s %(number)s Pull Requests geöffnet"
+msgid "PR author opened %(comparison)s %(number)s pull requests"
+msgstr "PR-Autor hat %(comparison)s %(number)s Pull Requests geöffnet"
 
 msgid "Review to pull request ratio"
 msgstr "Verhältnis von Reviews zu Pull Requests"
@@ -449,9 +449,9 @@ msgstr ""
 "den sie geöffnet und nicht selbst geschlossen hat."
 
 #, python-format
-msgid "its author has a review to pull request ratio %(comparison)s %(number)s"
+msgid "PR author has a review to pull request ratio %(comparison)s %(number)s"
 msgstr ""
-"sein Autor hat ein Verhältnis von Reviews zu Pull Requests %(comparison)s "
+"PR-Autor hat ein Verhältnis von Reviews zu Pull Requests %(comparison)s "
 "%(number)s"
 
 msgid "Reviews given"
@@ -465,8 +465,8 @@ msgstr ""
 "zählen: standardmäßig alle, aber nicht die auf den Pull Requests der Person."
 
 #, python-format
-msgid "its author gave %(comparison)s %(number)s reviews"
-msgstr "sein Autor hat %(comparison)s %(number)s Reviews gegeben"
+msgid "PR author gave %(comparison)s %(number)s reviews"
+msgstr "PR-Autor hat %(comparison)s %(number)s Reviews gegeben"
 
 msgid "title"
 msgstr "Titel"

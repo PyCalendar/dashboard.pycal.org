@@ -278,7 +278,7 @@ class Column:
         """Whether the condition holds as the column filters, for a result.
 
         A column that shows the pull requests it does not apply to holds when it does not
-        apply, such as *it is not open*; the others when it applies.
+        apply, such as *PR is not open*; the others when it applies.
 
         Parameters:
             result: Whether the condition applies; None while not known.
@@ -303,7 +303,7 @@ class Column:
 
     @property
     def sentence(self) -> str:
-        """The condition as it filters, as a part of a sentence, such as ``it is open``.
+        """The condition as it filters, as a part of a sentence, such as ``PR is open``.
 
         A negated column that shows the pull requests it does not apply to reads as the
         condition: two NOTs.
@@ -352,7 +352,7 @@ class Column:
         label absent for present, below for at least, or the condition of a negated column.
         Else the opposite choices of its group, such as closed and merged for open; else a
         quality check that is on inverts its filter: the pull requests it does not apply to,
-        such as *it is not auto-merging*; else, such as when it is off or of Skip if, it is the
+        such as *PR is not auto-merging*; else, such as when it is off or of Skip if, it is the
         NOT of the condition (``negated``). Inverting it again gives it back.
 
         Returns:

@@ -25,7 +25,7 @@ class PersonState(State):
 
     Attributes:
         phrase: The state compared with a number, with ``%(comparison)s`` and ``%(number)s``,
-            for the columns of the table, such as ``its author gave %(comparison)s
+            for the columns of the table, such as ``PR author gave %(comparison)s
             %(number)s reviews``.
         counted: Whether it is a count, such as reviews, whose comparisons read *more than*
             and *fewer than*; else a value, such as a ratio: *above* and *below*.

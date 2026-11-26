@@ -85,7 +85,7 @@ def test_the_column_of_the_types(project):  # noqa: F811
     assert column.group.cell(conflict, column.choices) == [
         {"text": "contributor", "kind": "contributor"}
     ]
-    assert column.sentence == "its author is an owner or a member"
+    assert column.sentence == "PR author is an owner or a member"
     assert column.head == [
         {"text": "owner", "kind": "owner"},
         {"text": "member", "kind": "member"},

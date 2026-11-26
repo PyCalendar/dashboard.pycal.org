@@ -126,9 +126,9 @@ def test_the_message_marks_skipped_quality_checks(
     values = MessageComments(project).values(ready)
     assert values["step_name"] == "Review"  # still in it: the other quality check is to do
     chat = "Ask in [the chat](https://chat.example.org)."  # its description, below it
-    assert values["tasks_all"] == f"1. :x: It is open\n2. :fast_forward: Review Ready  \n   {chat}"
+    assert values["tasks_all"] == f"1. :x: PR is open\n2. :fast_forward: Review Ready  \n   {chat}"
     assert values["tasks_done"] == f"1. :fast_forward: Review Ready  \n   {chat}"
-    assert values["tasks_todo"] == "1. :x: It is open"
+    assert values["tasks_todo"] == "1. :x: PR is open"
     from pycal_dashboard.markdown_text import render
 
     assert "⏩" in render(values["tasks_done"])  # as GitHub shows it

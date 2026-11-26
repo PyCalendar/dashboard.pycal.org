@@ -20,7 +20,7 @@ def test_columns_joined_by_or():
     assert [c.encode() for c in columns] == values  # the address keeps them
     first, second = Conjunction.of(columns)
     assert first.operator == "or" and first.encode() == f"{LABEL}|{CONFLICT}"
-    assert first.sentence == "it has the label needs review or its branch is in conflict"
+    assert first.sentence == "PR has the label needs review or PR branch is in conflict"
     assert first.summary == "Label needs review: present or Branch: conflict"
     assert second.encode() == OPEN
     # the operator is that of the first column; an OR of one is none
@@ -53,7 +53,7 @@ def test_the_radio_choice_turns_an_and_into_an_or_and_back(client, project, bob)
     assert shown_columns(answer) == [f"or1~{LABEL}", f"or1~{CONFLICT}", OPEN]
     head = answer.content.decode().split("data-and-head")[1].split("</tr>")[0]
     assert 'name="operator0" value="or" checked' in head and "Any of these" in head
-    assert "It has the label needs review or its branch is in conflict" in head
+    assert "PR has the label needs review or PR branch is in conflict" in head
     assert 'value="Review"' in answer.content.decode()  # what was typed stays
     back = client.post(
         SAVE, {**data, "col": shown_columns(answer), "operator0": "and", "operator": "0"}
@@ -88,7 +88,7 @@ def test_an_or_is_one_quality_check_of_the_step(project):  # noqa: F811
     assert [t.value for t in tasks] == [f"{LABEL}|{CONFLICT}", OPEN]
     first = tasks[0]
     assert first.result is True
-    assert first.column.sentence == "it has the label needs review or its branch is in conflict"
+    assert first.column.sentence == "PR has the label needs review or PR branch is in conflict"
     # the evidence of those that hold
     label = Column.decode(LABEL)
     assert first.column.evidence(ready, project=project) == label.evidence(ready, project=project)

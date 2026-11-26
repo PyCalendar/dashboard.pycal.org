@@ -29,7 +29,7 @@ class OwnPullRequestsClosed(PersonState):
     )
     data = (IssueData(), ReviewsData())
 
-    phrase = gettext_noop("its author closed %(comparison)s %(number)s of their own pull requests")
+    phrase = gettext_noop("PR author closed %(comparison)s %(number)s of their own pull requests")
 
     @classmethod
     def measure(cls, person: GitHubUser, scope: Scope, values: dict) -> int:

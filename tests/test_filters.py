@@ -54,7 +54,7 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     rows = table.split("<tr data-condition-row=")[1:]
     assert len(rows) == 3 and "data-summary" not in page  # one table, not three
     # the conditions read as sentences, as they filter
-    assert "It is open" in rows[0] and "It does not have the label needs review" in rows[1]
+    assert "PR is open" in rows[0] and "PR does not have the label needs review" in rows[1]
     assert 'name="on" value="0" checked' in rows[0] and 'name="on" value="1" checked' in rows[1]
     # a new filter: every condition on, also the one that shows both
     assert 'name="on" value="2" checked' in rows[2] and 'class="off"' not in rows[2]
@@ -66,7 +66,7 @@ def test_the_save_page_shows_the_conditions_in_one_table(client, project, bob):
     assert page.count('<input type="hidden" name="col"') == 3
     # each condition can be inverted and removed
     assert 'name="invert" value="0"' in rows[0] and 'name="remove" value="0"' in rows[0]
-    assert 'title="Invert: it is closed or merged"' in rows[0]
+    assert 'title="Invert: PR is closed or merged"' in rows[0]
 
 
 def test_a_saved_filter_keeps_its_conditions_that_are_off(client, project, bob):
@@ -184,8 +184,8 @@ def test_save_a_filter_and_open_it(client, project, bob):
     item = page.split('data-filter="Ready to merge"')[1].split("</li>\n</ul>")[0]
     assert "<strong>Open</strong> ones" in item and "2 conditions" in item  # in force
     # the table of the conditions in force is on the page, the numbers come when opened
-    assert "It is open" in item and "It does not have the label needs review" in item
-    assert "Its branch is in conflict" not in item  # off: no part of the filter
+    assert "PR is open" in item and "PR does not have the label needs review" in item
+    assert "PR branch is in conflict" not in item  # off: no part of the filter
     assert f'data-numbers="/projects/icalendar/filters/{saved.pk}/?numbers=1"' in item
     numbers = client.get(f"/projects/icalendar/filters/{saved.pk}/?numbers=1").json()
     assert numbers == {"count": 3, "conditions": {"0": 2, "1": 1}}
@@ -439,7 +439,7 @@ def test_a_condition_of_skip_if_hides_what_it_applies_to(client, project, bob):
     assert answer.status_code == 302 and "labels~skip~present~needs+review" in answer["Location"]
     page = client.get(answer["Location"]).content.decode()
     skip = page.split("data-filter-skip>")[1].split("</table>")[0]
-    assert "It has the label needs review" in skip and "data-to-checks" in skip
+    assert "PR has the label needs review" in skip and "data-to-checks" in skip
     assert "The filter shows 1 pull request now:" in page  # open, without the label: Conflict
     back = client.get(
         f"/projects/icalendar/filters/save/?{query.replace('applies~present', 'skip~present')}&check=1"
@@ -465,7 +465,7 @@ def test_a_condition_of_skip_if_switched_off_stays_in_skip_if(client, project, b
     assert (off.kind, off.active, off.skips) == ("skip", False, False)
     page = save_page(client, *saved.columns, saved=saved.pk)
     skip = page.split("data-filter-skip>")[1].split("</table>")[0]
-    assert "It has the label needs review" in skip and 'class="off"' in skip  # still there
+    assert "PR has the label needs review" in skip and 'class="off"' in skip  # still there
     assert 'name="on" value="1" checked' not in skip
     assert "The filter shows 2 pull requests now:" in page  # off: it hides nothing
     on = {**data, "on": ["0", "1"], "save": "this", "saved": saved.pk}

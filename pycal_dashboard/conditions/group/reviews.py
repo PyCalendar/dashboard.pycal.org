@@ -154,7 +154,7 @@ class ReviewsGroup(ConditionGroup):
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``it has at least 2 reviews`` or ``it has fewer than 2 reviews``.
+        """Such as ``PR has at least 2 reviews`` or ``PR has fewer than 2 reviews``.
 
         Parameters:
             choices: The comparison and the number.
@@ -170,13 +170,13 @@ class ReviewsGroup(ConditionGroup):
         kinds = checked(choices[2:])
         if kinds != ALL:
             return ngettext(
-                "it has %(comparison)s %(number)s review: %(kinds)s",
-                "it has %(comparison)s %(number)s reviews: %(kinds)s",
+                "PR has %(comparison)s %(number)s review: %(kinds)s",
+                "PR has %(comparison)s %(number)s reviews: %(kinds)s",
                 number,
             ) % {"comparison": words, "number": number, "kinds": kinds_text(kinds)}
         return ngettext(
-            "it has %(comparison)s %(number)s review",
-            "it has %(comparison)s %(number)s reviews",
+            "PR has %(comparison)s %(number)s review",
+            "PR has %(comparison)s %(number)s reviews",
             number,
         ) % {"comparison": words, "number": number}
 

@@ -139,7 +139,7 @@ def test_the_json(client, project, steps):  # noqa: F811
     assert data["title"] == "Ready" and data["step"] == second.pk
     assert data["steps"][1]["tasks"][0] == {
         "condition": "labels~applies~present~needs review",
-        "sentence": "It has the label needs review",
+        "sentence": "PR has the label needs review",
         "state": "todo",
         "skipped": False,
         "summary": "Review Ready",
@@ -335,13 +335,13 @@ def test_a_condition_of_skip_if_skips_the_step(client, project, steps, open_step
     issue = Issue.objects.get(title="Ready")
     progress = PullRequestProgress(issue, project)
     review = progress.steps[1]
-    assert review.skip.automatic and review.skip.reason == "It is open"
+    assert review.skip.automatic and review.skip.reason == "PR is open"
     assert [task.value for task in review.tasks] == ["labels~applies~present~needs review"]
     assert progress.current.step == open_step
     assert StepAssignment(project).step_of(issue) == open_step
     page = client.get(f"/projects/icalendar/pull/{issue.number}/").content.decode()
     box = page.split(f'data-step="{second.pk}"')[1].split("</li>")[0]
-    assert "Skipped: <span data-skip-condition>It is open</span>" in box
+    assert "Skipped: <span data-skip-condition>PR is open</span>" in box
     from pycal_dashboard.services.column_results import ColumnResults
 
     results = ColumnResults(list(project.repositories.all()), project=project)

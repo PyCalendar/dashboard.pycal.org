@@ -46,7 +46,7 @@ def test_columns_joined_by_and():
     assert [c.encode() for c in columns] == values  # the address keeps them
     first, second = Conjunction.of(columns)
     assert first.encode() == f"{LABEL}&{OPEN}" and second.encode() == CONFLICT
-    assert first.sentence == "it has the label needs review and it is open"
+    assert first.sentence == "PR has the label needs review and PR is open"
     assert first.checks and not first.skips and first.kind == "check"
     alone = Conjunction.normalized([Column.decode(f"and3~{LABEL}"), Column.decode(CONFLICT)])
     assert [c.encode() for c in alone] == [LABEL, CONFLICT]  # an AND of one is none
@@ -88,7 +88,7 @@ def test_join_and_take_out_on_the_page_of_saving(client, project, bob):  # noqa:
     page = answer.content.decode()
     head = page.split("data-and-head")[1].split("</tr>")[0]
     assert "All of these, as one condition:" in head
-    assert "It has the label needs review and its branch is in conflict" in head
+    assert "PR has the label needs review and PR branch is in conflict" in head
     assert "Invert" not in head and "Remove" not in head  # the AND is not inverted itself
     members = page.split('class="and-member')
     assert len(members) == 3 and "data-unjoin" in members[1] and "Invert" in members[1]
@@ -195,7 +195,7 @@ def test_an_and_is_one_quality_check_of_the_step(client, project, step, bob):  #
     assert [t.value for t in tasks] == [f"{LABEL}&{OPEN}", CONFLICT]
     first = tasks[0]
     assert (first.state, first.result, first.summary) == ("todo", True, "Review Ready")
-    assert first.column.sentence == "it has the label needs review and it is open"
+    assert first.column.sentence == "PR has the label needs review and PR is open"
     columns = first.column.columns
     assert first.column.evidence(ready, project=project) == [
         found for column in columns for found in column.evidence(ready, project=project)
@@ -205,7 +205,7 @@ def test_an_and_is_one_quality_check_of_the_step(client, project, step, bob):  #
     found = PullRequestProgress(conflict, project).steps[0].tasks
     assert [(t.value, t.state) for t in found] == [(CONFLICT, "todo"), (f"{LABEL}&{OPEN}", "done")]
     page = client.get(f"/projects/icalendar/pull/{ready.number}/").content.decode()
-    assert "It has the label needs review and it is open" in page and "Review Ready" in page
+    assert "PR has the label needs review and PR is open" in page and "Review Ready" in page
     data = client.get(f"/projects/icalendar/pull/{ready.number}.json").json()
     assert data["steps"][0]["tasks"][0]["condition"] == f"{LABEL}&{OPEN}"
     # the page of the step: one condition, its summary and description edited as one
@@ -268,7 +268,7 @@ def test_skip_if_an_and_applies(project):  # noqa: F811
     assert StepAssignment(project).step_of(ready) is None
     assert StepAssignment(project).step_of(conflict).name == "Open"
     skip = PullRequestProgress(ready, project).steps[0].skip
-    assert skip.reason == "It is open and it has the label needs review"
+    assert skip.reason == "PR is open and PR has the label needs review"
 
 
 def test_the_buttons_of_an_and_forward_what_was_typed(client, project, bob):  # noqa: F811

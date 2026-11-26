@@ -164,7 +164,7 @@ class SwitchesGroup(ConditionGroup):
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``its branch is outdated or in conflict``.
+        """Such as ``PR branch is outdated or in conflict``.
 
         Parameters:
             choices: The switches that are on.

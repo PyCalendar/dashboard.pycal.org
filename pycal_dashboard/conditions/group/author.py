@@ -217,7 +217,7 @@ class AuthorGroup(ConditionGroup):
 
     @classmethod
     def sentence(cls, choices: tuple[str, ...], negative: bool = False) -> str:
-        """Such as ``its author has a review to pull request ratio below 1``.
+        """Such as ``PR author has a review to pull request ratio below 1``.
 
         Parameters:
             choices: The state, the comparison and the number.

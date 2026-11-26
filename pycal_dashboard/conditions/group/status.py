@@ -27,5 +27,5 @@ class StatusGroup(SwitchesGroup):
         ("draft", Draft, gettext_noop("draft")),
     )
     exclusive = ("open", "closed", "merged")  # auto-merging and drafts are open, too
-    phrase = (gettext_noop("it is %(states)s"), gettext_noop("it is not %(states)s"))
+    phrase = (gettext_noop("PR is %(states)s"), gettext_noop("PR is not %(states)s"))
     words = {"draft": gettext_noop("a draft")}
