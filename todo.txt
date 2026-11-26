@@ -775,5 +775,7 @@ community: where to start, what waits for a review, who contributes.
 - [x] Answer: how the conditions are made from a string: Column.decode splits the value of col= at ~ (and<n>~, not~,
       the group of GROUPS, the filter, then the choices checked by the group), Conjunction.of joins the ANDs;
       the conditions themselves are found by id (conditions.find, CONDITIONS)
-- [ ] The person: should the column Label lose its mode "absent" (labels~...~absent~x), so that an absent label is
-      only not~labels~...~present~x? Saved filters and steps would be changed over by a migration
+- [x] The person: should the column Label lose its mode "absent" (labels~...~absent~x), so that an absent label is
+      only not~labels~...~present~x? Decided: absent stays, and inverting absent may give the filter not
+- [x] Answer: where the filter factory is: there is none as one class; a filter is the list of strings
+      PullRequestFilter.columns, made into conditions by Column.decode and Conjunction.of_values (normalized when saved)
