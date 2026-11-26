@@ -9,6 +9,22 @@ Changelog
 
 .. towncrier release notes start
 
+0.27.0 (2026-11-26)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- At the bottom of editing and reviewing the message, Apply is the last button, after Preview or Edit.
+- Every link that leads to GitHub shows the mark of GitHub, so that people see that they leave dashboard.pycal.org: the repositories, the pull requests, the reviews, the evidence, the links to report a problem and to the privacy statement of GitHub, and the links to GitHub in texts of Markdown.
+
+
+Bug fixes
+~~~~~~~~~
+
+- Apply right after typing the message applies the new text: the edited message, which is saved when the field is left, no longer writes back the message that was applied a moment before.
+
+
 0.26.0 (2026-11-26)
 -------------------
 
