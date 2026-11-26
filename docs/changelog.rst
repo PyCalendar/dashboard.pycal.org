@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.29.0 (2026-11-26)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Conditions of a filter can be joined by OR, as by AND: the head of an AND has the choice All of them (AND) or Any of them (OR), and an OR holds when one of its conditions holds; it is one quality check of the step, or one condition of Skip if.
+- The factory of the conditions makes every condition of its class and the inputs, and writes it down and reads it again: a column of an absent label and the NOT of a present one are the same, written as absent; the NOT of at least 2 reviews is below 2. The column Author checks the new condition ``author_state``.
+
+
 0.28.0 (2026-11-26)
 -------------------
 

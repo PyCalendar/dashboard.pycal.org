@@ -1,1 +1,0 @@
-The factory of the conditions makes every condition of its class and the inputs, and writes it down and reads it again: a column of an absent label and the NOT of a present one are the same, written as absent; the NOT of at least 2 reviews is below 2. The column Author checks the new condition ``author_state``.
