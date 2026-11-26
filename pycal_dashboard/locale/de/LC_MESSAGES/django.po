@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 15:53+0000\n"
+"POT-Creation-Date: 2026-11-26 20:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,6 +194,10 @@ msgstr "NICHT %(condition)s"
 
 msgid "NOT"
 msgstr "NICHT"
+
+#, python-format
+msgid "%(conditions)s or %(condition)s"
+msgstr ""
 
 #, python-format
 msgid "%(conditions)s and %(condition)s"
@@ -556,6 +560,9 @@ msgstr "Der zu prüfende Text ist nicht gültig"
 
 msgid "Unknown label"
 msgstr "Unbekanntes Label"
+
+msgid "The column cannot show the condition"
+msgstr ""
 
 msgid "A setting of the site is wrong"
 msgstr "Eine Einstellung der Seite ist falsch"
@@ -2009,6 +2016,9 @@ msgstr "Bedingung"
 msgid "Applies to"
 msgstr "Trifft zu auf"
 
+msgid "OR"
+msgstr ""
+
 msgid "AND"
 msgstr "UND"
 
@@ -2135,11 +2145,31 @@ msgstr ""
 "Ziehe sie zwischen zwei Bedingungen, um sie dorthin zu verschieben, auch aus "
 "ihrem UND heraus."
 
+msgid ""
+"The choice of a group, All of them (AND) or Any of them (OR), turns an AND "
+"into an OR, which holds when one of its conditions holds, and back."
+msgstr ""
+
 msgid "No conditions: all pull requests."
 msgstr "Keine Bedingungen: alle Pull Requests."
 
+msgid "Any of these, as one condition:"
+msgstr ""
+
 msgid "All of these, as one condition:"
 msgstr "Alle diese, als eine Bedingung:"
+
+msgid "How the conditions are joined"
+msgstr ""
+
+msgid "All of them (AND)"
+msgstr ""
+
+msgid "Any of them (OR)"
+msgstr ""
+
+msgid "Change"
+msgstr "Ändern"
 
 #, python-format
 msgid "Filter by %(name)s"
@@ -2946,9 +2976,6 @@ msgstr ""
 "Du besitzt das Projekt allein: Gib zuerst einer anderen Person die Rolle "
 "besitzen, bevor du das änderst."
 
-msgid "Change"
-msgstr "Ändern"
-
 msgid "Share the project"
 msgstr "Das Projekt teilen"
 
@@ -3258,6 +3285,15 @@ msgstr "Pro Seite"
 
 msgid "On GitHub"
 msgstr "Auf GitHub"
+
+msgid ""
+"Joined by OR with the other columns of the same number: one condition of the "
+"step"
+msgstr ""
+
+#, python-format
+msgid "OR %(number)s"
+msgstr ""
 
 msgid ""
 "Joined by AND with the other columns of the same number: one condition of "

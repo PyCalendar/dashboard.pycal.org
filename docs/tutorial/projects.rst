@@ -337,6 +337,23 @@ moving it and saving the filter keep it in its AND. In the address, the columns
 of an AND start with its number, such as
 ``col=and1~labels~applies~present~needs+review&col=and1~status~applies~open``.
 
+Conditions joined by OR
+-----------------------
+
+The head of an AND has the choice **All of them (AND)** or **Any of them
+(OR)**. *Any of them* turns the AND into an *OR*: one condition of the step,
+which holds when one of its conditions holds, such as *it is a draft or it has
+the label WIP*. The page shows it at once; without JavaScript, **Change** next
+to the choice shows it, and every other button and saving keep the choice, too.
+*All of them* turns it back into an AND. Everything else is as for an AND: it
+is dragged together, it is one quality check with one summary and description,
+and as a condition of *Skip if*, it skips the step when one of its conditions
+applies. Its default text joins its conditions by *or*, and its evidence is
+that of the conditions that hold, or of all of them when none holds. In the
+table of pull requests, its columns have the mark *OR* with its number, and in
+the address, they start with ``or`` and its number, such as
+``col=or1~status~applies~draft&col=or1~labels~applies~present~WIP``.
+
 The tab *Filters*, public like the project, lists the saved filters with their
 description. **+ New filter** opens the table of pull requests with its menu **+**
 open, to add the first condition of a new filter. Opening a filter shows a

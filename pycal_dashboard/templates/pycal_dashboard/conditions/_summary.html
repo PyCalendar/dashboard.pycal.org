@@ -14,5 +14,5 @@
     <tr class="drop-here" data-drop-here data-gap data-before=""><td colspan="3" class="muted">{% translate "Drop a condition here to skip the step when it applies." %}</td></tr></tbody>
 </table></div>
 <p class="muted">{% translate "A condition that is off stays a column but does not filter." %}</p>
-{% if editable %}<p class="muted" data-and-help>{% translate "Drag a condition onto another one or onto an AND to join them by AND: they are one condition of the step, which holds when all of them hold. Drag it between two conditions to move it there, also out of its AND." %}</p>{% endif %}
+{% if editable %}<p class="muted" data-and-help>{% translate "Drag a condition onto another one or onto an AND to join them by AND: they are one condition of the step, which holds when all of them hold. Drag it between two conditions to move it there, also out of its AND." %} {% translate "The choice of a group, All of them (AND) or Any of them (OR), turns an AND into an OR, which holds when one of its conditions holds, and back." %}</p>{% endif %}
 {% else %}<p class="muted">{% translate "No conditions: all pull requests." %}</p>{% endif %}

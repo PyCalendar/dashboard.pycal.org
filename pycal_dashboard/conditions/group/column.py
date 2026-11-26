@@ -51,8 +51,10 @@ GROUPS: dict[str, type[ConditionGroup]] = {
 # filter that it applies to; skip_off: one of Skip if that is switched off. So each condition of
 # a filter has its type (a quality check, or Skip if) and whether it is active.
 FILTERS = ("all", "applies", "not", "skip", "skip_off")
-# the first part of a column joined with others by AND: ``and<number>~``, such as ``and1~``
-JOINED = re.compile(r"and([1-9][0-9]{0,2})")
+# the first part of a column joined with others by AND or by OR: ``and<number>~`` or
+# ``or<number>~``, such as ``and1~``
+JOINED = re.compile(r"(and|or)([1-9][0-9]{0,2})")
+OPERATORS = ("and", "or")  # how the columns of the same number are joined
 
 
 @dataclass(frozen=True)
@@ -62,7 +64,8 @@ class Column:
     The value is ``<group>~<filter>~<choice>~...``, with ``%`` and ``~`` of a part escaped,
     such as ``branch~all~outdated~conflict`` or ``labels~applies~present~needs review``.
     A column joined with others by AND starts with the number of the AND, such as
-    ``and1~labels~applies~present~bug`` (see
+    ``and1~labels~applies~present~bug``, and one joined by OR with ``or``, such as
+    ``or1~labels~applies~present~bug`` (see
     :class:`~pycal_dashboard.conditions.group.conjunction.Conjunction`), and the NOT of its
     condition with ``not``, such as ``not~text~skip~title~contains~WIP``: every condition can
     be inverted (:meth:`inverted`), its NOT holds when it does not
@@ -72,8 +75,9 @@ class Column:
         group: The group of conditions.
         choices: Its choices.
         filter: ``all``, ``applies`` or ``not``.
-        joined: The number of the AND that it is a part of in its filter; 0 for none.
+        joined: The number of the AND or OR that it is a part of in its filter; 0 for none.
         negated: Whether it is the NOT of the condition of its group and choices.
+        operator: ``and`` or ``or``: how it is joined with the others of its number.
     """
 
     group: type[ConditionGroup]
@@ -81,6 +85,7 @@ class Column:
     filter: str = "all"
     joined: int = 0
     negated: bool = False
+    operator: str = "and"
 
     @classmethod
     def decode(cls, value: str) -> Column:
@@ -110,8 +115,9 @@ class Column:
         filter = parts[1] if len(parts) > 1 else "all"
         if filter not in FILTERS:
             raise ConditionInputUnknown(f"filter: {filter}")
-        number = int(joined[1]) if joined else 0
-        column = cls(group, group.check(tuple(parts[2:])), filter, number, negated)
+        number = int(joined[2]) if joined else 0
+        operator = joined[1] if joined else "and"
+        column = cls(group, group.check(tuple(parts[2:])), filter, number, negated, operator)
         return column.writing(column.condition)  # such as absent for the NOT of present
 
     @classmethod
@@ -165,10 +171,11 @@ class Column:
         """The value of the column in the address.
 
         Returns:
-            Such as ``branch~all~outdated``, ``and1~branch~all~outdated`` when it is joined, or
-            ``not~branch~all~outdated`` when it is negated.
+            Such as ``branch~all~outdated``, ``and1~branch~all~outdated`` when it is joined by
+            AND, ``or1~branch~all~outdated`` by OR, or ``not~branch~all~outdated`` when it is
+            negated.
         """
-        parts = (f"and{self.joined}",) if self.joined else ()
+        parts = (f"{self.operator}{self.joined}",) if self.joined else ()
         parts += ("not",) if self.negated else ()
         parts += (self.group.id, self.filter, *self.choices)
         # only % and the separator ~ are escaped: the address escapes the rest once

@@ -642,6 +642,9 @@ tr[data-condition-row][draggable="true"] { cursor: grab; }
 tbody[data-section].dragged-over { outline: 2px dashed var(--primary); outline-offset: -2px; }
 tr.drop-here td { font-size: .85rem; text-align: center; }
 /* conditions joined by AND: a group of rows, with a line on the left and a head row */
+form.stacked fieldset.operator-choice { display: inline-flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: center; border: 0; margin: 0 0 0 .5rem; padding: 0; font-size: .875em; vertical-align: middle; }
+form.stacked fieldset.operator-choice label { display: inline-flex; align-items: center; margin: 0; font-weight: normal; white-space: nowrap; }
+form.stacked fieldset.operator-choice input { width: auto; margin: 0 .35rem 0 0; }
 .and-chip { display: inline-block; padding: 0 .4em; border-radius: .3em; background: var(--surface-tint); border: 1px solid var(--border); color: var(--text-muted); font-size: .75em; font-weight: 700; letter-spacing: .04em; vertical-align: middle; }
 .filter-conditions tr.and-head td { background: var(--surface-tint); border-bottom: 0; padding-top: .5rem; padding-bottom: .25rem; }
 .filter-conditions tr.and-head td:first-child, .filter-conditions tr.and-member td:first-child { border-left: .25rem solid var(--primary); }

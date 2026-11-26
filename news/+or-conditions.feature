@@ -1,0 +1,1 @@
+Conditions of a filter can be joined by OR, as by AND: the head of an AND has the choice All of them (AND) or Any of them (OR), and an OR holds when one of its conditions holds; it is one quality check of the step, or one condition of Skip if.

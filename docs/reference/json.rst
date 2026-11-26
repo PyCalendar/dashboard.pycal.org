@@ -48,7 +48,8 @@ Every public page has its information as JSON at the address of the page with
        :ref:`pull-request-page`: each with its ``id``, ``name``, ``number``,
        whether it is ``complete``, how many quality checks are ``done`` of the
        ``total``, and its ``tasks``, each with its ``condition`` (of
-       conditions joined by AND, their columns joined with ``&``),
+       conditions joined by AND, their columns joined with ``&``; by OR, with
+       ``|``),
        ``sentence``, ``state`` (``todo``, ``done``, ``skipped`` or
        ``unknown``), whether it is ``skipped`` (not why, see :ref:`skips`),
        ``summary`` and ``evidence``, the links that show why its condition

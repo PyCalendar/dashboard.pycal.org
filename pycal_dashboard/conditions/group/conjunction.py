@@ -1,4 +1,4 @@
-"""Conditions of a filter joined by AND: one condition of a step, made of several columns."""
+"""Conditions of a filter joined by AND or by OR: one condition of a step, of several columns."""
 
 from __future__ import annotations
 
@@ -19,15 +19,18 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class Conjunction:
-    """Columns of a filter joined by AND, which a step uses as one condition.
+    """Columns of a filter joined by AND, or by OR, which a step uses as one condition.
 
-    The columns of an AND have the same number (``Column.joined``) and the same type: quality
-    checks or Skip if. As a quality check, the AND keeps a pull request in the step while all of
-    its conditions in force hold, as each of them filters, such as *it is open and it has the
-    label bug*; as a condition of Skip if, it skips the step when all of them apply. A column
-    that is off is no part of it. It is used like a column where the filter and the steps use
-    their conditions: its value (:meth:`encode`) is that of its columns without their numbers,
-    joined with ``&``, which keeps the summary and the description of the step and the skips.
+    The columns of an AND have the same number (``Column.joined``) and the same type: quality checks
+    or Skip if. Joined by OR (``Column.operator``, the same for all of them, that of the first), it
+    holds when one of its conditions in force holds, as it filters, such as *it is a draft or it has
+    the label WIP*; a radio choice of the page of saving a filter turns an AND into an OR and back.
+    As a quality check, the AND keeps a pull request in the step while all of its conditions in
+    force hold, as each of them filters, such as *it is open and it has the label bug*; as a
+    condition of Skip if, it skips the step when all of them apply. A column that is off is no part
+    of it. It is used like a column where the filter and the steps use their conditions: its value
+    (:meth:`encode`) is that of its columns without their numbers, joined with ``&``, or with ``|``
+    for an OR, which keeps the summary and the description of the step and the skips.
 
     Attributes:
         columns: The columns, in their order in the filter.
@@ -57,7 +60,7 @@ class Conjunction:
         found: list[Column | Conjunction] = []
         for numbers in cls.indices(columns):
             if len(numbers) == 1:
-                found.append(replace(columns[numbers[0]], joined=0))
+                found.append(replace(columns[numbers[0]], joined=0, operator="and"))
             else:
                 found.append(cls(tuple(columns[number] for number in numbers)))
         return found
@@ -131,14 +134,16 @@ class Conjunction:
                 key = (column.kind, column.joined)
                 sizes[key] = sizes.get(key, 0) + 1
         numbers: dict[tuple[str, int], int] = {}
+        operators: dict[tuple[str, int], str] = {}  # that of the first column of each
         found = []
         for column in columns:
             key = (column.kind, column.joined)
             if not column.joined or sizes[key] < 2:
-                found.append(replace(column, joined=0))
+                found.append(replace(column, joined=0, operator="and"))
                 continue
             numbers.setdefault(key, len(numbers) + 1)
-            found.append(replace(column, joined=numbers[key]))
+            operator = operators.setdefault(key, column.operator)
+            found.append(replace(column, joined=numbers[key], operator=operator))
         return found
 
     @property
@@ -150,6 +155,11 @@ class Conjunction:
     def kind(self) -> str:
         """The type of the condition in a filter: ``skip`` for Skip if, else ``check``."""
         return self.columns[0].kind
+
+    @property
+    def operator(self) -> str:
+        """``and`` or ``or``: how its conditions are joined."""
+        return self.columns[0].operator
 
     @property
     def in_force(self) -> tuple[Column, ...]:
@@ -182,9 +192,12 @@ class Conjunction:
         """The value of the condition in a step: those of its columns, joined with ``&``.
 
         Returns:
-            Such as ``status~applies~open&ci~applies~failing``.
+            Such as ``status~applies~open&ci~applies~failing``; ``|`` between them for an OR.
         """
-        return "&".join(replace(column, joined=0).encode() for column in self.columns)
+        separator = "|" if self.operator == "or" else "&"
+        return separator.join(
+            replace(column, joined=0, operator="and").encode() for column in self.columns
+        )
 
     @staticmethod
     def combined(results: Iterable[bool | None]) -> bool | None:
@@ -208,6 +221,39 @@ class Conjunction:
                 found = None
         return found
 
+    @staticmethod
+    def either(results: Iterable[bool | None]) -> bool | None:
+        """The OR of the results of conditions, of which some may not be known.
+
+        Parameters:
+            results: Whether each condition holds; None while not known.
+
+        Returns:
+            True when one holds; else None when one is not known; else False.
+
+        Examples:
+            >>> Conjunction.either([False, None, True]), Conjunction.either([False, None])
+            (True, None)
+        """
+        found: bool | None = False
+        for result in results:
+            if result is True:
+                return True
+            if result is None:
+                found = None
+        return found
+
+    def combine(self, results: Iterable[bool | None]) -> bool | None:
+        """The results of its conditions joined by its operator: AND, or OR.
+
+        Parameters:
+            results: Whether each condition holds; None while not known.
+
+        Returns:
+            True, False, or None while not known.
+        """
+        return self.either(results) if self.operator == "or" else self.combined(results)
+
     def results(self, found: list[dict[int, bool | None]]) -> dict[int, bool | None]:
         """Whether the AND holds for each pull request, from the results of its columns.
 
@@ -222,7 +268,7 @@ class Conjunction:
             return {}
         columns = self.in_force
         return {
-            pk: self.combined(
+            pk: self.combine(
                 column.holds(cells.get(pk)) for column, cells in zip(columns, found, strict=True)
             )
             for pk in found[0]
@@ -230,6 +276,8 @@ class Conjunction:
 
     def applies(self, issue: Issue, scope: Scope | None = None) -> bool | None:
         """Whether all conditions of the AND hold for a pull request, as each of them filters.
+
+        For an OR, whether one of them holds.
 
         Parameters:
             issue: The pull request.
@@ -239,7 +287,7 @@ class Conjunction:
         Returns:
             True or False; None while the data of one is not complete.
         """
-        return self.combined(column.holds(column.applies(issue, scope)) for column in self.in_force)
+        return self.combine(column.holds(column.applies(issue, scope)) for column in self.in_force)
 
     def holds(self, result: bool | None) -> bool | None:
         """Whether the AND holds, for its result (:meth:`applies`).
@@ -267,7 +315,9 @@ class Conjunction:
     def evidence(
         self, issue: Issue, scope: Scope | None = None, project: Project | None = None
     ) -> list[Evidence]:
-        """The evidence of every condition of the AND, in its order.
+        """The evidence of every condition of the AND, in its order; of an OR, those that hold.
+
+        An OR of which none holds shows the evidence of all of them.
 
         Parameters:
             issue: The pull request.
@@ -277,34 +327,47 @@ class Conjunction:
         Returns:
             The links, such as to the checks on GitHub.
         """
-        return [item for column in self.in_force for item in column.evidence(issue, scope, project)]
+        columns = self.in_force
+        if self.operator == "or":
+            holding = [c for c in columns if c.holds(c.applies(issue, scope))]
+            columns = tuple(holding) or columns
+        return [item for column in columns for item in column.evidence(issue, scope, project)]
 
     @staticmethod
-    def joined_text(parts: Iterable[str]) -> str:
-        """Texts joined by *and*.
+    def joined_text(parts: Iterable[str], operator: str = "and") -> str:
+        """Texts joined by *and*, or by *or*.
 
         Parameters:
             parts: Such as ``["it is open", "it has the label bug"]``.
+            operator: ``and`` or ``or``.
 
         Returns:
             Such as ``it is open and it has the label bug``.
         """
         found = ""
         for part in parts:
-            found = (
-                gettext("%(conditions)s and %(condition)s")
-                % {"conditions": found, "condition": part}
-                if found
-                else str(part)
-            )
+            if not found:
+                found = str(part)
+            elif operator == "or":
+                found = gettext("%(conditions)s or %(condition)s") % {
+                    "conditions": found,
+                    "condition": part,
+                }
+            else:
+                found = gettext("%(conditions)s and %(condition)s") % {
+                    "conditions": found,
+                    "condition": part,
+                }
         return found
 
     @property
     def sentence(self) -> str:
-        """The conditions in force as a part of a sentence, joined by *and*."""
-        return self.joined_text(str(c.sentence) for c in self.in_force or self.columns)
+        """The conditions in force as a part of a sentence, joined by *and* or by *or*."""
+        parts = (str(c.sentence) for c in self.in_force or self.columns)
+        return self.joined_text(parts, self.operator)
 
     @property
     def summary(self) -> str:
-        """The headers of its columns in words, joined by *and*."""
-        return self.joined_text(str(c.summary) for c in self.in_force or self.columns)
+        """The headers of its columns in words, joined by *and* or by *or*."""
+        parts = (str(c.summary) for c in self.in_force or self.columns)
+        return self.joined_text(parts, self.operator)

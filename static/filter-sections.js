@@ -4,7 +4,8 @@
 // gap, which has room to drop in between. A drop where it was picked up changes nothing. The drop
 // presses a button of the condition (AND with the one above, with the condition it was dropped
 // onto, or a hidden one that places it), which sends the form: the name, the description and
-// the switches stay as they were typed, as without JavaScript.
+// the switches stay as they were typed, as without JavaScript. The radio choice of a group, AND
+// or OR, sends the form with its button Change, which is hidden then.
 (function () {
   "use strict";
   var form = document.querySelector("form[data-save-filter]");
@@ -105,6 +106,12 @@
         window.location.href = dragged.dataset.move.replace(/&amp;/g, "&");
       }
     });
+  });
+  // the radio choice of an AND or an OR: the page shows it at once, by its button Change
+  document.querySelectorAll("fieldset[data-operator]").forEach(function (choice) {
+    var apply = choice.querySelector("button[data-operator-apply]");
+    if (apply && apply.form && apply.form.requestSubmit) { apply.hidden = true; }
+    choice.addEventListener("change", function () { press(apply); });
   });
   // leaving the table: nothing is highlighted
   document.querySelectorAll("table.filter-conditions").forEach(function (table) {

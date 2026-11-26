@@ -16,7 +16,7 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
-from pycal_dashboard.conditions.group.column import Column
+from pycal_dashboard.conditions.group.column import OPERATORS, Column
 from pycal_dashboard.conditions.group.conjunction import Conjunction
 from pycal_dashboard.errors import FilterNameMissing, FilterNameTaken
 from pycal_dashboard.models import Label, PullRequestFilter, PullRequestStep
@@ -210,7 +210,9 @@ def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None
     The buttons: ``swap``, ``invert``, ``remove``, ``skip`` (into Skip if), ``check`` (into
     the quality checks), ``join`` (by AND, with the condition of ``to``, else with the one
     above), ``unjoin`` (out of its AND) or ``place`` (before the condition of ``to``, or at
-    the end of the ``section``: ``checks`` or ``skip``). An AND of one column is none.
+    the end of the ``section``: ``checks`` or ``skip``), or ``operator`` (the radio choices of
+    AND and OR, which every form sent applies, see :func:`operated`). An AND of one column is
+    none.
 
     Parameters:
         form: The address or the form sent, with the number of the column of the button.
@@ -219,7 +221,8 @@ def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None
     Returns:
         The changed columns; None without such a button.
     """
-    for action in ("swap", "invert", "remove", "skip", "check", "join", "unjoin", "place"):
+    actions = ("swap", "invert", "remove", "skip", "check", "join", "unjoin", "place", "operator")
+    for action in actions:
         if action not in form:
             continue
         changed = list(columns)
@@ -242,12 +245,43 @@ def saved_columns(form: QueryDict, columns: list[Column]) -> list[Column] | None
         elif action == "place":  # dropped between two conditions, or at the end of a section
             kind = "skip" if form.get("section") == "skip" else "check"
             changed = placed(changed, index, target, kind)
+        elif action == "operator":  # the choices of AND and OR are applied already
+            pass
         elif action == "invert":
             changed[index] = column.inverted() or column
         else:  # a column of crosses for its opposite of check marks
             changed[index] = column.opposite() or column
         return Conjunction.normalized(changed)
     return None
+
+
+def operated(columns: list[Column], form: QueryDict) -> list[Column]:
+    """The columns with the radio choices of the page of saving: AND or OR for each group.
+
+    The choice of a group is ``operator<index>``, by the place of its first column: ``and`` or
+    ``or``. A group without its choice in the form stays as it was.
+
+    Parameters:
+        columns: The columns of conditions.
+        form: The form sent.
+
+    Returns:
+        The columns, each of a group with the operator chosen for it.
+
+    Examples:
+        >>> from django.http import QueryDict
+        >>> values = ["and1~status~applies~open", "and1~status~applies~draft"]
+        >>> found = operated([Column.decode(v) for v in values], QueryDict("operator0=or"))
+        >>> [column.encode() for column in found]
+        ['or1~status~applies~open', 'or1~status~applies~draft']
+    """
+    changed = list(columns)
+    for numbers in Conjunction.indices(changed):
+        operator = form.get(f"operator{numbers[0]}")
+        if len(numbers) > 1 and operator in OPERATORS:
+            for number in numbers:
+                changed[number] = replace(changed[number], operator=operator)
+    return changed
 
 
 def switched(columns: list[Column], on: set[int]) -> list[Column]:
@@ -420,7 +454,7 @@ def project_filter_save(request: HttpRequest, slug: str):
     saved = saved_filter(access.project, form.get("saved"))
     if request.method == "POST":  # the switches as they are on the page
         on = {int(n) for n in request.POST.getlist("on") if n.isdigit()}
-        columns = switched(columns, on)
+        columns = Conjunction.normalized(operated(switched(columns, on), request.POST))
     changed = saved_columns(form, columns)
     if changed is not None:  # a button of a condition: use the opposite, invert or remove it
         if request.method == "POST":  # a button of the form: what was typed stays

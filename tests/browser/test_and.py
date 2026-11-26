@@ -51,6 +51,7 @@ def test_where_a_dragged_condition_lands_is_highlighted(signed_in, site, github,
     """The AND as a whole, a single condition, or the gap in between; not where it was."""
     pull_request_project(github, bob)
     page = signed_in
+    page.set_viewport_size({"width": 1280, "height": 1000})  # no scrolling while it is held
     checks = open_page(page, site, f"and1~{LABEL}", f"and1~{OPEN}", CONFLICT)
     single = checks.locator("tr[data-condition-row='2']")
     gaps = checks.locator("tr[data-gap]")
@@ -93,3 +94,23 @@ def test_a_drop_where_it_was_picked_up_changes_nothing(signed_in, site, github, 
     expect(checks.locator("tr[data-condition-row]")).to_have_count(3)
     names = checks.locator("tr[data-condition-row] td.condition-name")
     expect(names.nth(1)).to_contain_text("conflict")
+
+
+def test_turn_an_and_into_an_or_with_the_radio_choice(signed_in, site, github, bob):
+    """The choice sends the form at once; its button Change is for pages without JavaScript."""
+    pull_request_project(github, bob)
+    page = signed_in
+    checks = open_page(page, site, f"and1~{LABEL}", f"and1~{CONFLICT}", OPEN)
+    page.get_by_label("Name").fill("Typed")
+    head = checks.locator("tr[data-and-head]")
+    expect(head).to_contain_text("All of these, as one condition:")
+    expect(head.locator("button[data-operator-apply]")).to_be_hidden()
+    head.get_by_label("Any of them (OR)").check()
+    expect(page).to_have_url(re.compile(r"col=or1~labels.*col=or1~branch~applies~conflict"))
+    head = checks.locator("tr[data-and-head]")
+    expect(head).to_contain_text("Any of these, as one condition:")
+    expect(head).to_contain_text("It has the label needs review or its branch is in conflict")
+    expect(head.get_by_label("Any of them (OR)")).to_be_checked()
+    expect(page.get_by_label("Name")).to_have_value("Typed")  # what was typed stays
+    head.get_by_label("All of them (AND)").check()
+    expect(page).to_have_url(re.compile(r"col=and1~labels"))

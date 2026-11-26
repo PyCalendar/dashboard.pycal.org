@@ -160,7 +160,8 @@ after a change, follow the rule it names instead of changing the test.
   choices to conditions, checks them for a column or inverts them. So a NOT and the condition
   that it is are the same: `absent` and `not~` of `present` read as one condition, written as
   `absent`. `tests/test_factory.py` checks it.
-- Conditions joined by AND (`Conjunction`, `Column.joined`) are one condition of a step: one
+- Conditions joined by AND (`Conjunction`, `Column.joined`), or by OR (`Column.operator`, a
+  radio choice of the group, `or<n>~` in the address), are one condition of a step: one
   quality check, or one condition of Skip if. Wherever a step or a filter uses its conditions,
   go through `Conjunction.of` (its value, `encode()`, keys the texts and the skips of the step);
   a change of a column keeps its AND (`dataclasses.replace`). The AND itself is not inverted,
