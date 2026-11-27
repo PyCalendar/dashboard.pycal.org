@@ -9,6 +9,16 @@ Changelog
 
 .. towncrier release notes start
 
+0.30.0 (2026-11-27)
+-------------------
+
+New features
+~~~~~~~~~~~~
+
+- Authors sign up for the PR message themselves: Sign up on the Current Message leads to a page without other links, which shows the text of the writers and the repositories, and after signing in with GitHub the switch Enable Pull Request Messages for all your pull requests; it adds their GitHub handle to the people of the message. The section Which pull requests get it is now Pull Requests with a status message.
+- The number of pull requests with a status message on the Current Message links to the table of those pull requests, with the condition PR Sync on.
+
+
 0.29.3 (2026-11-26)
 -------------------
 
