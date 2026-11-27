@@ -233,6 +233,7 @@ class ProjectBackup:
             "to_listed": message.to_listed,
             "authors": self.handles(message.authors),
             "to_authors": message.to_authors,
+            "signup_text": message.signup_text,
             "to_new": message.to_new,
             "to_open": message.to_open,
             "to_closed": message.to_closed,

@@ -802,8 +802,10 @@ again later, and which the pull requests do not get before it is applied.
    and *Edit* above it, and below it which pull request it is of, such as *This
    is the message as it would appear in pull request collective/icalendar#42*,
    which links the message on that pull request on GitHub to check it there (the
-   pull request while it does not have the message yet); and which pull requests
-   get it; or that there is none yet. Everybody who sees the project
+   pull request while it does not have the message yet); and the section *Pull
+   Requests with a status message*, which says which pull requests get it and
+   how many, with the button **Sign up** for authors (see
+   :ref:`message-signup`); or that there is none yet. Everybody who sees the project
    steps through its examples here, as on *Preview*, and sees the message of a
    pull request by its number.
 **Edit**
@@ -837,7 +839,8 @@ the message, and with it the step labels. Its *Options*:
   GitHub handles in the field, such as ``octocat, monalisa``: those open now and
   those they open later, but not the closed and merged ones. While you type,
   the field proposes GitHub handles, the authors of the pull requests of the
-  project first, see :ref:`github-handles`. On by default;
+  project first, see :ref:`github-handles`. On by default. Below it, the text of
+  the page of signing up, see :ref:`message-signup`;
 - *Add to all new pull requests*: those opened after the switch was switched on;
 - *Add to all open pull requests*;
 - *Add to closed and merged pull requests*, in light red: not preferred, as they
@@ -849,6 +852,32 @@ updates those whose text changed. The number follows the switches; without
 JavaScript, **Count** counts them. The log records every comment written or
 updated; the comment ends with a hidden line that says that dashboard.pycal.org
 wrote it.
+
+.. _message-signup:
+
+Signing up for the message
+--------------------------
+
+Authors sign up for the message themselves, for all their pull requests on the
+repositories of the project: **Sign up** below *Pull Requests with a status
+message* on the *Current Message* leads to the page
+``/projects/<project>/message/scope/new/user/``. It has no other links, so that
+nobody gets lost on the way:
+
+- Before signing in, it shows the text that the writers chose on
+  *Synchronization*, by default *Log in to enable the Pull Request Messages on
+  these repositories:*, the repositories as text, such as
+  *github.com/collective/icalendar*, and **Sign in with GitHub**, which comes
+  back to the page.
+- Signed in, it says *Hello @octocat,* with the switch *Enable Pull Request
+  Messages for all your pull requests on these repositories?*, off until you
+  signed up, the repositories, and **Save**.
+
+Saving adds your GitHub handle to the people of *Add to the open pull requests
+of these people*, or takes it out; your pull requests get the message in the
+background. The page is open while the project has a message that was applied
+and that option is on; everybody who sees the project may sign up, for their own
+pull requests only.
 
 .. _github-handles:
 

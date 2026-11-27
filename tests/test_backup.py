@@ -220,6 +220,7 @@ KEPT = {
         "to_listed",
         "authors",
         "to_authors",
+        "signup_text",
         "to_new",
         "to_open",
         "to_closed",
@@ -321,6 +322,7 @@ def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
         listed=["1"],
         authors=["octocat", "Monalisa"],
         to_open=True,
+        signup_text="Sign in for **iCalendar**",
     )
     client.force_login(bob)
     data = yaml.safe_load(download(client))
@@ -331,17 +333,23 @@ def test_the_backup_has_the_message(client, project, step, bob):  # noqa: F811
         "to_listed": True,
         "authors": ["Monalisa", "octocat"],
         "to_authors": True,
+        "signup_text": "Sign in for **iCalendar**",
         "to_new": False,
         "to_open": True,
         "to_closed": False,
     }
     data["message"].update(template="Changed", to_new=True, authors=["bob"], to_authors=False)
+    data["message"]["signup_text"] = "Sign in"
     restore(client, yaml.safe_dump(data))
     assert PullRequestMessage.objects.get().template == "Hi {author_handle}"  # not ticked
     restore(client, yaml.safe_dump(data), ["message"])
     message = PullRequestMessage.objects.get()
     assert message.template == "Changed" and message.new_since is not None
     assert (message.authors, message.to_authors) == (["bob"], False)
+    assert message.signup_text == "Sign in"
+    del data["message"]["signup_text"]  # a backup of before the page of signing up: it stays
+    restore(client, yaml.safe_dump(data), ["message"])
+    assert PullRequestMessage.objects.get().signup_text == "Sign in"
 
 
 def test_the_backup_is_sorted_inside(client, project, step, bob):  # noqa: F811

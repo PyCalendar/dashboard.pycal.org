@@ -111,6 +111,11 @@ urlpatterns = [
         name="project_message_scope",
     ),
     path(
+        "projects/<project_slug:slug>/message/scope/new/user/",
+        message.project_message_signup,
+        name="project_message_signup",
+    ),
+    path(
         "projects/<project_slug:slug>/message/preview/",
         message.project_message_preview,
         name="project_message_preview",

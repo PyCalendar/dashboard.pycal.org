@@ -13,6 +13,7 @@ from collections.abc import Callable
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -31,6 +32,7 @@ from pycal_dashboard.models import (
 )
 from pycal_dashboard.services.example_pulls import ExamplePulls
 from pycal_dashboard.services.message_comments import MessageComments
+from pycal_dashboard.services.message_signup import MessageSignup
 from pycal_dashboard.services.project_access import ProjectAccess
 from pycal_dashboard.services.project_editor import ProjectEditor
 from pycal_dashboard.services.update_queue import UpdateQueue
@@ -42,6 +44,8 @@ from .steps import handles
 
 # what a new message starts with
 DEFAULT = "{pr_badge}\n\n**{step_name}**\n\n{step_description}\n\n{tasks_all}\n"
+# the page where people sign up for the message themselves, after the project
+SIGNUP_PATH = "message/scope/new/user/"
 # the pages of the message, their names and addresses after the project
 FLOW = (
     ("message", "message/"),
@@ -101,7 +105,8 @@ def with_scope(message: PullRequestMessage, form: QueryDict) -> PullRequestMessa
     Parameters:
         message: The message.
         form: ``listed``, ``to_listed``, ``authors`` (GitHub handles), ``to_authors``,
-            ``to_new``, ``to_open`` and ``to_closed``.
+            ``to_new``, ``to_open``, ``to_closed`` and ``signup_text``, the text of the page of
+            signing up (empty when it is the default).
 
     Returns:
         The message.
@@ -110,6 +115,9 @@ def with_scope(message: PullRequestMessage, form: QueryDict) -> PullRequestMessa
     message.to_listed = form.get("to_listed") == "on"
     message.authors = handles(form.get("authors", ""))
     message.to_authors = form.get("to_authors") == "on"
+    if "signup_text" in form:
+        text = form.get("signup_text", "").strip()
+        message.signup_text = "" if text == MessageSignup.default_text() else text
     message.to_open = form.get("to_open") == "on"
     message.to_closed = form.get("to_closed") == "on"
     to_new = form.get("to_new") == "on"
@@ -429,6 +437,7 @@ def project_message_scope(request: HttpRequest, slug: str):
             "message": message,
             "listed": ", ".join(message.listed or []),
             "authors": ", ".join(message.authors or []),
+            "signup_text": message.signup_text or MessageSignup.default_text(),
             "button": ngettext(
                 "Keep %(count)s pull request synchronized",
                 "Keep %(count)s pull requests synchronized",
@@ -438,6 +447,54 @@ def project_message_scope(request: HttpRequest, slug: str):
         }
 
     return flow_page(request, slug, "scope", "pycal_dashboard/message/scope.html", context)
+
+
+@require_http_methods(["GET", "HEAD", "POST"])
+def project_message_signup(request: HttpRequest, slug: str):
+    """Sign up for the PR message: the pull requests of the person get it.
+
+    Visitors see the text of the writers, the repositories and the button to sign in with
+    GitHub, which comes back here; signed in, a switch for their pull requests and Save. The
+    page has no other links, so that nobody gets lost on the way.
+
+    Parameters:
+        request: The request; POST with ``enabled`` (``on``) to save.
+        slug: The project.
+
+    Returns:
+        The page, or a redirect to it after saving, or to signing in.
+
+    Raises:
+        MessageSignupClosed: The project has no applied message for the pull requests of people.
+        MessageSignupWithoutHandle: The account has no GitHub handle.
+    """
+    access, moved = opened(request, slug, SIGNUP_PATH)
+    if moved:
+        return moved
+    signup = MessageSignup(access)
+    signup.require_open()
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect_to_login(access.project.path(SIGNUP_PATH))
+        on = request.POST.get("enabled") == "on"
+        signup.save(on)
+        if on:
+            text = _("Your pull requests on these repositories get the PR message.")
+        else:
+            text = _("Your pull requests no longer get the PR message.")
+        messages.success(request, text)
+        return redirect(access.project.path(SIGNUP_PATH))
+    return render(
+        request,
+        "pycal_dashboard/message/signup.html",
+        {
+            "project": access.project,
+            "signup": signup,
+            "text": signup.text(),
+            "repositories": signup.repositories(),
+            "next": access.project.path(SIGNUP_PATH),
+        },
+    )
 
 
 def apply_message(request: HttpRequest, project: Project, message: PullRequestMessage):

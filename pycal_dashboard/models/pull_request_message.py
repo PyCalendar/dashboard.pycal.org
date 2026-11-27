@@ -10,7 +10,8 @@ class PullRequestMessage(models.Model):
     It is off until a scope is switched on: the pull requests ``listed`` by their numbers (on
     by default, without numbers none), the open pull requests of the ``authors`` by their GitHub
     handles (on by default, without handles none), all new ones (opened after ``new_since``),
-    all open ones, or the closed and merged ones too. A pull request with the message has it
+    all open ones, or the closed and merged ones too. People add their own GitHub handle to the
+    ``authors`` on the page of signing up (``signup_text``). A pull request with the message has it
     updated whenever the message or its values change (``MessageComments``).
     """
 
@@ -25,6 +26,9 @@ class PullRequestMessage(models.Model):
     # the GitHub handles of the authors whose open pull requests get it, such as ["octocat"]
     authors = models.JSONField(default=list, blank=True)
     to_authors = models.BooleanField(default=True)
+    # the text of the page where people sign up for the message (Markdown); empty for the
+    # default text, which says to sign in to enable it on the repositories
+    signup_text = models.TextField(blank=True)
     to_new = models.BooleanField(default=False)
     new_since = models.DateTimeField(null=True, blank=True)  # when to_new was switched on
     to_open = models.BooleanField(default=False)

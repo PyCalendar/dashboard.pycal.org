@@ -1,0 +1,22 @@
+{% extends "pycal_dashboard/base.html" %}
+{% load i18n socialaccount markdown %}
+{% block title %}{% translate "PR message" %} · {{ project.name }} · {{ site_name }}{% endblock %}
+{% block main %}
+<section class="card narrow signup-page" data-message-signup>
+{% if user.is_authenticated %}
+<form method="post" class="stacked" data-signup-form>{% csrf_token %}
+  <p data-signup-hello>{% blocktranslate with handle=signup.handle %}Hello @{{ handle }},{% endblocktranslate %}</p>
+  {% translate "Enable Pull Request Messages for all your pull requests on these repositories?" as enable_label %}{% include "pycal_dashboard/_switch.html" with name="enabled" value="on" checked=signup.signed_up text=enable_label hidden_text="" %}
+  <ul class="signup-repositories" data-signup-repositories>{% for repository in repositories %}<li>{{ repository }}</li>{% endfor %}</ul>
+  <p class="save-buttons"><button class="button" type="submit" data-signup-save>{% translate "Save" %}</button></p>
+</form>
+{% else %}
+<div class="markdown" data-signup-text>{{ text|markdown }}</div>
+<ul class="signup-repositories" data-signup-repositories>{% for repository in repositories %}<li>{{ repository }}</li>{% endfor %}</ul>
+{% if sign_in_configured %}<form method="post" action="{% provider_login_url 'github' %}">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <p class="save-buttons"><button class="button button-accent" type="submit" data-signup-sign-in>{% translate "Sign in with GitHub" %}</button></p>
+</form>{% else %}<p class="message message-warning">{% blocktranslate %}Signing in is not set up yet: {{ site_name }} has no OAuth app.{% endblocktranslate %}</p>{% endif %}
+{% endif %}
+</section>
+{% endblock %}

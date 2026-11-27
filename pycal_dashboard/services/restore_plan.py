@@ -48,6 +48,7 @@ MESSAGE_FIELDS = (
     "to_listed",
     "authors",
     "to_authors",
+    "signup_text",
     "to_new",
     "to_open",
     "to_closed",
@@ -126,6 +127,7 @@ def message_fields(entry: dict) -> dict:
         "to_listed": bool(entry.get("to_listed", True)),
         "authors": ProjectBackup.handles(entry.get("authors"))[:100],
         "to_authors": bool(entry.get("to_authors", True)),
+        "signup_text": str(entry.get("signup_text") or ""),
         "to_new": bool(entry.get("to_new")),
         "to_open": bool(entry.get("to_open")),
         "to_closed": bool(entry.get("to_closed")),
@@ -321,6 +323,8 @@ class RestorePlan:
         fields = message_fields(entry)
         if "draft" not in entry:  # a backup of before the drafts: the draft stays
             fields["draft"] = message.draft
+        if "signup_text" not in entry:  # a backup of before the page of signing up
+            fields["signup_text"] = message.signup_text
         now = {field: getattr(message, field) for field in fields}
         now["listed"] = ProjectBackup.listed(message.listed)  # their order changes nothing
         fields["listed"] = ProjectBackup.listed(fields["listed"])
@@ -546,6 +550,8 @@ class RestorePlan:
         fields = message_fields(entry)
         if "draft" not in entry:  # a backup of before the drafts: the draft stays
             del fields["draft"]
+        if "signup_text" not in entry:  # a backup of before the page of signing up
+            del fields["signup_text"]
         fields["new_since"] = timezone.now() if fields["to_new"] else None
         PullRequestMessage.objects.update_or_create(project=self.project, defaults=fields)
 

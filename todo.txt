@@ -804,3 +804,11 @@ community: where to start, what waits for a review, who contributes.
       evidence of an AND or an OR has each link once
 - [x] "Its labels on GitHub" -> "PR labels on GitHub", and the other evidence (checks, reviews, Status Message, steps,
       where the PR is merged); rule (AGENTS.md): no its or it where it is not clear what it refers to
+- [x] Sign up for the PR message: Sign up at the bottom of the Current Message (in the section "Pull Requests with a
+      status message", which was "Which pull requests get it"; the count says "N pull requests with a status message")
+      leads to /projects/<slug>/message/scope/new/user/: before signing in the text of the writers (Markdown, on
+      Synchronization; default "Log in to enable the Pull Request Messages on these repositories:"), the repositories
+      as text without links, and Sign in with GitHub; signed in "Hello @handle," the switch (off by default) "Enable
+      Pull Request Messages for all your pull requests on these repositories?", the repositories, and Save, which
+      adds the handle to the authors of the message (or takes it out)
+- [ ] The person: translate the texts of signing up into German and Spanish?

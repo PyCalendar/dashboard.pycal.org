@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-26 23:29+0000\n"
+"POT-Creation-Date: 2026-11-27 10:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -744,6 +744,12 @@ msgstr "Pull Request nicht gefunden"
 msgid "Which repository?"
 msgstr "Welches Repository?"
 
+msgid "No sign up for the PR message"
+msgstr ""
+
+msgid "Sign in with GitHub"
+msgstr "Mit GitHub anmelden"
+
 msgid "The GitHub App could not be registered"
 msgstr "Die GitHub App konnte nicht registriert werden"
 
@@ -956,13 +962,15 @@ msgid ""
 "The projects you create, the role of each collaborator with their GitHub "
 "handle, who skipped a step or a quality check for a pull request, when, and "
 "why, and the GitHub handles of the authors whose pull requests get the "
-"message of PR Sync."
+"message of PR Sync, which writers add or the authors themselves on the page "
+"of signing up."
 msgstr ""
 "Die Projekte, die du erstellst, die Rolle jeder und jedes Mitwirkenden mit "
 "ihrem GitHub-Handle, wer einen Schritt oder eine Qualitätsprüfung für einen "
 "Pull Request übersprungen hat, wann und warum, und die GitHub-Handles der "
 "Autorinnen und Autoren, deren Pull Requests die Nachricht von PR Sync "
-"bekommen."
+"bekommen, die Schreibende hinzufügen oder die Autorinnen und Autoren selbst "
+"auf der Seite der Anmeldung."
 
 msgid "Collaborators of projects"
 msgstr "Mitwirkende von Projekten"
@@ -1160,6 +1168,11 @@ msgstr "Nichts zu tun."
 
 msgid "Nothing is done yet."
 msgstr "Noch nichts erledigt."
+
+msgid ""
+"Log in to enable the Pull Request Messages\n"
+"on these repositories:"
+msgstr ""
 
 msgid "Steps"
 msgstr "Schritte"
@@ -1458,9 +1471,6 @@ msgstr ""
 
 msgid "Sign in"
 msgstr "Anmelden"
-
-msgid "Sign in with GitHub"
-msgstr "Mit GitHub anmelden"
 
 #, python-format
 msgid ""
@@ -2545,6 +2555,15 @@ msgstr ""
 "Ihre Pull Requests, die jetzt offen sind, und die, die sie später öffnen; "
 "geschlossene bleiben außen vor."
 
+msgid "The text of the page of signing up, before signing in"
+msgstr ""
+
+#, python-format
+msgid ""
+"People add themselves on the page of signing up, %(signup_url)s, which the "
+"Current Message links to. The page lists the repositories below the text."
+msgstr ""
+
 msgid "Add to all new pull requests"
 msgstr "Zu allen neuen Pull Requests hinzufügen"
 
@@ -2577,8 +2596,8 @@ msgstr ""
 "ihres Bereichs und aktualisiert ihn, wann immer sich die Nachricht oder die "
 "Werte ihrer Variablen ändern."
 
-msgid "Which pull requests get it"
-msgstr "Welche Pull Requests sie bekommen"
+msgid "Pull Requests with a status message"
+msgstr ""
 
 msgid "These pull requests:"
 msgstr "Diese Pull Requests:"
@@ -2596,10 +2615,18 @@ msgid "Closed and merged pull requests"
 msgstr "Geschlossene und gemergte Pull Requests"
 
 #, python-format
-msgid "%(counter)s pull request gets it."
-msgid_plural "%(counter)s pull requests get it."
-msgstr[0] "%(counter)s Pull Request bekommt sie."
-msgstr[1] "%(counter)s Pull Requests bekommen sie."
+msgid "%(counter)s pull request with a status message."
+msgid_plural "%(counter)s pull requests with a status message."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Sign up"
+msgstr ""
+
+msgid ""
+"Authors sign up themselves: their pull requests on these repositories get "
+"the status message."
+msgstr ""
 
 msgid "There is no message yet: no pull request gets a comment."
 msgstr ""
@@ -2607,6 +2634,18 @@ msgstr ""
 
 msgid "Create the message"
 msgstr "Die Nachricht erstellen"
+
+msgid "PR message"
+msgstr ""
+
+#, python-format
+msgid "Hello @%(handle)s,"
+msgstr ""
+
+msgid ""
+"Enable Pull Request Messages for all your pull requests on these "
+"repositories?"
+msgstr ""
 
 msgid "Mark all as read"
 msgstr "Alle als gelesen markieren"
@@ -4112,6 +4151,12 @@ msgstr[0] ""
 msgstr[1] ""
 "Der Umfang ist gespeichert: %(count)s Pull Requests bekommen die Nachricht "
 "im Hintergrund."
+
+msgid "Your pull requests on these repositories get the PR message."
+msgstr ""
+
+msgid "Your pull requests no longer get the PR message."
+msgstr ""
 
 #, python-format
 msgid ""

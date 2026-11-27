@@ -302,6 +302,14 @@ ACTIONS = {
         lambda c, w: c.get(f"/complete/people/?project={w.project.slug}&q=oct"),
         lambda w: True,
     ),
+    "sign up for the PR message, for their own pull requests": (
+        "visitor",
+        lambda c, w: (
+            PullRequestMessage.objects.create(project=w.project, template="Hi", to_authors=True),
+            c.post(w.path + "message/scope/new/user/", {"enabled": "on"}),
+        )[1],
+        lambda w: PullRequestMessage.objects.get(project=w.project).authors in (["alice"], ["bob"]),
+    ),
     "sync the open pull requests of authors": (
         "write",
         lambda c, w: c.post(

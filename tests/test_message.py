@@ -124,7 +124,7 @@ def test_the_edited_message_is_saved_and_applied_later(client, github, project, 
     assert (
         "<strong>" in page and "All open pull requests" in page and "data-not-applied" not in page
     )
-    assert "2 pull requests get it." in page
+    assert "2 pull requests with a status message." in page
     shown = page.split("data-message-preview")[1]
     assert shown.index("</div>") < shown.index("data-message-pull")  # below the message
     line = shown.split("data-message-pull>")[1].split("</p>")[0]

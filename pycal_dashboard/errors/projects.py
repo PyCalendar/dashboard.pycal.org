@@ -486,3 +486,35 @@ class PullRequestNumberAmbiguous(ProjectError):
 
     title = _("Which repository?")
     status = 404
+
+
+class MessageSignupClosed(ProjectError):
+    """The project has no PR message that people sign up for themselves.
+
+    This happens when:
+
+    - the project has no message of PR Sync yet, or it was never applied, or
+    - its writers switched off *Add to the open pull requests of these people* on the page
+      *Synchronization* of PR Sync.
+
+    Resolve:
+        - When you are a writer of the project, apply the message and switch on *Add to the
+          open pull requests of these people*.
+        - Else, ask the writers of the project to do so.
+    """
+
+    title = _("No sign up for the PR message")
+    status = 404
+
+
+class MessageSignupWithoutHandle(ProjectError):
+    """Your account has no GitHub handle, so its pull requests cannot be found.
+
+    This happens when the account was made without GitHub, such as an account of the
+    administration.
+
+    Resolve:
+        Sign out, and sign in with GitHub.
+    """
+
+    title = _("Sign in with GitHub")

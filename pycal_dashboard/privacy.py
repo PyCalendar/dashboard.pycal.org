@@ -44,7 +44,8 @@ DATA = {
             "The projects you create, the role of each collaborator with their GitHub handle, "
             "who skipped a step or a quality check for a pull request, when, and why, and the "
             "GitHub handles of "
-            "the authors whose pull requests get the message of PR Sync."
+            "the authors whose pull requests get the message of PR Sync, which writers add or "
+            "the authors themselves on the page of signing up."
         ),
         "whose": _("Collaborators of projects"),
         "seen_by": _(
@@ -190,6 +191,7 @@ MODELS = {
             "to_listed",
             "authors",
             "to_authors",
+            "signup_text",
             "to_new",
             "new_since",
             "to_open",
