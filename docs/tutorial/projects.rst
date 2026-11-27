@@ -804,7 +804,8 @@ again later, and which the pull requests do not get before it is applied.
    which links the message on that pull request on GitHub to check it there (the
    pull request while it does not have the message yet); and the section *Pull
    Requests with a status message*, which says which pull requests get it and
-   how many, with the button **Sign up** for authors (see
+   how many, linked to the table of pull requests with the condition *PR Sync
+   on*, with the button **Sign up** for authors (see
    :ref:`message-signup`); or that there is none yet. Everybody who sees the project
    steps through its examples here, as on *Preview*, and sees the message of a
    pull request by its number.

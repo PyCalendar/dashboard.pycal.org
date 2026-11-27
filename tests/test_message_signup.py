@@ -129,7 +129,10 @@ def test_the_message_page_links_the_sign_up(client, applied):
     assert "Pull Requests with a status message" in page
     assert "Which pull requests get it" not in page
     scope = page.split("data-scope-title>")[1]
-    assert "pull requests with a status message." in scope.split("data-message-count>")[1]
+    count = scope.split("data-message-count>")[1].split("</p>")[0]
+    assert "pull requests with a status message." in count
+    # the count leads to the table of those pull requests: PR Sync on
+    assert '<a href="/projects/icalendar/pull-requests/?col=dashboard~applies~sync">' in count
     link = scope.split("data-signup-link>")[1].split("</p>")[0]
     assert f'href="{SIGNUP}"' in link and "Sign up" in link
     assert PullRequestStep.objects.exists()

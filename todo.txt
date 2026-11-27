@@ -812,3 +812,5 @@ community: where to start, what waits for a review, who contributes.
       Pull Request Messages for all your pull requests on these repositories?", the repositories, and Save, which
       adds the handle to the authors of the message (or takes it out)
 - [ ] The person: translate the texts of signing up into German and Spanish?
+- [x] The count "N pull requests with a status message" of the Current Message links to the table of pull requests with
+      PR Sync on (pull-requests/?col=dashboard~applies~sync)
